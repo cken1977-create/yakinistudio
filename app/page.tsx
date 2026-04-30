@@ -1,5 +1,6 @@
 import { Hero } from '@/components/sections/Hero'
 import { Services } from '@/components/sections/Services'
+import { AiTools } from '@/components/sections/AiTools'
 import { Pricing } from '@/components/sections/Pricing'
 import { IntakeForm } from '@/components/sections/IntakeForm'
 import Link from 'next/link'
