@@ -1,23 +1,14 @@
 import { redirect } from 'next/navigation'
-import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
 
 export default async function ClientDashboard() {
   const cookieStore = await cookies()
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() { return cookieStore.getAll() },
-        setAll() {},
-      },
-    }
-  )
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/client/login')
+  const clientCookie = cookieStore.get('yakini_client')
+  
+  if (!clientCookie) {
+    redirect('/client/login')
+  }
 
   return (
     <div className="min-h-screen bg-[#141414] pt-24">
@@ -33,7 +24,7 @@ export default async function ClientDashboard() {
               Welcome back.
             </h1>
             <p className="text-[#F5EFE3]/30 text-sm">
-              {user.email}
+              {clientCookie.value}
             </p>
           </div>
           <form action="/api/auth/signout" method="post">
