@@ -1,12 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
+import { useEffect, useState, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 function VerifyContent() {
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
-  const router = useRouter()
+  const [status, setStatus] = useState<'loading' | 'error'>('loading')
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
 
@@ -23,14 +21,13 @@ function VerifyContent() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          setStatus('success')
-          setTimeout(() => router.push('/client'), 1500)
+          window.location.href = '/client'
         } else {
           setStatus('error')
         }
       })
       .catch(() => setStatus('error'))
-  }, [token, router])
+  }, [token])
 
   return (
     <div className="min-h-screen bg-[#141414] flex items-center justify-center px-6">
@@ -39,12 +36,6 @@ function VerifyContent() {
           <>
             <div className="text-[#C9A84C] text-2xl mb-4 animate-pulse">◆</div>
             <p className="text-[#F5EFE3]/50 text-sm">Verifying your link...</p>
-          </>
-        )}
-        {status === 'success' && (
-          <>
-            <div className="text-[#C9A84C] text-2xl mb-4">✓</div>
-            <p className="text-[#F5EFE3]/70 text-sm">Verified. Redirecting to your portal...</p>
           </>
         )}
         {status === 'error' && (
