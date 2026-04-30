@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase'
 
 export async function GET(req: NextRequest) {
-  try {
-    const token = req.nextUrl.searchParams.get('token')
-    if (!token) {
-      return NextResponse.redirect(new URL('/client/login', req.url))
-    }
+  const token = req.nextUrl.searchParams.get('token')
 
+  if (!token) {
+    return NextResponse.redirect(new URL('/client/login', req.url))
+  }
+
+  try {
     const supabase = createClient()
     const { data: authToken } = await supabase
       .from('auth_tokens')
@@ -17,7 +18,7 @@ export async function GET(req: NextRequest) {
       .single()
 
     if (!authToken || new Date(authToken.expires_at) < new Date()) {
-      return NextResponse.redirect(new URL('/client/login', req.url))
+      return NextResponse.redirect(new URL('/client/login?error=expired', req.url))
     }
 
     await supabase
@@ -25,10 +26,14 @@ export async function GET(req: NextRequest) {
       .update({ used: true })
       .eq('id', authToken.id)
 
-    const response = NextResponse.redirect(new URL('/client', req.url))
-    response.cookies.set('yakini_client', authToken.email, {
+    const url = new URL('/client', req.url)
+    const response = NextResponse.redirect(url, { status: 302 })
+
+    response.cookies.set({
+      name: 'yakini_client',
+      value: authToken.email,
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7,
       path: '/',
@@ -38,6 +43,6 @@ export async function GET(req: NextRequest) {
 
   } catch (err) {
     console.error('Verify error:', err)
-    return NextResponse.redirect(new URL('/client/login', req.url))
+    return NextResponse.redirect(new URL('/client/login?error=failed', req.url))
   }
 }
