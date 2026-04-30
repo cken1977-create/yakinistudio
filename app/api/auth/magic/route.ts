@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     const magicLink = 'https://yakini.digital/client/verify?token=' + token
 
     await resend.emails.send({
-      from: 'Yakini <hello@yakini.digital>',
+      from: 'Yakini <onboarding@resend.dev>',
       to: email,
       subject: 'Your Yakini Client Portal Login Link',
       html: '<div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:32px;background:#141414;color:#F5EFE3">' +
