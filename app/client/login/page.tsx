@@ -1,21 +1,29 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase'
 
 export default function ClientLogin() {
   const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'sent'>('idle')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'sent' | 'error'>('idle')
 
   async function handleLogin() {
     if (!email) return
     setStatus('loading')
-    const supabase = createClient()
-    await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: 'https://yakini.digital/client' }
-    })
-    setStatus('sent')
+    try {
+      const res = await fetch('/api/auth/magic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setStatus('sent')
+      } else {
+        setStatus('error')
+      }
+    } catch {
+      setStatus('error')
+    }
   }
 
   return (
@@ -30,6 +38,7 @@ export default function ClientLogin() {
           </h1>
           <p className="text-[#F5EFE3]/40 text-sm leading-relaxed">
             Enter your email to receive a secure login link.
+            Only authorized clients can access the portal.
           </p>
         </div>
 
@@ -37,8 +46,8 @@ export default function ClientLogin() {
           <div className="bg-[#1C1C1C] border border-[#C9A84C]/20 p-8 text-center">
             <div className="text-[#C9A84C] text-2xl mb-4">✓</div>
             <p className="text-[#F5EFE3]/60 text-sm leading-relaxed">
-              Check your email for a secure login link.
-              It expires in 1 hour.
+              Check your email for a secure login link
+              from hello@yakini.digital. Expires in 1 hour.
             </p>
           </div>
         ) : (
@@ -55,6 +64,11 @@ export default function ClientLogin() {
                 className="bg-[#1C1C1C] border border-[#F5EFE3]/10 text-[#F5EFE3] px-4 py-3 text-sm outline-none focus:border-[#C9A84C] transition-colors"
               />
             </div>
+            {status === 'error' && (
+              <p className="text-red-400 text-xs italic">
+                Email not recognized. Contact hello@yakini.digital to get access.
+              </p>
+            )}
             <button
               onClick={handleLogin}
               disabled={status === 'loading' || !email}
