@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Yakini
 
-## Getting Started
+> **We build what you build on.**
 
-First, run the development server:
+Digital infrastructure for small businesses, culinary entrepreneurs,
+and founders who are serious about growth.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Live Site
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+[yakini.digital](https://yakini.digital)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## About
 
-To learn more about Next.js, take a look at the following resources:
+Yakini means "one who is certain." We build websites, lead capture
+systems, client portals, mobile apps, and AI-powered business tools
+for operators who need institutional-grade infrastructure without
+agency pricing.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Industries served:**
+- Culinary (personal chefs, restaurants, food trucks, caterers)
+- Energy & oilfield services
+- Small business & founders
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Layer | Tech |
+|---|---|
+| Web Framework | Next.js 16 (App Router) |
+| Styling | Tailwind CSS + shadcn/ui |
+| Backend | Supabase (PostgreSQL, Auth, Storage) |
+| Deployment | Vercel |
+| Email | Resend |
+| Mobile | React Native + Expo (coming) |
+| AI | Claude API — Anthropic (coming) |
+| Version Control | GitHub |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Project Structure
+yakini/
+├── app/
+│   ├── (marketing)/
+│   │   ├── page.tsx          ← homepage
+│   │   ├── services/         ← /services
+│   │   ├── pricing/          ← /pricing
+│   │   ├── work/             ← /work
+│   │   └── process/          ← /process
+│   ├── api/
+│   │   └── leads/route.ts    ← lead capture API
+│   └── layout.tsx            ← root layout
+├── components/
+│   ├── layout/
+│   │   ├── Navbar.tsx
+│   │   └── Footer.tsx
+│   └── sections/
+│       ├── Hero.tsx
+│       ├── Services.tsx
+│       ├── Pricing.tsx
+│       └── IntakeForm.tsx
+├── lib/
+│   ├── supabase.ts
+│   └── utils.ts
+└── types/
+└── index.ts
+---
+
+## Service Tiers
+
+| Tier | Name | Price |
+|---|---|---|
+| 1 | Authority — Website | $1,500 – $3,500 |
+| 2 | Conversion — Lead Systems | $3,500 – $6,000 |
+| 3 | Operations — Dashboards | $6,000 – $12,000 |
+| 4 | Retention — Mobile Apps | $10,000 – $20,000+ |
+| 5 | Intelligence — AI Tools | Custom |
+
+---
+
+## Active Clients
+
+| Client | Industry | Status |
+|---|---|---|
+| Pettít Luxe Group | Culinary | In Progress |
+| PX3 Energy Services | Oilfield | Coming Soon |
+
+---
+
+## Environment Variables
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+RESEND_API_KEY=
+---
+
+## Deployment
+
+Push to `main` → Vercel auto-deploys → live at `yakini.digital`
+
+---
+
+## Contact
+
+hello@yakini.digital
+
+---
+
+*© 2026 Yakini LLC — We build what you build on.*
