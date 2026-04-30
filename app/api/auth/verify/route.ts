@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase'
-import { cookies } from 'next/headers'
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    const { token } = await req.json()
+    const token = req.nextUrl.searchParams.get('token')
     if (!token) {
-      return NextResponse.json({ error: 'Token required' }, { status: 400 })
+      return NextResponse.redirect(new URL('/client/login', req.url))
     }
 
     const supabase = createClient()
-
     const { data: authToken } = await supabase
       .from('auth_tokens')
       .select('*')
@@ -18,27 +16,21 @@ export async function POST(req: NextRequest) {
       .eq('used', false)
       .single()
 
-    if (!authToken) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+    if (!authToken || new Date(authToken.expires_at) < new Date()) {
+      return NextResponse.redirect(new URL('/client/login', req.url))
     }
 
-    if (new Date(authToken.expires_at) < new Date()) {
-      return NextResponse.json({ error: 'Token expired' }, { status: 401 })
-    }
-
-    // Mark token as used
     await supabase
       .from('auth_tokens')
       .update({ used: true })
       .eq('id', authToken.id)
 
-    // Set session cookie
-    const response = NextResponse.json({ success: true }, { status: 200 })
+    const response = NextResponse.redirect(new URL('/client', req.url))
     response.cookies.set('yakini_client', authToken.email, {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
       path: '/',
     })
 
@@ -46,6 +38,6 @@ export async function POST(req: NextRequest) {
 
   } catch (err) {
     console.error('Verify error:', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.redirect(new URL('/client/login', req.url))
   }
 }
