@@ -2,11 +2,14 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
   const clientCookie = request.cookies.get('yakini_client')
+  const path = request.nextUrl.pathname
 
-  if (!clientCookie && 
-      request.nextUrl.pathname.startsWith('/client') &&
-      !request.nextUrl.pathname.startsWith('/client/login') &&
-      !request.nextUrl.pathname.startsWith('/client/verify')) {
+  if (
+    !clientCookie &&
+    path.startsWith('/client') &&
+    !path.startsWith('/client/login') &&
+    !path.startsWith('/client/verify')
+  ) {
     return NextResponse.redirect(new URL('/client/login', request.url))
   }
 
