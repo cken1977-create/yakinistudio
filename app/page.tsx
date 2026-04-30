@@ -1,8 +1,8 @@
 import { Hero } from '@/components/sections/Hero'
 import { Services } from '@/components/sections/Services'
+import { ProductMockup } from '@/components/sections/ProductMockup'
 import { Pricing } from '@/components/sections/Pricing'
 import { IntakeForm } from '@/components/sections/IntakeForm'
-import { AiTools } from '@/components/sections/AiTools'
 import Link from 'next/link'
 
 export default function HomePage() {
@@ -17,7 +17,8 @@ export default function HomePage() {
                 <div className="w-8 h-px bg-[#C9A84C]" />
                 <span className="text-[#C9A84C] text-[10px] tracking-[4px] uppercase">About Yakini</span>
               </div>
-              <h2 className="font-bold text-[#F5EFE3] leading-none tracking-tight mb-8" style={{ fontSize: 'clamp(36px, 5vw, 60px)' }}>
+              <h2 className="font-bold text-[#F5EFE3] leading-none tracking-tight mb-8"
+                style={{ fontSize: 'clamp(36px, 5vw, 60px)' }}>
                 We are not a<br />
                 <em className="text-[#C9A84C] not-italic">design shop.</em>
               </h2>
@@ -50,7 +51,7 @@ export default function HomePage() {
         </div>
       </section>
       <Services />
-      <AiTools />
+      <ProductMockup />
       <Pricing />
       <IntakeForm />
     </>
