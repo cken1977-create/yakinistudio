@@ -10,7 +10,7 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "dev:yakini": "turbo dev --filter=yakini.digital",
-    "dev:template": "turbo dev --filter=_template",
+    "dev:template": "turbo dev --filter=template",
     "lint": "turbo lint"
   },
   "devDependencies": {
