@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 
 const SUPABASE_URL = 'https://mxshsmknfqxwltucgezl.supabase.co'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14c2hzbWtuZnF4d2x0dWNnZXpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1MDM1NjIsImV4cCI6MjA5MzA3OTU2Mn0.cdx3T5CVFKq2sis-FOHau2V0Lx3CrsyoZmaAfM689v0'
-const RESEND_API_KEY = 're_DdtMrt3n_F6B4vJQiepzrYpHwK6gkB93N'
 const SIGN_BASE_URL = 'https://sign.yakini.digital'
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -244,9 +243,9 @@ export default function ContractsPage() {
         expiresAt,
       })
 
-      await fetch('https://api.resend.com/emails', {
+      await fetch('/api/send-email', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${RESEND_API_KEY}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           from: 'Yakini Contracts <admin@yakini.digital>',
           to: [form.client_email.trim()],
@@ -256,9 +255,9 @@ export default function ContractsPage() {
       })
 
       // 5 — Notify Clarence
-      await fetch('https://api.resend.com/emails', {
+      await fetch('/api/send-email', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${RESEND_API_KEY}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           from: 'Yakini Contracts <admin@yakini.digital>',
           to: ['admin@yakini.digital'],
@@ -308,9 +307,9 @@ export default function ContractsPage() {
   const resendContract = async (c: Contract) => {
     if (!c.signing_token) return
     const signingLink = `${SIGN_BASE_URL}/${c.signing_token}`
-    await fetch('https://api.resend.com/emails', {
+    await fetch('/api/send-email', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${RESEND_API_KEY}` },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         from: 'Yakini Contracts <admin@yakini.digital>',
         to: [c.client_email],
@@ -748,8 +747,9 @@ export default function ContractsPage() {
       <div className={`yc-toast ${toastVisible ? 'yc-toast-show' : ''}`}>{toast}</div>
     </>
   )
-                        }
-                  // ── Email Templates ────────────────────────────────────────────────────────
+}
+
+// ── Email Templates ────────────────────────────────────────────────────────
 function buildClientEmail({ name, business, title, signingLink, setupFee, monthly, services, expiresAt }: {
   name: string, business: string, title: string, signingLink: string,
   setupFee: string, monthly: string, services: string[], expiresAt: string
@@ -790,8 +790,7 @@ function buildClientEmail({ name, business, title, signingLink, setupFee, monthl
       </div>
     </div>
   `
-}
-
+                    }
 function buildReminderEmail({ name, business, title, signingLink }: {
   name: string, business: string, title: string, signingLink: string
 }) {
