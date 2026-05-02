@@ -442,7 +442,7 @@ const FAQS = [
   },
   {
     q: 'Can I upgrade tiers later?',
-    a: 'Absolutely. Many founders start at Authority and upgrade to Intelligence once they want AI tooling. Setup costs for the upgrade are calculated against work already completed — you don\'t pay setup again.',
+    a: 'Absolutely. Many founders start at Authority and upgrade to Intelligence once they want AI tooling. Setup costs for the upgrade are calculated against work already completed — you don't pay full setup again.',
   },
   {
     q: 'Do you work with startups or only established businesses?',
