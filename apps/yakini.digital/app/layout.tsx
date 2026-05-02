@@ -1,35 +1,24 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
-import { Navbar } from '@/components/layout/Navbar'
-import { Footer } from '@/components/layout/Footer'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Yakini — We build what you build on.',
-  description: 'Digital infrastructure for small businesses and founders who are serious about growth.',
-  keywords: ['web development', 'digital infrastructure', 'small business', 'personal chef websites', 'restaurant websites'],
+  title: 'Yakini — Digital infrastructure for serious founders',
+  description: 'We don\'t make websites. We build the platforms your business runs on — with intelligence baked into the foundation.',
+  keywords: 'digital infrastructure, AI platforms, founder tools, custom software, Yakini',
   openGraph: {
-    title: 'Yakini — We build what you build on.',
-    description: 'Digital infrastructure for small businesses and founders who are serious about growth.',
+    title: 'Yakini Digital Infrastructure',
+    description: 'Digital infrastructure for serious founders. We build the platforms your business runs on.',
     url: 'https://yakini.digital',
     siteName: 'Yakini',
     type: 'website',
   },
+  robots: { index: true, follow: true },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+      <body style={{ margin: 0, padding: 0, background: '#050E1F' }}>
+        {children}
       </body>
     </html>
   )
