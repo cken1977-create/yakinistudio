@@ -4,69 +4,146 @@ import { useState } from 'react'
 import { SiteShell } from '@/components/SiteShell'
 
 // ═════════════════════════════════════════════════════════════════════════
-// YAKINI INTELLIGENCE — Sales Page
+// YAKINI INTELLIGENCE — Sales Page v2
 // File: apps/yakini.digital/app/intelligence/page.tsx
 //
-// Purpose: Convert "interested" into "where do I sign" for $5K-15K/mo
-// Intelligence tier engagements.
+// v2 changes:
+// - Multi-vertical positioning (6 industries shown)
+// - Yakini Intelligence branding (no Claude references)
+// - Garland reframed as "First Strategic Partner" not "the example"
+// - New "Across Industries" section with vertical-specific use cases
 // ═════════════════════════════════════════════════════════════════════════
 
 const TOOLS = [
   {
     icon: '⚖',
     name: 'Case Triage',
-    headline: 'Strength assessment in 8 seconds.',
-    desc: 'Analyzes incoming cases and returns a structured assessment: case strength, confidence percentage, key arguments for your position, risks to watch, evidence checklist, and recommended next steps.',
-    use: 'Tow defense, legal services, insurance claims, dispute resolution.',
-    example: 'TTMC-2026-0001 → STRONG (85%) → 3 winning arguments cited Texas Transportation Code §545.305',
+    headline: 'Decision-grade analysis in 8 seconds.',
+    desc: 'Analyzes incoming work and returns structured assessment: strength rating, confidence percentage, key arguments, risks to watch, recommended next steps, and evidence checklist.',
+    use: 'Legal hearings · Restaurant order disputes · Oilfield safety incidents · Trucking compliance issues · Catering contract disputes · Insurance claims',
+    example: 'Tow case → STRONG (85%) cited TX Transportation Code §545.305 → 3 winning arguments laid out',
   },
   {
     icon: '✉',
     name: 'Letter Generation',
     headline: 'Demand letters and dispute notices, drafted instantly.',
-    desc: 'Generates first-draft demand letters, dispute notices, follow-up communications, cease-and-desist letters — all in your voice and brand. You review and send.',
-    use: 'Any business that handles disputes, billing issues, or formal communications.',
+    desc: 'Generates first-draft demand letters, dispute responses, follow-up communications, and formal correspondence — in your brand voice. You review and send.',
+    use: 'Tow demand letters · Catering contract disputes · Restaurant vendor complaints · Trucking insurance correspondence · Oilfield incident notices · Permit appeals',
     example: 'Customer dispute → 3 letter variants → review → send. 30 seconds total.',
   },
   {
     icon: '🏛',
-    name: 'Hearing Prep Brief',
-    headline: 'One-page court briefs the night before.',
-    desc: 'Generates a complete pre-hearing brief 24 hours before any scheduled hearing: facts of the case, key arguments, anticipated counter-arguments, evidence presentation order, and a ready-to-go talking script.',
-    use: 'Legal hearings, regulatory meetings, insurance appeals, board presentations.',
-    example: 'Hearing tomorrow at 9am → brief in your inbox at 8am with full prep packet.',
+    name: 'Hearing & Meeting Prep',
+    headline: 'One-page briefs the night before.',
+    desc: 'Generates a complete pre-event brief 24 hours before any scheduled hearing, board meeting, or client pitch: facts, key points, anticipated counter-arguments, talking script.',
+    use: 'Court hearings · Investor pitches · Permit board meetings · Insurance appeals · Regulatory inspections · High-stakes client calls',
+    example: 'Hearing tomorrow at 9am → brief in your inbox at 8am with full prep packet ready.',
   },
   {
     icon: '🔍',
-    name: 'License Verification',
-    headline: 'Cross-reference state records automatically.',
-    desc: 'When a vendor, contractor, or counterparty is named, AI cross-references their licensing status against state records and flags any discrepancies, expirations, or issues.',
-    use: 'Construction, contracting, real estate, regulated industries.',
+    name: 'Verification & Compliance',
+    headline: 'Cross-reference licensing and regulatory records automatically.',
+    desc: 'When a vendor, contractor, employee, or counterparty is named, AI cross-references licensing status against state and federal records and flags discrepancies.',
+    use: 'TX VSF licensing · Restaurant health permits · Oilfield safety certifications · CDL verifications · Liquor licenses · Insurance certificates',
     example: 'Tow company name → cross-checked against TX VSF database → flagged expired license.',
   },
   {
     icon: '💬',
     name: 'Customer Communication',
-    headline: 'Status updates drafted in your voice.',
-    desc: 'Auto-drafts personalized customer status updates, follow-ups, and replies based on case progress. Maintains your brand voice across thousands of touchpoints.',
-    use: 'Service businesses, professional services, anything with active customer relationships.',
+    headline: 'Status updates and replies drafted in your voice.',
+    desc: 'Auto-drafts personalized customer communications based on case progress, project milestones, or service updates. Maintains your brand voice across every touchpoint.',
+    use: 'Service status updates · Catering follow-ups · Trucking delivery comms · Restaurant reservation comms · Project milestone updates · Apology / recovery messages',
     example: 'Case status changed → personalized update drafted → you approve → sent.',
   },
   {
     icon: '📊',
     name: 'Strategic Pattern Analysis',
     headline: 'Detect what wins. Detect what loses.',
-    desc: 'Analyzes your historical case data to identify patterns: which case types have highest win rates, which arguments resonate, which evidence carries weight, which judges/courts to prioritize.',
-    use: 'Any business with case-based or project-based historical data.',
-    example: '50 cases analyzed → "Cases citing §545.305 win 87% of the time. Prioritize.',
+    desc: 'Analyzes your historical data to identify patterns: which work has highest profit margins, which arguments resonate, which clients to prioritize, which red flags to avoid.',
+    use: 'Win-rate analysis · Profitable client patterns · High-risk job indicators · Marketing channel ROI · Regional performance data · Seasonal demand modeling',
+    example: '50 cases analyzed → "Cases citing §545.305 win 87% of the time. Prioritize those."',
   },
 ]
 
-const ROI_INPUTS = [
-  { label: 'Cases per month', default: 50 },
-  { label: 'Minutes saved per case', default: 30 },
-  { label: 'Hours saved per month', default: 25 },
-  { label: 'Effective hourly rate', default: 150 },
+const VERTICALS = [
+  {
+    industry: 'TOW DEFENSE',
+    name: 'Tow Defense Service',
+    status: 'LIVE',
+    statusColor: 'gold',
+    desc: 'Wrongful tow hearings across Texas. Customer intake, AI case triage, evidentiary packet builder, hearing prep.',
+    tools: [
+      { name: 'Case Triage', detail: 'Strength assessment with TX statute citations' },
+      { name: 'Letter Generation', detail: 'Demand letters to tow companies' },
+      { name: 'Hearing Prep', detail: 'One-page court briefs' },
+      { name: 'License Verification', detail: 'TX VSF database cross-check' },
+    ],
+  },
+  {
+    industry: 'PRIVATE CHEF & CATERING',
+    name: 'Pettít Luxe Group',
+    status: 'BUILDING',
+    statusColor: 'electric',
+    desc: 'Luxury private dining and event catering. Booking system, client portal, event quoting, contract automation.',
+    tools: [
+      { name: 'Smart Quoting', detail: 'Event proposals based on guest count, menu, location' },
+      { name: 'Customer Communication', detail: 'Pre-event coordination drafts' },
+      { name: 'Strategic Analysis', detail: 'Most profitable event types and seasons' },
+      { name: 'Letter Generation', detail: 'Vendor and venue contracts' },
+    ],
+  },
+  {
+    industry: 'OILFIELD SERVICES',
+    name: 'PX3 Energy',
+    status: 'BUILDING',
+    statusColor: 'electric',
+    desc: 'Oilfield service operations in Odessa, TX. Crew dispatch, safety incident management, client reporting, equipment tracking.',
+    tools: [
+      { name: 'Incident Triage', detail: 'Safety incident severity assessment' },
+      { name: 'Compliance Verification', detail: 'OSHA + Texas RRC certification checks' },
+      { name: 'Letter Generation', detail: 'Incident reports and client updates' },
+      { name: 'Strategic Analysis', detail: 'Crew utilization + job profitability' },
+    ],
+  },
+  {
+    industry: 'TRUCKING & FLEET',
+    name: 'Logistics Operators',
+    status: 'PROSPECTIVE',
+    statusColor: 'muted',
+    desc: 'Fleet management and compliance. DOT compliance tracking, driver records, route optimization, claims handling.',
+    tools: [
+      { name: 'Compliance Triage', detail: 'DOT violation severity + response strategy' },
+      { name: 'Letter Generation', detail: 'Insurance claims and DOT responses' },
+      { name: 'Verification', detail: 'CDL and medical certification checks' },
+      { name: 'Strategic Analysis', detail: 'Route profitability + driver patterns' },
+    ],
+  },
+  {
+    industry: 'RESTAURANT OPERATORS',
+    name: 'Independent Restaurants',
+    status: 'PROSPECTIVE',
+    statusColor: 'muted',
+    desc: 'Independent restaurant operations. Reservations, vendor management, staff scheduling, supplier disputes.',
+    tools: [
+      { name: 'Customer Communication', detail: 'Reservation confirmations and apologies' },
+      { name: 'Letter Generation', detail: 'Vendor disputes and supplier letters' },
+      { name: 'Compliance Verification', detail: 'Health permit and license checks' },
+      { name: 'Strategic Analysis', detail: 'Profitable menu items and slow nights' },
+    ],
+  },
+  {
+    industry: 'FILM & PRODUCTION',
+    name: 'Production Companies',
+    status: 'PROSPECTIVE',
+    statusColor: 'muted',
+    desc: 'Film production operations. Project tracking, vendor management, location agreements, contract workflows.',
+    tools: [
+      { name: 'Project Triage', detail: 'Production feasibility and risk assessment' },
+      { name: 'Letter Generation', detail: 'Location agreements and crew contracts' },
+      { name: 'Customer Communication', detail: 'Talent and crew coordination' },
+      { name: 'Strategic Analysis', detail: 'Production profitability patterns' },
+    ],
+  },
 ]
 
 export default function IntelligencePage() {
@@ -96,8 +173,10 @@ export default function IntelligencePage() {
           </h1>
           <p className="yk-page-sub">
             Every Yakini platform comes with an AI layer woven into the workflow —
-            not bolted on as an afterthought. Yakini Intelligence-powered tools that turn 30 minutes
-            of expert work into 8 seconds of structured output.
+            not bolted on as an afterthought. Tow defense services. Private chefs.
+            Oilfield operators. Restaurants. Trucking fleets. Production companies.
+            <br /><br />
+            Same intelligence engine. Wildly different applications. Every founder we work with gets superpowers in their industry.
           </p>
         </div>
       </header>
@@ -113,7 +192,7 @@ export default function IntelligencePage() {
             See it <span className="yk-gold">work.</span>
           </h2>
           <p className="int-section-sub">
-            This is the actual output from Garland's TheyTowedMyCar.com platform —
+            This is the actual output from a live Yakini-built platform —
             a real case analyzed by Yakini Intelligence in 8 seconds. No mockup. No filter. The screenshot below is from the live admin dashboard.
           </p>
 
@@ -193,6 +272,58 @@ export default function IntelligencePage() {
               <span className="int-demo-stamp">REAL OUTPUT · NOT A MOCKUP</span>
             </div>
           </div>
+
+          <p className="int-demo-aside">
+            This is from <strong style={{ color: 'var(--gold)' }}>TheyTowedMyCar.com</strong>, our first live Strategic Partner platform.
+            The same intelligence engine adapts to every industry we build for —
+            see the breakdown below.
+          </p>
+        </div>
+      </section>
+
+      {/* ───── ACROSS INDUSTRIES ───── */}
+      <section className="yk-section int-verticals-section">
+        <div className="yk-section-inner">
+          <div className="yk-section-tag">
+            <span className="yk-num">02</span>
+            <span>Across Industries</span>
+          </div>
+          <h2 className="yk-section-h2">
+            Same engine.
+            <br />
+            <span className="yk-italic">Wildly different</span>
+            <br />
+            <span className="yk-gold">applications.</span>
+          </h2>
+          <p className="int-section-sub">
+            Tow defense services need different intelligence than private chefs.
+            Oilfield operations look nothing like restaurant management.
+            Yakini Intelligence adapts to your industry, your workflow, your specific competitive edge.
+          </p>
+
+          <div className="int-verticals-grid">
+            {VERTICALS.map((v, i) => (
+              <div key={v.name} className="int-vertical-card">
+                <div className="int-vertical-header">
+                  <div className="int-vertical-industry">{v.industry}</div>
+                  <div className={`int-vertical-status int-status-${v.statusColor}`}>
+                    {v.status}
+                  </div>
+                </div>
+                <h3 className="int-vertical-name">{v.name}</h3>
+                <p className="int-vertical-desc">{v.desc}</p>
+                <div className="int-vertical-tools">
+                  <div className="int-vertical-tools-h">YAKINI INTELLIGENCE TOOLS APPLIED</div>
+                  {v.tools.map(t => (
+                    <div key={t.name} className="int-vertical-tool">
+                      <div className="int-vertical-tool-name">{t.name}</div>
+                      <div className="int-vertical-tool-detail">{t.detail}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -200,7 +331,7 @@ export default function IntelligencePage() {
       <section className="yk-section int-roi">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
-            <span className="yk-num">02</span>
+            <span className="yk-num">03</span>
             <span>The Math</span>
           </div>
           <h2 className="yk-section-h2">
@@ -213,11 +344,11 @@ export default function IntelligencePage() {
             <div className="int-roi-inputs">
               <div className="int-roi-h">Your Numbers</div>
               <p className="int-roi-intro">
-                Adjust the inputs below to see what Yakini Intelligence saves your business in time and money.
+                Cases. Tickets. Decisions. Customers. Whatever your business runs on, adjust the inputs to see what Yakini Intelligence saves you in time and money.
               </p>
 
               <div className="int-roi-field">
-                <label>Cases / Tickets / Decisions per month</label>
+                <label>Decisions per month</label>
                 <input
                   type="range"
                   min="10"
@@ -229,7 +360,7 @@ export default function IntelligencePage() {
               </div>
 
               <div className="int-roi-field">
-                <label>Minutes of expert time saved per case</label>
+                <label>Minutes of expert time saved per decision</label>
                 <input
                   type="range"
                   min="5"
@@ -292,13 +423,13 @@ export default function IntelligencePage() {
       <section className="yk-section int-tools-section">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
-            <span className="yk-num">03</span>
+            <span className="yk-num">04</span>
             <span>The Tools</span>
           </div>
           <h2 className="yk-section-h2">
             Six AI tools.
             <br />
-            <span className="yk-italic">One workflow.</span>
+            <span className="yk-italic">Every industry.</span>
           </h2>
 
           <div className="int-tools-grid">
@@ -312,7 +443,7 @@ export default function IntelligencePage() {
                 <p className="int-tool-headline">{t.headline}</p>
                 <p className="int-tool-desc">{t.desc}</p>
                 <div className="int-tool-section">
-                  <div className="int-tool-h">USE CASES</div>
+                  <div className="int-tool-h">USE CASES ACROSS INDUSTRIES</div>
                   <p>{t.use}</p>
                 </div>
                 <div className="int-tool-section">
@@ -325,17 +456,17 @@ export default function IntelligencePage() {
         </div>
       </section>
 
-      {/* ───── CASE STUDY: GARLAND ───── */}
+      {/* ───── FIRST STRATEGIC PARTNER ───── */}
       <section className="yk-section int-case-study">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
-            <span className="yk-num">04</span>
-            <span>Case Study</span>
+            <span className="yk-num">05</span>
+            <span>First Strategic Partner</span>
           </div>
 
           <div className="int-cs-grid">
             <div className="int-cs-content">
-              <div className="int-cs-eyebrow">STRATEGIC PARTNER</div>
+              <div className="int-cs-eyebrow">CASE STUDY · LIVE PLATFORM</div>
               <h2 className="int-cs-h2">
                 <span className="yk-italic">Tow Defense Service</span>
                 <br />
@@ -359,7 +490,10 @@ export default function IntelligencePage() {
                 <p>
                   We built him a complete platform: customer intake, admin command center,
                   customer portal, AI-powered case triage, automatic revenue tracking.
-                  All in one session. All on his own domain. All AI-assisted.
+                  All on his own domain. All AI-assisted. All Yakini Intelligence.
+                </p>
+                <p className="int-cs-future">
+                  <strong style={{ color: 'var(--gold)' }}>This is just the first.</strong> Pettít Luxe Group, PX3 Energy, and three additional verticals are in active build — each with Yakini Intelligence configured to their specific industry.
                 </p>
               </div>
 
@@ -377,6 +511,10 @@ export default function IntelligencePage() {
                   <span className="int-cs-stat-lbl">Owned by him</span>
                 </div>
               </div>
+
+              <a href="/platforms" className="int-cs-link">
+                See all Yakini platforms →
+              </a>
             </div>
 
             <div className="int-cs-visual">
@@ -404,7 +542,7 @@ export default function IntelligencePage() {
                   </div>
                   <div className="int-cs-feature">
                     <span className="int-cs-feature-dot int-cs-feature-electric">●</span>
-                    <span>AI Triage (Yakini Intelligence)</span>
+                    <span>Yakini Intelligence (AI Triage)</span>
                   </div>
                   <div className="int-cs-feature">
                     <span className="int-cs-feature-dot">●</span>
@@ -433,7 +571,7 @@ export default function IntelligencePage() {
       <section className="yk-section int-pricing-position">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
-            <span className="yk-num">05</span>
+            <span className="yk-num">06</span>
             <span>Investment</span>
           </div>
           <h2 className="yk-section-h2">
@@ -446,12 +584,12 @@ export default function IntelligencePage() {
             <div className="int-tier-included">
               <h3>Included in every Intelligence engagement:</h3>
               <ul>
-                <li>Custom platform (not a template)</li>
+                <li>Custom platform built for your industry (not a template)</li>
                 <li>Independent infrastructure (your domain, your data)</li>
                 <li>Database architecture + multi-tenant ready</li>
                 <li>Customer-facing portal with auth</li>
                 <li>Admin command center built for your workflow</li>
-                <li>All 6 AI tools integrated</li>
+                <li>All 6 Yakini Intelligence tools, configured for your vertical</li>
                 <li>Email automation + notifications</li>
                 <li>Continuous AI refinement (monthly tuning)</li>
                 <li>Platform updates + new features as you grow</li>
@@ -501,7 +639,8 @@ export default function IntelligencePage() {
             </h2>
             <p className="int-final-sub">
               Marketing firms can't build what we build. They don't make software.
-              When you have Yakini Intelligence, your competitors aren't just behind on marketing — they're behind on the fundamental capability of their business.
+              When you have Yakini Intelligence configured for your industry,
+              your competitors aren't just behind on marketing — they're behind on the fundamental capability of their business.
             </p>
             <div className="int-final-ctas">
               <a href="/apply" className="yk-btn-primary">
@@ -536,7 +675,7 @@ const PAGE_CSS = `
     font-size: 18px;
     line-height: 1.7;
     color: var(--muted);
-    max-width: 720px;
+    max-width: 760px;
     margin-bottom: 80px;
   }
 
@@ -560,6 +699,16 @@ const PAGE_CSS = `
   @keyframes int-gradient-shift {
     0%, 100% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
+  }
+
+  .int-demo-aside {
+    margin-top: 32px;
+    text-align: center;
+    font-size: 16px;
+    color: var(--muted);
+    font-family: var(--font-display);
+    font-style: italic;
+    line-height: 1.6;
   }
 
   .yk-demo-meta {
@@ -687,11 +836,131 @@ const PAGE_CSS = `
     letter-spacing: 0.2em;
     color: var(--electric);
     text-transform: uppercase;
+                      }
+              
+  /* ═══ VERTICALS ═══ */
+  .int-verticals-section {
+    background: linear-gradient(180deg, var(--black) 0%, var(--navy-deep) 100%);
+  }
+  .int-verticals-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .int-vertical-card {
+    padding: 36px 32px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--line);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .int-vertical-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s;
+  }
+  .int-vertical-card:hover {
+    border-color: var(--gold);
+    background: rgba(200, 168, 75, 0.03);
+    transform: translateY(-3px);
+  }
+  .int-vertical-card:hover::before { transform: scaleX(1); }
+
+  .int-vertical-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px;
+    gap: 12px;
+  }
+  .int-vertical-industry {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .int-vertical-status {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    padding: 4px 10px;
+    border: 1px solid;
+    text-transform: uppercase;
+  }
+  .int-status-gold {
+    color: var(--gold);
+    border-color: var(--gold);
+    background: var(--gold-soft);
+  }
+  .int-status-electric {
+    color: var(--electric);
+    border-color: var(--electric);
+    background: var(--electric-soft);
+  }
+  .int-status-muted {
+    color: var(--muted);
+    border-color: var(--line-strong);
+  }
+
+  .int-vertical-name {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .int-vertical-desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .int-vertical-tools {
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+  .int-vertical-tools-h {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .int-vertical-tool {
+    display: flex; flex-direction: column;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .int-vertical-tool:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+  .int-vertical-tool-name {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 4px;
+  }
+  .int-vertical-tool-detail {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 800px) {
+    .int-verticals-grid { grid-template-columns: 1fr; }
   }
 
   /* ═══ ROI CALCULATOR ═══ */
   .int-roi {
-    background: linear-gradient(180deg, var(--black) 0%, var(--navy-deep) 100%);
+    background: linear-gradient(180deg, var(--navy-deep) 0%, var(--black) 100%);
   }
   .int-roi-grid {
     display: grid;
@@ -952,11 +1221,11 @@ const PAGE_CSS = `
   }
   .int-cs-quote {
     font-family: var(--font-display);
-    font-size: clamp(28px, 3vw, 40px);
+    font-size: clamp(24px, 2.6vw, 32px);
     font-style: italic;
     font-weight: 500;
     color: var(--gold);
-    line-height: 1.3;
+    line-height: 1.4;
     padding: 24px 0;
     border-top: 1px solid var(--gold);
     border-bottom: 1px solid var(--gold);
@@ -974,6 +1243,12 @@ const PAGE_CSS = `
     line-height: 1.8;
     color: var(--cream);
     margin-bottom: 16px;
+  }
+  .int-cs-future {
+    margin-top: 24px;
+    padding: 20px;
+    background: rgba(200, 168, 75, 0.05);
+    border-left: 2px solid var(--gold);
   }
   .int-cs-stats {
     display: flex; gap: 32px;
@@ -998,6 +1273,14 @@ const PAGE_CSS = `
     margin-top: 8px;
     letter-spacing: 0.05em;
   }
+  .int-cs-link {
+    display: inline-block;
+    margin-top: 32px;
+    color: var(--gold);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .int-cs-link:hover { color: var(--cream); }
 
   .int-cs-visual-card {
     padding: 36px;
