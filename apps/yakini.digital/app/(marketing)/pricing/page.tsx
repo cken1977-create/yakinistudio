@@ -4,13 +4,19 @@ import { useState } from 'react'
 import { SiteShell } from '@/components/SiteShell'
 
 // ═════════════════════════════════════════════════════════════════════════
-// YAKINI PRICING PAGE
-// File: apps/yakini.digital/app/pricing/page.tsx
+// YAKINI PRICING PAGE — v2 (May 4, 2026)
+// File: apps/yakini.digital/app/(marketing)/pricing/page.tsx
 //
-// 4-tier transparent pricing. Setup + monthly fully public.
-// Strategic Partner rate disclosure for Garland and early adopters.
+// v2 changes:
+//   - Foundation: monthly is now a range ($500-750) reflecting maintenance scope
+//   - Authority: setup raised to $6,500; monthly range ($1,500-2,000)
+//   - Intelligence + Enterprise: contact-for-pricing (no public numbers)
+//   - NEW: Nonprofits as a distinct mission-aligned section (below comparison)
+//   - Yakini Intelligence is now in EVERY tier (Lite/Standard/Pro/Custom)
+//   - Build & Own footnote — one-time ownership pricing available on request
 // ═════════════════════════════════════════════════════════════════════════
 
+// Commercial tiers — render in the 4-column grid
 const TIERS = [
   {
     id: 'foundation',
@@ -18,8 +24,11 @@ const TIERS = [
     tagline: 'Built right from day one.',
     description: 'Custom branded site with the Yakini foundation: real architecture, real design, real ownership. Perfect for founders who want to start serious from day one.',
     setup: 2500,
-    monthly: 1500,
+    monthlyMin: 500,
+    monthlyMax: 750,
+    monthlySubtitle: 'Varies by ongoing maintenance scope',
     minTerm: 3,
+    aiTier: 'Yakini Intelligence Lite',
     features: [
       'Custom branded marketing site',
       'Mobile-first responsive design',
@@ -28,27 +37,33 @@ const TIERS = [
       'SEO foundations (meta, sitemap, schema)',
       'Google Analytics 4 setup',
       'Independent infrastructure (your domain, your data)',
+      'Yakini Intelligence Lite — embedded AI assistant trained on your content + brand voice',
       'Monthly platform updates + maintenance',
       'Email + chat support (24-48hr response)',
     ],
     notIncluded: [
       'Customer portal or admin dashboard',
-      'AI tools (Yakini Intelligence)',
       'Multi-tenant database',
       'Payment processing integrations',
+      'Specialized AI workflow tools (booking, comms, case triage)',
     ],
     bestFor: 'Solo founders, consultants, service providers launching their first serious online presence.',
     color: 'gold',
     featured: false,
+    contactForPricing: false,
+    contactCta: null,
   },
   {
     id: 'authority',
     name: 'Authority',
     tagline: 'A real platform. Not just a website.',
     description: 'Multi-section platform with database, lead pipeline, and basic admin tooling. The most popular tier for growing service businesses ready to scale ops.',
-    setup: 5000,
-    monthly: 3000,
+    setup: 6500,
+    monthlyMin: 1500,
+    monthlyMax: 2000,
+    monthlySubtitle: 'Varies by ongoing maintenance scope',
     minTerm: 6,
+    aiTier: 'Yakini Intelligence Standard',
     features: [
       'Everything in Foundation, plus:',
       'Multi-section platform with custom database',
@@ -56,31 +71,35 @@ const TIERS = [
       'Booking or appointment system',
       'Customer portal (basic auth + view-only)',
       'Brand assets package (social templates, email signatures)',
+      'Yakini Intelligence Standard — embedded AI + booking assistant + customer comms drafter',
       'Content strategy + monthly content updates',
       'Priority support (same-day response)',
       'Quarterly performance reviews',
       'Up to 2 platform feature updates per quarter',
     ],
     notIncluded: [
-      'AI tools (Yakini Intelligence)',
+      'Full Yakini Intelligence suite (Pro tier)',
       'Custom workflow automation',
       'Advanced multi-tenant architecture',
     ],
     bestFor: 'Service businesses, consultants, small agencies, hospitality operators, professional service firms.',
     color: 'gold',
     featured: false,
+    contactForPricing: false,
+    contactCta: null,
   },
   {
     id: 'intelligence',
     name: 'Intelligence',
     tagline: 'AI baked into the foundation.',
-    description: 'Custom platform configured for your industry, with all 6 Yakini Intelligence tools integrated into your workflow. This is what we built for Garland\'s tow defense service. This is the tier that turns competitors into followers.',
-    setup: 12500,
-    monthly: 7500,
+    description: 'Custom platform configured for your industry, with the full Yakini Intelligence Pro suite integrated into your workflow. This is what we built for Garland\'s tow defense service. This is the tier that turns competitors into followers.',
+    contactForPricing: true,
+    contactCta: 'Contact about Intelligence',
     minTerm: 12,
+    aiTier: 'Yakini Intelligence Pro',
     features: [
       'Everything in Authority, plus:',
-      'Full Yakini Intelligence layer (6 AI tools)',
+      'Yakini Intelligence Pro — full 6-tool suite (Case Triage, Letter Generation, Hearing Prep, License Verification, Customer Comms, Strategic Analysis)',
       'Industry-specific AI configuration',
       'Custom admin command center',
       'Customer portal with magic-link auth',
@@ -105,13 +124,13 @@ const TIERS = [
     name: 'Enterprise',
     tagline: 'Built for companies with infrastructure ambitions.',
     description: 'Full-custom platform development with multi-tenant architecture, integrations, and enterprise-grade ops. For founders who are building a category-defining business.',
-    setup: 25000,
-    setupNote: 'starting',
-    monthly: 15000,
-    monthlyNote: 'starting',
+    contactForPricing: true,
+    contactCta: 'Contact about Enterprise',
     minTerm: 12,
+    aiTier: 'Yakini Intelligence Custom',
     features: [
       'Everything in Intelligence, plus:',
+      'Yakini Intelligence Custom — bespoke AI tools built for your specific operational workflow',
       'Full custom architecture for your industry',
       'Multi-tenant + multi-brand support',
       'Third-party integrations (Salesforce, HubSpot, custom APIs)',
@@ -139,7 +158,7 @@ const COMPARISON_FEATURES = [
   { name: 'Custom database architecture', tiers: { foundation: false, authority: true, intelligence: true, enterprise: true } },
   { name: 'Customer portal', tiers: { foundation: false, authority: 'Basic', intelligence: 'Full + Auth', enterprise: 'Multi-tenant' } },
   { name: 'Admin command center', tiers: { foundation: false, authority: 'Basic', intelligence: 'Custom', enterprise: 'Full Custom' } },
-  { name: 'Yakini Intelligence (AI tools)', tiers: { foundation: false, authority: false, intelligence: 'All 6', enterprise: 'All 6 + Custom' } },
+  { name: 'Yakini Intelligence', tiers: { foundation: 'Lite', authority: 'Standard', intelligence: 'Pro (6 tools)', enterprise: 'Custom' } },
   { name: 'Workflow automation', tiers: { foundation: false, authority: false, intelligence: true, enterprise: 'Advanced' } },
   { name: 'Multi-tenant architecture', tiers: { foundation: false, authority: false, intelligence: true, enterprise: 'White-label' } },
   { name: 'Third-party integrations', tiers: { foundation: false, authority: false, intelligence: false, enterprise: true } },
@@ -175,6 +194,9 @@ export default function PricingPage() {
             We publish ours because the work justifies them.
             Setup costs, monthly retainers, what's included, what's not — all public.
           </p>
+          <p className="pr-page-sub-italic">
+            Every Yakini engagement includes Yakini Intelligence. The depth scales with the tier.
+          </p>
         </div>
       </header>
 
@@ -198,12 +220,18 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* ───── TIERS ───── */}
+      {/* ───── COMMERCIAL TIERS ───── */}
       <section className="yk-section pr-tiers">
         <div className="yk-section-inner">
           <div className="pr-tiers-grid">
-            {TIERS.map((tier, i) => {
-              const monthly = annual ? Math.round(tier.monthly * 0.85) : tier.monthly
+            {TIERS.map((tier) => {
+              let monthlyMinDisplay: number | null = null
+              let monthlyMaxDisplay: number | null = null
+              if (!tier.contactForPricing && tier.monthlyMin && tier.monthlyMax) {
+                monthlyMinDisplay = annual ? Math.round(tier.monthlyMin * 0.85) : tier.monthlyMin
+                monthlyMaxDisplay = annual ? Math.round(tier.monthlyMax * 0.85) : tier.monthlyMax
+              }
+
               return (
                 <div
                   key={tier.id}
@@ -217,25 +245,49 @@ export default function PricingPage() {
                   <div className="pr-tier-tagline">{tier.tagline}</div>
 
                   <div className="pr-tier-price-block">
-                    <div className="pr-tier-monthly">
-                      <span className="pr-price-currency">$</span>
-                      <span className="pr-price-num">{monthly.toLocaleString()}</span>
-                      <span className="pr-price-period">/mo</span>
-                    </div>
-                    {tier.monthlyNote && (
-                      <div className="pr-price-note">{tier.monthlyNote}</div>
+                    {tier.contactForPricing ? (
+                      <>
+                        <div className="pr-tier-monthly pr-contact-price">
+                          <span className="pr-contact-text">Contact</span>
+                        </div>
+                        <div className="pr-price-note pr-contact-note">
+                          Engagement scoped individually
+                        </div>
+                        {tier.minTerm && (
+                          <div className="pr-tier-term">{tier.minTerm}-month minimum</div>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <div className="pr-tier-monthly">
+                          <span className="pr-price-currency">$</span>
+                          <span className="pr-price-num">{monthlyMinDisplay?.toLocaleString()}</span>
+                          <span className="pr-price-range-dash">–</span>
+                          <span className="pr-price-num">{monthlyMaxDisplay?.toLocaleString()}</span>
+                          <span className="pr-price-period">/mo</span>
+                        </div>
+                        {tier.monthlySubtitle && (
+                          <div className="pr-price-note">{tier.monthlySubtitle}</div>
+                        )}
+                        <div className="pr-tier-setup">
+                          + ${tier.setup?.toLocaleString()} setup
+                        </div>
+                        <div className="pr-tier-term">{tier.minTerm}-month minimum</div>
+                      </>
                     )}
-                    <div className="pr-tier-setup">
-                      + ${tier.setup.toLocaleString()}
-                      {tier.setupNote && ` ${tier.setupNote}`} setup
-                    </div>
-                    <div className="pr-tier-term">{tier.minTerm}-month minimum</div>
                   </div>
 
                   <p className="pr-tier-desc">{tier.description}</p>
 
-                  <a href="/apply" className={`pr-tier-cta ${tier.featured ? 'pr-cta-featured' : ''}`}>
-                    <span>Apply for {tier.name}</span>
+                  <a
+                    href={tier.contactForPricing ? '/contact' : '/apply'}
+                    className={`pr-tier-cta ${tier.featured ? 'pr-cta-featured' : ''}`}
+                  >
+                    <span>
+                      {tier.contactForPricing
+                        ? tier.contactCta
+                        : `Apply for ${tier.name}`}
+                    </span>
                     <span className="yk-btn-arrow">→</span>
                   </a>
 
@@ -248,7 +300,7 @@ export default function PricingPage() {
                     </ul>
                   </div>
 
-                  {tier.notIncluded.length > 0 && (
+                  {tier.notIncluded && tier.notIncluded.length > 0 && (
                     <div className="pr-tier-section">
                       <div className="pr-tier-section-h pr-tier-section-not">NOT INCLUDED</div>
                       <ul className="pr-tier-list pr-list-not">
@@ -266,6 +318,14 @@ export default function PricingPage() {
                 </div>
               )
             })}
+          </div>
+
+          {/* Build & Own footnote */}
+          <div className="pr-build-own-note">
+            <span className="pr-build-own-eyebrow">ALTERNATIVE STRUCTURE</span>
+            Each tier is also available as a one-time <strong>Build &amp; Own</strong> engagement.
+            Yakini builds the platform; you own and operate it after delivery.
+            Contact us for ownership pricing.
           </div>
         </div>
       </section>
@@ -316,6 +376,68 @@ export default function PricingPage() {
                 ))}
               </tbody>
             </table>
+            <p className="pr-table-footnote">
+              Nonprofit engagements scoped individually — see Mission-Aligned section below.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ───── NONPROFITS / MISSION-ALIGNED SECTION ───── */}
+      <section className="yk-section pr-nonprofits">
+        <div className="yk-section-inner">
+          <div className="pr-nonprofits-card">
+            <div className="pr-nonprofits-meta">
+              <span className="pr-nonprofits-dot" />
+              <span>MISSION-ALIGNED ENGAGEMENT</span>
+            </div>
+            <h3 className="pr-nonprofits-h">
+              Custom infrastructure for <span className="yk-italic">nonprofits and mission-driven organizations.</span>
+            </h3>
+            <p className="pr-nonprofits-body">
+              For 501(c)(3) organizations and community-serving nonprofits, pricing is structured
+              around your mission, your funders, and your operational reality — not standard commercial rates.
+              The architecture standards do not change. The platform you receive meets the same quality bar
+              as any commercial engagement.
+              <br /><br />
+              Qualifying organizations may also access funding support through the
+              <strong style={{ color: 'var(--gold)' }}> BRSA Foundation</strong>, the independent 501(c)(3) that funds access to Yakini infrastructure
+              for underserved populations.
+            </p>
+
+            <div className="pr-nonprofits-grid">
+              <div className="pr-nonprofits-feature">
+                <div className="pr-nonprofits-feature-h">WHAT'S INCLUDED</div>
+                <ul className="pr-tier-list pr-list-included">
+                  <li>Custom platform built to your mission and operational needs</li>
+                  <li>Donor management + grant tracking workflows (when applicable)</li>
+                  <li>Volunteer coordination + program management tools</li>
+                  <li>Yakini Intelligence layer matched to your engagement scope</li>
+                  <li>Same architecture quality as commercial tiers</li>
+                </ul>
+              </div>
+
+              <div className="pr-nonprofits-feature">
+                <div className="pr-nonprofits-feature-h">PARTNERSHIP STRUCTURE</div>
+                <ul className="pr-tier-list pr-list-included">
+                  <li>Mission-aligned engagement terms set per partnership</li>
+                  <li>BRSA Foundation funding pathway for qualifying orgs</li>
+                  <li>Pilot pricing for case-study partners (one per category)</li>
+                  <li>Transparent budget conversations from the first call</li>
+                  <li>No commercial-tier minimums applied automatically</li>
+                </ul>
+              </div>
+            </div>
+
+            <p className="pr-nonprofits-pilot">
+              <strong>Current pilot partner:</strong> Vizionz Sankofa (Albuquerque) — serving low-income families
+              and refugee/immigrant communities.
+            </p>
+
+            <a href="/contact" className="yk-btn-primary">
+              <span>Contact about nonprofit pricing</span>
+              <span className="yk-btn-arrow">→</span>
+            </a>
           </div>
         </div>
       </section>
@@ -396,7 +518,7 @@ export default function PricingPage() {
             </h2>
             <p className="pr-final-sub">
               Every tier comes with the same core promise: real infrastructure you own,
-              built to your specifications, on your domain. The only question is how much capability you need from day one.
+              built to your specifications, on your domain, with Yakini Intelligence woven in. The only question is how much capability you need from day one.
             </p>
             <div className="pr-final-ctas">
               <a href="/apply" className="yk-btn-primary">
@@ -418,11 +540,27 @@ export default function PricingPage() {
 const FAQS = [
   {
     q: 'Why are your prices public when other agencies hide theirs?',
-    a: 'Hidden pricing is a tactic to anchor founders to higher quotes during sales calls. We don\'t need that tactic. Our work justifies our prices, and serious founders deserve to know what they\'re investing in upfront. Setup costs, monthly retainers, what\'s included, what\'s not — all public on this page.',
+    a: 'Hidden pricing is a tactic to anchor founders to higher quotes during sales calls. We don\'t need that tactic. Foundation and Authority tier pricing is fully public — setup, monthly range, and what\'s included. Intelligence, Enterprise, and Nonprofit engagements are bespoke and scoped through conversation, the way premium custom work is properly priced.',
+  },
+  {
+    q: 'Why is Foundation and Authority monthly pricing a range?',
+    a: 'Every engagement has variable maintenance scope. The base tier locks in the platform; the monthly range reflects how much ongoing work you choose. A founder who needs minimal monthly support pays at the bottom of the range. A founder who wants heavy iteration and ongoing platform development pays at the top. Same tier, scoped to your reality.',
+  },
+  {
+    q: 'What\'s the difference between Yakini Intelligence Lite, Standard, Pro, and Custom?',
+    a: 'Lite (Foundation tier) — embedded AI assistant trained on your content and brand voice, customer-facing. Standard (Authority tier) — embedded AI plus specialized tools (booking assistant, customer comms drafter). Pro (Intelligence tier) — full 6-tool Yakini Intelligence suite (Case Triage, Letter Generation, Hearing Prep, License Verification, Customer Comms, Strategic Analysis), customer + admin facing. Custom (Enterprise tier) — bespoke AI tools built for your specific operational workflow plus full Pro suite. AI is in every Yakini engagement; the depth scales with the tier.',
   },
   {
     q: 'What\'s the difference between setup and monthly?',
-    a: 'Setup is the one-time cost to architect and build your platform. Monthly is the ongoing retainer for hosting, maintenance, support, updates, and (at Intelligence/Enterprise tiers) AI tool refinement. You pay setup once when we kick off the build. Monthly recurs.',
+    a: 'Setup is the one-time cost to architect and build your platform. Monthly is the ongoing retainer for hosting, maintenance, support, updates, AI usage, and platform refinement. You pay setup once when we kick off the build. Monthly recurs.',
+  },
+  {
+    q: 'What is Build & Own and how does it differ from a monthly partnership?',
+    a: 'Build & Own is an alternative engagement structure. Yakini builds the complete platform; you take ownership at delivery and operate it independently afterward. There is no ongoing monthly retainer in this structure — but you also lose ongoing platform development, AI refinement, and priority support. Most operators choose monthly partnership because the ongoing relationship compounds value. Build & Own is for operators who want full ownership and intend to operate the platform in-house long-term. Contact us for ownership pricing.',
+  },
+  {
+    q: 'How does nonprofit pricing work?',
+    a: 'Nonprofit engagements are scoped per partnership. Pricing reflects the organization\'s mission, funding profile, and operational reality — not standard commercial rates. Qualifying 501(c)(3) organizations may also access funding support through BRSA Foundation, the independent 501(c)(3) that funds access to Yakini infrastructure for underserved populations. Vizionz Sankofa is our pilot partner in this tier.',
   },
   {
     q: 'Why is there a minimum term?',
@@ -438,11 +576,11 @@ const FAQS = [
   },
   {
     q: 'What does Yakini Intelligence actually cost to run?',
-    a: 'AI inference costs are bundled into your monthly retainer at Intelligence tier. As your usage scales beyond standard thresholds, we\'ll have a transparent conversation about adjusting the retainer. No surprise overage charges.',
+    a: 'AI inference costs are bundled into your monthly retainer at every tier. As your usage scales beyond standard thresholds, we\'ll have a transparent conversation about adjusting the retainer. No surprise overage charges.',
   },
   {
     q: 'Can I upgrade tiers later?',
-    a: 'Absolutely. Many founders start at Authority and upgrade to Intelligence once they want AI tooling. Setup costs for the upgrade are calculated against work already completed — you don\'t pay full setup again.',
+    a: 'Absolutely. Many founders start at Foundation or Authority and upgrade to Intelligence once they want the full AI suite. Setup costs for the upgrade are calculated against work already completed — you don\'t pay full setup again.',
   },
   {
     q: 'Do you work with startups or only established businesses?',
@@ -457,6 +595,15 @@ const PAGE_CSS = `
       rgba(200, 168, 75, 0.15) 0%,
       rgba(74, 144, 217, 0.06) 40%,
       transparent 70%) !important;
+  }
+  .pr-page-sub-italic {
+    margin-top: 20px;
+    font-style: italic;
+    opacity: 0.85;
+    font-size: 16px;
+    color: var(--cream);
+    line-height: 1.6;
+    max-width: 720px;
   }
 
   /* ═══ BILLING TOGGLE ═══ */
@@ -513,7 +660,7 @@ const PAGE_CSS = `
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 12px;
-    margin-bottom: 80px;
+    margin-bottom: 40px;
   }
 
   .pr-tier {
@@ -580,6 +727,7 @@ const PAGE_CSS = `
     align-items: baseline;
     gap: 4px;
     margin-bottom: 4px;
+    flex-wrap: wrap;
   }
   .pr-price-currency {
     font-family: var(--font-display);
@@ -589,15 +737,36 @@ const PAGE_CSS = `
   }
   .pr-price-num {
     font-family: var(--font-display);
-    font-size: 56px;
+    font-size: 44px;
     font-weight: 500;
     color: var(--cream);
+    line-height: 1;
+  }
+  .pr-price-range-dash {
+    font-family: var(--font-display);
+    font-size: 32px;
+    color: var(--muted);
+    margin: 0 4px;
     line-height: 1;
   }
   .pr-price-period {
     font-size: 16px;
     color: var(--muted);
     margin-left: 4px;
+  }
+  .pr-contact-price {
+    font-size: 36px;
+  }
+  .pr-contact-text {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 500;
+    color: var(--gold);
+    font-style: italic;
+    line-height: 1;
+  }
+  .pr-contact-note {
+    margin-top: 8px;
   }
   .pr-price-note {
     font-size: 11px;
@@ -712,6 +881,29 @@ const PAGE_CSS = `
     line-height: 1.7;
     font-style: italic;
     font-family: var(--font-display);
+      }
+      
+  /* Build & Own footnote */
+  .pr-build-own-note {
+    max-width: 720px;
+    margin: 40px auto 60px;
+    text-align: center;
+    padding: 24px 28px;
+    border: 1px solid rgba(200, 168, 75, 0.30);
+    background: rgba(200, 168, 75, 0.05);
+    font-size: 14px;
+    color: var(--cream);
+    line-height: 1.7;
+  }
+  .pr-build-own-eyebrow {
+    color: var(--gold);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    display: block;
+    margin-bottom: 12px;
   }
 
   @media (max-width: 1100px) {
@@ -721,6 +913,8 @@ const PAGE_CSS = `
   }
   @media (max-width: 600px) {
     .pr-tiers-grid { grid-template-columns: 1fr; gap: 32px; }
+    .pr-price-num { font-size: 36px; }
+    .pr-price-range-dash { font-size: 24px; }
   }
 
   /* ═══ COMPARISON TABLE ═══ */
@@ -774,6 +968,93 @@ const PAGE_CSS = `
   .pr-cell-text {
     color: var(--cream);
     font-size: 12px;
+  }
+  .pr-table-footnote {
+    margin-top: 24px;
+    text-align: center;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* ═══ NONPROFITS / MISSION-ALIGNED ═══ */
+  .pr-nonprofits {
+    background: linear-gradient(180deg, var(--navy-deep) 0%, var(--black-soft) 100%);
+  }
+  .pr-nonprofits-card {
+    padding: 60px;
+    background: linear-gradient(135deg, rgba(200, 168, 75, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid var(--gold);
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .pr-nonprofits-meta {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 6px 14px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+  .pr-nonprofits-dot {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: yk-dot-pulse 2s ease-in-out infinite;
+  }
+  .pr-nonprofits-h {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.6vw, 42px);
+    font-weight: 500;
+    line-height: 1.15;
+    color: var(--cream);
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+    max-width: 22ch;
+  }
+  .pr-nonprofits-body {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--cream);
+    margin-bottom: 40px;
+    max-width: 760px;
+  }
+  .pr-nonprofits-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+    padding: 32px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .pr-nonprofits-feature-h {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .pr-nonprofits-pilot {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--cream);
+    margin-bottom: 32px;
+    padding: 20px;
+    background: rgba(0,0,0,0.2);
+    border-left: 2px solid var(--gold);
+  }
+
+  @media (max-width: 800px) {
+    .pr-nonprofits-card { padding: 40px 28px; }
+    .pr-nonprofits-grid { grid-template-columns: 1fr; gap: 32px; }
   }
 
   /* ═══ STRATEGIC PARTNER ═══ */
