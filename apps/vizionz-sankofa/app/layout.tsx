@@ -1,6 +1,18 @@
-import { BrandProvider, Navigation, Footer } from '@yakini/ui'
+// ═════════════════════════════════════════════════════════════════════════
+// LAYOUT — Vizionz Sankofa root
+// ═════════════════════════════════════════════════════════════════════════
+// Bespoke chrome wraps every page. Imports primitives only from
+// @yakini/ui-primitives and bespoke components from local components/.
+// Does NOT import from @yakini/template-yakini-editorial.
+//
+// Order: Topbar → Header → main content → Footer
+// ═════════════════════════════════════════════════════════════════════════
+
+import type { Metadata } from 'next'
+import { BrandProvider } from '@yakini/ui-primitives'
 import { validateBrandConfig } from '@yakini/config'
 import { config } from '@/config/brand'
+import { Topbar, Header, Footer } from '@/components'
 
 // Build-time validation — fails the build if config is invalid
 const validation = validateBrandConfig(config)
@@ -8,7 +20,7 @@ if (!validation.valid) {
   throw new Error(`Invalid brand config: ${validation.errors.join(', ')}`)
 }
 
-export const metadata = {
+export const metadata: Metadata = {
   title: `${config.business.dba || config.business.name} — ${config.business.tagline}`,
   description: config.business.description,
   keywords: config.seo.keywords.join(', '),
@@ -21,13 +33,18 @@ export const metadata = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
       <body>
         <BrandProvider config={config}>
-          <Navigation config={config} />
-          <main style={{ minHeight: '100vh' }}>
+          <Topbar config={config} />
+          <Header config={config} />
+          <main style={{ minHeight: '60vh' }}>
             {children}
           </main>
           <Footer config={config} />
