@@ -1,6 +1,6 @@
-export const dynamic = 'force-dynamic';
-
 'use client'
+
+export const dynamic = 'force-dynamic';
 
 import { Hero, Section, ServiceCard, Button } from '@yakini/ui'
 import { config } from '@/config/brand'
