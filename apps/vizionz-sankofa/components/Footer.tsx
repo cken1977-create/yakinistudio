@@ -10,7 +10,7 @@
 import type { BrandConfig } from '@yakini/config'
 import { VS_NAVY, VS_RED, VS_INK, VS_GREEN } from './TriColorRule'
 
-const VS_NAVY_DEEP = '#061935'  // Deeper navy for footer ground
+const VS_BLACK_DEEP = '#0A0A0A'  // True deep black for the Pan-African footer ground
 
 export function Footer({ config }: { config: BrandConfig }) {
   const year = new Date().getFullYear()
@@ -19,7 +19,7 @@ export function Footer({ config }: { config: BrandConfig }) {
     <>
       <style>{`
         .vs-footer {
-          background: ${VS_NAVY_DEEP};
+          background: ${VS_BLACK_DEEP};
           color: #FFFFFF;
           padding: 4rem 0 1.5rem;
           position: relative;
@@ -70,7 +70,7 @@ export function Footer({ config }: { config: BrandConfig }) {
           font-size: 1.5rem;
           font-weight: 600;
           box-shadow:
-            0 0 0 2px ${VS_NAVY_DEEP},
+            0 0 0 2px #0A0A0A,
             0 0 0 3px ${VS_RED};
         }
         .vs-footer-brand-name {

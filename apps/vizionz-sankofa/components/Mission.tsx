@@ -77,9 +77,9 @@ export function Mission({ config }: { config: BrandConfig }) {
           font-style: italic;
           font-size: 1.625rem;
           line-height: 1.4;
-          color: ${VS_RED};
+          color: ${VS_INK};
           padding: 0.5rem 0 0.5rem 1.5rem;
-          border-left: 4px solid ${VS_RED};
+          border-left: 4px solid ${VS_GREEN};
           margin: 2.5rem 0;
         }
 

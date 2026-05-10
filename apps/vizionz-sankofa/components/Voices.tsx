@@ -100,10 +100,10 @@ export function Voices({ voices = DEFAULT_VOICES }: VoicesProps) {
           flex-direction: column;
         }
         .vs-voice-card.featured {
-          background: ${VS_NAVY};
+          background: #0F0F0F;
           color: #FFFFFF;
           border: none;
-          box-shadow: 0 16px 36px -10px rgba(10, 37, 72, 0.35);
+          box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.55);
           position: relative;
           overflow: hidden;
         }
@@ -137,7 +137,7 @@ export function Voices({ voices = DEFAULT_VOICES }: VoicesProps) {
         }
         .vs-voice-card.featured .vs-voice-portrait {
           background: #FFFFFF;
-          color: ${VS_NAVY};
+          color: #0F0F0F;
           box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
         }
 

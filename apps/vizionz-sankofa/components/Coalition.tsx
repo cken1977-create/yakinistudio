@@ -21,7 +21,7 @@
 
 import { VS_NAVY, VS_RED, VS_INK, VS_GREEN } from './TriColorRule'
 
-const VS_NAVY_DEEP = '#061935'
+const VS_GREEN_DEEP = '#003D1A'  // Deep Pan-African green for the architectural ground
 
 export interface CoalitionItem {
   kind: 'partner' | 'funder'
@@ -103,7 +103,7 @@ export function Coalition({ items = DEFAULT_ITEMS }: CoalitionProps) {
       <style>{`
         .vs-coalition {
           padding: 6rem 0;
-          background: ${VS_NAVY};
+          background: #005422;
           color: #FFFFFF;
           position: relative;
         }

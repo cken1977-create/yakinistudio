@@ -1,21 +1,19 @@
 // ═════════════════════════════════════════════════════════════════════════
 // NUMBERS BAND — By-the-numbers credibility strip
 // ═════════════════════════════════════════════════════════════════════════
-// Deep navy ground, tri-color rule along the top edge, four large stats
-// with italic Pan-African red accent figures (the "+" symbols). Each stat
-// has a label below in restrained mono caps. Vertical dividers between
-// stats on desktop.
-//
-// Stats are passed as props so the component is reusable. Default values
-// match the v4 mock for VS specifically.
+// Black ground (Pan-African register, not navy/American). Tri-color rule
+// along the top edge. Four large stats with italic Pan-African red
+// accent figures.
 // ═════════════════════════════════════════════════════════════════════════
 
-import { VS_NAVY, VS_RED, VS_INK, VS_GREEN } from './TriColorRule'
+import { VS_RED, VS_INK, VS_GREEN } from './TriColorRule'
+
+const VS_BLACK = '#0F0F0F'  // Slightly softened from pure black to avoid harshness
 
 export interface NumberStat {
-  figure: string         // "500", "11", "6", "8"
-  accent?: string        // "+", "" — rendered in italic Pan-African red after figure
-  label: string          // "Families Served", "Years of Service"
+  figure: string
+  accent?: string
+  label: string
 }
 
 interface NumbersBandProps {
@@ -34,7 +32,7 @@ export function NumbersBand({ stats = DEFAULT_STATS }: NumbersBandProps) {
     <>
       <style>{`
         .vs-numbers {
-          background: ${VS_NAVY};
+          background: ${VS_BLACK};
           color: #FFFFFF;
           padding: 4rem 0;
           position: relative;
