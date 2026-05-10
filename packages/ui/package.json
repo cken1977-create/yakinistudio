@@ -4,10 +4,13 @@
   "private": true,
   "main": "./src/index.tsx",
   "types": "./src/index.tsx",
+  "description": "DEPRECATED: Re-exports from @yakini/ui-primitives and @yakini/template-yakini-editorial. New code should import from those packages directly.",
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"
   },
   "dependencies": {
-    "@yakini/config": "*"
+    "@yakini/config": "*",
+    "@yakini/ui-primitives": "*",
+    "@yakini/template-yakini-editorial": "*"
   }
 }
