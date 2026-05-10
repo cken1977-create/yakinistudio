@@ -67,7 +67,7 @@ export function CTABands({
           background: #FAFAFA;
         }
         .vs-cta-band-support {
-          background: ${VS_RED};
+          background: #0F0F0F;
           color: #FFFFFF;
         }
 
@@ -134,13 +134,15 @@ export function CTABands({
           box-shadow: 0 6px 18px rgba(206, 17, 38, 0.32);
         }
         .vs-cta-band-support .vs-cta-button {
-          background: #FFFFFF;
-          color: ${VS_RED};
+          background: ${VS_RED};
+          color: #FFFFFF;
+          box-shadow: 0 2px 10px rgba(206, 17, 38, 0.32);
         }
         .vs-cta-band-support .vs-cta-button:hover {
-          background: ${VS_INK};
+          background: #A20D1E;
           color: #FFFFFF;
           transform: translateY(-1px);
+          box-shadow: 0 6px 18px rgba(206, 17, 38, 0.44);
         }
 
         @media (max-width: 800px) {
