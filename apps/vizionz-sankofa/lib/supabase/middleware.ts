@@ -1,6 +1,6 @@
 // VIZIONZ SANKOFA · Supabase middleware utility
-// Refreshes the operator's session on every request and ensures
-// the auth cookies stay synchronized across page navigations.
+// Refreshes the operator's session on every request and exposes the
+// current pathname to server components via the x-pathname header.
 
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
@@ -9,6 +9,11 @@ export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   })
+
+  // Expose the current path to server components (e.g., AdminLayout's
+  // skip-check for /admin/login). Layouts can't access usePathname,
+  // so we propagate via a request header set in middleware.
+  supabaseResponse.headers.set('x-pathname', request.nextUrl.pathname)
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,6 +30,7 @@ export async function updateSession(request: NextRequest) {
           supabaseResponse = NextResponse.next({
             request,
           })
+          supabaseResponse.headers.set('x-pathname', request.nextUrl.pathname)
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
           )
