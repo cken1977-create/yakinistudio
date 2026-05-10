@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 'use client'
 
 import { Hero, Section, ServiceCard, Button } from '@yakini/ui'
