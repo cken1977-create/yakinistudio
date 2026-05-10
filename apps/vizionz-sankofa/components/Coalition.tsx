@@ -132,7 +132,7 @@ export function Coalition({ items = DEFAULT_ITEMS }: CoalitionProps) {
           font-weight: 600;
           letter-spacing: 0.2em;
           text-transform: uppercase;
-          color: #E2293E;
+          color: #0A0A0A;
         }
         .vs-coalition-headline {
           font-family: 'Cormorant Garamond', Georgia, serif;
@@ -179,7 +179,7 @@ export function Coalition({ items = DEFAULT_ITEMS }: CoalitionProps) {
           transition: all 250ms ease;
         }
         .vs-coalition-item:hover {
-          border-color: #E2293E;
+          border-color: #0A0A0A;
           background: rgba(255, 255, 255, 0.06);
           transform: translateY(-2px);
         }
@@ -188,7 +188,7 @@ export function Coalition({ items = DEFAULT_ITEMS }: CoalitionProps) {
           font-size: 0.625rem;
           letter-spacing: 0.2em;
           text-transform: uppercase;
-          color: #E2293E;
+          color: #0A0A0A;
           display: block;
           margin: 0 0 0.75rem;
           font-weight: 600;
