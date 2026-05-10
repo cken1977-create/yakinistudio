@@ -1,6 +1,12 @@
 // VIZIONZ SANKOFA · Server-side auth helpers
 // Called from server components and server actions to enforce
 // authentication on admin surfaces.
+//
+// TODO Wave 2: Role-based access. Khadijah + Carly = 'operator' (full
+// admin access); other VS employees = 'employee' (CRM surfaces only).
+// Implementation path: add user_role to auth.users.raw_user_meta_data
+// or create a new vs_operators table, then expose role in
+// requireOperator() return signature so admin pages can branch on it.
 
 import { redirect } from 'next/navigation'
 import { createClient } from './server'
