@@ -448,7 +448,7 @@ export function Hero({ config }: { config: BrandConfig }) {
         .yk-hero-bg {
           position: absolute; inset: 0;
           background:
-            radial-gradient(ellipse 80% 60% at 50% 0%, rgba(${hexToRgb(getComputedStyle(document.documentElement).getPropertyValue('--brand-primary') || '#888888')},0.08), transparent),
+            radial-gradient(ellipse 80% 60% at 50% 0%, rgba(${hexToRgb((typeof window !== 'undefined' ? getComputedStyle(document.documentElement).getPropertyValue('--brand-primary') : '') || '#888888')},0.08), transparent),
             var(--brand-bg);
         }
         .yk-hero-content {
