@@ -2,6 +2,10 @@
 // Single-button photo + video upload. Native file picker (mobile + desktop).
 // Files upload to Supabase Storage, then media_items rows are inserted.
 // Metadata editing (caption, date, order) deferred to Step 8 media list.
+//
+// HEIC handling: iPhone photos arrive as .heic, which most browsers can't
+// render natively in <img> tags. We convert HEIC -> JPEG client-side
+// before upload using heic2any. Matches Legacyline's working pattern.
 
 'use client'
 
@@ -14,17 +18,73 @@ type UploadState =
   | { kind: 'complete'; succeeded: number; failed: number }
   | { kind: 'error'; message: string }
 
-const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/heic', 'image/webp', 'image/gif']
-const VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/webm']
-
 function classifyFile(file: File): 'photo' | 'video' | null {
-  if (PHOTO_TYPES.includes(file.type)) return 'photo'
-  if (VIDEO_TYPES.includes(file.type)) return 'video'
+  // Permissive classification: check MIME type first, fall back to file extension.
+  // Some mobile browsers report empty MIME types for HEIC/HEIF files.
+  const mime = file.type.toLowerCase()
+  const name = file.name.toLowerCase()
+
+  if (mime.startsWith('image/')) return 'photo'
+  if (mime.startsWith('video/')) return 'video'
+
+  // Extension fallback for browsers that don't set MIME correctly
+  if (
+    name.endsWith('.heic') ||
+    name.endsWith('.heif') ||
+    name.endsWith('.jpg') ||
+    name.endsWith('.jpeg') ||
+    name.endsWith('.png') ||
+    name.endsWith('.webp') ||
+    name.endsWith('.gif')
+  ) {
+    return 'photo'
+  }
+
+  if (
+    name.endsWith('.mp4') ||
+    name.endsWith('.mov') ||
+    name.endsWith('.webm') ||
+    name.endsWith('.m4v')
+  ) {
+    return 'video'
+  }
+
   return null
 }
 
+function isHeic(file: File): boolean {
+  const mime = file.type.toLowerCase()
+  const name = file.name.toLowerCase()
+  return (
+    mime === 'image/heic' ||
+    mime === 'image/heif' ||
+    name.endsWith('.heic') ||
+    name.endsWith('.heif')
+  )
+}
+
+async function convertHeicToJpeg(file: File): Promise<File> {
+  // Dynamic import — heic2any is browser-only, ~200KB.
+  // Loading it on demand keeps the initial page bundle small.
+  const heic2anyModule = await import('heic2any')
+  const heic2any = heic2anyModule.default
+
+  const convertedBlob = (await heic2any({
+    blob: file,
+    toType: 'image/jpeg',
+    quality: 0.92,
+  })) as Blob
+
+  // Rename the file with a .jpg extension
+  const newName = file.name.replace(/\.(heic|heif)$/i, '.jpg')
+
+  return new File([convertedBlob], newName, {
+    type: 'image/jpeg',
+    lastModified: Date.now(),
+  })
+}
+
 function safeFileName(name: string): string {
-  // Strip path components, lowercase extension, replace unsafe chars
   const base = name.split('/').pop()!.split('\\').pop()!
   return base
     .toLowerCase()
@@ -46,7 +106,8 @@ export default function MediaAdminPage() {
     let failed = 0
 
     for (let i = 0; i < files.length; i++) {
-      const file = files[i]
+      let file = files[i]
+
       setState({
         kind: 'uploading',
         current: i + 1,
@@ -60,6 +121,17 @@ export default function MediaAdminPage() {
         continue
       }
 
+      // HEIC conversion for iPhone photos
+      if (kind === 'photo' && isHeic(file)) {
+        try {
+          file = await convertHeicToJpeg(file)
+        } catch (err) {
+          console.error('HEIC conversion failed:', err)
+          failed++
+          continue
+        }
+      }
+
       const storagePath = `${timestamp}-${i}-${safeFileName(file.name)}`
 
       const { error: uploadError } = await supabase.storage
@@ -70,6 +142,7 @@ export default function MediaAdminPage() {
         })
 
       if (uploadError) {
+        console.error('Storage upload failed:', uploadError)
         failed++
         continue
       }
@@ -81,8 +154,7 @@ export default function MediaAdminPage() {
       })
 
       if (insertError) {
-        // Storage upload succeeded but DB row failed — orphan file.
-        // Acceptable for tonight; Step 8 will surface orphan cleanup.
+        console.error('DB insert failed:', insertError)
         failed++
         continue
       }
@@ -92,7 +164,6 @@ export default function MediaAdminPage() {
 
     setState({ kind: 'complete', succeeded, failed })
 
-    // Reset the file input so the same files can be re-uploaded if needed
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
@@ -141,6 +212,7 @@ export default function MediaAdminPage() {
         >
           Upload event photos and program videos for the public Gallery on
           vizionz-sankofa.org. Select one or many files — they upload together.
+          iPhone photos (HEIC) convert to JPEG automatically.
         </p>
       </section>
 
@@ -154,7 +226,6 @@ export default function MediaAdminPage() {
           marginBottom: '24px',
         }}
       >
-        {/* Tri-color rule along top edge */}
         <div
           style={{
             position: 'absolute',
@@ -172,11 +243,10 @@ export default function MediaAdminPage() {
         {state.kind === 'complete' && <CompleteState state={state} onReset={reset} />}
         {state.kind === 'error' && <ErrorState message={state.message} onReset={reset} />}
 
-        {/* Hidden file input — triggered by the visible button */}
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*,video/*"
+          accept="image/*,video/*,.heic,.heif"
           multiple
           onChange={handleFileSelection}
           style={{ display: 'none' }}
@@ -339,7 +409,7 @@ function CompleteState({
             marginBottom: '16px',
           }}
         >
-          {state.failed} failed — usually unsupported file types
+          {state.failed} failed — check browser console for details
         </div>
       )}
 
