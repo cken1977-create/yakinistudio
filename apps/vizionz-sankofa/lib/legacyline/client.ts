@@ -27,7 +27,7 @@ export type CreateParticipantInput = {
 export type CreateParticipantResponse = {
   participant_id: string
   registry_id: string
-  subject_number: string
+  subject_number: string | null
   status: string
   organization_id: string | null
   created_at: string // RFC 3339
@@ -253,13 +253,21 @@ function assertParticipantResponse(
     return v
   }
 
+  // Substrate-honest: subject_number is assigned later in Legacyline's
+  // participant lifecycle, often null at creation time. Required at
+  // creation: participant_id, registry_id, status, created_at.
   return {
     participant_id: requiredString('participant_id'),
     registry_id: requiredString('registry_id'),
-    subject_number: requiredString('subject_number'),
+    subject_number:
+      typeof obj.subject_number === 'string' && obj.subject_number.length > 0
+        ? obj.subject_number
+        : null,
     status: requiredString('status'),
     organization_id:
-      typeof obj.organization_id === 'string' ? obj.organization_id : null,
+      typeof obj.organization_id === 'string' && obj.organization_id.length > 0
+        ? obj.organization_id
+        : null,
     created_at: requiredString('created_at'),
   }
 }

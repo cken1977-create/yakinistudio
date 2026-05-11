@@ -802,14 +802,7 @@ function PromoteToLegacyline({
       </FormField>
 
       <FormField label="Date of birth" required field="dob" errorField={errorField}>
-        <input
-          type="date"
-          value={dob}
-          onChange={(e) => setDob(e.target.value)}
-          disabled={submitting}
-          max={new Date().toISOString().slice(0, 10)}
-          style={promoteInputStyle}
-        />
+        <DobPicker value={dob} onChange={setDob} disabled={submitting} />
       </FormField>
 
       <FormField label="Organization (optional)" field="organization_id" errorField={errorField}>
@@ -960,5 +953,139 @@ const promoteInputStyle: React.CSSProperties = {
   fontFamily: 'inherit',
   outline: 'none',
   boxSizing: 'border-box',
+}
+
+// ─── DOB Picker (Wave 2.3 polish) ────────────────────────────────────
+// Three dropdowns: Month / Day / Year. Mobile-friendly, prevents invalid
+// dates (Feb 30 impossible), produces YYYY-MM-DD string that matches what
+// Legacyline's Go handler expects from r.FormValue("dob"). Year range:
+// current year back to 1900.
+
+function DobPicker({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: string
+  onChange: (next: string) => void
+  disabled: boolean
+}) {
+  // Parse current value (YYYY-MM-DD) into parts; empty if invalid
+  const parts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+  const currentYear = parts ? parts[1] : ''
+  const currentMonth = parts ? parts[2] : ''
+  const currentDay = parts ? parts[3] : ''
+
+  const thisYear = new Date().getFullYear()
+  const years: string[] = []
+  for (let y = thisYear; y >= 1900; y--) {
+    years.push(String(y))
+  }
+
+  const months = [
+    { v: '01', l: 'January' },
+    { v: '02', l: 'February' },
+    { v: '03', l: 'March' },
+    { v: '04', l: 'April' },
+    { v: '05', l: 'May' },
+    { v: '06', l: 'June' },
+    { v: '07', l: 'July' },
+    { v: '08', l: 'August' },
+    { v: '09', l: 'September' },
+    { v: '10', l: 'October' },
+    { v: '11', l: 'November' },
+    { v: '12', l: 'December' },
+  ]
+
+  // Days adjust to selected month + year (Feb in leap year etc.)
+  const maxDay = currentMonth && currentYear
+    ? new Date(parseInt(currentYear, 10), parseInt(currentMonth, 10), 0).getDate()
+    : 31
+
+  const days: string[] = []
+  for (let d = 1; d <= maxDay; d++) {
+    days.push(String(d).padStart(2, '0'))
+  }
+
+  function commit(nextMonth: string, nextDay: string, nextYear: string) {
+    if (!nextMonth || !nextDay || !nextYear) {
+      onChange('')
+      return
+    }
+    // Re-validate day against new month/year combination
+    const validMaxDay = new Date(
+      parseInt(nextYear, 10),
+      parseInt(nextMonth, 10),
+      0
+    ).getDate()
+    const correctedDay =
+      parseInt(nextDay, 10) > validMaxDay
+        ? String(validMaxDay).padStart(2, '0')
+        : nextDay
+    onChange(`${nextYear}-${nextMonth}-${correctedDay}`)
+  }
+
+  const selectStyle: React.CSSProperties = {
+    flex: 1,
+    padding: '10px 8px',
+    fontSize: '14px',
+    color: '#0A0A0A',
+    background: '#FFFFFF',
+    border: '1px solid rgba(10, 10, 10, 0.2)',
+    borderRadius: '2px',
+    fontFamily: 'inherit',
+    outline: 'none',
+    boxSizing: 'border-box',
+    cursor: disabled ? 'wait' : 'pointer',
+  }
+
+  return (
+    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+      <select
+        value={currentMonth}
+        onChange={(e) => commit(e.target.value, currentDay, currentYear)}
+        disabled={disabled}
+        style={{ ...selectStyle, minWidth: '120px', flex: '2 1 120px' }}
+        aria-label="Month"
+      >
+        <option value="">Month</option>
+        {months.map((m) => (
+          <option key={m.v} value={m.v}>
+            {m.l}
+          </option>
+        ))}
+      </select>
+
+      <select
+        value={currentDay}
+        onChange={(e) => commit(currentMonth, e.target.value, currentYear)}
+        disabled={disabled || !currentMonth}
+        style={{ ...selectStyle, minWidth: '70px', flex: '1 1 70px' }}
+        aria-label="Day"
+      >
+        <option value="">Day</option>
+        {days.map((d) => (
+          <option key={d} value={d}>
+            {parseInt(d, 10)}
+          </option>
+        ))}
+      </select>
+
+      <select
+        value={currentYear}
+        onChange={(e) => commit(currentMonth, currentDay, e.target.value)}
+        disabled={disabled}
+        style={{ ...selectStyle, minWidth: '90px', flex: '1 1 90px' }}
+        aria-label="Year"
+      >
+        <option value="">Year</option>
+        {years.map((y) => (
+          <option key={y} value={y}>
+            {y}
+          </option>
+        ))}
+      </select>
+    </div>
+  )
 }
 
