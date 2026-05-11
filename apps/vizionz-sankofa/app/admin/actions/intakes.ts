@@ -14,9 +14,11 @@ import { createClient } from '@/lib/supabase/server'
 import { requireOperator } from '@/lib/supabase/auth'
 import {
   createParticipant,
+  getParticipant,
   LegacylineClientError,
   type CreateParticipantInput,
   type LegacylineError,
+  type ParticipantStatus,
 } from '@/lib/legacyline/client'
 
 const INTAKE_STATUSES = [
@@ -302,6 +304,109 @@ export async function promoteIntakeToLegacyline(
     participant_id: participant.participant_id,
     registry_id: participant.registry_id,
     subject_number: participant.subject_number,
+  }
+}
+
+// ─── Refresh Legacyline status (Wave 2.4) ────────────────────────────
+// Fetches current participant state from Legacyline and writes to VS
+// cache columns. Operator triggers via Refresh button next to each
+// promoted intake row.
+//
+// Substrate-honest separation: Legacyline is the source of truth for
+// participant lifecycle state; VS caches it for fast queue rendering.
+// Background sync (cron) is a Wave 3+ concern — for now, operator
+// pulls when they want freshness.
+
+export type RefreshStatusResult =
+  | {
+      ok: true
+      status: ParticipantStatus
+      synced_at: string
+    }
+  | { ok: false; error: string; detail?: LegacylineError }
+
+export async function refreshLegacylineStatus(
+  intakeId: string
+): Promise<RefreshStatusResult> {
+  await requireOperator()
+  const supabase = await createClient()
+
+  // Fetch the intake to get its legacyline_participant_id
+  const { data: intake, error: fetchError } = await supabase
+    .from('intake_requests')
+    .select('id, legacyline_participant_id')
+    .eq('id', intakeId)
+    .single()
+
+  if (fetchError || !intake) {
+    return {
+      ok: false,
+      error: fetchError?.message ?? 'Intake not found',
+    }
+  }
+
+  if (!intake.legacyline_participant_id) {
+    return {
+      ok: false,
+      error: 'This intake has not been promoted to Legacyline yet',
+    }
+  }
+
+  // Call Legacyline
+  let participant
+  try {
+    participant = await getParticipant(intake.legacyline_participant_id)
+  } catch (err) {
+    const detail =
+      err instanceof LegacylineClientError
+        ? err.detail
+        : ({
+            kind: 'unexpected' as const,
+            message: err instanceof Error ? err.message : 'Unknown error',
+          })
+
+    const errMessage = detail.message ?? 'Status refresh failed'
+
+    // Record the failure on the intake so the operator can see it
+    await supabase
+      .from('intake_requests')
+      .update({ legacyline_error: errMessage })
+      .eq('id', intakeId)
+
+    revalidatePath('/admin/intakes')
+
+    return {
+      ok: false,
+      error: errMessage,
+      detail,
+    }
+  }
+
+  // Success: write cached status + clear any prior error
+  const syncedAt = new Date().toISOString()
+
+  const { error: updateError } = await supabase
+    .from('intake_requests')
+    .update({
+      legacyline_status: participant.status,
+      legacyline_status_synced_at: syncedAt,
+      legacyline_error: null,
+    })
+    .eq('id', intakeId)
+
+  if (updateError) {
+    return {
+      ok: false,
+      error: `Legacyline returned status '${participant.status}' but VS cache update failed: ${updateError.message}`,
+    }
+  }
+
+  revalidatePath('/admin/intakes')
+
+  return {
+    ok: true,
+    status: participant.status,
+    synced_at: syncedAt,
   }
 }
 

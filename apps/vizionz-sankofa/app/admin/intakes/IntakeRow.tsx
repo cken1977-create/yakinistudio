@@ -12,6 +12,7 @@ import {
   saveIntakeNotes,
   deleteIntake,
   promoteIntakeToLegacyline,
+  refreshLegacylineStatus,
 } from '../actions/intakes'
 import { splitFullNameForPromotion } from '@/lib/legacyline/client'
 
@@ -632,54 +633,7 @@ function PromoteToLegacyline({
 
   if (intake.legacyline_participant_id) {
     return (
-      <div
-        style={{
-          padding: '10px 14px',
-          background: 'rgba(0, 122, 51, 0.08)',
-          borderLeft: '3px solid #007A33',
-          borderRadius: '2px',
-          fontSize: '12px',
-          color: '#0A0A0A',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '4px',
-        }}
-      >
-        <div
-          style={{
-            fontSize: '10px',
-            fontWeight: 600,
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            color: '#007A33',
-            fontFamily:
-              'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
-          }}
-        >
-          Promoted to Legacyline
-        </div>
-        <div style={{ fontSize: '13px', fontWeight: 600 }}>
-          {intake.legacyline_registry_id ?? intake.legacyline_participant_id}
-        </div>
-        {intake.legacyline_promoted_at && (
-          <div
-            style={{
-              fontSize: '11px',
-              color: 'rgba(10, 10, 10, 0.55)',
-              fontFamily:
-                'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
-            }}
-          >
-            {new Date(intake.legacyline_promoted_at).toLocaleString('en-US', {
-              month: 'short',
-              day: 'numeric',
-              year: 'numeric',
-              hour: 'numeric',
-              minute: '2-digit',
-            })}
-          </div>
-        )}
-      </div>
+      <LegacylinePromotedStrip intake={intake} disabled={disabled} />
     )
   }
 
@@ -1067,3 +1021,275 @@ function DobPicker({
     </div>
   )
 }
+
+// ─── LegacylinePromotedStrip (Wave 2.4) ──────────────────────────────
+// Shows when an intake has been promoted to Legacyline. Displays:
+//   - Registry ID
+//   - Current lifecycle status badge (with color per state)
+//   - Last sync timestamp
+//   - Refresh button to fetch latest status from Legacyline
+
+type LegacylineStatusKey =
+  | 'registered'
+  | 'data_collecting'
+  | 'under_review'
+  | 'evaluated'
+  | 'certified'
+  | 'revoked'
+
+const LEGACYLINE_STATUS_LABELS: Record<LegacylineStatusKey, string> = {
+  registered: 'Registered',
+  data_collecting: 'Data Collecting',
+  under_review: 'Under Review',
+  evaluated: 'Evaluated',
+  certified: 'Certified',
+  revoked: 'Revoked',
+}
+
+const LEGACYLINE_STATUS_COLORS: Record<LegacylineStatusKey, string> = {
+  registered: 'rgba(10, 10, 10, 0.5)',
+  data_collecting: '#CE1126',
+  under_review: '#0A2548',
+  evaluated: '#0A2548',
+  certified: '#007A33',
+  revoked: 'rgba(10, 10, 10, 0.4)',
+}
+
+function isKnownLegacylineStatus(s: string): s is LegacylineStatusKey {
+  return s in LEGACYLINE_STATUS_LABELS
+}
+
+function formatSyncedRelative(iso: string): string {
+  const date = new Date(iso)
+  const ms = Date.now() - date.getTime()
+  const minutes = Math.floor(ms / 60000)
+  const hours = Math.floor(minutes / 60)
+  const days = Math.floor(hours / 24)
+
+  if (minutes < 1) return 'just now'
+  if (minutes < 60) return `${minutes}m ago`
+  if (hours < 24) return `${hours}h ago`
+  if (days < 7) return `${days}d ago`
+  return new Date(iso).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
+
+function LegacylinePromotedStrip({
+  intake,
+  disabled,
+}: {
+  intake: IntakeRecord
+  disabled: boolean
+}) {
+  const [refreshing, startRefresh] = useTransition()
+  const [refreshError, setRefreshError] = useState<string | null>(null)
+
+  const statusKey = intake.legacyline_status
+  const statusLabel =
+    statusKey && isKnownLegacylineStatus(statusKey)
+      ? LEGACYLINE_STATUS_LABELS[statusKey]
+      : statusKey
+      ? statusKey
+      : null
+  const statusColor =
+    statusKey && isKnownLegacylineStatus(statusKey)
+      ? LEGACYLINE_STATUS_COLORS[statusKey]
+      : 'rgba(10, 10, 10, 0.5)'
+
+  function handleRefresh() {
+    setRefreshError(null)
+    startRefresh(async () => {
+      const result = await refreshLegacylineStatus(intake.id)
+      if (!result.ok) {
+        setRefreshError(result.error)
+      }
+    })
+  }
+
+  return (
+    <div
+      style={{
+        flexBasis: '100%',
+        padding: '12px 14px',
+        background: 'rgba(0, 122, 51, 0.08)',
+        borderLeft: '3px solid #007A33',
+        borderRadius: '2px',
+        fontSize: '12px',
+        color: '#0A0A0A',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+      }}
+    >
+      {/* Top row — kicker + registry ID + refresh button */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          flexWrap: 'wrap',
+        }}
+      >
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div
+            style={{
+              fontSize: '10px',
+              fontWeight: 600,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: '#007A33',
+              fontFamily:
+                'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
+              marginBottom: '2px',
+            }}
+          >
+            Promoted to Legacyline
+          </div>
+          <div style={{ fontSize: '14px', fontWeight: 600 }}>
+            {intake.legacyline_registry_id ?? intake.legacyline_participant_id}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleRefresh}
+          disabled={disabled || refreshing}
+          aria-label="Refresh status from Legacyline"
+          title="Refresh status from Legacyline"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '32px',
+            height: '32px',
+            padding: '0',
+            background: '#FFFFFF',
+            border: '1px solid rgba(10, 10, 10, 0.15)',
+            borderRadius: '2px',
+            cursor: disabled || refreshing ? 'wait' : 'pointer',
+            flexShrink: 0,
+            color: 'rgba(10, 10, 10, 0.65)',
+          }}
+        >
+          <span
+            style={{
+              fontSize: '16px',
+              display: 'inline-block',
+              transformOrigin: 'center',
+              animation: refreshing
+                ? 'vs-spin 0.8s linear infinite'
+                : undefined,
+            }}
+          >
+            ↻
+          </span>
+        </button>
+      </div>
+
+      {/* Status badge + sync timestamp row */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          flexWrap: 'wrap',
+        }}
+      >
+        {statusLabel ? (
+          <span
+            style={{
+              display: 'inline-block',
+              padding: '3px 9px',
+              fontSize: '10px',
+              fontWeight: 600,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: '#FFFFFF',
+              background: statusColor,
+              borderRadius: '2px',
+              fontFamily:
+                'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
+            }}
+          >
+            {statusLabel}
+          </span>
+        ) : (
+          <span
+            style={{
+              fontSize: '11px',
+              color: 'rgba(10, 10, 10, 0.5)',
+              fontStyle: 'italic',
+            }}
+          >
+            Status not yet synced — tap ↻ to fetch
+          </span>
+        )}
+
+        {intake.legacyline_status_synced_at && (
+          <span
+            style={{
+              fontSize: '11px',
+              color: 'rgba(10, 10, 10, 0.55)',
+              fontFamily:
+                'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
+              letterSpacing: '0.04em',
+            }}
+          >
+            synced {formatSyncedRelative(intake.legacyline_status_synced_at)}
+          </span>
+        )}
+      </div>
+
+      {/* Promoted timestamp (less prominent, for audit) */}
+      {intake.legacyline_promoted_at && (
+        <div
+          style={{
+            fontSize: '10px',
+            color: 'rgba(10, 10, 10, 0.45)',
+            fontFamily:
+              'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
+            letterSpacing: '0.04em',
+          }}
+        >
+          promoted{' '}
+          {new Date(intake.legacyline_promoted_at).toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+          })}
+        </div>
+      )}
+
+      {/* Refresh error if present */}
+      {refreshError && (
+        <div
+          style={{
+            marginTop: '4px',
+            padding: '8px 10px',
+            background: 'rgba(206, 17, 38, 0.08)',
+            borderLeft: '3px solid #CE1126',
+            fontSize: '12px',
+            color: '#0A0A0A',
+            lineHeight: 1.4,
+          }}
+        >
+          {refreshError}
+        </div>
+      )}
+
+      {/* Spinner keyframe (scoped to this component instance) */}
+      <style>{`
+        @keyframes vs-spin {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
+  )
+}
+

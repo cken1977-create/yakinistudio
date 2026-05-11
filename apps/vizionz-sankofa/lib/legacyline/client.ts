@@ -298,3 +298,163 @@ export function splitFullNameForPromotion(fullName: string): {
     last_name: parts.slice(1).join(' '),
   }
 }
+
+// ─── getParticipant (Wave 2.4) ───────────────────────────────────────
+// Read endpoint for refreshing cached Legacyline status in VS substrate.
+// Calls GET /participants/{id} on Legacyline. Returns the full
+// Participant struct or throws a typed error.
+//
+// Substrate-honest: SubjectNumber comes back as a number (int in Go),
+// not a string. We normalize to a string in the response shape so the
+// VS side doesn't have to think about int-vs-string serialization.
+
+export type ParticipantStatus =
+  | 'registered'
+  | 'data_collecting'
+  | 'under_review'
+  | 'evaluated'
+  | 'certified'
+  | 'revoked'
+  | string // accept unknown statuses gracefully — Legacyline may add more
+
+export type GetParticipantResponse = {
+  id: string
+  registry_id: string
+  subject_number: number | null
+  first_name: string
+  last_name: string
+  dob: string
+  email: string | null
+  phone: string | null
+  organization_id: string | null
+  status: ParticipantStatus
+  created_at: string
+}
+
+export async function getParticipant(
+  participantId: string
+): Promise<GetParticipantResponse> {
+  if (!participantId || participantId.trim().length === 0) {
+    throw new LegacylineClientError({
+      kind: 'validation',
+      message: 'participant_id is required',
+      field: 'participant_id',
+    })
+  }
+
+  const config = readConfig()
+
+  const url = `${config.apiUrl.replace(/\/$/, '')}/participants/${encodeURIComponent(participantId)}`
+
+  const controller = new AbortController()
+  const timeoutHandle = setTimeout(
+    () => controller.abort(),
+    config.timeoutMs
+  )
+
+  let response: Response
+  try {
+    response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'X-Actor': config.actor,
+      },
+      signal: controller.signal,
+    })
+  } catch (err) {
+    if (err instanceof Error && err.name === 'AbortError') {
+      throw new LegacylineClientError({
+        kind: 'timeout',
+        message: `Legacyline did not respond within ${config.timeoutMs}ms`,
+      })
+    }
+    throw new LegacylineClientError({
+      kind: 'network',
+      message: err instanceof Error ? err.message : 'Network error',
+    })
+  } finally {
+    clearTimeout(timeoutHandle)
+  }
+
+  if (response.status === 404) {
+    throw new LegacylineClientError({
+      kind: 'http_error',
+      status: 404,
+      message: `Participant ${participantId} not found in Legacyline`,
+    })
+  }
+
+  if (!response.ok) {
+    const bodyText = await response.text().catch(() => '')
+    throw new LegacylineClientError({
+      kind: 'http_error',
+      status: response.status,
+      message: `Legacyline returned ${response.status}`,
+      body: bodyText.slice(0, 500),
+    })
+  }
+
+  let parsed: unknown
+  try {
+    parsed = await response.json()
+  } catch {
+    throw new LegacylineClientError({
+      kind: 'unexpected',
+      message: 'Legacyline returned non-JSON response',
+    })
+  }
+
+  return assertGetParticipantResponse(parsed)
+}
+
+function assertGetParticipantResponse(
+  raw: unknown
+): GetParticipantResponse {
+  if (typeof raw !== 'object' || raw === null) {
+    throw new LegacylineClientError({
+      kind: 'unexpected',
+      message: 'Legacyline response was not an object',
+    })
+  }
+
+  const obj = raw as Record<string, unknown>
+
+  const requiredString = (key: string): string => {
+    const v = obj[key]
+    if (typeof v !== 'string' || v.length === 0) {
+      throw new LegacylineClientError({
+        kind: 'unexpected',
+        message: `Legacyline GET /participants response missing required field: ${key}`,
+      })
+    }
+    return v
+  }
+
+  const optionalString = (key: string): string | null => {
+    const v = obj[key]
+    return typeof v === 'string' && v.length > 0 ? v : null
+  }
+
+  // SubjectNumber comes back as a Go int → JSON number; 0 is the default
+  // when not yet assigned. Treat 0 as "not yet assigned" → null.
+  let subjectNumber: number | null = null
+  if (typeof obj.subject_number === 'number' && obj.subject_number > 0) {
+    subjectNumber = obj.subject_number
+  }
+
+  return {
+    id: requiredString('id'),
+    registry_id: requiredString('registry_id'),
+    subject_number: subjectNumber,
+    first_name: requiredString('first_name'),
+    last_name: requiredString('last_name'),
+    dob: requiredString('dob'),
+    email: optionalString('email'),
+    phone: optionalString('phone'),
+    organization_id: optionalString('organization_id'),
+    status: requiredString('status'),
+    created_at: requiredString('created_at'),
+  }
+}
+
