@@ -236,7 +236,7 @@ function IdleState({ onClickUpload }: { onClickUpload: () => void }) {
           color: 'rgba(10, 10, 10, 0.55)',
         }}
       >
-        Photos: JPG, PNG, HEIC, WebP, GIF · Videos: MP4, MOV, WebM
+        Photos: JPG, PNG, HEIC, WebP, GIF · Videos: MP4 (H.264) recommended
       </p>
     </div>
   )

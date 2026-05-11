@@ -23,7 +23,7 @@ import {
   Mission,
   Programs,
   Voices,
-  Gallery,
+  GallerySection,
   Coalition,
   CTABands,
   Newsletter,
@@ -37,7 +37,7 @@ export default function HomePage() {
       <Mission config={config} />
       <Programs config={config} />
       <Voices />
-      <Gallery />
+      <GallerySection />
       <Coalition />
       <CTABands />
       <Newsletter config={config} />
