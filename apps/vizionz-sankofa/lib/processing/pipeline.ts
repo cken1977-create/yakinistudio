@@ -226,15 +226,25 @@ function collectFullText(extracted: ExtractedDocument): string {
   }
 }
 
-// ─── Chunk row construction (per-MIME metadata) ───────────────────────────
+// ─── Chunk row construction (per-MIME metadata) ────────────────────────
+//
+// Schema (Wave 3.1 migration): vs_document_chunks columns are
+//   id, document_id, chunk_index, content, embedding, token_count,
+//   source_ref, created_at.
+//
+// source_ref is a flexible text field used for human-readable source
+// attribution in Wave 3.4 retrieval. Per-MIME format:
+//   PDF      → "Page {n}"
+//   DOCX     → nearest preceding heading text, or null
+//   XLSX     → "Sheet: {sheetName}"
+//   plain    → null
 
 type ChunkRow = {
   document_id: string
   chunk_index: number
-  chunk_text: string
-  tokens: number
-  page_number: number | null
-  section_heading: string | null
+  content: string
+  token_count: number
+  source_ref: string | null
 }
 
 function buildChunkRows(
@@ -257,9 +267,6 @@ function buildChunkRowsFromPDF(
   documentId: string,
   extracted: { pages: Array<{ pageNumber: number; text: string }> }
 ): ChunkRow[] {
-  // Chunk each page independently so page_number is unambiguous per chunk.
-  // (Cross-page chunks would require offset arithmetic; per-page chunking
-  // is simpler and produces equally good retrieval at typical doc lengths.)
   const rows: ChunkRow[] = []
   let chunkIndex = 0
 
@@ -270,10 +277,9 @@ function buildChunkRowsFromPDF(
       rows.push({
         document_id: documentId,
         chunk_index: chunkIndex++,
-        chunk_text: chunk,
-        tokens: countTokens(chunk),
-        page_number: page.pageNumber,
-        section_heading: null,
+        content: chunk,
+        token_count: countTokens(chunk),
+        source_ref: `Page ${page.pageNumber}`,
       })
     }
   }
@@ -291,8 +297,6 @@ function buildChunkRowsFromDOCX(
   const { chunks } = chunkBySentences(extracted.text)
   const rows: ChunkRow[] = []
 
-  // Compute character offset of each chunk in the full text by sequential
-  // search. Chunks are emitted in order, so we advance a cursor.
   let cursor = 0
   for (let i = 0; i < chunks.length; i++) {
     const chunk = chunks[i]
@@ -300,20 +304,18 @@ function buildChunkRowsFromDOCX(
     const chunkPos = offset >= 0 ? offset : cursor
     cursor = chunkPos + chunk.length
 
-    // Nearest preceding heading.
-    let sectionHeading: string | null = null
+    let sourceRef: string | null = null
     for (const h of extracted.headings) {
-      if (h.position <= chunkPos) sectionHeading = h.text
+      if (h.position <= chunkPos) sourceRef = h.text
       else break
     }
 
     rows.push({
       document_id: documentId,
       chunk_index: i,
-      chunk_text: chunk,
-      tokens: countTokens(chunk),
-      page_number: null,
-      section_heading: sectionHeading,
+      content: chunk,
+      token_count: countTokens(chunk),
+      source_ref: sourceRef,
     })
   }
 
@@ -334,10 +336,9 @@ function buildChunkRowsFromXLSX(
       rows.push({
         document_id: documentId,
         chunk_index: chunkIndex++,
-        chunk_text: chunk,
-        tokens: countTokens(chunk),
-        page_number: null,
-        section_heading: sheet.name,
+        content: chunk,
+        token_count: countTokens(chunk),
+        source_ref: `Sheet: ${sheet.name}`,
       })
     }
   }
@@ -353,9 +354,8 @@ function buildChunkRowsFromPlain(
   return chunks.map((chunk, i) => ({
     document_id: documentId,
     chunk_index: i,
-    chunk_text: chunk,
-    tokens: countTokens(chunk),
-    page_number: null,
-    section_heading: null,
+    content: chunk,
+    token_count: countTokens(chunk),
+    source_ref: null,
   }))
 }
