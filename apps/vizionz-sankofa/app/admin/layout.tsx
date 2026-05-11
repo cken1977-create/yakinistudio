@@ -6,7 +6,7 @@
 
 import { headers } from 'next/headers'
 import Link from 'next/link'
-import { getOperator } from '@/lib/supabase/auth'
+import { requireOperatorOrEmployee } from '@/lib/supabase/auth'
 import { redirect } from 'next/navigation'
 import { signOut } from './actions/auth'
 
@@ -27,15 +27,28 @@ export default async function AdminLayout({
     return <>{children}</>
   }
 
-  // Every other /admin/* route requires a verified operator session.
-  const user = await getOperator()
-  if (!user) {
-    redirect('/admin/login')
-  }
+  // Every other /admin/* route requires a verified operator OR employee
+  // session. requireOperatorOrEmployee handles all redirect cases:
+  //   - unauthenticated → /admin/login
+  //   - signed in but pending/revoked/no row → /admin/access-pending
+  //   - operator OR employee → returns AuthenticatedOperator
+  const user = await requireOperatorOrEmployee()
 
-  // Derive a display name from the email's local part.
-  const emailLocal = user.email?.split('@')[0] ?? 'Operator'
-  const displayName = emailLocal.charAt(0).toUpperCase() + emailLocal.slice(1)
+  // Wave 2.5: Display name comes from vs_operators.display_name when set
+  // (e.g. "Khadijah Asili"), falls back to email local part with first
+  // letter uppercased (e.g. "Cken1977"). Operators can update their
+  // display_name in the future Operator Settings surface (Wave 3+).
+  const displayName =
+    user.operator.display_name?.trim() ||
+    (() => {
+      const emailLocal = user.email?.split('@')[0] ?? 'Operator'
+      return emailLocal.charAt(0).toUpperCase() + emailLocal.slice(1)
+    })()
+
+  // Wave 2.5: Role badge in topbar — visible signal of access level
+  const isOperator = user.role === 'operator'
+  const roleBadgeLabel = isOperator ? 'Operator' : 'Employee'
+  const roleBadgeColor = isOperator ? '#0A2548' : '#CE1126'
 
   return (
     <div
@@ -134,13 +147,38 @@ export default async function AdminLayout({
         >
           <div
             style={{
-              fontSize: '13px',
-              color: 'rgba(10, 10, 10, 0.7)',
               display: 'none',
+              alignItems: 'center',
+              gap: '10px',
             }}
             className="vs-admin-email-desktop"
           >
-            {displayName}
+            <span
+              style={{
+                fontSize: '13px',
+                color: 'rgba(10, 10, 10, 0.75)',
+                fontWeight: 500,
+              }}
+            >
+              {displayName}
+            </span>
+            <span
+              style={{
+                display: 'inline-block',
+                padding: '3px 9px',
+                fontSize: '10px',
+                fontWeight: 600,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: '#FFFFFF',
+                background: roleBadgeColor,
+                borderRadius: '2px',
+                fontFamily:
+                  'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
+              }}
+            >
+              {roleBadgeLabel}
+            </span>
           </div>
 
           <form action={signOut}>

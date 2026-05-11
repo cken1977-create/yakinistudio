@@ -6,6 +6,12 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+// Wave 2.5: All media actions are operator-only by deliberate design.
+// Media items appear on the public Vizionz Sankofa website — only Khadijah,
+// Carly, and Clarence (full operators) decide what gets published. VS
+// employees route here have read-only access via /admin/media's page-level
+// gate, but cannot upload, edit, or delete. If that policy changes later,
+// retag specific actions with requireOperatorOrEmployee.
 import { requireOperator } from '@/lib/supabase/auth'
 
 export async function updateMediaItem(

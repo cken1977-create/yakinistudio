@@ -11,7 +11,10 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
-import { requireOperator } from '@/lib/supabase/auth'
+import {
+  requireOperator,
+  requireOperatorOrEmployee,
+} from '@/lib/supabase/auth'
 import {
   createParticipant,
   getParticipant,
@@ -43,7 +46,8 @@ type ActionResult = { ok: true } | { ok: false; error: string }
 // Idempotent — safe to call twice (won't overwrite a later contacted_at).
 
 export async function markIntakeContacted(id: string): Promise<ActionResult> {
-  const user = await requireOperator()
+  // Wave 2.5: Both operator and employee can mark intakes contacted
+  const user = await requireOperatorOrEmployee()
   const supabase = await createClient()
 
   // Read current state to preserve fields we shouldn't clobber
@@ -96,19 +100,35 @@ export async function updateIntakeStatus(
   id: string,
   newStatus: string
 ): Promise<ActionResult> {
-  await requireOperator()
+  // Wave 2.5: Both operator and employee can update status,
+  // but employees are restricted to non-terminal states.
+  const user = await requireOperatorOrEmployee()
 
   if (!isValidStatus(newStatus)) {
     return { ok: false, error: 'Invalid status value' }
   }
 
-  // Block promoting to Legacyline until Wave 2.3 wires the integration.
-  // The UI button is visible-but-disabled; this is the server-side guard.
+  // Wave 2.5: Employees can only set status to 'contacted' or 'in_progress'.
+  // Terminal states (resolved, closed_no_response) and the Legacyline
+  // promotion state are operator-only — those imply final decisions.
+  if (user.role === 'employee') {
+    const employeeAllowedStatuses: string[] = ['contacted', 'in_progress', 'new']
+    if (!employeeAllowedStatuses.includes(newStatus)) {
+      return {
+        ok: false,
+        error:
+          'Employees can only set status to Contacted or In Progress. Ask an operator to mark this Resolved or Closed.',
+      }
+    }
+  }
+
+  // Promotion to Legacyline never happens via this action — only via
+  // promoteIntakeToLegacyline, which is operator-only. Defense in depth.
   if (newStatus === 'promoted_to_legacyline') {
     return {
       ok: false,
       error:
-        'Legacyline promotion ships in Wave 2.3. Use a different status for now.',
+        'Use the Promote to Legacyline button to create the participant. Status cannot be set directly.',
     }
   }
 
@@ -134,7 +154,8 @@ export async function saveIntakeNotes(
   id: string,
   notes: string
 ): Promise<ActionResult> {
-  const user = await requireOperator()
+  // Wave 2.5: Both operator and employee can save notes
+  const user = await requireOperatorOrEmployee()
   const supabase = await createClient()
 
   // Length guard
@@ -161,6 +182,7 @@ export async function saveIntakeNotes(
 // ─── Delete intake (rare — spam cleanup) ─────────────────────────────
 
 export async function deleteIntake(id: string): Promise<ActionResult> {
+  // Wave 2.5: Operator only — destructive action, no audit trail recovery
   await requireOperator()
   const supabase = await createClient()
 
@@ -208,6 +230,8 @@ export async function promoteIntakeToLegacyline(
   intakeId: string,
   input: PromoteIntakeInput
 ): Promise<PromoteIntakeResult> {
+  // Wave 2.5: Operator only — cross-organism action, creates substrate
+  // in Legacyline that cannot be cleanly undone
   const user = await requireOperator()
   const supabase = await createClient()
 
@@ -328,7 +352,8 @@ export type RefreshStatusResult =
 export async function refreshLegacylineStatus(
   intakeId: string
 ): Promise<RefreshStatusResult> {
-  await requireOperator()
+  // Wave 2.5: Both operator and employee can refresh — read-only action
+  await requireOperatorOrEmployee()
   const supabase = await createClient()
 
   // Fetch the intake to get its legacyline_participant_id

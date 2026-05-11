@@ -3,6 +3,8 @@
 // Operators (Khadijah, Will, Carly, Clarence) upload here and manage
 // captions, event dates, and deletions.
 
+// Wave 2.5: Media library is operator-only — content goes on the public
+// site, only full operators decide what's published.
 import { requireOperator } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 import { UploadSection } from './UploadSection'

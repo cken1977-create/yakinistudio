@@ -3,12 +3,15 @@
 // navigation to admin surfaces and live stats from Supabase.
 
 import Link from 'next/link'
-import { requireOperator } from '@/lib/supabase/auth'
+import { requireOperatorOrEmployee, touchLastActive } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function AdminLandingPage() {
   // Enforce authentication. Redirects to /admin/login if no session.
-  const user = await requireOperator()
+  const user = await requireOperatorOrEmployee()
+  // Wave 2.5: bounded activity tracking — only this landing page updates
+  // last_active_at, no per-action writes
+  void touchLastActive(user.id)
 
   // Pull live media counts from Supabase.
   const supabase = await createClient()

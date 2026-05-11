@@ -100,13 +100,20 @@ function truncate(text: string, max: number): string {
   return text.slice(0, max).trim() + '…'
 }
 
+export type IntakeRowViewerRole = 'operator' | 'employee'
+
 export function IntakeRow({
   intake,
   defaultExpanded = false,
+  viewerRole,
 }: {
   intake: IntakeRecord
   defaultExpanded?: boolean
+  viewerRole: IntakeRowViewerRole
 }) {
+  // Wave 2.5: Role-aware rendering. Employees see a restricted surface:
+  // no Promote button, no Delete button, restricted status options.
+  const isOperator = viewerRole === 'operator'
   const [expanded, setExpanded] = useState(defaultExpanded)
   const [notes, setNotes] = useState(intake.notes ?? '')
   const [notesSaved, setNotesSaved] = useState<boolean | null>(null)
@@ -264,6 +271,29 @@ export function IntakeRow({
             background: 'rgba(10, 10, 10, 0.015)',
           }}
         >
+          {!isOperator && (
+            <div
+              style={{
+                padding: '8px 12px',
+                background: 'rgba(10, 36, 72, 0.04)',
+                borderLeft: '3px solid rgba(10, 36, 72, 0.3)',
+                fontSize: '11px',
+                color: 'rgba(10, 10, 10, 0.65)',
+                lineHeight: 1.5,
+                fontFamily:
+                  'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
+                letterSpacing: '0.04em',
+              }}
+            >
+              <strong style={{ color: '#0A2548', letterSpacing: '0.14em' }}>
+                EMPLOYEE VIEW ·
+              </strong>{' '}
+              You can mark contacted, save notes, and update status to
+              Contacted or In Progress. To resolve, close, promote to
+              Legacyline, or delete this intake, ask an operator.
+            </div>
+          )}
+
           <DetailGrid>
             <DetailRow label="Email">
               <a
@@ -437,15 +467,21 @@ export function IntakeRow({
               <option value="new">New</option>
               <option value="contacted">Contacted</option>
               <option value="in_progress">In Progress</option>
-              <option value="resolved">Resolved</option>
-              <option value="closed_no_response">Closed — No Response</option>
+              {isOperator && (
+                <>
+                  <option value="resolved">Resolved</option>
+                  <option value="closed_no_response">Closed — No Response</option>
+                </>
+              )}
             </select>
 
-            <PromoteToLegacyline intake={intake} disabled={isPending} />
+            {isOperator && (
+              <PromoteToLegacyline intake={intake} disabled={isPending} />
+            )}
 
             <div style={{ flex: 1 }} />
 
-            {!confirmingDelete ? (
+            {isOperator && !confirmingDelete ? (
               <button
                 type="button"
                 onClick={() => setConfirmingDelete(true)}
@@ -465,7 +501,7 @@ export function IntakeRow({
               >
                 Delete
               </button>
-            ) : (
+            ) : isOperator && confirmingDelete ? (
               <div style={{ display: 'flex', gap: '6px' }}>
                 <button
                   type="button"
@@ -506,7 +542,7 @@ export function IntakeRow({
                   Cancel
                 </button>
               </div>
-            )}
+            ) : null}
           </div>
 
           {error && (

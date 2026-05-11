@@ -6,7 +6,7 @@
 // call). Scales from zero intakes (empty state) to thousands (pagination
 // deferred to TODO_FUTURE per locked Wave 2.2 scope).
 
-import { requireOperator } from '@/lib/supabase/auth'
+import { requireOperatorOrEmployee } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 import { IntakeRow, type IntakeRecord } from './IntakeRow'
 
@@ -68,7 +68,7 @@ export default async function IntakesAdminPage({
 }: {
   searchParams: Promise<{ filter?: string }>
 }) {
-  await requireOperator()
+  const viewer = await requireOperatorOrEmployee()
 
   const params = await searchParams
   const filter: FilterValue = isValidFilter(params.filter)
@@ -200,11 +200,11 @@ export default async function IntakesAdminPage({
       )}
 
       {!error && intakes.length > 0 && filter === 'all' && (
-        <GroupedView intakes={intakes} />
+        <GroupedView intakes={intakes} viewerRole={viewer.role} />
       )}
 
       {!error && intakes.length > 0 && filter !== 'all' && (
-        <FlatList intakes={intakes} filter={filter} />
+        <FlatList intakes={intakes} filter={filter} viewerRole={viewer.role} />
       )}
     </div>
   )
@@ -243,7 +243,13 @@ async function fetchStatusCounts(
 
 // ─── Grouped view (when filter=all) ───────────────────────────────────
 
-function GroupedView({ intakes }: { intakes: IntakeRecord[] }) {
+function GroupedView({
+  intakes,
+  viewerRole,
+}: {
+  intakes: IntakeRecord[]
+  viewerRole: 'operator' | 'employee'
+}) {
   const grouped: Record<IntakeRecord['status'], IntakeRecord[]> = {
     new: [],
     contacted: [],
@@ -309,6 +315,7 @@ function GroupedView({ intakes }: { intakes: IntakeRecord[] }) {
                   key={intake.id}
                   intake={intake}
                   defaultExpanded={isNewGroup}
+                  viewerRole={viewerRole}
                 />
               ))}
             </div>
@@ -324,9 +331,11 @@ function GroupedView({ intakes }: { intakes: IntakeRecord[] }) {
 function FlatList({
   intakes,
   filter,
+  viewerRole,
 }: {
   intakes: IntakeRecord[]
   filter: FilterValue
+  viewerRole: 'operator' | 'employee'
 }) {
   const expandFirst = filter === 'new'
 
@@ -337,6 +346,7 @@ function FlatList({
           key={intake.id}
           intake={intake}
           defaultExpanded={expandFirst && idx === 0}
+          viewerRole={viewerRole}
         />
       ))}
     </div>
