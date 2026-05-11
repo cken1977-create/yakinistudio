@@ -39,6 +39,8 @@ export type IntakeRecord = {
   legacyline_registry_id: string | null
   legacyline_promoted_at: string | null
   legacyline_error: string | null
+  legacyline_status: string | null
+  legacyline_status_synced_at: string | null
 }
 
 const REQUEST_TYPE_LABELS: Record<string, string> = {
