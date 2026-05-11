@@ -8,6 +8,8 @@
 import { revalidatePath } from 'next/cache'
 import { requireOperator } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
+import { after } from 'next/server'
+import { processDocument } from '@/lib/processing/pipeline'
 import {
   DocumentCategory,
   DOCUMENT_CATEGORY_LABELS,
@@ -93,8 +95,16 @@ export async function registerUploadedDocuments(
       storage_path: data.storage_path,
     })
 
-    // Wave 3.3 hook point: fire processing pipeline here when ready
-    // For now, document stays in 'pending' until Wave 3.3 ships.
+    // Wave 3.3 hook point: fire-and-forget pipeline trigger.
+    // Server action returns immediately; pipeline runs in background
+    // via Vercel's after(). Errors caught and recorded to the row.
+    after(async () => {
+      try {
+        await processDocument(data.id)
+      } catch (err) {
+        console.error('[registerUploadedDocuments] pipeline failed for ' + data.id, err)
+      }
+    })
   }
 
   revalidatePath('/admin/documents')

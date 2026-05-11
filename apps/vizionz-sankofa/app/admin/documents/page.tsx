@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase/server'
 import { DOCUMENT_CATEGORY_LABELS, type DocumentCategory } from './types'
 import { DocumentRow } from './DocumentRow'
 import UploadButton from './UploadButton'
+import { DocumentsListPolling } from './DocumentsListPolling'
 
 export const dynamic = 'force-dynamic'
 
@@ -315,7 +316,8 @@ export default async function DocumentsPage({
             gap: '8px',
           }}
         >
-          {documents.map((doc) => {
+          <DocumentsListPolling documents={documents} />
+                    {documents.map((doc) => {
             const uploader = uploaderMap.get(doc.uploaded_by)
             return (
               <DocumentRow

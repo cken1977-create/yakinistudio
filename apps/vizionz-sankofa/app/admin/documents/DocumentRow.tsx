@@ -5,6 +5,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   updateDocumentMetadata,
   deleteDocument,
@@ -86,6 +87,8 @@ export function DocumentRow({
   const [confirmingDelete, setConfirmingDelete] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [isRetrying, startRetry] = useTransition()
+  const router = useRouter()
 
   // Editable fields
   const [title, setTitle] = useState(doc.title)
@@ -296,7 +299,39 @@ export function DocumentRow({
                     color: '#0A0A0A',
                   }}
                 >
-                  <strong>Processing error:</strong> {doc.processing_error}
+                  <div style={{ marginBottom: '10px' }}>
+                    <strong>Processing error:</strong> {doc.processing_error}
+                  </div>
+                  <button
+                    type='button'
+                    disabled={isRetrying}
+                    onClick={() => {
+                      startRetry(async () => {
+                        try {
+                          await fetch(`/api/admin/documents/${doc.id}/process`, { method: 'POST' })
+                          router.refresh()
+                        } catch (err) {
+                          console.error('Retry failed:', err)
+                        }
+                      })
+                    }}
+                    style={{
+                      padding: '6px 12px',
+                      background: '#0A0A0A',
+                      color: '#FFFFFF',
+                      border: '1px solid #0A0A0A',
+                      borderRadius: '2px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      letterSpacing: '0.08em',
+                      textTransform: 'uppercase',
+                      fontFamily: 'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
+                      cursor: isRetrying ? 'wait' : 'pointer',
+                      opacity: isRetrying ? 0.6 : 1,
+                    }}
+                  >
+                    {isRetrying ? 'Retrying…' : 'Retry processing'}
+                  </button>
                 </div>
               )}
 
