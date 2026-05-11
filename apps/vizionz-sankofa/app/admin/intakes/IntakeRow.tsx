@@ -1,11 +1,11 @@
 // VIZIONZ SANKOFA · /admin/intakes · IntakeRow
 // Expandable row for a single intake request.
 // Collapsed: at-a-glance scan view.
-// Expanded: full details + operator actions.
+// Expanded: full details + operator actions including Legacyline promotion.
 
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import {
   markIntakeContacted,
   updateIntakeStatus,
@@ -438,10 +438,7 @@ export function IntakeRow({
               <option value="closed_no_response">Closed — No Response</option>
             </select>
 
-            <PromoteToLegacyline
-              intake={intake}
-              disabled={isPending}
-            />
+            <PromoteToLegacyline intake={intake} disabled={isPending} />
 
             <div style={{ flex: 1 }} />
 
@@ -615,10 +612,6 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 // ─── Promote to Legacyline (Wave 2.3) ────────────────────────────────
-// Three states:
-//   - already promoted → green confirmation strip, no form
-//   - idle → "Open promotion form" button
-//   - form open → inline form with pre-filled name fields, required DOB
 
 function PromoteToLegacyline({
   intake,
@@ -637,7 +630,6 @@ function PromoteToLegacyline({
   const [error, setError] = useState<string | null>(null)
   const [errorField, setErrorField] = useState<string | undefined>(undefined)
 
-  // ─── Already promoted: show registry ID + timestamp ───────────────
   if (intake.legacyline_participant_id) {
     return (
       <div
@@ -691,8 +683,7 @@ function PromoteToLegacyline({
     )
   }
 
-  // ─── Idle: show button to open form ────────────────────────────────
-  if (!formOpen) {
+  if(!formOpen) {
     return (
       <button
         type="button"
@@ -716,7 +707,6 @@ function PromoteToLegacyline({
     )
   }
 
-  // ─── Form open: inline promotion form ──────────────────────────────
   function handleSubmit() {
     setError(null)
     setErrorField(undefined)
@@ -735,8 +725,6 @@ function PromoteToLegacyline({
         return
       }
 
-      // Success — form will disappear when the row re-renders with
-      // the new legacyline_participant_id from revalidatePath.
       setFormOpen(false)
     })
   }
@@ -955,11 +943,9 @@ const promoteInputStyle: React.CSSProperties = {
   boxSizing: 'border-box',
 }
 
-// ─── DOB Picker (Wave 2.3 polish) ────────────────────────────────────
-// Three dropdowns: Month / Day / Year. Mobile-friendly, prevents invalid
-// dates (Feb 30 impossible), produces YYYY-MM-DD string that matches what
-// Legacyline's Go handler expects from r.FormValue("dob"). Year range:
-// current year back to 1900.
+// ─── DOB Picker (Wave 2.3 polish — fixed) ────────────────────────────
+// Each dropdown owns its own internal state. Parent's dob string only
+// gets set when all three are filled. Partial state never gets wiped.
 
 function DobPicker({
   value,
@@ -970,11 +956,27 @@ function DobPicker({
   onChange: (next: string) => void
   disabled: boolean
 }) {
-  // Parse current value (YYYY-MM-DD) into parts; empty if invalid
-  const parts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
-  const currentYear = parts ? parts[1] : ''
-  const currentMonth = parts ? parts[2] : ''
-  const currentDay = parts ? parts[3] : ''
+  const initialParts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+  const [month, setMonth] = useState(initialParts ? initialParts[2] : '')
+  const [day, setDay] = useState(initialParts ? initialParts[3] : '')
+  const [year, setYear] = useState(initialParts ? initialParts[1] : '')
+
+  useEffect(() => {
+    if (month && day && year) {
+      const maxValidDay = new Date(
+        parseInt(year, 10),
+        parseInt(month, 10),
+        0
+      ).getDate()
+      const correctedDay =
+        parseInt(day, 10) > maxValidDay
+          ? String(maxValidDay).padStart(2, '0')
+          : day
+      onChange(`${year}-${month}-${correctedDay}`)
+    } else {
+      onChange('')
+    }
+  }, [month, day, year, onChange])
 
   const thisYear = new Date().getFullYear()
   const years: string[] = []
@@ -997,32 +999,9 @@ function DobPicker({
     { v: '12', l: 'December' },
   ]
 
-  // Days adjust to selected month + year (Feb in leap year etc.)
-  const maxDay = currentMonth && currentYear
-    ? new Date(parseInt(currentYear, 10), parseInt(currentMonth, 10), 0).getDate()
-    : 31
-
   const days: string[] = []
-  for (let d = 1; d <= maxDay; d++) {
+  for (let d = 1; d <= 31; d++) {
     days.push(String(d).padStart(2, '0'))
-  }
-
-  function commit(nextMonth: string, nextDay: string, nextYear: string) {
-    if (!nextMonth || !nextDay || !nextYear) {
-      onChange('')
-      return
-    }
-    // Re-validate day against new month/year combination
-    const validMaxDay = new Date(
-      parseInt(nextYear, 10),
-      parseInt(nextMonth, 10),
-      0
-    ).getDate()
-    const correctedDay =
-      parseInt(nextDay, 10) > validMaxDay
-        ? String(validMaxDay).padStart(2, '0')
-        : nextDay
-    onChange(`${nextYear}-${nextMonth}-${correctedDay}`)
   }
 
   const selectStyle: React.CSSProperties = {
@@ -1042,8 +1021,8 @@ function DobPicker({
   return (
     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
       <select
-        value={currentMonth}
-        onChange={(e) => commit(e.target.value, currentDay, currentYear)}
+        value={month}
+        onChange={(e) => setMonth(e.target.value)}
         disabled={disabled}
         style={{ ...selectStyle, minWidth: '120px', flex: '2 1 120px' }}
         aria-label="Month"
@@ -1057,9 +1036,9 @@ function DobPicker({
       </select>
 
       <select
-        value={currentDay}
-        onChange={(e) => commit(currentMonth, e.target.value, currentYear)}
-        disabled={disabled || !currentMonth}
+        value={day}
+        onChange={(e) => setDay(e.target.value)}
+        disabled={disabled}
         style={{ ...selectStyle, minWidth: '70px', flex: '1 1 70px' }}
         aria-label="Day"
       >
@@ -1072,8 +1051,8 @@ function DobPicker({
       </select>
 
       <select
-        value={currentYear}
-        onChange={(e) => commit(currentMonth, currentDay, e.target.value)}
+        value={year}
+        onChange={(e) => setYear(e.target.value)}
         disabled={disabled}
         style={{ ...selectStyle, minWidth: '90px', flex: '1 1 90px' }}
         aria-label="Year"
@@ -1088,4 +1067,3 @@ function DobPicker({
     </div>
   )
 }
-
