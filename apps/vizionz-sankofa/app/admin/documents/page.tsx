@@ -6,7 +6,7 @@
 import Link from 'next/link'
 import { requireOperator } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
-import { DOCUMENT_CATEGORY_LABELS, type DocumentCategory } from '../actions/documents'
+import { DOCUMENT_CATEGORY_LABELS, type DocumentCategory } from './types'
 import { DocumentRow } from './DocumentRow'
 import UploadButton from './UploadButton'
 

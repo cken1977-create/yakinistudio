@@ -8,9 +8,11 @@ import { useState, useTransition } from 'react'
 import {
   updateDocumentMetadata,
   deleteDocument,
+} from '../actions/documents'
+import {
   DOCUMENT_CATEGORY_LABELS,
   type DocumentCategory,
-} from '../actions/documents'
+} from './types'
 
 type DocumentRecord = {
   id: string

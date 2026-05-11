@@ -21,7 +21,7 @@ import {
   DOCUMENT_CATEGORY_LABELS,
   type DocumentCategory,
   type UploadDocumentInput,
-} from '../actions/documents'
+} from './types'
 
 type RowStatus = 'queued' | 'uploading' | 'ready' | 'error'
 
