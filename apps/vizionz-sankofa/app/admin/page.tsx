@@ -42,6 +42,10 @@ export default async function AdminLandingPage() {
     .from('intake_requests')
     .select('*', { count: 'exact', head: true })
 
+  const { count: documentCount } = await supabase
+    .from('vs_documents')
+    .select('*', { count: 'exact', head: true })
+
   const greetingName = getOperatorDisplayName(user)
   // emailLocal kept for any other call sites — leaving the derivation for
   // now in case other parts of the page reference it; remove in future
@@ -118,6 +122,11 @@ export default async function AdminLandingPage() {
           value={intakeNewCount ?? 0}
           accent="#CE1126"
         />
+          <StatCell
+            label="Documents"
+            value={documentCount ?? 0}
+            accent="#5B2C8F"
+          />
       </section>
 
       {/* Surfaces grid */}
@@ -156,6 +165,13 @@ export default async function AdminLandingPage() {
             kicker="Intakes · Wave 2"
             title="Get Help Requests"
             description={`Review incoming intakes from families seeking support. Triage, contact, and route to the right program. ${intakeTotalCount ?? 0} total · ${intakeNewCount ?? 0} new.`}
+            status="active"
+          />
+          <SurfaceCard
+            href="/admin/documents"
+            kicker="Substrate · Wave 3.2"
+            title="Document Library"
+            description="Upload organizational documents — policies, financials, programs, board minutes. Each becomes searchable substrate as it's processed."
             status="active"
           />
           <SurfaceCard
