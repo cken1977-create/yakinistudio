@@ -72,7 +72,7 @@ export async function processDocument(documentId: string): Promise<void> {
     }
 
     // 7. Embed all chunks in batch.
-    const chunkTexts = chunkRows.map((c) => c.chunk_text)
+    const chunkTexts = chunkRows.map((c) => c.content)
     const embeddings = await embedChunks(chunkTexts)
 
     if (embeddings.length !== chunkRows.length) {
