@@ -26,6 +26,15 @@ export default async function AdminLandingPage() {
     .select('*', { count: 'exact', head: true })
     .eq('kind', 'video')
 
+  const { count: intakeNewCount } = await supabase
+    .from('intake_requests')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'new')
+
+  const { count: intakeTotalCount } = await supabase
+    .from('intake_requests')
+    .select('*', { count: 'exact', head: true })
+
   const emailLocal = user.email?.split('@')[0] ?? 'operator'
   const greetingName =
     emailLocal.charAt(0).toUpperCase() + emailLocal.slice(1)
@@ -94,7 +103,11 @@ export default async function AdminLandingPage() {
         />
         <StatCell label="Photos" value={photoCount ?? 0} accent="#0A2548" />
         <StatCell label="Videos" value={videoCount ?? 0} accent="#007A33" />
-        <StatCell label="Active Programs" value={6} accent="#CE1126" />
+        <StatCell
+          label="New Intakes"
+          value={intakeNewCount ?? 0}
+          accent="#CE1126"
+        />
       </section>
 
       {/* Surfaces grid */}
@@ -129,11 +142,11 @@ export default async function AdminLandingPage() {
             status="active"
           />
           <SurfaceCard
-            href="#"
+            href="/admin/intakes"
             kicker="Intakes · Wave 2"
             title="Get Help Requests"
-            description="Review incoming intakes from families seeking support. Triage, contact, and route to the right program."
-            status="coming"
+            description={`Review incoming intakes from families seeking support. Triage, contact, and route to the right program. ${intakeTotalCount ?? 0} total · ${intakeNewCount ?? 0} new.`}
+            status="active"
           />
           <SurfaceCard
             href="#"
