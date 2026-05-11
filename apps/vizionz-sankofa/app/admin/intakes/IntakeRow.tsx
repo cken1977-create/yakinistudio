@@ -11,7 +11,9 @@ import {
   updateIntakeStatus,
   saveIntakeNotes,
   deleteIntake,
+  promoteIntakeToLegacyline,
 } from '../actions/intakes'
+import { splitFullNameForPromotion } from '@/lib/legacyline/client'
 
 export type IntakeRecord = {
   id: string
@@ -32,6 +34,10 @@ export type IntakeRecord = {
   contacted_at: string | null
   assigned_to: string | null
   created_at: string
+  legacyline_participant_id: string | null
+  legacyline_registry_id: string | null
+  legacyline_promoted_at: string | null
+  legacyline_error: string | null
 }
 
 const REQUEST_TYPE_LABELS: Record<string, string> = {
@@ -432,25 +438,10 @@ export function IntakeRow({
               <option value="closed_no_response">Closed — No Response</option>
             </select>
 
-            <button
-              type="button"
-              disabled
-              title="Promote to Legacyline ships in Wave 2.3"
-              style={{
-                padding: '10px 16px',
-                fontSize: '12px',
-                fontWeight: 600,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                color: 'rgba(10, 10, 10, 0.4)',
-                background: 'transparent',
-                border: '1px dashed rgba(10, 10, 10, 0.2)',
-                borderRadius: '2px',
-                cursor: 'not-allowed',
-              }}
-            >
-              Promote to Legacyline · Wave 2.3
-            </button>
+            <PromoteToLegacyline
+              intake={intake}
+              disabled={isPending}
+            />
 
             <div style={{ flex: 1 }} />
 
@@ -622,3 +613,352 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
     </div>
   )
 }
+
+// ─── Promote to Legacyline (Wave 2.3) ────────────────────────────────
+// Three states:
+//   - already promoted → green confirmation strip, no form
+//   - idle → "Open promotion form" button
+//   - form open → inline form with pre-filled name fields, required DOB
+
+function PromoteToLegacyline({
+  intake,
+  disabled,
+}: {
+  intake: IntakeRecord
+  disabled: boolean
+}) {
+  const [formOpen, setFormOpen] = useState(false)
+  const seed = splitFullNameForPromotion(intake.full_name)
+  const [firstName, setFirstName] = useState(seed.first_name)
+  const [lastName, setLastName] = useState(seed.last_name)
+  const [dob, setDob] = useState('')
+  const [orgId, setOrgId] = useState('')
+  const [submitting, startSubmit] = useTransition()
+  const [error, setError] = useState<string | null>(null)
+  const [errorField, setErrorField] = useState<string | undefined>(undefined)
+
+  // ─── Already promoted: show registry ID + timestamp ───────────────
+  if (intake.legacyline_participant_id) {
+    return (
+      <div
+        style={{
+          padding: '10px 14px',
+          background: 'rgba(0, 122, 51, 0.08)',
+          borderLeft: '3px solid #007A33',
+          borderRadius: '2px',
+          fontSize: '12px',
+          color: '#0A0A0A',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+        }}
+      >
+        <div
+          style={{
+            fontSize: '10px',
+            fontWeight: 600,
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            color: '#007A33',
+            fontFamily:
+              'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
+          }}
+        >
+          Promoted to Legacyline
+        </div>
+        <div style={{ fontSize: '13px', fontWeight: 600 }}>
+          {intake.legacyline_registry_id ?? intake.legacyline_participant_id}
+        </div>
+        {intake.legacyline_promoted_at && (
+          <div
+            style={{
+              fontSize: '11px',
+              color: 'rgba(10, 10, 10, 0.55)',
+              fontFamily:
+                'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
+            }}
+          >
+            {new Date(intake.legacyline_promoted_at).toLocaleString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit',
+            })}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // ─── Idle: show button to open form ────────────────────────────────
+  if (!formOpen) {
+    return (
+      <button
+        type="button"
+        onClick={() => setFormOpen(true)}
+        disabled={disabled}
+        style={{
+          padding: '10px 16px',
+          fontSize: '12px',
+          fontWeight: 600,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          color: '#0A2548',
+          background: 'transparent',
+          border: '1px solid #0A2548',
+          borderRadius: '2px',
+          cursor: disabled ? 'wait' : 'pointer',
+        }}
+      >
+        Promote to Legacyline →
+      </button>
+    )
+  }
+
+  // ─── Form open: inline promotion form ──────────────────────────────
+  function handleSubmit() {
+    setError(null)
+    setErrorField(undefined)
+
+    startSubmit(async () => {
+      const result = await promoteIntakeToLegacyline(intake.id, {
+        first_name: firstName,
+        last_name: lastName,
+        dob,
+        organization_id: orgId.trim() || null,
+      })
+
+      if (!result.ok) {
+        setError(result.error)
+        setErrorField(result.field)
+        return
+      }
+
+      // Success — form will disappear when the row re-renders with
+      // the new legacyline_participant_id from revalidatePath.
+      setFormOpen(false)
+    })
+  }
+
+  return (
+    <div
+      style={{
+        flexBasis: '100%',
+        marginTop: '12px',
+        padding: '14px 16px',
+        background: '#FFFFFF',
+        border: '1px solid rgba(10, 36, 72, 0.2)',
+        borderLeft: '3px solid #0A2548',
+        borderRadius: '2px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+      }}
+    >
+      <div
+        style={{
+          fontSize: '10px',
+          fontWeight: 600,
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+          color: '#0A2548',
+          fontFamily:
+            'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
+        }}
+      >
+        Promote to Legacyline
+      </div>
+
+      <div
+        style={{
+          fontSize: '13px',
+          color: 'rgba(10, 10, 10, 0.65)',
+          lineHeight: 1.5,
+        }}
+      >
+        Confirm the participant&apos;s legal name and date of birth from your
+        conversation. Email and phone come from the original request.
+      </div>
+
+      <FormField label="First name" required field="first_name" errorField={errorField}>
+        <input
+          type="text"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          disabled={submitting}
+          style={promoteInputStyle}
+        />
+      </FormField>
+
+      <FormField label="Last name" required field="last_name" errorField={errorField}>
+        <input
+          type="text"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          disabled={submitting}
+          style={promoteInputStyle}
+        />
+      </FormField>
+
+      <FormField label="Date of birth" required field="dob" errorField={errorField}>
+        <input
+          type="date"
+          value={dob}
+          onChange={(e) => setDob(e.target.value)}
+          disabled={submitting}
+          max={new Date().toISOString().slice(0, 10)}
+          style={promoteInputStyle}
+        />
+      </FormField>
+
+      <FormField label="Organization (optional)" field="organization_id" errorField={errorField}>
+        <input
+          type="text"
+          value={orgId}
+          onChange={(e) => setOrgId(e.target.value)}
+          disabled={submitting}
+          placeholder="Leave blank for individual track"
+          style={promoteInputStyle}
+        />
+      </FormField>
+
+      {error && (
+        <div
+          style={{
+            padding: '10px 12px',
+            background: 'rgba(206, 17, 38, 0.08)',
+            borderLeft: '3px solid #CE1126',
+            fontSize: '13px',
+            color: '#0A0A0A',
+            lineHeight: 1.5,
+          }}
+        >
+          {error}
+        </div>
+      )}
+
+      <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={submitting || !firstName.trim() || !lastName.trim() || !dob}
+          style={{
+            padding: '10px 18px',
+            fontSize: '12px',
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: '#FFFFFF',
+            background: '#0A2548',
+            border: 'none',
+            borderRadius: '2px',
+            cursor:
+              submitting || !firstName.trim() || !lastName.trim() || !dob
+                ? 'not-allowed'
+                : 'pointer',
+            opacity:
+              submitting || !firstName.trim() || !lastName.trim() || !dob
+                ? 0.5
+                : 1,
+          }}
+        >
+          {submitting ? 'Promoting…' : 'Create Legacyline participant'}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setFormOpen(false)
+            setError(null)
+            setErrorField(undefined)
+          }}
+          disabled={submitting}
+          style={{
+            padding: '10px 14px',
+            fontSize: '11px',
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: '#0A0A0A',
+            background: 'transparent',
+            border: '1px solid rgba(10, 10, 10, 0.2)',
+            borderRadius: '2px',
+            cursor: submitting ? 'wait' : 'pointer',
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+
+      {intake.legacyline_error && (
+        <div
+          style={{
+            marginTop: '8px',
+            padding: '10px 12px',
+            background: 'rgba(206, 17, 38, 0.04)',
+            border: '1px dashed rgba(206, 17, 38, 0.3)',
+            borderRadius: '2px',
+            fontSize: '11px',
+            color: 'rgba(10, 10, 10, 0.65)',
+            lineHeight: 1.5,
+            fontFamily:
+              'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
+          }}
+        >
+          Last attempt failed: {intake.legacyline_error}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function FormField({
+  label,
+  required,
+  field,
+  errorField,
+  children,
+}: {
+  label: string
+  required?: boolean
+  field: string
+  errorField?: string
+  children: React.ReactNode
+}) {
+  const hasError = errorField === field
+
+  return (
+    <div>
+      <div
+        style={{
+          fontSize: '10px',
+          fontWeight: 600,
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+          color: hasError ? '#CE1126' : 'rgba(10, 10, 10, 0.55)',
+          marginBottom: '6px',
+          fontFamily:
+            'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
+        }}
+      >
+        {label}
+        {required && <span style={{ color: '#CE1126' }}> *</span>}
+      </div>
+      {children}
+    </div>
+  )
+}
+
+const promoteInputStyle: React.CSSProperties = {
+  width: '100%',
+  padding: '8px 10px',
+  fontSize: '14px',
+  color: '#0A0A0A',
+  background: '#FFFFFF',
+  border: '1px solid rgba(10, 10, 10, 0.2)',
+  borderRadius: '2px',
+  fontFamily: 'inherit',
+  outline: 'none',
+  boxSizing: 'border-box',
+}
+
