@@ -3,7 +3,11 @@
 // navigation to admin surfaces and live stats from Supabase.
 
 import Link from 'next/link'
-import { requireOperatorOrEmployee, touchLastActive } from '@/lib/supabase/auth'
+import {
+  requireOperatorOrEmployee,
+  touchLastActive,
+  getOperatorDisplayName,
+} from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function AdminLandingPage() {
@@ -38,9 +42,12 @@ export default async function AdminLandingPage() {
     .from('intake_requests')
     .select('*', { count: 'exact', head: true })
 
+  const greetingName = getOperatorDisplayName(user)
+  // emailLocal kept for any other call sites — leaving the derivation for
+  // now in case other parts of the page reference it; remove in future
+  // polish if confirmed unused.
   const emailLocal = user.email?.split('@')[0] ?? 'operator'
-  const greetingName =
-    emailLocal.charAt(0).toUpperCase() + emailLocal.slice(1)
+  // greetingName is set above via getOperatorDisplayName
 
   return (
     <div>

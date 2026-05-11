@@ -6,7 +6,10 @@
 
 import { headers } from 'next/headers'
 import Link from 'next/link'
-import { requireOperatorOrEmployee } from '@/lib/supabase/auth'
+import {
+  requireOperatorOrEmployee,
+  getOperatorDisplayName,
+} from '@/lib/supabase/auth'
 import { redirect } from 'next/navigation'
 import { signOut } from './actions/auth'
 
@@ -19,9 +22,17 @@ export default async function AdminLayout({
   // Falls back to safe defaults if header isn't set.
   const headerList = await headers()
   const pathname = headerList.get('x-pathname') ?? ''
-  const isLoginPath = pathname.startsWith('/admin/login')
+  // Wave 2.5 hotfix: gate pages and login render bare. Without this,
+  // a redirect FROM requireOperatorOrEmployee TO /admin/access-pending
+  // would re-enter the layout, re-fire the same redirect, loop forever.
+  const bareRenderPaths = [
+    '/admin/login',
+    '/admin/access-pending',
+    '/admin/access-denied',
+  ]
+  const isLoginPath = bareRenderPaths.some((p) => pathname.startsWith(p))
 
-  // /admin/login renders bare — no chrome, no auth gate.
+  // Login + gate pages render bare — no chrome, no auth gate.
   // This prevents the redirect loop (login -> auth check -> redirect to login).
   if (isLoginPath) {
     return <>{children}</>
@@ -34,16 +45,9 @@ export default async function AdminLayout({
   //   - operator OR employee → returns AuthenticatedOperator
   const user = await requireOperatorOrEmployee()
 
-  // Wave 2.5: Display name comes from vs_operators.display_name when set
-  // (e.g. "Khadijah Asili"), falls back to email local part with first
-  // letter uppercased (e.g. "Cken1977"). Operators can update their
-  // display_name in the future Operator Settings surface (Wave 3+).
-  const displayName =
-    user.operator.display_name?.trim() ||
-    (() => {
-      const emailLocal = user.email?.split('@')[0] ?? 'Operator'
-      return emailLocal.charAt(0).toUpperCase() + emailLocal.slice(1)
-    })()
+  // Wave 2.5: Display name derived via canonical helper. See
+  // getOperatorDisplayName in lib/supabase/auth.ts.
+  const displayName = getOperatorDisplayName(user)
 
   // Wave 2.5: Role badge in topbar — visible signal of access level
   const isOperator = user.role === 'operator'

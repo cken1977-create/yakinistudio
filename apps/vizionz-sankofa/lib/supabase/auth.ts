@@ -229,3 +229,31 @@ export async function touchLastActive(userId: string): Promise<void> {
     // Silently swallow — activity tracking is not load-bearing.
   }
 }
+
+// ─── Display name derivation (canonical source) ────────────────────
+
+/**
+ * Returns the operator's display name, with substrate-honest fallback.
+ *
+ * Priority:
+ *   1. vs_operators.display_name (operator-set, canonical — e.g.
+ *      "Khadijah Asili", "Clarence Kennedy", "Carly Anderson")
+ *   2. Email local part with first letter uppercased (e.g. "Cken1977")
+ *   3. Literal string "Operator" as last resort
+ *
+ * Every UI surface that greets the operator must use this helper rather
+ * than deriving display name inline. One source of truth means changes
+ * (e.g. "show first name only", "show initials") happen in one place.
+ */
+export function getOperatorDisplayName(user: AuthenticatedOperator): string {
+  const fromOperator = user.operator.display_name?.trim()
+  if (fromOperator) return fromOperator
+
+  const emailLocal = user.email?.split('@')[0]?.trim()
+  if (emailLocal && emailLocal.length > 0) {
+    return emailLocal.charAt(0).toUpperCase() + emailLocal.slice(1)
+  }
+
+  return 'Operator'
+}
+
