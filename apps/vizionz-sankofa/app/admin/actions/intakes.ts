@@ -198,7 +198,7 @@ export type PromoteIntakeResult =
       ok: true
       participant_id: string
       registry_id: string
-      subject_number: string
+      subject_number: string | null
     }
   | { ok: false; error: string; field?: string; detail?: LegacylineError }
 
