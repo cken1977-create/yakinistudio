@@ -182,12 +182,12 @@ export default async function AdminLandingPage() {
             status='active'
           />
                     <SurfaceCard
-            href="#"
-            kicker="Donors · Wave 3"
-            title="Donor Management"
-            description="Track donor relationships, recurring gifts, grants in motion, and BRSA Foundation funding alignment."
-            status="coming"
-          />
+                      href="/admin/donors"
+                      kicker="Substrate · Wave 3.5"
+                      title="Donor Management"
+                      description="Donor records, gift history, and CSV import. Yakini Intelligence reads donor patterns to answer questions about giving history, recurring relationships, and lifetime support."
+                      status="active"
+                    />
           <SurfaceCard
             href="#"
             kicker="Programs · Wave 3"

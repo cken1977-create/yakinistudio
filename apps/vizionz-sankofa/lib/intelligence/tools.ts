@@ -23,7 +23,7 @@ import { retrieveChunks, type RetrievedChunk } from './retrieve'
 // ─── Citation type — surfaces to UI ──────────────────────────────────────
 
 export type Citation = {
-  source_type: 'document' | 'intake'
+  source_type: 'document' | 'intake' | 'donor'
   // For document citations
   document_id?: string
   document_title?: string
@@ -34,6 +34,9 @@ export type Citation = {
   // For intake citations
   intake_id?: string
   intake_label?: string  // e.g. "Smith family — housing request"
+  // For donor citations
+  donor_id?: string
+  donor_label?: string
 }
 
 // ─── Tool result shape ───────────────────────────────────────────────────
@@ -130,6 +133,34 @@ const TOOL_REGISTRY: Record<string, ToolEntry> = {
       },
     },
     handler: queryIntakes,
+  },
+
+  query_donors: {
+    definition: {
+      name: 'query_donors',
+      description:
+        'Query the donor records — the people, families, foundations, and ' +
+        'organizations who give to the organization. Use this when the question ' +
+        'is about who has donated, donation patterns, recurring givers, lapsed ' +
+        'donors, lifetime giving totals, or any donor demographic. Returns up to ' +
+        '20 matching donors with summary information including lifetime giving ' +
+        'and last gift date. Examples: "Who are our top donors this year?", ' +
+        '"Who has not given in over a year?", "How many recurring donors do we ' +
+        'have?". Operator-private notes are excluded from results.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          status: { type: 'string', description: 'Optional filter by donor status. Values: "active", "lapsed", "declined_contact", "deceased".' },
+          donor_type: { type: 'string', description: 'Optional filter by donor type. Values: "individual", "family", "foundation", "corporation", "anonymous".' },
+          tags: { type: 'array', items: { type: 'string' }, description: 'Optional filter by tags. Donors with ANY of the provided tags are returned.' },
+          min_lifetime_dollars: { type: 'number', description: 'Optional: only return donors whose lifetime giving meets or exceeds this dollar amount.' },
+          recurring: { type: 'boolean', description: 'Optional: if true, only return donors flagged as recurring.' },
+          last_gift_within_days: { type: 'number', description: 'Optional: only return donors whose last gift was within this many days.' },
+          search: { type: 'string', description: 'Optional keyword search within donor name and email.' },
+        },
+      },
+    },
+    handler: queryDonors,
   },
 }
 
@@ -323,6 +354,99 @@ async function queryIntakes(input: Record<string, unknown>): Promise<ToolResult>
   return {
     content:
       `Found ${rows.length} intake record${rows.length === 1 ? '' : 's'}:\n\n${formatted}`,
+    citations,
+    ok: true,
+  }
+}
+
+// ─── query_donors handler ────────────────────────────────────────────────
+
+async function queryDonors(input: Record<string, unknown>): Promise<ToolResult> {
+  const status = typeof input.status === 'string' ? input.status : null
+  const donorType = typeof input.donor_type === 'string' ? input.donor_type : null
+  const tags = Array.isArray(input.tags)
+    ? (input.tags as unknown[]).filter((t): t is string => typeof t === 'string').map((t) => t.toLowerCase().trim())
+    : []
+  const minLifetimeDollars =
+    typeof input.min_lifetime_dollars === 'number' && input.min_lifetime_dollars > 0
+      ? input.min_lifetime_dollars
+      : null
+  const recurringOnly = input.recurring === true
+  const lastGiftWithinDays =
+    typeof input.last_gift_within_days === 'number' && input.last_gift_within_days > 0
+      ? Math.floor(input.last_gift_within_days)
+      : null
+  const search = typeof input.search === 'string' ? input.search.trim() : null
+
+  const supabase = createAdminClient()
+  let q = supabase
+    .from('donors')
+    .select(
+      'id, first_name, last_name, display_name, email, phone, ' +
+      'donor_type, status, tags, first_gift_date, last_gift_date, ' +
+      'total_lifetime_amount_cents, total_gifts_count, recurring, created_at'
+    )
+    .order('total_lifetime_amount_cents', { ascending: false })
+    .limit(20)
+
+  if (status) q = q.eq('status', status)
+  if (donorType) q = q.eq('donor_type', donorType)
+  if (tags.length > 0) q = q.overlaps('tags', tags)
+  if (minLifetimeDollars !== null) {
+    q = q.gte('total_lifetime_amount_cents', Math.round(minLifetimeDollars * 100))
+  }
+  if (recurringOnly) q = q.eq('recurring', true)
+  if (lastGiftWithinDays !== null) {
+    const cutoff = new Date(Date.now() - lastGiftWithinDays * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .slice(0, 10)
+    q = q.gte('last_gift_date', cutoff)
+  }
+  if (search) {
+    q = q.or(
+      `display_name.ilike.%${search}%,first_name.ilike.%${search}%,` +
+      `last_name.ilike.%${search}%,email.ilike.%${search}%`
+    )
+  }
+
+  const { data, error } = await q
+  if (error) {
+    return { content: `Donor query failed: ${error.message}`, citations: [], ok: false, error: error.message }
+  }
+  if (!data || data.length === 0) {
+    return { content: 'No donor records matched the filters. Try broadening the search or removing filters. If no donors exist yet, suggest the operator add some via the Donor Management surface.', citations: [], ok: true }
+  }
+
+  type DonorQueryRow = {
+    id: string; first_name: string | null; last_name: string | null;
+    display_name: string; email: string | null; phone: string | null;
+    donor_type: string; status: string; tags: string[];
+    first_gift_date: string | null; last_gift_date: string | null;
+    total_lifetime_amount_cents: number; total_gifts_count: number;
+    recurring: boolean; created_at: string;
+  }
+  const rows = data as unknown as DonorQueryRow[]
+
+  const formatted = rows.map((r, i) => {
+    const dollars = (r.total_lifetime_amount_cents / 100).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
+    const lastGift = r.last_gift_date ? new Date(r.last_gift_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'never'
+    const lines = [
+      `[${i + 1}] ${r.display_name} — ${r.donor_type} Â· ${r.status}`,
+      `    Lifetime: $${dollars} across ${r.total_gifts_count} gift${r.total_gifts_count === 1 ? '' : 's'}`,
+      `    Last gift: ${lastGift}${r.recurring ? ' Â· recurring' : ''}`,
+    ]
+    if (r.email || r.phone) lines.push(`    Contact: ${[r.email, r.phone].filter(Boolean).join(', ')}`)
+    if (r.tags && r.tags.length > 0) lines.push(`    Tags: ${r.tags.join(', ')}`)
+    return lines.join('\n')
+  }).join('\n\n')
+
+  const citations: Citation[] = rows.map((r) => {
+    const dollars = (r.total_lifetime_amount_cents / 100).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+    return { source_type: 'donor', donor_id: r.id, donor_label: `${r.display_name} — $${dollars} lifetime` }
+  })
+
+  return {
+    content: `Found ${rows.length} donor record${rows.length === 1 ? '' : 's'}:\n\n${formatted}`,
     citations,
     ok: true,
   }

@@ -1,8 +1,8 @@
-// VIZIONZ SANKOFA · /admin/intelligence (Wave 3.4)
+// VIZIONZ SANKOFA · /admin/donors (Wave 3.5)
 //
-// Yakini Intelligence chat surface. Operator asks natural-language
-// questions about VS organizational data; Yakini Intelligence retrieves
-// grounded answers from documents and intakes with source citations.
+// Donor management surface. Server component pulls initial donor list
+// server-side; client wrapper handles search/filter UI + maps over
+// DonorRow components.
 
 import {
   requireOperatorOrEmployee,
@@ -10,34 +10,36 @@ import {
   getOperatorDisplayName,
 } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
-import { IntelligenceChat } from './IntelligenceChat'
+import { DonorListClient } from './DonorListClient'
+import { type DonorRecord, formatCurrency } from './types'
 
 export const dynamic = 'force-dynamic'
 
-export default async function IntelligencePage() {
+export default async function DonorsPage() {
   const user = await requireOperatorOrEmployee()
   void touchLastActive(user.id)
 
-  // Pull live substrate counts so the operator sees what Yakini Intelligence
-  // can read before they ask. Empty substrate produces empty answers; this
-  // is operator-honest UX.
   const supabase = await createClient()
-  const { count: readyDocCount } = await supabase
-    .from('vs_documents')
-    .select('*', { count: 'exact', head: true })
-    .eq('processing_status', 'ready')
-
-  const { count: chunkCount } = await supabase
-    .from('vs_document_chunks')
-    .select('*', { count: 'exact', head: true })
-
-  const { count: intakeCount } = await supabase
-    .from('intake_requests')
-    .select('*', { count: 'exact', head: true })
-
-  const { count: donorCount } = await supabase
+  const { data, error } = await supabase
     .from('donors')
-    .select('*', { count: 'exact', head: true })
+    .select(
+      'id, first_name, last_name, display_name, email, phone, ' +
+      'address_line1, address_line2, city, state, postal_code, ' +
+      'donor_type, status, tags, notes, first_gift_date, last_gift_date, ' +
+      'total_lifetime_amount_cents, total_gifts_count, recurring, ' +
+      'created_at, updated_at, created_by'
+    )
+    .order('display_name', { ascending: true })
+
+  const donors = (error ? [] : (data ?? [])) as unknown as DonorRecord[]
+
+  // Substrate counts for the readiness strip
+  const totalCount = donors.length
+  const activeCount = donors.filter((d) => d.status === 'active').length
+  const lifetimeCents = donors.reduce(
+    (sum, d) => sum + d.total_lifetime_amount_cents,
+    0
+  )
 
   const greetingName = getOperatorDisplayName(user)
 
@@ -57,9 +59,8 @@ export default async function IntelligencePage() {
               'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
           }}
         >
-          Yakini Intelligence · Wave 3.4
+          Substrate · Wave 3.5
         </div>
-
         <h1
           style={{
             fontSize: '36px',
@@ -70,9 +71,8 @@ export default async function IntelligencePage() {
             fontFamily: '"DM Serif Display", Georgia, serif',
           }}
         >
-          Ask anything about your organization, {greetingName}.
+          Donor Management
         </h1>
-
         <p
           style={{
             fontSize: '16px',
@@ -81,48 +81,31 @@ export default async function IntelligencePage() {
             maxWidth: '640px',
           }}
         >
-          Yakini Intelligence reads your documents and intake records to give
-          you grounded answers with source citations. Ask about programs,
-          history, families, finances — anything that lives in your operating
-          substrate.
+          The people, families, foundations, and organizations who give to
+          your work, {greetingName}. Add new donors, record gifts, and import
+          your existing list. Yakini Intelligence reads this substrate to
+          answer questions about donor patterns and giving history.
         </p>
       </section>
 
-      {/* Substrate readiness strip — what Yakini can actually read */}
+      {/* Substrate readiness strip */}
       <section
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
           gap: '1px',
           background: 'rgba(10, 10, 10, 0.08)',
-          marginBottom: '40px',
+          marginBottom: '32px',
           border: '1px solid rgba(10, 10, 10, 0.08)',
         }}
       >
-        <SubstrateCell
-          label="Documents Ready"
-          value={readyDocCount ?? 0}
-          accent="#5B2C8F"
-        />
-        <SubstrateCell
-          label="Indexed Chunks"
-          value={chunkCount ?? 0}
-          accent="#0A2548"
-        />
-        <SubstrateCell
-          label="Intake Records"
-          value={intakeCount ?? 0}
-          accent="#007A33"
-        />
-        <SubstrateCell
-          label="Donor Records"
-          value={donorCount ?? 0}
-          accent="#0A2548"
-        />
+        <SubstrateCell label="Total Donors" value={totalCount.toLocaleString()} accent="#5B2C8F" />
+        <SubstrateCell label="Active Donors" value={activeCount.toLocaleString()} accent="#007A33" />
+        <SubstrateCell label="Lifetime Giving" value={formatCurrency(lifetimeCents)} accent="#0A2548" />
       </section>
 
-      {/* Chat surface */}
-      <IntelligenceChat />
+      {/* Donor list with search/filter */}
+      <DonorListClient donors={donors} />
     </div>
   )
 }
@@ -133,7 +116,7 @@ function SubstrateCell({
   accent,
 }: {
   label: string
-  value: number
+  value: string
   accent: string
 }) {
   return (
@@ -160,7 +143,7 @@ function SubstrateCell({
           fontFamily: '"DM Serif Display", Georgia, serif',
         }}
       >
-        {value.toLocaleString()}
+        {value}
       </div>
     </div>
   )

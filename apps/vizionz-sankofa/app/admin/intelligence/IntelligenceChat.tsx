@@ -14,7 +14,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 // ─── Types ───────────────────────────────────────────────────────────────
 
 type Citation = {
-  source_type: 'document' | 'intake'
+  source_type: 'document' | 'intake' | 'donor'
   document_id?: string
   document_title?: string
   document_file_name?: string
@@ -23,6 +23,8 @@ type Citation = {
   similarity?: number
   intake_id?: string
   intake_label?: string
+  donor_id?: string
+  donor_label?: string
 }
 
 type Message =
@@ -327,6 +329,8 @@ function CitationChip({
   const href =
     citation.source_type === 'document'
       ? `/admin/documents`
+      : citation.source_type === 'donor'
+      ? `/admin/donors`
       : `/admin/intakes`
 
   const label =
@@ -334,6 +338,8 @@ function CitationChip({
       ? `${citation.document_title}${
           citation.source_ref ? ` · ${citation.source_ref}` : ''
         }`
+      : citation.source_type === 'donor'
+      ? citation.donor_label || 'Donor record'
       : citation.intake_label || 'Intake record'
 
   return (
