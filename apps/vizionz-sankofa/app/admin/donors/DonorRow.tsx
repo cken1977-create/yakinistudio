@@ -650,7 +650,7 @@ export function LabeledInput({
   value: string
   onChange: (v: string) => void
   placeholder?: string
-  type?: stringtype?: string
+  type?: string
 }) {
   return (
     <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '11px' }}>
