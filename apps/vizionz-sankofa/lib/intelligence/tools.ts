@@ -289,7 +289,7 @@ async function queryIntakes(input: Record<string, unknown>): Promise<ToolResult>
     requested_program: string | null
     created_at: string
   }
-  const rows = data as IntakeRow[]
+  const rows = data as unknown as IntakeRow[]
     const formatted = rows
     .map((r, i) => {
       const name = [r.first_name, r.last_name].filter(Boolean).join(' ') || 'Unknown'
