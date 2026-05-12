@@ -175,6 +175,13 @@ export default async function AdminLandingPage() {
             status="active"
           />
           <SurfaceCard
+            href='/admin/intelligence'
+            kicker='Substrate · Wave 3.4'
+            title='Yakini Intelligence'
+            description='Ask anything about your organization. Yakini Intelligence reads your documents and intake records to deliver grounded answers with source citations.'
+            status='active'
+          />
+                    <SurfaceCard
             href="#"
             kicker="Donors · Wave 3"
             title="Donor Management"
