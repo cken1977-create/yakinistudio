@@ -276,7 +276,21 @@ async function queryIntakes(input: Record<string, unknown>): Promise<ToolResult>
 
   // Format intakes for Anthropic. Each intake on a numbered row with
   // bounded fields. The model can reference rows by number in its answer.
-  const formatted = data
+  type IntakeRow = {
+    id: string
+    status: string
+    first_name: string | null
+    last_name: string | null
+    email: string | null
+    phone: string | null
+    request_summary: string | null
+    family_size: number | null
+    housing_status: string | null
+    requested_program: string | null
+    created_at: string
+  }
+  const rows = data as IntakeRow[]
+    const formatted = rows
     .map((r, i) => {
       const name = [r.first_name, r.last_name].filter(Boolean).join(' ') || 'Unknown'
       const created = new Date(r.created_at).toLocaleDateString('en-US', {
@@ -296,7 +310,7 @@ async function queryIntakes(input: Record<string, unknown>): Promise<ToolResult>
     })
     .join('\n\n')
 
-  const citations: Citation[] = data.map((r) => {
+  const citations: Citation[] = rows.map((r) => {
     const name = [r.first_name, r.last_name].filter(Boolean).join(' ') || 'Unknown'
     const summary = r.requested_program || r.housing_status || 'intake'
     return {
@@ -308,7 +322,7 @@ async function queryIntakes(input: Record<string, unknown>): Promise<ToolResult>
 
   return {
     content:
-      `Found ${data.length} intake record${data.length === 1 ? '' : 's'}:\n\n${formatted}`,
+      `Found ${rows.length} intake record${rows.length === 1 ? '' : 's'}:\n\n${formatted}`,
     citations,
     ok: true,
   }
