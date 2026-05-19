@@ -61,7 +61,7 @@ export default function AboutPage() {
           </h2>
 
           <div className="values-grid">
-            {about.values.map((value, i) => (
+            {(about.values ?? []).map((value, i) => (
               <div key={i} className="value-card">
                 <div className="value-num">0{i + 1}</div>
                 <h3 className="value-title">{value.title}</h3>
