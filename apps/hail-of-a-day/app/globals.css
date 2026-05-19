@@ -1008,3 +1008,118 @@ form.intake-form {
   margin-top: 14px;
   line-height: 1.55;
                               }
+
+/* ── SERVICES PAGE ───────────────────────────────────────────────────────── */
+.services-hero {
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(58, 141, 181, 0.15), transparent 70%),
+    var(--navy-deep);
+  padding: 100px 24px 60px;
+}
+
+.services-grid-section {
+  background: var(--navy);
+  padding: 80px 24px 100px;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+@media (max-width: 800px) {
+  .services-grid { grid-template-columns: 1fr; }
+}
+
+.service-card {
+  background: var(--navy-deepest);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 40px 36px;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--signal);
+  opacity: 0.4;
+  transition: opacity 0.3s;
+}
+.service-card:hover {
+  background: var(--navy-lift);
+  transform: translateY(-2px);
+}
+.service-card:hover::before { opacity: 1; }
+
+.service-icon {
+  font-size: 2.2rem;
+  margin-bottom: 18px;
+  display: inline-block;
+}
+
+.service-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  line-height: 1.2;
+  color: var(--chrome-bright);
+}
+
+.service-description {
+  font-size: 1rem;
+  color: var(--chrome-mid);
+  line-height: 1.65;
+  margin-bottom: 22px;
+}
+
+.service-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line-strong);
+  padding-top: 20px;
+}
+.service-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 0.92rem;
+  color: var(--chrome);
+}
+.feature-check {
+  color: var(--signal);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.services-cta {
+  background:
+    radial-gradient(ellipse 50% 60% at 50% 50%, rgba(61, 220, 61, 0.08), transparent 70%),
+    var(--navy-deepest);
+  padding: 100px 24px;
+  text-align: center;
+  border-top: 1px solid var(--line);
+}
+.services-cta h2 {
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  color: var(--chrome-bright);
+  margin-bottom: 20px;
+}
+.services-cta h2 .accent { color: var(--signal); }
+.services-cta-lead {
+  font-size: 1.15rem;
+  color: var(--chrome-mid);
+  max-width: 640px;
+  margin: 0 auto 40px;
+  line-height: 1.6;
+   }
