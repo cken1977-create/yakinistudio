@@ -3,14 +3,17 @@
 // VIZIONZ SANKOFA · /admin/participants/[id] · TabsClient
 //
 // Tab navigation for participant detail page. Owns active-tab state.
-// Renders the appropriate tab content. Placeholder tabs for surfaces not
-// yet built (Services, Documents, Assessments) — each replaced wholesale
-// in its own Wave 3.X push without touching this file's architecture.
+// Renders the appropriate tab content. Wave 3 currently has Notes + Services
+// shipped; Documents and Assessments are placeholders that get swapped in
+// their own Wave 3.X push.
 
 import { useState } from 'react'
 import { CaseNotesTab } from './CaseNotesTab'
+import { ServicesTab } from './ServicesTab'
 import type {
   CaseNoteWithStaff,
+  ServiceWithJoins,
+  ServiceTypeRecord,
   TabKey,
 } from './types'
 import { TAB_LABELS } from './types'
@@ -19,14 +22,20 @@ import type { StaffRecord } from '../types'
 export function TabsClient({
   participantId,
   caseNotes,
+  services,
+  serviceTypes,
   staff,
   defaultAuthorId,
+  defaultDelivererId,
   operatorName,
 }: {
   participantId: string
   caseNotes: CaseNoteWithStaff[]
+  services: ServiceWithJoins[]
+  serviceTypes: ServiceTypeRecord[]
   staff: StaffRecord[]
   defaultAuthorId: string | null
+  defaultDelivererId: string | null
   operatorName: string
 }) {
   const [activeTab, setActiveTab] = useState<TabKey>('notes')
@@ -47,7 +56,10 @@ export function TabsClient({
       >
         {tabKeys.map((key) => {
           const isActive = activeTab === key
-          const count = key === 'notes' ? caseNotes.length : null
+          let count: number | null = null
+          if (key === 'notes') count = caseNotes.length
+          if (key === 'services') count = services.length
+
           return (
             <button
               key={key}
@@ -98,7 +110,15 @@ export function TabsClient({
             defaultAuthorId={defaultAuthorId}
           />
         )}
-        {activeTab === 'services' && <ServicesPlaceholder />}
+        {activeTab === 'services' && (
+          <ServicesTab
+            participantId={participantId}
+            initialServices={services}
+            serviceTypes={serviceTypes}
+            staff={staff}
+            defaultDelivererId={defaultDelivererId}
+          />
+        )}
         {activeTab === 'documents' && <DocumentsPlaceholder />}
         {activeTab === 'assessments' && <AssessmentsPlaceholder />}
       </div>
@@ -121,16 +141,6 @@ export function TabsClient({
         Signed in as {operatorName}
       </footer>
     </div>
-  )
-}
-
-function ServicesPlaceholder() {
-  return (
-    <ComingSoonPanel
-      title="Services Delivered"
-      wave="Wave 3.5"
-      description="Track every service unit provided to this participant — meals, housing assistance, transportation, ID recovery, court accompaniment, and more. Each service becomes a countable unit for grant reporting."
-    />
   )
 }
 

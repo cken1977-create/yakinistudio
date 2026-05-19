@@ -1,8 +1,8 @@
 // VIZIONZ SANKOFA · /admin/participants/[id] (Wave 3)
 //
 // Participant detail page. Server component fetches participant, case notes,
-// and staff list. Renders hero + tab navigation. Each tab is its own client
-// component that owns its own CRUD.
+// services delivered, service types catalog, and staff list. Renders hero +
+// tab navigation. Each tab is its own client component that owns its own CRUD.
 
 import {
   requireOperatorOrEmployee,
@@ -16,6 +16,9 @@ import { TabsClient } from './TabsClient'
 import type {
   CaseNoteRecord,
   CaseNoteWithStaff,
+  ServiceDeliveredRecord,
+  ServiceWithJoins,
+  ServiceTypeRecord,
 } from './types'
 import type {
   ParticipantRecord,
@@ -79,15 +82,62 @@ export default async function ParticipantDetailPage({
     staff: { full_name: string | null; role: string | null } | null
   }
 
-  const caseNotes: CaseNoteWithStaff[] = ((notesData ?? []) as unknown as NoteWithJoin[]).map(
-    (n) => ({
-      ...n,
-      staff_full_name: n.staff?.full_name ?? null,
-      staff_role: n.staff?.role ?? null,
-    }),
-  )
+  const caseNotes: CaseNoteWithStaff[] = (
+    (notesData ?? []) as unknown as NoteWithJoin[]
+  ).map((n) => ({
+    ...n,
+    staff_full_name: n.staff?.full_name ?? null,
+    staff_role: n.staff?.role ?? null,
+  }))
 
-  // Fetch active staff for note authoring + case manager display
+  // Fetch services delivered for this participant, joined with service_type
+  // for category/unit display and staff for delivered_by attribution
+  const { data: servicesData } = await supabase
+    .from('services_delivered')
+    .select(
+      'id, participant_id, service_type_id, delivered_by_id, delivered_at, ' +
+        'units, outcome, related_cohort_id, notes, cost_amount, ' +
+        'cost_funded_by, created_at, ' +
+        'service_type:service_type_id (name, category, countable_unit), ' +
+        'staff:delivered_by_id (full_name)',
+    )
+    .eq('participant_id', id)
+    .order('delivered_at', { ascending: false })
+
+  type ServiceWithJoin = ServiceDeliveredRecord & {
+    service_type: {
+      name: string | null
+      category: string | null
+      countable_unit: string | null
+    } | null
+    staff: { full_name: string | null } | null
+  }
+
+  const services: ServiceWithJoins[] = (
+    (servicesData ?? []) as unknown as ServiceWithJoin[]
+  ).map((s) => ({
+    ...s,
+    service_type_name: s.service_type?.name ?? null,
+    service_type_category: s.service_type?.category ?? null,
+    service_type_unit: s.service_type?.countable_unit ?? null,
+    delivered_by_name: s.staff?.full_name ?? null,
+  }))
+
+  // Fetch active service types catalog for the log-service dropdown
+  const { data: serviceTypesData } = await supabase
+    .from('service_types')
+    .select(
+      'id, slug, name, description, category, countable_unit, is_active',
+    )
+    .eq('is_active', true)
+    .order('category', { ascending: true })
+    .order('name', { ascending: true })
+
+  const serviceTypes = (
+    serviceTypesData ?? []
+  ) as unknown as ServiceTypeRecord[]
+
+  // Fetch active staff for note authoring + service deliverer + case manager
   const { data: staffData } = await supabase
     .from('staff')
     .select('id, full_name, role')
@@ -197,14 +247,8 @@ export default async function ParticipantDetailPage({
           label="Case Manager"
           value={caseManager?.full_name ?? 'Unassigned'}
         />
-        <QuickFact
-          label="Phone"
-          value={participant.phone_primary ?? '—'}
-        />
-        <QuickFact
-          label="Email"
-          value={participant.email ?? '—'}
-        />
+        <QuickFact label="Phone" value={participant.phone_primary ?? '—'} />
+        <QuickFact label="Email" value={participant.email ?? '—'} />
         <QuickFact
           label="Location"
           value={
@@ -219,8 +263,11 @@ export default async function ParticipantDetailPage({
       <TabsClient
         participantId={participant.id}
         caseNotes={caseNotes}
+        services={services}
+        serviceTypes={serviceTypes}
         staff={staff}
         defaultAuthorId={defaultAuthorId}
+        defaultDelivererId={defaultAuthorId}
         operatorName={greetingName}
       />
     </div>
