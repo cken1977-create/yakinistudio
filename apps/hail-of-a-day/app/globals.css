@@ -2061,3 +2061,432 @@ form.intake-form {
   color: var(--signal);
   font-weight: 700;
    }
+
+/* ── CUSTOMER PORTAL (claim status demo) ─────────────────────────────────── */
+.portal-shell {
+  background: var(--navy-deep);
+  min-height: 100vh;
+}
+
+.portal-container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.portal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+.portal-eyebrow {
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--signal);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.portal-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--chrome-bright);
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+.portal-vehicle {
+  font-size: 1rem;
+  color: var(--chrome-mid);
+}
+
+.portal-claim-card {
+  background: var(--navy-deepest);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 20px 24px;
+  min-width: 220px;
+}
+.portal-claim-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--chrome-dim);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.portal-claim-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--chrome-bright);
+  margin-bottom: 14px;
+  letter-spacing: 0.04em;
+}
+.portal-claim-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-strong);
+  font-size: 0.88rem;
+  color: var(--chrome-mid);
+}
+.portal-claim-stat strong {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.4rem;
+}
+.portal-claim-stat .signal { color: var(--signal); }
+
+.portal-status-headline {
+  background:
+    radial-gradient(circle at 0% 50%, rgba(61, 220, 61, 0.12), transparent 60%),
+    var(--navy-deepest);
+  border: 1px solid var(--line-strong);
+  border-left: 4px solid var(--signal);
+  border-radius: 6px;
+  padding: 24px 28px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 0 30px var(--signal-glow);
+}
+.portal-status-pulse {
+  width: 14px;
+  height: 14px;
+  background: var(--signal);
+  border-radius: 50%;
+  box-shadow: 0 0 16px var(--signal);
+  animation: pulse 1.6s ease-in-out infinite;
+  flex-shrink: 0;
+}
+.portal-status-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--signal);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.portal-status-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--chrome-bright);
+  margin-bottom: 6px;
+  line-height: 1.15;
+}
+.portal-status-sub {
+  font-size: 0.92rem;
+  color: var(--chrome-mid);
+}
+.portal-status-sub strong { color: var(--chrome-bright); }
+
+.portal-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  background: var(--navy-deepest);
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  padding: 4px;
+  overflow-x: auto;
+}
+.portal-tab {
+  flex: 1;
+  background: transparent;
+  color: var(--chrome-mid);
+  border: none;
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.portal-tab:hover { color: var(--chrome-bright); }
+.portal-tab.active {
+  background: var(--signal);
+  color: var(--navy-deepest);
+}
+
+.portal-panel {
+  background: var(--navy-deepest);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 32px;
+}
+
+/* ── Timeline (Progress tab) ── */
+.timeline {
+  position: relative;
+  padding-left: 24px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  background: var(--line-strong);
+}
+.timeline-step {
+  position: relative;
+  padding-bottom: 28px;
+  padding-left: 28px;
+}
+.timeline-step:last-child { padding-bottom: 0; }
+.timeline-marker {
+  position: absolute;
+  left: -16px;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  font-family: 'Oswald', sans-serif;
+  background: var(--navy);
+  border: 2px solid var(--line-strong);
+  color: var(--chrome-dim);
+}
+.timeline-step.complete .timeline-marker {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: var(--navy-deepest);
+}
+.timeline-step.current .timeline-marker {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: var(--navy-deepest);
+  box-shadow: 0 0 16px var(--signal-glow);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+.timeline-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.timeline-step.complete .timeline-label,
+.timeline-step.current .timeline-label { color: var(--chrome-bright); }
+.timeline-step.future .timeline-label { color: var(--chrome-dim); }
+.timeline-sublabel {
+  font-size: 0.85rem;
+  color: var(--chrome-mid);
+}
+.timeline-step.future .timeline-sublabel { color: var(--chrome-dim); }
+
+/* ── Photos tab ── */
+.portal-photo-section { margin-bottom: 28px; }
+.portal-photo-section:last-child { margin-bottom: 0; }
+.portal-photo-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.88rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--signal);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.portal-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+@media (max-width: 640px) { .portal-photo-grid { grid-template-columns: repeat(2, 1fr); } }
+.portal-photo {
+  aspect-ratio: 1;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(58, 141, 181, 0.15) 0%, transparent 60%),
+    var(--navy);
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  color: var(--chrome-dim);
+  font-weight: 600;
+}
+.portal-photo-pending .portal-photo {
+  opacity: 0.5;
+  background: var(--navy-deepest);
+}
+
+/* ── Messages tab ── */
+.messages-list {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 12px;
+  margin-bottom: 20px;
+  max-height: 460px;
+  overflow-y: auto;
+}
+.message {
+  background: var(--navy);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 16px 18px;
+}
+.message-tania {
+  border-left: 3px solid var(--signal);
+}
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.message-from {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--chrome-bright);
+  font-weight: 600;
+}
+.message-tania .message-from { color: var(--signal); }
+.message-when {
+  font-size: 0.78rem;
+  color: var(--chrome-dim);
+}
+.message-text {
+  font-size: 0.95rem;
+  color: var(--chrome);
+  line-height: 1.55;
+}
+
+.message-compose {
+  display: flex;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line-strong);
+}
+.message-input {
+  flex: 1;
+  padding: 12px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--chrome-bright);
+  background: var(--navy);
+}
+.message-input:focus {
+  outline: none;
+  border-color: var(--signal);
+  background: var(--navy-lift);
+}
+.message-send {
+  background: var(--signal);
+  color: var(--navy-deepest);
+  border: none;
+  padding: 12px 20px;
+  border-radius: 3px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ── Details tab ── */
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+@media (max-width: 700px) { .details-grid { grid-template-columns: 1fr; } }
+
+.detail-block {
+  background: var(--navy);
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  padding: 22px 24px;
+}
+.detail-block-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--signal);
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line-strong);
+}
+.detail-block-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.92rem;
+  gap: 16px;
+}
+.detail-row span {
+  color: var(--chrome-dim);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.detail-row strong {
+  color: var(--chrome-bright);
+  font-weight: 600;
+  text-align: right;
+}
+.detail-row strong.signal { color: var(--signal); }
+
+.portal-help {
+  background: var(--navy);
+  border: 1px solid var(--line-strong);
+  border-left: 3px solid var(--teal-bright);
+  border-radius: 4px;
+  padding: 24px;
+  text-align: center;
+}
+.portal-help h3 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--chrome-bright);
+  margin-bottom: 8px;
+}
+.portal-help p {
+  color: var(--chrome-mid);
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+}
+.portal-help-btn {
+  display: inline-block;
+  background: var(--signal);
+  color: var(--navy-deepest);
+  padding: 12px 24px;
+  border-radius: 3px;
+  font-weight: 800;
+  font-size: 0.88rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+   }
