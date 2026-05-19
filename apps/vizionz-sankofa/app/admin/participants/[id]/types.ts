@@ -248,3 +248,105 @@ export function formatFileSize(bytes: number | null): string {
   }
   return `${size.toFixed(size < 10 && unitIndex > 0 ? 1 : 0)} ${units[unitIndex]}`
 }
+
+
+// ─── ASSESSMENTS (Wave 3.7) ────────────────────────────────────────────────
+
+export type AssessmentInterval =
+  | 'baseline'
+  | '3_month'
+  | '6_month'
+  | '12_month'
+  | 'exit'
+  | 'follow_up'
+
+export type AssessmentDomain =
+  | 'Housing'
+  | 'Family'
+  | 'Employment'
+  | 'Mental Wellness'
+  | 'Substance/Recovery'
+  | 'Social Support'
+
+export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
+  'Housing',
+  'Family',
+  'Employment',
+  'Mental Wellness',
+  'Substance/Recovery',
+  'Social Support',
+]
+
+export const VS_BASELINE_INSTRUMENT_NAME = 'VS Six-Domain Readiness'
+export const VS_BASELINE_INSTRUMENT_VERSION = '1.0'
+
+export type AssessmentRecord = {
+  id: string
+  participant_id: string
+  administered_by_id: string | null
+  assessed_at: string
+  interval: AssessmentInterval
+  related_cohort_id: string | null
+  instrument_name: string | null
+  instrument_version: string | null
+  composite_score: string | null
+}
+
+export type AssessmentScoreRecord = {
+  id: string
+  assessment_id: string
+  domain: string
+  score: string
+  sub_scores: Record<string, unknown> | null
+  notes: string | null
+  created_at: string
+}
+
+export type AssessmentWithScores = AssessmentRecord & {
+  administered_by_name: string | null
+  scores: AssessmentScoreRecord[]
+}
+
+export type DomainScoreInput = {
+  domain: AssessmentDomain
+  score: number
+  notes: string | null
+}
+
+export type AssessmentEditableFields = {
+  assessed_at: string
+  interval: AssessmentInterval
+  administered_by_id: string | null
+  domain_scores: DomainScoreInput[]
+}
+
+export const ASSESSMENT_INTERVAL_LABELS: Record<AssessmentInterval, string> = {
+  baseline: 'Baseline',
+  '3_month': '3-Month',
+  '6_month': '6-Month',
+  '12_month': '12-Month',
+  exit: 'Exit',
+  follow_up: 'Follow-up',
+}
+
+export const LIKERT_LABELS: Record<number, string> = {
+  1: 'Crisis',
+  2: 'Vulnerable',
+  3: 'Stable',
+  4: 'Safe',
+  5: 'Thriving',
+}
+
+export const LIKERT_COLORS: Record<number, string> = {
+  1: '#CE1126',
+  2: '#B45F00',
+  3: '#5B2C8F',
+  4: '#007A33',
+  5: '#005522',
+}
+
+export function computeComposite(scores: DomainScoreInput[]): number {
+  if (scores.length === 0) return 0
+  const sum = scores.reduce((s, d) => s + d.score, 0)
+  return Math.round((sum / scores.length) * 100) / 100
+}

@@ -1,9 +1,8 @@
 // VIZIONZ SANKOFA · /admin/participants/[id] (Wave 3)
 //
 // Participant detail page. Server component fetches participant, case notes,
-// services delivered, service types catalog, documents, and staff list.
-// Renders hero + tab navigation. Each tab is its own client component that
-// owns its own CRUD.
+// services delivered, service types catalog, documents, assessments, and
+// staff list. Renders hero + tab navigation.
 
 import {
   requireOperatorOrEmployee,
@@ -22,6 +21,9 @@ import type {
   ServiceTypeRecord,
   ParticipantDocumentRecord,
   ParticipantDocumentWithStaff,
+  AssessmentRecord,
+  AssessmentScoreRecord,
+  AssessmentWithScores,
 } from './types'
 import type {
   ParticipantRecord,
@@ -68,7 +70,7 @@ export default async function ParticipantDetailPage({
 
   const participant = participantData as unknown as ParticipantRecord
 
-  // Fetch case notes for this participant, joined with staff for display
+  // Case notes
   const { data: notesData } = await supabase
     .from('case_notes')
     .select(
@@ -93,7 +95,7 @@ export default async function ParticipantDetailPage({
     staff_role: n.staff?.role ?? null,
   }))
 
-  // Fetch services delivered for this participant, joined with service_type
+  // Services delivered
   const { data: servicesData } = await supabase
     .from('services_delivered')
     .select(
@@ -125,7 +127,7 @@ export default async function ParticipantDetailPage({
     delivered_by_name: s.staff?.full_name ?? null,
   }))
 
-  // Fetch active service types catalog
+  // Service types catalog
   const { data: serviceTypesData } = await supabase
     .from('service_types')
     .select(
@@ -139,7 +141,7 @@ export default async function ParticipantDetailPage({
     serviceTypesData ?? []
   ) as unknown as ServiceTypeRecord[]
 
-  // Fetch participant documents, joined with staff for uploader display
+  // Documents
   const { data: documentsData } = await supabase
     .from('participant_documents')
     .select(
@@ -162,7 +164,34 @@ export default async function ParticipantDetailPage({
     uploaded_by_name: d.staff?.full_name ?? null,
   }))
 
-  // Fetch active staff for all tab interactions
+  // Assessments with scores joined
+  const { data: assessmentsData } = await supabase
+    .from('assessments')
+    .select(
+      'id, participant_id, administered_by_id, assessed_at, interval, ' +
+        'related_cohort_id, instrument_name, instrument_version, ' +
+        'composite_score, ' +
+        'staff:administered_by_id (full_name), ' +
+        'scores:assessment_scores (id, assessment_id, domain, score, ' +
+        '  sub_scores, notes, created_at)',
+    )
+    .eq('participant_id', id)
+    .order('assessed_at', { ascending: false })
+
+  type AssessmentWithJoin = AssessmentRecord & {
+    staff: { full_name: string | null } | null
+    scores: AssessmentScoreRecord[]
+  }
+
+  const assessments: AssessmentWithScores[] = (
+    (assessmentsData ?? []) as unknown as AssessmentWithJoin[]
+  ).map((a) => ({
+    ...a,
+    administered_by_name: a.staff?.full_name ?? null,
+    scores: a.scores ?? [],
+  }))
+
+  // Staff (active only)
   const { data: staffData } = await supabase
     .from('staff')
     .select('id, full_name, role')
@@ -172,8 +201,7 @@ export default async function ParticipantDetailPage({
   const staff = (staffData ?? []) as unknown as StaffRecord[]
 
   // VS uses vs_operators for auth; staff table is the CRM identity layer.
-  // For now, default the author/uploader to the first staff member; in
-  // Wave 3.5 we link vs_operators ↔ staff for accurate attribution.
+  // Default attribution to first staff member; Wave 3.5 links them properly.
   const defaultAuthorId = staff[0]?.id ?? null
 
   const greetingName = getOperatorDisplayName(user)
@@ -224,7 +252,7 @@ export default async function ParticipantDetailPage({
         Participant · Case File
       </div>
 
-      {/* Hero — name + status */}
+      {/* Hero */}
       <div
         style={{
           display: 'flex',
@@ -250,7 +278,7 @@ export default async function ParticipantDetailPage({
         {participant.legacyline_subject_id && <LegacylinePillServer />}
       </div>
 
-      {/* Quick facts row */}
+      {/* Quick facts */}
       <div
         style={{
           display: 'grid',
@@ -288,10 +316,12 @@ export default async function ParticipantDetailPage({
         services={services}
         serviceTypes={serviceTypes}
         documents={documents}
+        assessments={assessments}
         staff={staff}
         defaultAuthorId={defaultAuthorId}
         defaultDelivererId={defaultAuthorId}
         defaultUploaderId={defaultAuthorId}
+        defaultAdministrator={defaultAuthorId}
         operatorName={greetingName}
       />
     </div>
@@ -342,12 +372,7 @@ function LegacylinePillServer() {
 
 function QuickFact({ label, value }: { label: string; value: string }) {
   return (
-    <div
-      style={{
-        background: '#FFFFFF',
-        padding: '16px 20px',
-      }}
-    >
+    <div style={{ background: '#FFFFFF', padding: '16px 20px' }}>
       <div
         style={{
           fontSize: '10px',

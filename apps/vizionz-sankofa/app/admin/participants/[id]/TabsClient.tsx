@@ -3,18 +3,19 @@
 // VIZIONZ SANKOFA · /admin/participants/[id] · TabsClient
 //
 // Tab navigation for participant detail page. Owns active-tab state.
-// Wave 3 currently has Notes + Services + Documents shipped. Assessments
-// is a placeholder for Wave 3.7.
+// Wave 3 fully shipped: Notes + Services + Documents + Assessments.
 
 import { useState } from 'react'
 import { CaseNotesTab } from './CaseNotesTab'
 import { ServicesTab } from './ServicesTab'
 import { DocumentsTab } from './DocumentsTab'
+import { AssessmentsTab } from './AssessmentsTab'
 import type {
   CaseNoteWithStaff,
   ServiceWithJoins,
   ServiceTypeRecord,
   ParticipantDocumentWithStaff,
+  AssessmentWithScores,
   TabKey,
 } from './types'
 import { TAB_LABELS } from './types'
@@ -26,10 +27,12 @@ export function TabsClient({
   services,
   serviceTypes,
   documents,
+  assessments,
   staff,
   defaultAuthorId,
   defaultDelivererId,
   defaultUploaderId,
+  defaultAdministrator,
   operatorName,
 }: {
   participantId: string
@@ -37,10 +40,12 @@ export function TabsClient({
   services: ServiceWithJoins[]
   serviceTypes: ServiceTypeRecord[]
   documents: ParticipantDocumentWithStaff[]
+  assessments: AssessmentWithScores[]
   staff: StaffRecord[]
   defaultAuthorId: string | null
   defaultDelivererId: string | null
   defaultUploaderId: string | null
+  defaultAdministrator: string | null
   operatorName: string
 }) {
   const [activeTab, setActiveTab] = useState<TabKey>('notes')
@@ -49,7 +54,6 @@ export function TabsClient({
 
   return (
     <div>
-      {/* Tab navigation */}
       <nav
         style={{
           display: 'flex',
@@ -65,6 +69,7 @@ export function TabsClient({
           if (key === 'notes') count = caseNotes.length
           if (key === 'services') count = services.length
           if (key === 'documents') count = documents.length
+          if (key === 'assessments') count = assessments.length
 
           return (
             <button
@@ -106,7 +111,6 @@ export function TabsClient({
         })}
       </nav>
 
-      {/* Tab content */}
       <div>
         {activeTab === 'notes' && (
           <CaseNotesTab
@@ -133,10 +137,16 @@ export function TabsClient({
             defaultUploaderId={defaultUploaderId}
           />
         )}
-        {activeTab === 'assessments' && <AssessmentsPlaceholder />}
+        {activeTab === 'assessments' && (
+          <AssessmentsTab
+            participantId={participantId}
+            initialAssessments={assessments}
+            staff={staff}
+            defaultAdministrator={defaultAdministrator}
+          />
+        )}
       </div>
 
-      {/* Operator footer */}
       <footer
         style={{
           marginTop: '48px',
@@ -153,76 +163,6 @@ export function TabsClient({
       >
         Signed in as {operatorName}
       </footer>
-    </div>
-  )
-}
-
-function AssessmentsPlaceholder() {
-  return (
-    <ComingSoonPanel
-      title="Readiness Assessments"
-      wave="Wave 3.7"
-      description="Six-domain readiness check-ins (Housing, Family, Employment, Mental Wellness, Substance/Recovery, Social Support). Tracks progress over time. Wave 3.5+ upgrades to the branded VS Sankofa Family Readiness Index methodology."
-    />
-  )
-}
-
-function ComingSoonPanel({
-  title,
-  wave,
-  description,
-}: {
-  title: string
-  wave: string
-  description: string
-}) {
-  return (
-    <div
-      style={{
-        padding: '60px 40px',
-        textAlign: 'center',
-        border: '1px dashed rgba(10, 10, 10, 0.18)',
-        borderRadius: '8px',
-        background: '#FAFAF8',
-        maxWidth: '560px',
-        margin: '0 auto',
-      }}
-    >
-      <div
-        style={{
-          fontSize: '10px',
-          fontWeight: 600,
-          letterSpacing: '0.22em',
-          textTransform: 'uppercase',
-          color: '#5B2C8F',
-          marginBottom: '12px',
-          fontFamily:
-            'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
-        }}
-      >
-        {wave} · Coming Soon
-      </div>
-      <h3
-        style={{
-          fontSize: '22px',
-          fontWeight: 600,
-          color: '#0A0A0A',
-          marginBottom: '12px',
-          fontFamily: '"DM Serif Display", Georgia, serif',
-        }}
-      >
-        {title}
-      </h3>
-      <p
-        style={{
-          fontSize: '14px',
-          lineHeight: 1.65,
-          color: 'rgba(10, 10, 10, 0.65)',
-          margin: 0,
-        }}
-      >
-        {description}
-      </p>
     </div>
   )
 }
