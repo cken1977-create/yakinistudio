@@ -1,0 +1,25 @@
+{
+  "name": "hail-of-a-day",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@yakini/config": "*",
+    "@yakini/ui": "*",
+    "@yakini/database": "*",
+    "@supabase/supabase-js": "^2.45.0",
+    "next": "16.2.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  }
+}
