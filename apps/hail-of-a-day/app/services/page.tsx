@@ -22,14 +22,14 @@ export default function ServicesPage() {
       <section className="services-grid-section">
         <div className="container">
           <div className="services-grid">
-            {services.items.map((service, i) => (
+            {(services.items ?? []).map((service, i) => (
               <div key={i} className="service-card">
                 <div className="service-icon">{service.icon}</div>
                 <h2 className="service-title">{service.title}</h2>
                 <p className="service-description">{service.description}</p>
                 {service.features && service.features.length > 0 && (
                   <ul className="service-features">
-                    {service.features.map((feature, j) => (
+                    {(service.features ?? []).map((feature, j) => (
                       <li key={j}>
                         <span className="feature-check">✓</span>
                         {feature}

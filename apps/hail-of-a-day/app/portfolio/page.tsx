@@ -22,7 +22,7 @@ export default function PortfolioPage() {
       <section className="portfolio-grid-section">
         <div className="container">
           <div className="portfolio-grid">
-            {portfolio.items.map((item, i) => (
+            {(portfolio.items ?? []).map((item, i) => (
               <article key={i} className="portfolio-card">
                 <div className="portfolio-image">
                   <div className="portfolio-image-placeholder">
