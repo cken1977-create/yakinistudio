@@ -3,17 +3,18 @@
 // VIZIONZ SANKOFA · /admin/participants/[id] · TabsClient
 //
 // Tab navigation for participant detail page. Owns active-tab state.
-// Renders the appropriate tab content. Wave 3 currently has Notes + Services
-// shipped; Documents and Assessments are placeholders that get swapped in
-// their own Wave 3.X push.
+// Wave 3 currently has Notes + Services + Documents shipped. Assessments
+// is a placeholder for Wave 3.7.
 
 import { useState } from 'react'
 import { CaseNotesTab } from './CaseNotesTab'
 import { ServicesTab } from './ServicesTab'
+import { DocumentsTab } from './DocumentsTab'
 import type {
   CaseNoteWithStaff,
   ServiceWithJoins,
   ServiceTypeRecord,
+  ParticipantDocumentWithStaff,
   TabKey,
 } from './types'
 import { TAB_LABELS } from './types'
@@ -24,18 +25,22 @@ export function TabsClient({
   caseNotes,
   services,
   serviceTypes,
+  documents,
   staff,
   defaultAuthorId,
   defaultDelivererId,
+  defaultUploaderId,
   operatorName,
 }: {
   participantId: string
   caseNotes: CaseNoteWithStaff[]
   services: ServiceWithJoins[]
   serviceTypes: ServiceTypeRecord[]
+  documents: ParticipantDocumentWithStaff[]
   staff: StaffRecord[]
   defaultAuthorId: string | null
   defaultDelivererId: string | null
+  defaultUploaderId: string | null
   operatorName: string
 }) {
   const [activeTab, setActiveTab] = useState<TabKey>('notes')
@@ -59,6 +64,7 @@ export function TabsClient({
           let count: number | null = null
           if (key === 'notes') count = caseNotes.length
           if (key === 'services') count = services.length
+          if (key === 'documents') count = documents.length
 
           return (
             <button
@@ -119,7 +125,14 @@ export function TabsClient({
             defaultDelivererId={defaultDelivererId}
           />
         )}
-        {activeTab === 'documents' && <DocumentsPlaceholder />}
+        {activeTab === 'documents' && (
+          <DocumentsTab
+            participantId={participantId}
+            initialDocuments={documents}
+            staff={staff}
+            defaultUploaderId={defaultUploaderId}
+          />
+        )}
         {activeTab === 'assessments' && <AssessmentsPlaceholder />}
       </div>
 
@@ -141,16 +154,6 @@ export function TabsClient({
         Signed in as {operatorName}
       </footer>
     </div>
-  )
-}
-
-function DocumentsPlaceholder() {
-  return (
-    <ComingSoonPanel
-      title="Participant Documents"
-      wave="Wave 3.6"
-      description="Per-participant document vault. Upload IDs, leases, court paperwork, intake forms, consent forms. Google Drive integration lets you pull existing files. Plaid integration brings in bank statements automatically."
-    />
   )
 }
 

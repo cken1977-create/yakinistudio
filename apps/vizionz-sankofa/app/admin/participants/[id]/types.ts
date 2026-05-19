@@ -160,3 +160,91 @@ export const SERVICE_CATEGORY_COLORS: Record<string, string> = {
   Programming: '#007A33',
   Referral: '#B45F00',
 }
+
+
+// ─── DOCUMENTS (Wave 3.6) ──────────────────────────────────────────────────
+
+export type DocumentCategory =
+  | 'id'
+  | 'lease'
+  | 'court'
+  | 'intake'
+  | 'consent'
+  | 'medical'
+  | 'financial'
+  | 'education'
+  | 'employment'
+  | 'benefits'
+  | 'other'
+
+export type ParticipantDocumentRecord = {
+  id: string
+  participant_id: string
+  uploaded_by_id: string | null
+  filename: string
+  storage_path: string
+  file_size_bytes: number | null
+  mime_type: string | null
+  category: string | null
+  description: string | null
+  is_confidential: boolean | null
+  uploaded_at: string
+  expires_at: string | null
+  created_at: string
+}
+
+export type ParticipantDocumentWithStaff = ParticipantDocumentRecord & {
+  uploaded_by_name: string | null
+}
+
+export const DOCUMENT_CATEGORY_LABELS: Record<DocumentCategory, string> = {
+  id: 'Government ID',
+  lease: 'Lease / Housing',
+  court: 'Court / Legal',
+  intake: 'Intake Form',
+  consent: 'Consent Form',
+  medical: 'Medical',
+  financial: 'Financial',
+  education: 'Education',
+  employment: 'Employment',
+  benefits: 'Benefits',
+  other: 'Other',
+}
+
+export const DOCUMENT_CATEGORY_ICONS: Record<DocumentCategory, string> = {
+  id: '🪪',
+  lease: '🏠',
+  court: '⚖️',
+  intake: '📋',
+  consent: '✍️',
+  medical: '🏥',
+  financial: '💵',
+  education: '🎓',
+  employment: '💼',
+  benefits: '🤝',
+  other: '📄',
+}
+
+export const STORAGE_BUCKET_PARTICIPANT_DOCS = 'vs-participant-documents'
+
+export function getDocumentStoragePath(
+  participantId: string,
+  filename: string,
+): string {
+  // Sanitize filename — replace problematic chars
+  const safe = filename.replace(/[^a-zA-Z0-9._-]/g, '_')
+  const timestamp = Date.now()
+  return `${participantId}/${timestamp}_${safe}`
+}
+
+export function formatFileSize(bytes: number | null): string {
+  if (!bytes || bytes === 0) return '—'
+  const units = ['B', 'KB', 'MB', 'GB']
+  let size = bytes
+  let unitIndex = 0
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024
+    unitIndex++
+  }
+  return `${size.toFixed(size < 10 && unitIndex > 0 ? 1 : 0)} ${units[unitIndex]}`
+}

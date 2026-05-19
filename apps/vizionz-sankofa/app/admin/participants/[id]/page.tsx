@@ -1,8 +1,9 @@
 // VIZIONZ SANKOFA · /admin/participants/[id] (Wave 3)
 //
 // Participant detail page. Server component fetches participant, case notes,
-// services delivered, service types catalog, and staff list. Renders hero +
-// tab navigation. Each tab is its own client component that owns its own CRUD.
+// services delivered, service types catalog, documents, and staff list.
+// Renders hero + tab navigation. Each tab is its own client component that
+// owns its own CRUD.
 
 import {
   requireOperatorOrEmployee,
@@ -19,6 +20,8 @@ import type {
   ServiceDeliveredRecord,
   ServiceWithJoins,
   ServiceTypeRecord,
+  ParticipantDocumentRecord,
+  ParticipantDocumentWithStaff,
 } from './types'
 import type {
   ParticipantRecord,
@@ -91,7 +94,6 @@ export default async function ParticipantDetailPage({
   }))
 
   // Fetch services delivered for this participant, joined with service_type
-  // for category/unit display and staff for delivered_by attribution
   const { data: servicesData } = await supabase
     .from('services_delivered')
     .select(
@@ -123,7 +125,7 @@ export default async function ParticipantDetailPage({
     delivered_by_name: s.staff?.full_name ?? null,
   }))
 
-  // Fetch active service types catalog for the log-service dropdown
+  // Fetch active service types catalog
   const { data: serviceTypesData } = await supabase
     .from('service_types')
     .select(
@@ -137,7 +139,30 @@ export default async function ParticipantDetailPage({
     serviceTypesData ?? []
   ) as unknown as ServiceTypeRecord[]
 
-  // Fetch active staff for note authoring + service deliverer + case manager
+  // Fetch participant documents, joined with staff for uploader display
+  const { data: documentsData } = await supabase
+    .from('participant_documents')
+    .select(
+      'id, participant_id, uploaded_by_id, filename, storage_path, ' +
+        'file_size_bytes, mime_type, category, description, ' +
+        'is_confidential, uploaded_at, expires_at, created_at, ' +
+        'staff:uploaded_by_id (full_name)',
+    )
+    .eq('participant_id', id)
+    .order('uploaded_at', { ascending: false })
+
+  type DocWithJoin = ParticipantDocumentRecord & {
+    staff: { full_name: string | null } | null
+  }
+
+  const documents: ParticipantDocumentWithStaff[] = (
+    (documentsData ?? []) as unknown as DocWithJoin[]
+  ).map((d) => ({
+    ...d,
+    uploaded_by_name: d.staff?.full_name ?? null,
+  }))
+
+  // Fetch active staff for all tab interactions
   const { data: staffData } = await supabase
     .from('staff')
     .select('id, full_name, role')
@@ -146,21 +171,18 @@ export default async function ParticipantDetailPage({
 
   const staff = (staffData ?? []) as unknown as StaffRecord[]
 
-  // Resolve current operator → staff record (for default note author)
   // VS uses vs_operators for auth; staff table is the CRM identity layer.
-  // For now, default the author to the first staff member; in Wave 3.5 we
-  // link vs_operators ↔ staff for accurate authorship.
+  // For now, default the author/uploader to the first staff member; in
+  // Wave 3.5 we link vs_operators ↔ staff for accurate attribution.
   const defaultAuthorId = staff[0]?.id ?? null
 
   const greetingName = getOperatorDisplayName(user)
 
-  // Display name handling
   const displayName =
     participant.preferred_name && participant.preferred_name.trim().length > 0
       ? `${participant.preferred_name} (${participant.first_name} ${participant.last_name})`
       : `${participant.first_name} ${participant.last_name}`
 
-  // Find assigned case manager
   const caseManager = participant.primary_case_manager_id
     ? staff.find((s) => s.id === participant.primary_case_manager_id)
     : undefined
@@ -259,15 +281,17 @@ export default async function ParticipantDetailPage({
         />
       </div>
 
-      {/* Tabs (client-side state for active tab) */}
+      {/* Tabs */}
       <TabsClient
         participantId={participant.id}
         caseNotes={caseNotes}
         services={services}
         serviceTypes={serviceTypes}
+        documents={documents}
         staff={staff}
         defaultAuthorId={defaultAuthorId}
         defaultDelivererId={defaultAuthorId}
+        defaultUploaderId={defaultAuthorId}
         operatorName={greetingName}
       />
     </div>
