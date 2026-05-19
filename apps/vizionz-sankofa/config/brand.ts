@@ -8,7 +8,7 @@ import type { BrandConfig } from '@yakini/config'
 export const config: BrandConfig = {
   business: {
     name: 'Vizionz Sankofa',
-    tagline: 'Seeing forward, returning to roots.',
+    tagline: 'Seeing into the future while going back to our roots to obtain knowledge to move forward.',
     description: 'Vizionz Sankofa serves New Mexico\'s most vulnerable — unsheltered neighbors, refugee and immigrant families of all backgrounds, youth in crisis, and the families who hold them. Since 2014.',
     yearFounded: 2014,
   },
@@ -101,8 +101,8 @@ export const config: BrandConfig = {
 
   home: {
     hero: {
-      headline: 'Seeing forward, returning to roots.',
-      subheadline: 'Vizionz Sankofa serves New Mexico\'s most vulnerable — unsheltered neighbors, refugee and immigrant families of all backgrounds, youth in crisis, and the families who hold them. We honor where you come from while moving you forward.',
+      headline: 'Seeing into the future while going back to our roots to obtain knowledge to move forward.',
+      subheadline: '',
       cta: 'Get Help Now',
       ctaLink: '/contact',
       secondaryCta: 'Support Our Work',
