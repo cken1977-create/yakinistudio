@@ -11,7 +11,9 @@
     "dev": "turbo dev",
     "dev:yakini": "turbo dev --filter=yakini.digital",
     "dev:template": "turbo dev --filter=template",
-    "lint": "turbo lint"
+    "lint": "turbo lint",
+    "dev:chef-jada": "turbo dev --filter=chef-jada",
+    "build:chef-jada": "turbo build --filter=chef-jada"
   },
   "devDependencies": {
     "turbo": "latest"
