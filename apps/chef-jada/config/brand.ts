@@ -52,6 +52,7 @@ export const config: BrandConfig = {
     subheadline: 'Restaurant-caliber dining, on your terms — wherever the moment matters.',
     items: [
       {
+        image: '/portfolio/01-lamb-chops-demi-glace.jpg',
         title: 'Private Dining',
         description: 'Multi-course tasting menus prepared in your home. Designed around your tastes, dietary needs, and the occasion. Restaurant-tier plating, intimate setting.',
         icon: '🍽️',
@@ -64,6 +65,7 @@ export const config: BrandConfig = {
         features: ['Curated oyster selection', 'Caviar service & pairings', 'Champagne presentation', 'Available by request'],
       },
       {
+        image: '/portfolio/02-lobster-fra-diavolo.jpg',
         title: 'Event Catering',
         description: 'Showstopper menus for intimate gatherings, milestone celebrations, and corporate events. Up to 50 guests with full service staff coordination.',
         icon: '✨',
@@ -76,18 +78,21 @@ export const config: BrandConfig = {
         features: ['Nationwide service', 'Pre-event menu planning', 'Sourcing on location', 'Multi-day engagements'],
       },
       {
+        image: '/portfolio/05-steak-hash.jpg',
         title: '1-on-1 Cooking Training',
         description: 'Private culinary instruction in your kitchen. Learn techniques, build confidence, develop your repertoire. Designed for home cooks who want to elevate.',
         icon: '👩🏽‍🍳',
         features: ['Private in-home lessons', 'Skill-tier instruction', 'Recipe & technique focus', 'Custom curriculum'],
       },
       {
+        image: '/portfolio/03-short-rib-chimichurri.jpg',
         title: 'Restaurant Menu Consulting',
         description: 'Menu development, recipe engineering, and culinary direction for restaurants. From concept to plate, with cost analysis and staff training included.',
         icon: '📋',
         features: ['Menu development', 'Recipe engineering', 'Cost analysis', 'Staff training'],
       },
       {
+        image: '/portfolio/04-salmon-brussels.jpg',
         title: 'Meal Prep',
         description: 'Weekly meal preparation for busy professionals. Restaurant-quality meals customized to your dietary preferences, delivered and stored for the week ahead.',
         icon: '🥘',
