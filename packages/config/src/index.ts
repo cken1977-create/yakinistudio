@@ -12,6 +12,7 @@ export type Service = {
   title: string
   description: string
   icon?: string  // emoji or icon identifier
+  image?: string    // optional photo path
   features?: string[]
 }
 
