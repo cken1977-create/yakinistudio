@@ -200,11 +200,11 @@ export default async function IntakesAdminPage({
       )}
 
       {!error && intakes.length > 0 && filter === 'all' && (
-        <GroupedView intakes={intakes} viewerRole={viewer.role} />
+        <GroupedView intakes={intakes} viewerRole={viewer.role === 'principal' ? 'operator' : viewer.role} />
       )}
 
       {!error && intakes.length > 0 && filter !== 'all' && (
-        <FlatList intakes={intakes} filter={filter} viewerRole={viewer.role} />
+        <FlatList intakes={intakes} filter={filter} viewerRole={viewer.role === 'principal' ? 'operator' : viewer.role} />
       )}
     </div>
   )

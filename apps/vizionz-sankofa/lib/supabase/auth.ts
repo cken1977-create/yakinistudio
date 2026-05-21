@@ -41,7 +41,7 @@ export type VsOperatorRow = {
 // Intersection type: User + role/operator means existing call sites
 // (user.id, user.email) keep working; new ones can branch on user.role.
 export type AuthenticatedOperator = User & {
-  role: 'operator' | 'employee'
+  role: 'principal' | 'operator' | 'employee'
   operator: VsOperatorRow
 }
 
@@ -56,7 +56,7 @@ async function loadCurrentOperator(): Promise<
       kind: 'authorized'
       user: User
       operator: VsOperatorRow
-      role: 'operator' | 'employee'
+      role: 'principal' | 'operator' | 'employee'
     }
 > {
   const supabase = await createClient()
@@ -94,7 +94,7 @@ async function loadCurrentOperator(): Promise<
     kind: 'authorized',
     user,
     operator,
-    role: operator.role as 'operator' | 'employee',
+    role: operator.role as 'principal' | 'operator' | 'employee',
   }
 }
 
@@ -124,7 +124,7 @@ export async function requireOperator(): Promise<AuthenticatedOperator> {
     case 'pending':
       redirect('/admin/access-pending')
     case 'authorized':
-      if (session.role !== 'operator') {
+      if (session.role === 'employee') {
         redirect('/admin/access-denied')
       }
       return Object.assign(session.user, {
@@ -257,3 +257,31 @@ export function getOperatorDisplayName(user: AuthenticatedOperator): string {
   return 'Operator'
 }
 
+
+
+/**
+ * Require the current session to belong to a principal
+ * (Khadijah, Carly, Denise, Clarence).
+ */
+export async function requirePrincipal(): Promise<AuthenticatedOperator> {
+  const session = await loadCurrentOperator()
+
+  switch (session.kind) {
+    case 'unauthenticated':
+      redirect('/admin/login')
+    case 'no_operator_row':
+      redirect('/admin/access-pending')
+    case 'revoked':
+      redirect('/admin/access-pending')
+    case 'pending':
+      redirect('/admin/access-pending')
+    case 'authorized':
+      if (session.role === 'operator' || session.role === 'employee') {
+        redirect('/admin/access-denied')
+      }
+      return Object.assign(session.user, {
+        role: session.role,
+        operator: session.operator,
+      }) as AuthenticatedOperator
+  }
+}
