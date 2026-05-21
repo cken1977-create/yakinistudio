@@ -1,44 +1,34 @@
 import type { BrandConfig } from '@yakini/config';
+import { EXAMPLE_CONFIG } from '@yakini/config';
 
 /**
  * Chef Jada / Pettit Luxe Group
  *
- * Public marketing site config. Operations system (menu builder,
- * cost analysis, booking, payments) lives in Phase 2 admin routes.
+ * Public marketing site config. Built on the Yakini EXAMPLE_CONFIG
+ * which was originally modeled on Chef Jada — we spread it and
+ * override the fields that have changed since (7-service expansion,
+ * multi-city positioning, etc.).
+ *
+ * Operations system (menu builder, cost analysis, booking, payments)
+ * lives in Phase 2 admin routes.
  *
  * Held in Confidence.
  */
 export const config: BrandConfig = {
+  ...EXAMPLE_CONFIG,
+
   business: {
-    name: "Pettit Luxe Group",
-    dba: "Chef Jada",
-    tagline: "Private Chef · Elevated Dining · Chicago + Los Angeles",
-    description: "Chef Jada Pettit brings restaurant-caliber dining to private homes, intimate events, and restaurants across Chicago and Los Angeles. Private dining, oyster and caviar experiences, traveling chef service, 1-on-1 culinary training, and restaurant menu consulting.",
+    ...EXAMPLE_CONFIG.business,
+    name: 'Pettit Luxe Group',
+    dba: 'Chef Jada',
+    tagline: 'Private Chef · Elevated Dining · Chicago + Los Angeles',
+    description: 'Chef Jada Pettit brings restaurant-caliber dining to private homes, intimate events, and restaurants across Chicago and Los Angeles. Private dining, oyster and caviar experiences, traveling chef service, 1-on-1 culinary training, and restaurant menu consulting.',
     yearFounded: 2020,
   },
 
-  brand: {
-    designSystem: 'editorial',
-    colors: {
-      primary: '#8B6914',
-      accent: '#0F0F0F',
-      background: '#FAFAF8',
-      text: '#1A1A1A',
-      textMuted: '#6B6B6B',
-      border: '#E8E4DC',
-    },
-    fonts: {
-      display: 'Cormorant Garamond',
-      body: 'DM Sans',
-    },
-    logo: {
-      text: 'Chef Jada',
-    },
-  },
-
   contact: {
+    ...EXAMPLE_CONFIG.contact,
     email: 'jada@pettitluxe.com',
-    phone: '',
     location: 'Chicago, IL · Los Angeles, CA',
     hours: 'By appointment',
   },
@@ -102,6 +92,7 @@ export const config: BrandConfig = {
   },
 
   seo: {
+    ...EXAMPLE_CONFIG.seo,
     siteUrl: 'https://chef-jada.vercel.app',
     keywords: [
       'private chef chicago',
