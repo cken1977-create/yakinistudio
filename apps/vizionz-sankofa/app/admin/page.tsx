@@ -198,11 +198,15 @@ export default async function AdminLandingPage() {
           label="Documents"
           value={documentCount ?? 0}
           accent="#5B2C8F"
-        <StatCell
-          label="Google Sync"
-          value={googleSyncCount ?? 0}
-          accent={googleSyncCount ? '#007A33' : '#0A0A0A'}
-        />
+        <div style={{ background: '#FFFFFF', padding: '20px 24px', position: 'relative' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '3px', height: '24px', background: googleSyncCount ? '#007A33' : 'rgba(10,10,10,0.15)' }} />
+          <div style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(10,10,10,0.55)', marginBottom: '8px', fontFamily: ''ui-monospace', "SF Mono", Menlo, monospace' }}>
+            Google Sync
+          </div>
+          <div style={{ fontSize: '18px', fontWeight: 600, color: googleSyncCount ? '#007A33' : 'rgba(10,10,10,0.4)', fontFamily: '"DM Serif Display", Georgia, serif' }}>
+            {googleSyncCount ? 'Connected' : 'Not connected'}
+          </div>
+        </div>
         />
       </section>
 
