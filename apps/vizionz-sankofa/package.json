@@ -14,6 +14,8 @@
     "@yakini/config": "*",
     "@yakini/database": "*",
     "@yakini/ui": "*",
+    "google-auth-library": "^10.6.2",
+    "googleapis": "^172.0.0",
     "heic2any": "^0.0.4",
     "mammoth": "^1.12.0",
     "next": "16.2.4",
