@@ -254,8 +254,8 @@ export function Hero({ config }: { config: BrandConfig }) {
                 </span>
               </div>
               <h1 className="vs-hero-headline">
-                Seeing forward,
-                <em>returning to roots.</em>
+                &ldquo;Seeing into the future while going back to our roots{' '}
+                <em>to obtain knowledge to move forward.</em>&rdquo;
               </h1>
               <p className="vs-hero-tagline">
                 {hero.subheadline}
