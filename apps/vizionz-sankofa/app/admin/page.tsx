@@ -88,7 +88,20 @@ export default async function AdminLandingPage() {
     .select('*', { count: 'exact', head: true })
     .in('status', ['drafting', 'submitted', 'awarded'])
 
+
+  const { count: googleSyncCount } = await supabase
+    .from('google_oauth_connections')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_active', true)
+
   const greetingName = getOperatorDisplayName(user)
+
+  const { data: recentActivity } = await supabase
+    .from('case_notes')
+    .select('id, content, created_at, participant_id, participants(first_name, last_name)')
+    .order('created_at', { ascending: false })
+    .limit(5)
+
   // emailLocal kept for any other call sites — leaving the derivation for
   // now in case other parts of the page reference it; remove in future
   // polish if confirmed unused.
@@ -185,6 +198,11 @@ export default async function AdminLandingPage() {
           label="Documents"
           value={documentCount ?? 0}
           accent="#5B2C8F"
+        <StatCell
+          label="Google Sync"
+          value={googleSyncCount ?? 0}
+          accent={googleSyncCount ? '#007A33' : '#0A0A0A'}
+        />
         />
       </section>
 
@@ -302,8 +320,62 @@ export default async function AdminLandingPage() {
             status="coming"
           />
         </div>
+
+      {/* Activity feed */}
+      <ActivityFeed items={recentActivity ?? []} />
       </section>
     </div>
+  )
+}
+
+
+type ActivityItem = {
+  id: string
+  content: string
+  created_at: string
+  participant_id: string
+  participants: { first_name: string; last_name: string } | null
+}
+
+function ActivityFeed({ items }: { items: ActivityItem[] }) {
+  if (items.length === 0) return null
+  return (
+    <section style={{ marginBottom: '40px' }}>
+      <div style={{
+        fontSize: '11px', fontWeight: 600, letterSpacing: '0.18em',
+        textTransform: 'uppercase', color: 'rgba(10,10,10,0.5)',
+        marginBottom: '16px',
+        fontFamily: ''ui-monospace', "SF Mono", "JetBrains Mono", Menlo, monospace',
+      }}>
+        Recent Activity
+      </div>
+      <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {items.map(item => {
+          const name = item.participants
+            ? `${item.participants.first_name} ${item.participants.last_name}`
+            : 'Unknown'
+          const date = new Date(item.created_at).toLocaleDateString()
+          return (
+            <li key={item.id} style={{
+              background: '#FFFFFF', border: '1px solid rgba(10,10,10,0.08)',
+              borderRadius: '8px', padding: '14px 18px',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px',
+            }}>
+              <div>
+                <p style={{ fontSize: '13px', fontWeight: 600, color: '#0A0A0A', margin: '0 0 4px' }}>{name}</p>
+                <p style={{ fontSize: '13px', color: 'rgba(10,10,10,0.6)', margin: 0, lineHeight: 1.5 }}>
+                  {item.content.length > 120 ? item.content.slice(0, 120) + '…' : item.content}
+                </p>
+              </div>
+              <span style={{
+                fontSize: '11px', color: 'rgba(10,10,10,0.4)', whiteSpace: 'nowrap',
+                fontFamily: ''ui-monospace', "SF Mono", Menlo, monospace',
+              }}>{date}</span>
+            </li>
+          )
+        })}
+      </ul>
+    </section>
   )
 }
 

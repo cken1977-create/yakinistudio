@@ -63,7 +63,31 @@ export function ParticipantsListClient({
     })
   }, [participants, search, tab])
 
-  const staffById = useMemo(() => {
+  function exportCSV() {
+    const headers = ["First Name","Last Name","Preferred Name","Email","Phone","City","State","Status","Intake Date","Case Manager"]
+    const rows = filtered.map(p => [
+      p.first_name ?? '',
+      p.last_name ?? '',
+      p.preferred_name ?? '',
+      p.email ?? '',
+      p.phone_primary ?? '',
+      p.city ?? '',
+      p.state ?? '',
+      p.status ?? '',
+      p.intake_date ?? '',
+      staffById.get(p.primary_case_manager_id ?? '')?.full_name ?? ''
+    ])
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `vs-participants-${new Date().toISOString().slice(0,10)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+    const staffById = useMemo(() => {
     const map = new Map<string, StaffRecord>()
     staff.forEach((s) => map.set(s.id, s))
     return map
@@ -112,6 +136,22 @@ export function ParticipantsListClient({
         >
           + Add Participant
         </button>
+          <button
+            onClick={exportCSV}
+            style={{
+              padding: '10px 18px',
+              border: '1px solid rgba(10, 10, 10, 0.16)',
+              background: '#FFFFFF',
+              color: '#0A0A0A',
+              borderRadius: '6px',
+              fontSize: '14px',
+              fontWeight: 500,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            Export CSV
+          </button>
       </section>
 
       {/* Status tabs */}
@@ -191,6 +231,108 @@ export function ParticipantsListClient({
   )
 }
 
+
+function QuickNoteModal({
+  participantId,
+  participantName,
+  onClose,
+}: {
+  participantId: string
+  participantName: string
+  onClose: () => void
+}) {
+  const [content, setContent] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [done, setDone] = useState(false)
+
+  async function save() {
+    if (!content.trim()) { setError('Note cannot be empty.'); return }
+    setSaving(true)
+    setError(null)
+    const supabase = createBrowserClient()
+    const { error: err } = await supabase.from('case_notes').insert({
+      participant_id: participantId,
+      content: content.trim(),
+      note_type: 'general',
+      created_at: new Date().toISOString(),
+    })
+    setSaving(false)
+    if (err) { setError(err.message); return }
+    setDone(true)
+    setTimeout(onClose, 800)
+  }
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, background: 'rgba(10,10,10,0.45)',
+        display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+        padding: '40px 16px', overflowY: 'auto', zIndex: 200,
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: '100%', maxWidth: '520px', background: '#FFFFFF',
+          borderRadius: '12px', padding: '28px', boxShadow: '0 24px 64px rgba(10,10,10,0.25)',
+        }}
+      >
+        <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#0A0A0A', marginBottom: '4px', fontFamily: '"DM Serif Display", Georgia, serif' }}>
+          Quick Note
+        </h2>
+        <p style={{ fontSize: '13px', color: 'rgba(10,10,10,0.5)', marginBottom: '16px' }}>
+          {participantName}
+        </p>
+        {done ? (
+          <p style={{ fontSize: '14px', color: '#007A33' }}>✓ Note saved.</p>
+        ) : (
+          <>
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows={4}
+              placeholder="Add a case note…"
+              style={{
+                width: '100%', padding: '10px 14px', border: '1px solid rgba(10,10,10,0.16)',
+                borderRadius: '6px', fontSize: '14px', color: '#0A0A0A',
+                background: '#FFFFFF', boxSizing: 'border-box', fontFamily: 'inherit',
+                resize: 'vertical',
+              }}
+            />
+            {error && <p style={{ fontSize: '13px', color: '#C0392B', marginTop: '6px' }}>{error}</p>}
+            <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+              <button
+                onClick={save}
+                disabled={saving}
+                style={{
+                  padding: '9px 18px', background: '#0A0A0A', color: '#FFFFFF',
+                  border: 'none', borderRadius: '6px', fontSize: '13px',
+                  fontWeight: 600, cursor: saving ? 'not-allowed' : 'pointer',
+                  fontFamily: 'inherit', opacity: saving ? 0.6 : 1,
+                }}
+              >
+                {saving ? 'Saving…' : 'Save Note'}
+              </button>
+              <button
+                onClick={onClose}
+                style={{
+                  padding: '9px 18px', background: '#FFFFFF', color: '#0A0A0A',
+                  border: '1px solid rgba(10,10,10,0.16)', borderRadius: '6px',
+                  fontSize: '13px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit',
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function TabButton({
   label,
   active,
@@ -231,6 +373,7 @@ function ParticipantRow({
   caseManager: StaffRecord | undefined
   onEdit: () => void
 }) {
+  const [quickNote, setQuickNote] = useState(false)
   const displayName =
     participant.preferred_name && participant.preferred_name.trim().length > 0
       ? `${participant.preferred_name} (${participant.first_name} ${participant.last_name})`
@@ -321,6 +464,29 @@ function ParticipantRow({
       >
         Open
       </button>
+          <button
+            onClick={() => setQuickNote(true)}
+            style={{
+              padding: '8px 16px',
+              border: '1px solid rgba(10,10,10,0.16)',
+              background: '#FFFFFF',
+              color: '#0A0A0A',
+              borderRadius: '6px',
+              fontSize: '13px',
+              fontWeight: 500,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            + Note
+          </button>
+          {quickNote && (
+            <QuickNoteModal
+              participantId={participant.id}
+              participantName={displayName}
+              onClose={() => setQuickNote(false)}
+            />
+          )}
     </article>
   )
 }
