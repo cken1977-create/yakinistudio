@@ -139,8 +139,8 @@ const GLOBAL_CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
   :root {
-    --navy: #0A1F3D;
-    --navy-deep: #050E1F;
+    --navy: #0A0908;
+    --navy-deep: #0A0908;
     --black: #000000;
     --black-soft: #0A0A0A;
     --gold: #C8A84B;
