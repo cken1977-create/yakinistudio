@@ -686,6 +686,7 @@ const PAGE_CSS = `
   .pr-header {
     background: linear-gradient(180deg, rgba(10, 9, 8, 0.20) 0%, rgba(10, 9, 8, 0.40) 100%), url('/yakini-pricing-bg.jpg') center center / cover no-repeat;
     min-height: 600px;
+    position: relative;
   }
   .pr-page-sub-italic {
     margin-top: 20px;
