@@ -1004,23 +1004,10 @@ const CSS = `
     z-index: 1;
   }
   .yk-hero-grid {
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(201, 169, 97, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(201, 169, 97, 0.03) 1px, transparent 1px);
-    background-size: 80px 80px;
-    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent 80%);
+    display: none;
   }
   .yk-hero-glow {
-    position: absolute;
-    top: -10%; left: 50%;
-    transform: translateX(-50%);
-    width: 1200px; height: 800px;
-    background: radial-gradient(ellipse at center,
-      rgba(201, 169, 97, 0.12) 0%,
-      transparent 70%);
-    filter: blur(60px);
-    animation: glow-pulse 8s ease-in-out infinite;
+    display: none;
   }
   @keyframes glow-pulse {
     0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
