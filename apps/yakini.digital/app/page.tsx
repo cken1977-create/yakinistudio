@@ -3,17 +3,17 @@
 import { useState, useEffect } from 'react'
 
 // ═════════════════════════════════════════════════════════════════════════
-// YAKINI HOME v3 — "Digital infrastructure for serious founders."
+// YAKINI HOME v4 — "Digital infrastructure for serious founders."
 // File: apps/yakini.digital/app/page.tsx
 //
-// v3 changes (May 4, 2026):
-//   - Migrated to Cosmogram brand identity (Dogon-anchored)
-//   - Warm Black + Antique Gold + Bone palette
-//   - Fraunces display + Inter body + JetBrains Mono accents
-//   - Brand mark replaced with the B2 Cosmogram (cosmic egg + sene)
-//   - Added Section 03·B — Composer (the operating layer)
-//   - Added Section 03·C — Yakini Studios (production arm)
-//   - Section 03·A retained as Yakini Intelligence (existing tools)
+// v4 changes (May 26, 2026):
+//   - Brand mark replaced: CosmogramMark SVG → <img src="/yakini-lockup.jpg" />
+//   - New section: Verticals (5 cards) inserted between Platforms and Intelligence
+//   - New section: Proof (Crownpoint, TheyTowedMyCar, Vizionz Sankofa)
+//   - New section: Partner Channel teaser before Final CTA
+//   - Vizionz Sankofa status: PILOT → LIVE (Wave 3.5 deployed May 24)
+//   - Footer updates: phone numbers, contracts portal, BRSA Holdings reference
+//   - CSS visual identity preserved (palette refresh ships in next commit)
 // ═════════════════════════════════════════════════════════════════════════
 
 export default function HomePage() {
@@ -34,7 +34,7 @@ export default function HomePage() {
       <nav className={`yk-nav ${scrolled ? 'scrolled' : ''}`}>
         <div className="yk-nav-inner">
           <a href="/" className="yk-brand" aria-label="Yakini home">
-            <CosmogramMark size={36} />
+            <YakiniMark size={36} />
             <div className="yk-brand-text">
               <span className="yk-brand-name">YAKINI</span>
               <span className="yk-brand-sub">DIGITAL INFRASTRUCTURE</span>
@@ -96,12 +96,13 @@ export default function HomePage() {
 
           <p className="yk-hero-sub">
             We don&apos;t make websites. We build the platforms your business runs on —
-            with intelligence baked into the foundation.
+            with intelligence baked into the foundation. Deployed against proven vertical
+            patterns. Owned by you from day one.
           </p>
 
           <div className="yk-hero-ctas">
             <a href="/apply" className="yk-btn-primary">
-              <span>Apply for partnership</span>
+              <span>Start the Operational Drag Audit</span>
               <span className="yk-btn-arrow">→</span>
             </a>
             <a href="/platforms" className="yk-btn-ghost">
@@ -114,6 +115,7 @@ export default function HomePage() {
               <span>· LEGACYLINE</span>
               <span>· THEYTOWEDMYCAR</span>
               <span>· VIZIONZ SANKOFA</span>
+              <span>· CROWNPOINT STRATEGIES</span>
               <span>· PETTÍT LUXE</span>
               <span>· PX3 ENERGY</span>
               <span>· COMPOSER</span>
@@ -121,6 +123,7 @@ export default function HomePage() {
               <span>· LEGACYLINE</span>
               <span>· THEYTOWEDMYCAR</span>
               <span>· VIZIONZ SANKOFA</span>
+              <span>· CROWNPOINT STRATEGIES</span>
               <span>· PETTÍT LUXE</span>
               <span>· PX3 ENERGY</span>
             </div>
@@ -154,7 +157,7 @@ export default function HomePage() {
                 <br />
                 They don&apos;t build software. We do.
               </p>
-              <p className="yk-manifesto-credit">— BUILT BY YAKINI</p>
+              <p className="yk-manifesto-credit">— BUILT BY YAKINI · GOVERNED BY BRSA</p>
             </div>
           </div>
         </div>
@@ -180,7 +183,7 @@ export default function HomePage() {
             <a href="/platforms#theytowedmycar" className="yk-platform-card yk-platform-featured">
               <div className="yk-platform-meta">
                 <span className="yk-platform-status">LIVE</span>
-                <span className="yk-platform-tier">INTELLIGENCE TIER</span>
+                <span className="yk-platform-tier">AUTHORITY TIER</span>
               </div>
               <h3 className="yk-platform-name">TheyTowedMyCar.com</h3>
               <p className="yk-platform-desc">
@@ -216,14 +219,26 @@ export default function HomePage() {
               <span className="yk-platform-arrow">→</span>
             </a>
 
-            <a href="#" className="yk-platform-card yk-platform-soon">
+            <a href="#" className="yk-platform-card">
               <div className="yk-platform-meta">
-                <span className="yk-platform-status">PILOT</span>
-                <span className="yk-platform-tier">FOUNDATION</span>
+                <span className="yk-platform-status">LIVE</span>
+                <span className="yk-platform-tier">AUTHORITY</span>
               </div>
               <h3 className="yk-platform-name">Vizionz Sankofa</h3>
               <p className="yk-platform-desc">
-                Albuquerque nonprofit serving low-income families and refugee communities.
+                Albuquerque nonprofit. Case management platform serving low-income families and refugee communities.
+              </p>
+              <span className="yk-platform-arrow">→</span>
+            </a>
+
+            <a href="#" className="yk-platform-card">
+              <div className="yk-platform-meta">
+                <span className="yk-platform-status">BUILDING</span>
+                <span className="yk-platform-tier">CORE</span>
+              </div>
+              <h3 className="yk-platform-name">Crownpoint Strategies</h3>
+              <p className="yk-platform-desc">
+                Real estate operations platform — Houston. Founding deployment of the Real Estate Vertical Edition.
               </p>
               <span className="yk-platform-arrow">→</span>
             </a>
@@ -262,6 +277,61 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ───── 02·B VERTICALS ───── */}
+      <section className="yk-section yk-verticals">
+        <div className="yk-section-inner">
+          <div className="yk-section-head">
+            <div className="yk-section-tag">
+              <span className="yk-num">02·B</span>
+              <span>Vertical Editions</span>
+            </div>
+            <h2 className="yk-section-h2">
+              Five proven industry patterns.
+              <br />
+              <span className="yk-italic">Deployment, </span>
+              <span className="yk-gold">not discovery.</span>
+            </h2>
+            <p className="yk-verticals-lead">
+              A Vertical Edition is a Yakini engagement deployed against one of our proven industry patterns.
+              The architecture, AI prompt libraries, compliance language, and operational workflows are already built and validated.
+              You&apos;re not paying for discovery. You&apos;re paying for deployment.
+            </p>
+          </div>
+
+          <div className="yk-verticals-grid">
+            {VERTICALS.map((v) => (
+              <a
+                key={v.id}
+                href="/pricing"
+                className={`yk-vertical-card ${v.live ? 'yk-vertical-live' : 'yk-vertical-dev'}`}
+              >
+                <div className="yk-vertical-status">
+                  <span className="yk-vertical-status-dot" />
+                  {v.status}
+                </div>
+                <h3 className="yk-vertical-name">{v.name}</h3>
+                <div className="yk-vertical-proof">
+                  <span className="yk-vertical-proof-label">PROOF</span>
+                  <span className="yk-vertical-proof-name">{v.proof}</span>
+                </div>
+                <p className="yk-vertical-desc">{v.description}</p>
+                <span className="yk-vertical-arrow">{v.live ? 'See deployment →' : 'In development →'}</span>
+              </a>
+            ))}
+          </div>
+
+          <div className="yk-verticals-cta-row">
+            <p className="yk-verticals-straddler">
+              <strong>Not sure which vertical fits?</strong> Start with the Operational Drag Audit.
+              We&apos;ll surface your dominant operational pattern and match you to the right deployment — vertical or custom.
+            </p>
+            <a href="/apply" className="yk-btn-primary">
+              <span>Start the Audit</span>
+              <span className="yk-btn-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
       {/* ───── 03·A INTELLIGENCE ───── */}
       <section className="yk-section yk-intelligence">
         <div className="yk-section-inner">
@@ -371,7 +441,7 @@ export default function HomePage() {
           <div className="yk-composer-preview">
             <div className="yk-composer-preview-header">
               <div className="yk-composer-preview-brand">
-                <CosmogramMark size={22} breathe={true} />
+                <YakiniMark size={22} />
                 <span className="yk-composer-preview-name">YAKINI</span>
                 <span className="yk-composer-preview-tag">· Composer</span>
               </div>
@@ -380,7 +450,7 @@ export default function HomePage() {
 
             <div className="yk-composer-preview-body">
               <div className="yk-composer-preview-mark">
-                <CosmogramMark size={64} breathe={true} />
+                <YakiniMark size={84} />
               </div>
               <h3 className="yk-composer-preview-greeting">Good evening.</h3>
               <p className="yk-composer-preview-tagline">
@@ -508,6 +578,87 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ───── 05 PROOF ───── */}
+      <section className="yk-section yk-proof">
+        <div className="yk-section-inner">
+          <div className="yk-section-head">
+            <div className="yk-section-tag">
+              <span className="yk-num">05</span>
+              <span>Proof</span>
+            </div>
+            <h2 className="yk-section-h2">
+              Validated <span className="yk-italic">in market.</span>
+              <br />
+              <span className="yk-gold">Operating today.</span>
+            </h2>
+          </div>
+
+          <div className="yk-proof-list">
+            <div className="yk-proof-item">
+              <div className="yk-proof-num">01</div>
+              <div className="yk-proof-content">
+                <h4 className="yk-proof-name">Crownpoint Strategies</h4>
+                <p className="yk-proof-line">
+                  Deploys the Real Estate Vertical Edition for property acquisition and disposition workflows.
+                  Houston-based, founding partner for the real estate vertical.
+                </p>
+              </div>
+            </div>
+
+            <div className="yk-proof-item">
+              <div className="yk-proof-num">02</div>
+              <div className="yk-proof-content">
+                <h4 className="yk-proof-name">TheyTowedMyCar</h4>
+                <p className="yk-proof-line">
+                  Operates on the Professional Services Vertical Edition pattern for consumer advocacy
+                  and case intake. Five Texas counties, AI-powered case triage in 8 seconds.
+                </p>
+              </div>
+            </div>
+
+            <div className="yk-proof-item">
+              <div className="yk-proof-num">03</div>
+              <div className="yk-proof-content">
+                <h4 className="yk-proof-name">Vizionz Sankofa</h4>
+                <p className="yk-proof-line">
+                  Runs on the Workforce Development Vertical Edition for participant case management
+                  and outcomes reporting. Albuquerque-based, first mission-aligned deployment.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* ───── 06 PARTNER CHANNEL ───── */}
+      <section className="yk-section yk-partners">
+        <div className="yk-section-inner">
+          <div className="yk-partners-card">
+            <div className="yk-partners-meta">
+              <span className="yk-partners-dot" />
+              <span>STRATEGIC PARTNER PROGRAM</span>
+            </div>
+            <h2 className="yk-partners-h">
+              For partners who refer business <span className="yk-italic">and earn recurring revenue.</span>
+            </h2>
+            <p className="yk-partners-body">
+              The Strategic Partner Program is for established operators who want to offer Yakini
+              infrastructure to their networks. Partners receive co-marketing rights, revenue share
+              on deployments through their channel, and advisory input on the vertical templates
+              serving their industry. Founding partner economics apply to the first partner in each
+              vertical and do not repeat.
+            </p>
+            <div className="yk-partners-active">
+              <strong>Founding partners in progress:</strong> Crownpoint Strategies (Real Estate vertical).
+              Future real estate channel partners deploy at standard Vertical Edition rates.
+            </div>
+            <a href="/apply" className="yk-btn-primary yk-partners-cta">
+              <span>Apply for Strategic Partner</span>
+              <span className="yk-btn-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* ───── FINAL CTA ───── */}
       <section className="yk-section yk-final">
         <div className="yk-section-inner">
@@ -523,15 +674,15 @@ export default function HomePage() {
             </h2>
             <p className="yk-final-sub">
               If your business is ready to be built on infrastructure that scales with you —
-              not against you — start the conversation.
+              not against you — start with the Operational Drag Audit.
             </p>
             <div className="yk-final-ctas">
               <a href="/apply" className="yk-btn-primary">
-                <span>Apply for partnership</span>
+                <span>Start the Audit</span>
                 <span className="yk-btn-arrow">→</span>
               </a>
-              <a href="/intelligence" className="yk-btn-ghost">
-                <span>See Intelligence</span>
+              <a href="/pricing" className="yk-btn-ghost">
+                <span>See Pricing</span>
               </a>
             </div>
           </div>
@@ -544,14 +695,15 @@ export default function HomePage() {
           <div className="yk-footer-grid">
             <div className="yk-footer-brand">
               <div className="yk-brand">
-                <CosmogramMark size={36} />
+                <YakiniMark size={36} />
                 <div className="yk-brand-text">
                   <span className="yk-brand-name">YAKINI</span>
                   <span className="yk-brand-sub">DIGITAL INFRASTRUCTURE</span>
                 </div>
               </div>
               <p className="yk-footer-tag">
-                The infrastructure layer your business runs on.
+                The infrastructure layer your business runs on. Built in Houston.
+                Governed by BRSA.
               </p>
             </div>
 
@@ -561,25 +713,30 @@ export default function HomePage() {
               <a href="/intelligence">Intelligence</a>
               <a href="/process">Process</a>
               <a href="/pricing">Pricing</a>
+              <a href="/apply">Operational Drag Audit</a>
             </div>
 
             <div className="yk-footer-col">
               <h6>Company</h6>
               <a href="/about">About</a>
               <a href="/apply">Apply</a>
-              <a href="https://brsafoundation.org">BRSA Foundation</a>
+              <a href="https://brsafoundation.org" target="_blank" rel="noopener">BRSA Foundation</a>
+              <a href="https://brsaholdings.org" target="_blank" rel="noopener">BRSA Holdings</a>
             </div>
 
             <div className="yk-footer-col">
               <h6>Contact</h6>
+              <a href="tel:+13466232199">Office · 1 (346) 623-2199</a>
+              <a href="tel:+13466264948">Executive · 1 (346) 626-4948</a>
               <a href="mailto:hello@yakini.digital">hello@yakini.digital</a>
               <a href="mailto:admin@yakini.digital">admin@yakini.digital</a>
+              <a href="https://contracts.yakini.digital">contracts.yakini.digital</a>
             </div>
           </div>
 
           <div className="yk-footer-bottom">
             <span>© 2026 BRSA Holdings, Inc. All rights reserved.</span>
-            <span>YAKINI is part of the BRSA ecosystem.</span>
+            <span>YAKINI is part of the BRSA ecosystem · Houston, Texas</span>
           </div>
         </div>
       </footer>
@@ -587,58 +744,71 @@ export default function HomePage() {
   )
 }
 
-// ─── The Cosmogram Mark (B2 — Four Elements / Sene) ─────
-// Dogon-anchored. Outer rotated square = the cosmic egg.
-// Inner square + cross = the sene seed of the four elements.
-// Center bone = the seed binding them.
-function CosmogramMark({
-  size = 36,
-  breathe = false,
-}: {
-  size?: number
-  breathe?: boolean
-}) {
+// ─── The Yakini Mark ────────────────────────────────────
+// Renders the locked Yakini lockup image from /public/yakini-lockup.jpg
+// Used in: nav, footer, Composer preview header, Composer preview body
+function YakiniMark({ size = 36 }: { size?: number }) {
   return (
-    <svg
-      viewBox="0 0 140 140"
+    <img
+      src="/yakini-lockup.jpg"
+      alt="Yakini"
       width={size}
       height={size}
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      style={{ display: 'block', overflow: 'visible', flexShrink: 0 }}
-    >
-      <rect
-        x="20" y="20" width="100" height="100"
-        fill="none" stroke="var(--gold)" strokeWidth="3"
-        transform="rotate(45 70 70)" opacity="0.85"
-      />
-      <rect
-        x="34" y="34" width="72" height="72"
-        fill="none" stroke="var(--gold)" strokeWidth="3.5"
-      />
-      <line x1="70" y1="34" x2="70" y2="106" stroke="var(--gold)" strokeWidth="3" />
-      <line x1="34" y1="70" x2="106" y2="70" stroke="var(--gold)" strokeWidth="3" />
-      <circle cx="52" cy="52" r="4" fill="var(--gold)" opacity="0.7" />
-      <circle cx="88" cy="52" r="4" fill="var(--gold)" opacity="0.7" />
-      <circle cx="52" cy="88" r="4" fill="var(--gold)" opacity="0.7" />
-      <circle cx="88" cy="88" r="4" fill="var(--gold)" opacity="0.7" />
-      <circle
-        cx="70" cy="70" r="9" fill="var(--bone)"
-        style={
-          breathe
-            ? {
-                transformOrigin: '70px 70px',
-                animation: 'cosmogramBreathe 4s ease-in-out infinite',
-              }
-            : undefined
-        }
-      />
-      <circle cx="70" cy="70" r="3" fill="var(--ink)" />
-    </svg>
+      style={{
+        display: 'block',
+        width: size,
+        height: size,
+        objectFit: 'contain',
+        flexShrink: 0,
+      }}
+    />
   )
 }
 
 // ─── Data ───────────────────────────────────────────────
+
+const VERTICALS = [
+  {
+    id: 'real-estate',
+    name: 'Real Estate Services',
+    status: 'LIVE',
+    live: true,
+    proof: 'Crownpoint Strategies',
+    description: 'Lead intake, fair housing compliance language, transaction workflows, buyer/seller portals, CRM integrations.',
+  },
+  {
+    id: 'professional-services',
+    name: 'Professional Services',
+    status: 'LIVE',
+    live: true,
+    proof: 'TheyTowedMyCar',
+    description: 'Client intake, case/matter management, document workflows, billing, secure client portals.',
+  },
+  {
+    id: 'workforce',
+    name: 'Workforce Development',
+    status: 'LIVE',
+    live: true,
+    proof: 'Vizionz Sankofa',
+    description: 'Participant case management, services tracking, outcomes reporting, grant compliance, funder portals.',
+  },
+  {
+    id: 'hospitality',
+    name: 'Culinary & Hospitality',
+    status: 'Q3 2026',
+    live: false,
+    proof: 'In development',
+    description: 'Booking and consultation workflows, customer preference tracking, content production, white-glove portals.',
+  },
+  {
+    id: 'construction',
+    name: 'Construction & Trade Services',
+    status: 'Q4 2026',
+    live: false,
+    proof: 'In development',
+    description: 'Lead and bid intake, project management, supplier coordination, customer project portals, change orders.',
+  },
+]
 
 const INTEL_TOOLS = [
   { name: 'Case Triage', icon: '⚖', desc: 'Strength assessment, key arguments, risk analysis, evidence checklist.' },
@@ -665,17 +835,17 @@ const STUDIOS_OFFERINGS = [
 ]
 
 const PROCESS_STEPS = [
-  { title: 'Strategic Intake', desc: 'We map your business — workflows, customers, ops, where AI multiplies you.', time: 'Day 1' },
-  { title: 'Architecture', desc: 'Database design, system blueprint, integration plan, security model.', time: 'Days 2-3' },
-  { title: 'Build', desc: 'Custom platform — not a template. Database, APIs, UI, AI tools, admin.', time: 'Days 4-14' },
-  { title: 'Deploy', desc: 'Your domain, your infrastructure, your data. We hand you the keys.', time: 'Day 15' },
-  { title: 'Optimize', desc: 'Monthly platform improvements, AI refinement, new features as you grow.', time: 'Ongoing' },
+  { title: 'Strategic Intake', desc: 'We map your business — workflows, customers, ops, where AI multiplies you. The Operational Drag Audit lives here.', time: 'Day 1' },
+  { title: 'Architecture', desc: 'Database design, system blueprint, integration plan, security model. If a vertical pattern fits, deployment starts here.', time: 'Days 2-3' },
+  { title: 'Build', desc: 'Custom platform — not a template. Database, APIs, UI, AI tools, admin command center. Vertical Editions deploy in 3-5 weeks; custom builds in 8-12.', time: 'Days 4-21' },
+  { title: 'Deploy', desc: 'Your domain, your infrastructure, your data. We hand you the keys. Composer turns on. Yakini Intelligence comes online.', time: 'Launch Day' },
+  { title: 'Optimize', desc: 'Monthly platform improvements, AI refinement, new features as you grow. We don\'t disappear after launch — we operate alongside you.', time: 'Ongoing' },
 ]
 
 // ─── CSS ───────────────────────────────────────────────
 
 const CSS = `
-  /* ═══ FOUNDATION — Cosmogram identity (Dogon-anchored) ═══ */
+  /* ═══ FOUNDATION ═══ */
   :root {
     --ink: #0A0908;
     --ink-deep: #060504;
@@ -716,11 +886,6 @@ const CSS = `
 
   .yk-italic { font-style: italic; font-family: var(--font-display); font-weight: 300; }
   .yk-gold { color: var(--gold); }
-
-  @keyframes cosmogramBreathe {
-    0%, 100% { transform: scale(1); opacity: 0.85; }
-    50%      { transform: scale(1.08); opacity: 1; }
-  }
 
   /* ═══ NAV ═══ */
   .yk-nav {
@@ -839,7 +1004,8 @@ const CSS = `
     .yk-nav-cta { display: none; }
     .yk-burger { display: block; }
    }
-   /* ═══ HERO ═══ */
+
+  /* ═══ HERO ═══ */
   .yk-hero {
     position: relative;
     min-height: 100vh;
@@ -1026,7 +1192,6 @@ const CSS = `
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
   }
-  
 
   /* Scroll indicator */
   .yk-hero-scroll {
@@ -1091,7 +1256,6 @@ const CSS = `
   }
   .yk-section-head { margin-bottom: 80px; }
   .yk-section-cta { margin-top: 60px; display: flex; justify-content: center; }
-
   /* ═══ MANIFESTO ═══ */
   .yk-manifesto {
     background: linear-gradient(180deg, var(--ink) 0%, var(--ink-soft) 100%);
@@ -1249,6 +1413,157 @@ const CSS = `
   @media (max-width: 600px) {
     .yk-platforms-grid { grid-template-columns: 1fr; }
     .yk-platform-featured { grid-column: span 1; }
+  }
+
+  /* ═══ VERTICALS ═══ */
+  .yk-verticals {
+    background: linear-gradient(180deg, var(--ink-deep) 0%, var(--ink) 100%);
+    border-top: 1px solid var(--line);
+    position: relative;
+  }
+  .yk-verticals-lead {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.65;
+    color: var(--muted);
+    max-width: 720px;
+    margin-top: -32px;
+    margin-bottom: 60px;
+    font-weight: 300;
+  }
+  .yk-verticals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 60px;
+  }
+  .yk-vertical-card {
+    padding: 32px 28px;
+    background: rgba(245, 242, 234, 0.02);
+    border: 1px solid var(--line);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .yk-vertical-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s;
+  }
+  .yk-vertical-card:hover {
+    border-color: var(--gold);
+    background: linear-gradient(180deg, rgba(201, 169, 97, 0.04) 0%, rgba(201, 169, 97, 0.01) 100%);
+    transform: translateY(-3px);
+  }
+  .yk-vertical-card:hover::before { transform: scaleX(1); }
+  .yk-vertical-live {
+    border-color: var(--gold-line);
+  }
+  .yk-vertical-dev {
+    opacity: 0.78;
+  }
+  .yk-vertical-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .yk-vertical-status-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: dot-pulse 2s ease-in-out infinite;
+  }
+  .yk-vertical-dev .yk-vertical-status {
+    color: var(--muted);
+  }
+  .yk-vertical-dev .yk-vertical-status-dot {
+    background: var(--muted);
+    animation: none;
+  }
+  .yk-vertical-name {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--bone);
+    line-height: 1.2;
+    margin-bottom: 18px;
+    letter-spacing: -0.01em;
+  }
+  .yk-vertical-proof {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 0;
+    border-top: 1px dashed var(--line);
+    border-bottom: 1px dashed var(--line);
+    margin-bottom: 16px;
+  }
+  .yk-vertical-proof-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .yk-vertical-proof-name {
+    font-family: var(--font-display);
+    font-size: 16px;
+    color: var(--bone);
+    font-weight: 400;
+  }
+  .yk-vertical-desc {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--muted);
+    font-weight: 300;
+    margin-bottom: 20px;
+    flex: 1;
+  }
+  .yk-vertical-arrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-top: auto;
+  }
+  .yk-verticals-cta-row {
+    padding: 36px 40px;
+    background: linear-gradient(135deg, rgba(201, 169, 97, 0.06) 0%, rgba(245, 242, 234, 0.02) 100%);
+    border: 1px solid var(--gold-line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .yk-verticals-straddler {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--bone);
+    max-width: 640px;
+    font-weight: 300;
+  }
+  .yk-verticals-straddler strong {
+    color: var(--gold);
+    font-weight: 500;
+    font-family: var(--font-display);
+    font-style: italic;
   }
 
   /* ═══ INTELLIGENCE ═══ */
@@ -1508,7 +1823,7 @@ const CSS = `
     font-style: italic;
   }
 
-  /* Composer preview card — mirrors the live Composer aesthetic */
+  /* Composer preview card */
   .yk-composer-preview {
     max-width: 900px;
     margin: 0 auto 80px;
@@ -1741,7 +2056,7 @@ const CSS = `
     border-radius: 50%;
     animation: dot-pulse 2s ease-in-out infinite;
   }
-  
+
   /* ═══ METRICS ═══ */
   .yk-metrics {
     background: var(--ink-deep);
@@ -1834,6 +2149,126 @@ const CSS = `
   @media (max-width: 700px) {
     .yk-process-item { grid-template-columns: 60px 1fr; gap: 16px; }
     .yk-process-time { grid-column: 2; text-align: left; margin-top: 8px; }
+  }
+
+  /* ═══ PROOF ═══ */
+  .yk-proof {
+    background: linear-gradient(180deg, var(--ink-soft) 0%, var(--ink-deep) 100%);
+    border-top: 1px solid var(--line);
+  }
+  .yk-proof-list {
+    display: flex; flex-direction: column;
+    border-top: 1px solid var(--gold-line);
+  }
+  .yk-proof-item {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 32px;
+    padding: 36px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: baseline;
+    transition: all 0.3s;
+  }
+  .yk-proof-item:hover {
+    background: rgba(201, 169, 97, 0.03);
+    padding-left: 16px;
+  }
+  .yk-proof-num {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 400;
+    color: var(--gold);
+    font-style: italic;
+    line-height: 1;
+  }
+  .yk-proof-name {
+    font-family: var(--font-display);
+    font-size: clamp(26px, 3vw, 38px);
+    font-weight: 400;
+    color: var(--bone);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  .yk-proof-line {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--muted);
+    max-width: 720px;
+    font-weight: 300;
+  }
+  @media (max-width: 700px) {
+    .yk-proof-item { grid-template-columns: 60px 1fr; gap: 20px; }
+  }
+
+  /* ═══ PARTNERS ═══ */
+  .yk-partners {
+    background: var(--ink);
+    border-top: 1px solid var(--line);
+  }
+  .yk-partners-card {
+    padding: 64px;
+    background: linear-gradient(135deg, rgba(201, 169, 97, 0.08) 0%, rgba(245, 242, 234, 0.02) 100%);
+    border: 2px solid var(--gold);
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .yk-partners-meta {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 6px 14px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+  .yk-partners-dot {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: dot-pulse 2s ease-in-out infinite;
+  }
+  .yk-partners-h {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 4.4vw, 52px);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--bone);
+    margin-bottom: 28px;
+    letter-spacing: -0.02em;
+    max-width: 22ch;
+  }
+  .yk-partners-body {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--bone);
+    margin-bottom: 28px;
+    max-width: 760px;
+    font-weight: 300;
+  }
+  .yk-partners-active {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin-bottom: 36px;
+    padding: 20px 24px;
+    background: rgba(0,0,0,0.2);
+    border-left: 2px solid var(--gold);
+  }
+  .yk-partners-active strong {
+    color: var(--gold);
+    font-weight: 500;
+  }
+  .yk-partners-cta {
+    align-self: flex-start;
+  }
+  @media (max-width: 700px) {
+    .yk-partners-card { padding: 40px 28px; }
   }
 
   /* ═══ FINAL CTA ═══ */
