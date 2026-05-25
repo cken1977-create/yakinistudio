@@ -994,7 +994,7 @@ const CSS = `
     position: absolute;
     inset: 0;
     background: var(--ink) url('/yakini-hero-bg.jpg') center center / cover no-repeat;
-    z-index: -1;
+    z-index: 0;
   }
   .yk-hero-bg::after {
     content: '';
