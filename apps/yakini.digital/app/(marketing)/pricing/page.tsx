@@ -684,7 +684,8 @@ export default function PricingPage() {
 const PAGE_CSS = `
   /* ═══ HEADER ═══ */
   .pr-header {
-    background: linear-gradient(180deg, rgba(10, 9, 8, 0.45) 0%, rgba(10, 9, 8, 0.65) 100%), url('/yakini-pricing-bg.jpg') center center / cover no-repeat;
+    background: linear-gradient(180deg, rgba(10, 9, 8, 0.20) 0%, rgba(10, 9, 8, 0.40) 100%), url('/yakini-pricing-bg.jpg') center center / cover no-repeat;
+    min-height: 600px;
   }
   .pr-page-sub-italic {
     margin-top: 20px;

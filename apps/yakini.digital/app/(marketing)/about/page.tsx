@@ -352,6 +352,11 @@ const BELIEFS = [
 
 const PAGE_CSS = `
   /* ═══ HEADER ═══ */
+  .ab-header {
+    background: linear-gradient(180deg, rgba(10, 9, 8, 0.20) 0%, rgba(10, 9, 8, 0.40) 100%), url('/yakini-about-bg.jpg') center center / cover no-repeat;
+    min-height: 600px;
+    position: relative;
+  }
   .ab-header::before {
     background: radial-gradient(ellipse at center,
       rgba(200, 168, 75, 0.15) 0%,
