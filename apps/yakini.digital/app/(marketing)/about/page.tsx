@@ -14,6 +14,7 @@ export default function AboutPage() {
   return (
     <SiteShell>
       <style>{PAGE_CSS}</style>
+      <div className="ab-page-bg" />
 
       {/* ───── HEADER ───── */}
       <header className="yk-page-header ab-header">
@@ -351,6 +352,28 @@ const BELIEFS = [
 ]
 
 const PAGE_CSS = `
+  /* === PAGE BACKGROUND (CGI imagery) === */
+  .ab-page-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: var(--navy-deep) url('/yakini-about-bg.jpg') center center / cover no-repeat;
+    pointer-events: none;
+  }
+  .ab-page-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(10,9,8,0.55) 0%, rgba(10,9,8,0.70) 70%, rgba(10,9,8,0.90) 100%);
+    pointer-events: none;
+  }
+  /* Lift content above the background */
+  header.ab-header,
+  section.yk-section {
+    position: relative;
+    z-index: 1;
+  }
+
   /* ═══ HEADER ═══ */
   .ab-header::before {
     background: radial-gradient(ellipse at center,
