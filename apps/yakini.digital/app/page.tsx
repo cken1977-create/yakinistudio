@@ -2333,4 +2333,48 @@ const CSS = `
   @media (max-width: 500px) {
     .yk-footer-grid { grid-template-columns: 1fr; }
   }
+
+
+  /* ═══ MOBILE OVERFLOW FIXES ═══ */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+    background: var(--ink);
+  }
+  .yk-nav, .yk-nav-inner, .yk-hero, .yk-hero-inner, .yk-section, .yk-section-inner {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  .yk-hero-marquee {
+    max-width: 100vw;
+  }
+  .yk-mobile-menu {
+    background: var(--ink) !important;
+    width: 100vw;
+    max-width: 100vw;
+  }
+  @media (max-width: 600px) {
+    .yk-hero {
+      padding: 100px 20px 40px;
+    }
+    .yk-hero-h1 {
+      font-size: clamp(40px, 9vw, 64px);
+      max-width: 100%;
+    }
+    .yk-section {
+      padding: 80px 20px;
+    }
+    .yk-btn-primary, .yk-btn-ghost {
+      padding: 16px 22px;
+      font-size: 10px;
+      width: 100%;
+      justify-content: center;
+    }
+    .yk-hero-ctas {
+      width: 100%;
+    }
+    .yk-hero-ctas a {
+      width: 100%;
+    }
+  }
 `
