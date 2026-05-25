@@ -2,7 +2,9 @@ import Link from 'next/link'
 
 export default function ServicesPage() {
   return (
-    <div className="min-h-screen bg-[#141414] pt-24">
+    <div className="min-h-screen pt-24" style={{
+      background: "linear-gradient(180deg, rgba(10, 9, 8, 0.20) 0%, rgba(10, 9, 8, 0.40) 100%), url('/yakini-services-bg.jpg') center top / cover no-repeat fixed",
+    }}>
 
       {/* Header */}
       <div className="max-w-7xl mx-auto px-6 py-24 border-b border-[#C9A84C]/15">
