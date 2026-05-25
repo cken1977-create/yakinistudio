@@ -115,7 +115,6 @@ export default function HomePage() {
               <span>· LEGACYLINE</span>
               <span>· THEYTOWEDMYCAR</span>
               <span>· VIZIONZ SANKOFA</span>
-              <span>· CROWNPOINT STRATEGIES</span>
               <span>· PETTÍT LUXE</span>
               <span>· PX3 ENERGY</span>
               <span>· COMPOSER</span>
@@ -123,7 +122,6 @@ export default function HomePage() {
               <span>· LEGACYLINE</span>
               <span>· THEYTOWEDMYCAR</span>
               <span>· VIZIONZ SANKOFA</span>
-              <span>· CROWNPOINT STRATEGIES</span>
               <span>· PETTÍT LUXE</span>
               <span>· PX3 ENERGY</span>
             </div>
@@ -227,18 +225,6 @@ export default function HomePage() {
               <h3 className="yk-platform-name">Vizionz Sankofa</h3>
               <p className="yk-platform-desc">
                 Albuquerque nonprofit. Case management platform serving low-income families and refugee communities.
-              </p>
-              <span className="yk-platform-arrow">→</span>
-            </a>
-
-            <a href="#" className="yk-platform-card">
-              <div className="yk-platform-meta">
-                <span className="yk-platform-status">BUILDING</span>
-                <span className="yk-platform-tier">CORE</span>
-              </div>
-              <h3 className="yk-platform-name">Crownpoint Strategies</h3>
-              <p className="yk-platform-desc">
-                Real estate operations platform — Houston. Founding deployment of the Real Estate Vertical Edition.
               </p>
               <span className="yk-platform-arrow">→</span>
             </a>
@@ -539,8 +525,8 @@ export default function HomePage() {
               <div className="yk-metric-lbl">Average AI analysis time</div>
             </div>
             <div className="yk-metric">
-              <div className="yk-metric-num">~1 hr</div>
-              <div className="yk-metric-lbl">From signed contract to live</div>
+              <div className="yk-metric-num">7 days</div>
+              <div className="yk-metric-lbl">Foundation Engagement to operational</div>
             </div>
             <div className="yk-metric">
               <div className="yk-metric-num">100%</div>
@@ -594,16 +580,6 @@ export default function HomePage() {
           </div>
 
           <div className="yk-proof-list">
-            <div className="yk-proof-item">
-              <div className="yk-proof-num">01</div>
-              <div className="yk-proof-content">
-                <h4 className="yk-proof-name">Crownpoint Strategies</h4>
-                <p className="yk-proof-line">
-                  Deploys the Real Estate Vertical Edition for property acquisition and disposition workflows.
-                  Houston-based, founding partner for the real estate vertical.
-                </p>
-              </div>
-            </div>
 
             <div className="yk-proof-item">
               <div className="yk-proof-num">02</div>
@@ -648,8 +624,7 @@ export default function HomePage() {
               vertical and do not repeat.
             </p>
             <div className="yk-partners-active">
-              <strong>Founding partners in progress:</strong> Crownpoint Strategies (Real Estate vertical).
-              Future real estate channel partners deploy at standard Vertical Edition rates.
+              <strong>Founding partner conversations underway.</strong> Real Estate, Hospitality, and Workforce Development verticals are actively scoping channel partner relationships. Founding partner economics apply only to the first partner in each vertical.
             </div>
             <a href="/apply" className="yk-btn-primary yk-partners-cta">
               <span>Apply for Strategic Partner</span>
@@ -771,10 +746,10 @@ const VERTICALS = [
   {
     id: 'real-estate',
     name: 'Real Estate Services',
-    status: 'LIVE',
-    live: true,
-    proof: 'Crownpoint Strategies',
-    description: 'Lead intake, fair housing compliance language, transaction workflows, buyer/seller portals, CRM integrations.',
+    status: 'Q3 2026',
+    live: false,
+    proof: 'In development',
+    description: 'Lead intake, fair housing compliance language, transaction workflows, buyer/seller portals, CRM integrations. First Vertical Edition deployment in scope.',
   },
   {
     id: 'professional-services',
