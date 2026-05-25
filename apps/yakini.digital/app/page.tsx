@@ -990,7 +990,19 @@ const CSS = `
     flex-direction: column;
     justify-content: center;
   }
-  .yk-hero-bg { position: absolute; inset: 0; background: var(--ink); z-index: -1; }
+  .yk-hero-bg {
+    position: absolute;
+    inset: 0;
+    background: var(--ink) url('/yakini-hero-bg.jpg') center center / cover no-repeat;
+    z-index: -1;
+  }
+  .yk-hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(10, 9, 8, 0.78) 0%, rgba(10, 9, 8, 0.88) 70%, rgba(10, 9, 8, 0.98) 100%);
+    z-index: 1;
+  }
   .yk-hero-grid {
     position: absolute; inset: 0;
     background-image:
@@ -1543,7 +1555,7 @@ const CSS = `
 
   /* ═══ INTELLIGENCE ═══ */
   .yk-intelligence {
-    background: linear-gradient(180deg, var(--ink-deep) 0%, var(--ink) 100%);
+    background: linear-gradient(180deg, rgba(6, 5, 4, 0.92) 0%, rgba(10, 9, 8, 0.95) 100%), url('/yakini-intelligence-bg.jpg') center center / cover no-repeat;
     position: relative;
   }
   .yk-intelligence::before {
@@ -1769,7 +1781,7 @@ const CSS = `
 
   /* ═══ COMPOSER (03·B) ═══ */
   .yk-composer {
-    background: var(--ink);
+    background: linear-gradient(180deg, rgba(10, 9, 8, 0.94) 0%, rgba(10, 9, 8, 0.96) 100%), url('/yakini-composer-bg.jpg') center center / cover no-repeat;
     border-top: 1px solid var(--line);
     position: relative;
   }
