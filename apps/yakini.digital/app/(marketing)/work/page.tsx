@@ -3,7 +3,7 @@ import Link from 'next/link'
 export default function WorkPage() {
   return (
     <div className="min-h-screen pt-24" style={{
-      background: "linear-gradient(180deg, rgba(10, 9, 8, 0.20) 0%, rgba(10, 9, 8, 0.40) 100%), url('/yakini-work-bg.jpg') center top / cover no-repeat fixed",
+      background: "linear-gradient(180deg, rgba(10, 9, 8, 0.85) 0%, rgba(10, 9, 8, 0.92) 100%), url('/yakini-work-bg.jpg') center top / cover no-repeat fixed",
     }}>
 
       {/* Header */}
@@ -14,12 +14,12 @@ export default function WorkPage() {
             Our Work
           </span>
         </div>
-        <h1 className="font-bold text-[#F5EFE3] leading-none tracking-tight mb-6"
+        <h1 className="font-bold text-[#F5EFE3] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] leading-none tracking-tight mb-6"
           style={{ fontSize: 'clamp(40px, 6vw, 80px)' }}>
           Built for founders<br />
           <em className="text-[#C9A84C] not-italic">who mean it.</em>
         </h1>
-        <p className="text-[#F5EFE3]/50 text-lg leading-relaxed max-w-2xl">
+        <p className="text-[#F5EFE3] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/50 text-lg leading-relaxed max-w-2xl">
           Every client gets institutional-grade work. Here's the proof.
         </p>
       </div>
@@ -33,20 +33,20 @@ export default function WorkPage() {
             <div className="text-[#C9A84C] text-[9px] tracking-[4px] uppercase mb-4">
               Case Study — 001
             </div>
-            <h2 className="font-bold text-[#F5EFE3] text-4xl mb-2 leading-tight">
+            <h2 className="font-bold text-[#F5EFE3] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] text-4xl mb-2 leading-tight">
               Pettít Luxe Group
             </h2>
             <p className="text-[#C9A84C] text-lg italic mb-6">
               by Chef Jada — Culinary Consulting & Kitchen Training
             </p>
-            <p className="text-[#F5EFE3]/50 text-base leading-relaxed mb-6">
+            <p className="text-[#F5EFE3] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/50 text-base leading-relaxed mb-6">
               Chef Jada came to Yakini with a vision — a signature menu,
               a consulting practice for restaurant owners, and a kitchen
               training program with no digital infrastructure to support
               any of it. No website. No pricing documents. No professional
               materials. No brand system.
             </p>
-            <p className="text-[#F5EFE3]/50 text-base leading-relaxed mb-10">
+            <p className="text-[#F5EFE3] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/50 text-base leading-relaxed mb-10">
               We built the entire foundation from scratch. One session.
               Everything she needed to walk into any room and close.
             </p>
@@ -68,7 +68,7 @@ export default function WorkPage() {
                 <div key={i}
                   className="flex items-center gap-3 px-5 py-3 border-b border-[#C9A84C]/10 last:border-0">
                   <span className="text-[#C9A84C] text-[8px] flex-shrink-0">◆</span>
-                  <span className="text-[#F5EFE3]/60 text-sm">{item}</span>
+                  <span className="text-[#F5EFE3] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/60 text-sm">{item}</span>
                 </div>
               ))}
             </div>
@@ -92,7 +92,7 @@ export default function WorkPage() {
                   <div className="font-bold text-[#C9A84C] text-4xl mb-2 leading-none">
                     {stat.num}
                   </div>
-                  <div className="text-[#F5EFE3]/40 text-xs leading-relaxed">
+                  <div className="text-[#F5EFE3] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/40 text-xs leading-relaxed">
                     {stat.label}
                   </div>
                 </div>
@@ -125,7 +125,7 @@ export default function WorkPage() {
 
             {/* Quote */}
             <div className="bg-[#1C1C1C] border border-[#C9A84C]/10 p-8 border-l-2 border-l-[#C9A84C]">
-              <p className="text-[#F5EFE3]/60 text-sm italic leading-relaxed mb-4">
+              <p className="text-[#F5EFE3] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/60 text-sm italic leading-relaxed mb-4">
                 "Everything I needed to walk into any room and close.
                 Yakini built my foundation."
               </p>
@@ -143,10 +143,10 @@ export default function WorkPage() {
           <div className="text-[#C9A84C] text-[9px] tracking-[4px] uppercase mb-4">
             Case Study — 002
           </div>
-          <h3 className="text-[#F5EFE3]/30 text-2xl font-bold mb-2">
+          <h3 className="text-[#F5EFE3] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/30 text-2xl font-bold mb-2">
             PX3 Energy Services
           </h3>
-          <p className="text-[#F5EFE3]/20 text-sm italic">
+          <p className="text-[#F5EFE3] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/20 text-sm italic">
             Odessa, TX — Oilfield Services — Coming Soon
           </p>
         </div>
