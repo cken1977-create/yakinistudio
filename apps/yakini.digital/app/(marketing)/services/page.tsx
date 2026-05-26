@@ -7,7 +7,7 @@ export default function ServicesPage() {
     }}>
 
       {/* Header */}
-      <div className="max-w-7xl mx-auto px-6 py-24 border-b border-[#C9A84C]/15">
+      <div className="max-w-7xl mx-auto px-6 py-24 border-b border-[#C9A84C]/15 bg-[#141414]/90 backdrop-blur-sm rounded-lg my-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-8 h-px bg-[#C9A84C]" />
           <span className="text-[#C9A84C] text-[10px] tracking-[4px] uppercase">
@@ -243,7 +243,7 @@ export default function ServicesPage() {
       </div>
 
       {/* CTA */}
-      <div className="max-w-7xl mx-auto px-6 py-24 text-center">
+      <div className="max-w-7xl mx-auto px-6 py-24 text-center bg-[#141414]/90 backdrop-blur-sm rounded-lg my-8">
         <h2 className="font-bold text-[#F5EFE3] text-4xl mb-4 leading-tight">
           Not sure which tier?
         </h2>
