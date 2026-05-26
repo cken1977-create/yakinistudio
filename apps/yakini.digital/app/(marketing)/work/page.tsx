@@ -10,16 +10,16 @@ export default function WorkPage() {
       <div className="max-w-7xl mx-auto px-6 py-24 border-b border-[#C9A84C]/15 bg-[#141414]/90 backdrop-blur-sm rounded-lg my-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-8 h-px bg-[#C9A84C]" />
-          <span className="text-[#FFD700] text-[10px] tracking-[4px] uppercase">
+          <span style={{color: "#FFD700"}} className=" text-[10px] tracking-[4px] uppercase">
             Our Work
           </span>
         </div>
-        <h1 className="font-bold text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] leading-none tracking-tight mb-6"
+        <h1 style={{color: "#FFFFFF"}} className="font-bold [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] leading-none tracking-tight mb-6"
           style={{ fontSize: 'clamp(40px, 6vw, 80px)' }}>
           Built for founders<br />
-          <em className="text-[#FFD700] not-italic">who mean it.</em>
+          <em style={{color: "#FFD700"}} className=" not-italic">who mean it.</em>
         </h1>
-        <p className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/50 text-lg leading-relaxed max-w-2xl">
+        <p style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/50 text-lg leading-relaxed max-w-2xl">
           Every client gets institutional-grade work. Here's the proof.
         </p>
       </div>
@@ -30,23 +30,23 @@ export default function WorkPage() {
 
           {/* Left */}
           <div>
-            <div className="text-[#FFD700] text-[9px] tracking-[4px] uppercase mb-4">
+            <div style={{color: "#FFD700"}} className=" text-[9px] tracking-[4px] uppercase mb-4">
               Case Study — 001
             </div>
-            <h2 className="font-bold text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] text-4xl mb-2 leading-tight">
+            <h2 style={{color: "#FFFFFF"}} className="font-bold [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] text-4xl mb-2 leading-tight">
               Pettít Luxe Group
             </h2>
-            <p className="text-[#FFD700] text-lg italic mb-6">
+            <p style={{color: "#FFD700"}} className=" text-lg italic mb-6">
               by Chef Jada — Culinary Consulting & Kitchen Training
             </p>
-            <p className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/50 text-base leading-relaxed mb-6">
+            <p style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/50 text-base leading-relaxed mb-6">
               Chef Jada came to Yakini with a vision — a signature menu,
               a consulting practice for restaurant owners, and a kitchen
               training program with no digital infrastructure to support
               any of it. No website. No pricing documents. No professional
               materials. No brand system.
             </p>
-            <p className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/50 text-base leading-relaxed mb-10">
+            <p style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/50 text-base leading-relaxed mb-10">
               We built the entire foundation from scratch. One session.
               Everything she needed to walk into any room and close.
             </p>
@@ -67,8 +67,8 @@ export default function WorkPage() {
               ].map((item, i) => (
                 <div key={i}
                   className="flex items-center gap-3 px-5 py-3 border-b border-[#C9A84C]/10 last:border-0">
-                  <span className="text-[#FFD700] text-[8px] flex-shrink-0">◆</span>
-                  <span className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/60 text-sm">{item}</span>
+                  <span style={{color: "#FFD700"}} className=" text-[8px] flex-shrink-0">◆</span>
+                  <span style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/60 text-sm">{item}</span>
                 </div>
               ))}
             </div>
@@ -92,7 +92,7 @@ export default function WorkPage() {
                   <div className="font-bold text-[#FFD700] text-4xl mb-2 leading-none">
                     {stat.num}
                   </div>
-                  <div className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/40 text-xs leading-relaxed">
+                  <div style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/40 text-xs leading-relaxed">
                     {stat.label}
                   </div>
                 </div>
@@ -101,7 +101,7 @@ export default function WorkPage() {
 
             {/* Services delivered */}
             <div className="bg-[#1C1C1C] border border-[#C9A84C]/10 p-8">
-              <div className="text-[#FFD700] text-[9px] tracking-[3px] uppercase mb-4">
+              <div style={{color: "#FFD700"}} className=" text-[9px] tracking-[3px] uppercase mb-4">
                 Services Delivered
               </div>
               <div className="flex flex-wrap gap-2">
@@ -125,11 +125,11 @@ export default function WorkPage() {
 
             {/* Quote */}
             <div className="bg-[#1C1C1C] border border-[#C9A84C]/10 p-8 border-l-2 border-l-[#C9A84C]">
-              <p className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/60 text-sm italic leading-relaxed mb-4">
+              <p style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/60 text-sm italic leading-relaxed mb-4">
                 "Everything I needed to walk into any room and close.
                 Yakini built my foundation."
               </p>
-              <div className="text-[#FFD700] text-[10px] tracking-[2px] uppercase">
+              <div style={{color: "#FFD700"}} className=" text-[10px] tracking-[2px] uppercase">
                 Chef Jada — Pettít Luxe Group
               </div>
             </div>
@@ -140,13 +140,13 @@ export default function WorkPage() {
       {/* Case Study 002 — Coming */}
       <div className="max-w-7xl mx-auto px-6 pb-24">
         <div className="border border-[#C9A84C]/10 bg-[#1C1C1C] p-12 text-center">
-          <div className="text-[#FFD700] text-[9px] tracking-[4px] uppercase mb-4">
+          <div style={{color: "#FFD700"}} className=" text-[9px] tracking-[4px] uppercase mb-4">
             Case Study — 002
           </div>
-          <h3 className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/30 text-2xl font-bold mb-2">
+          <h3 style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/30 text-2xl font-bold mb-2">
             PX3 Energy Services
           </h3>
-          <p className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/20 text-sm italic">
+          <p style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/20 text-sm italic">
             Odessa, TX — Oilfield Services — Coming Soon
           </p>
         </div>

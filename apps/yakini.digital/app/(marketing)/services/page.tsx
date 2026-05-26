@@ -10,16 +10,16 @@ export default function ServicesPage() {
       <div className="max-w-7xl mx-auto px-6 py-24 border-b border-[#C9A84C]/15 bg-[#141414]/90 backdrop-blur-sm rounded-lg my-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-8 h-px bg-[#C9A84C]" />
-          <span className="text-[#FFD700] text-[10px] tracking-[4px] uppercase">
+          <span style={{color: "#FFD700"}} className=" text-[10px] tracking-[4px] uppercase">
             Services
           </span>
         </div>
-        <h1 className="font-bold text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] leading-none tracking-tight mb-6"
+        <h1 style={{color: "#FFFFFF"}} className="font-bold [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] leading-none tracking-tight mb-6"
           style={{ fontSize: 'clamp(40px, 6vw, 80px)' }}>
           Infrastructure for<br />
-          <em className="text-[#FFD700] not-italic">serious builders.</em>
+          <em style={{color: "#FFD700"}} className=" not-italic">serious builders.</em>
         </h1>
-        <p className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/50 text-lg leading-relaxed max-w-2xl">
+        <p style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/50 text-lg leading-relaxed max-w-2xl">
           Four tiers. One ladder. Start where you are and scale
           as your business grows. Every tier builds on the last.
         </p>
@@ -136,16 +136,16 @@ export default function ServicesPage() {
               {/* Tier label */}
               <div className="md:col-span-1 p-8 border-b md:border-b-0 md:border-r border-[#C9A84C]/10 flex flex-col justify-between">
                 <div>
-                  <div className="text-[#FFD700] text-[9px] tracking-[3px] uppercase mb-2">
+                  <div style={{color: "#FFD700"}} className=" text-[9px] tracking-[3px] uppercase mb-2">
                     {service.tier}
                   </div>
-                  <div className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/20 text-[9px] tracking-[2px] uppercase border border-[#F5EFE3]/10 px-2 py-1 inline-block mb-4">
+                  <div style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/20 text-[9px] tracking-[2px] uppercase border border-[#F5EFE3]/10 px-2 py-1 inline-block mb-4">
                     {service.tag}
                   </div>
-                  <div className="text-[#FFD700] font-bold text-2xl leading-none">
+                  <div style={{color: "#FFD700"}} className=" font-bold text-2xl leading-none">
                     {service.price}
                   </div>
-                  <div className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/30 text-xs mt-1">
+                  <div style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/30 text-xs mt-1">
                     {service.retainer}
                   </div>
                 </div>
@@ -153,16 +153,16 @@ export default function ServicesPage() {
 
               {/* Content */}
               <div className="md:col-span-2 p-8 border-b md:border-b-0 md:border-r border-[#C9A84C]/10">
-                <h2 className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] font-bold text-xl mb-3 leading-tight">
+                <h2 style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] font-bold text-xl mb-3 leading-tight">
                   {service.title}
                 </h2>
-                <p className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/40 text-sm leading-relaxed mb-6">
+                <p style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/40 text-sm leading-relaxed mb-6">
                   {service.description}
                 </p>
-                <div className="text-[#FFD700] text-[9px] tracking-[2px] uppercase mb-2">
+                <div style={{color: "#FFD700"}} className=" text-[9px] tracking-[2px] uppercase mb-2">
                   Best For
                 </div>
-                <p className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/30 text-xs leading-relaxed italic">
+                <p style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/30 text-xs leading-relaxed italic">
                   {service.best}
                 </p>
               </div>
@@ -173,7 +173,7 @@ export default function ServicesPage() {
                   {service.includes.map((item) => (
                     <li key={item}
                       className="flex items-start gap-3 text-sm text-white/40">
-                      <span className="text-[#FFD700] text-[8px] mt-1 flex-shrink-0">
+                      <span style={{color: "#FFD700"}} className=" text-[8px] mt-1 flex-shrink-0">
                         ◆
                       </span>
                       {item}
@@ -197,22 +197,22 @@ export default function ServicesPage() {
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-8 h-px bg-[#C9A84C]" />
-                <span className="text-[#FFD700] text-[10px] tracking-[4px] uppercase">
+                <span style={{color: "#FFD700"}} className=" text-[10px] tracking-[4px] uppercase">
                   Alternative
                 </span>
               </div>
-              <h2 className="font-bold text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] text-4xl mb-4 leading-tight">
+              <h2 style={{color: "#FFFFFF"}} className="font-bold [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] text-4xl mb-4 leading-tight">
                 Studio Plan
               </h2>
-              <p className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/50 text-base leading-relaxed mb-6">
+              <p style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/50 text-base leading-relaxed mb-6">
                 No build fee. Just a monthly subscription and we handle
                 everything — site, updates, hosting, and maintenance.
                 Lower barrier to entry. Same quality output.
               </p>
-              <div className="text-[#FFD700] font-bold text-3xl mb-1">
+              <div style={{color: "#FFD700"}} className=" font-bold text-3xl mb-1">
                 $500 – $800
               </div>
-              <div className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/30 text-sm mb-8">
+              <div style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/30 text-sm mb-8">
                 per month — no build fee required
               </div>
               <Link href="/#contact"
@@ -233,8 +233,8 @@ export default function ServicesPage() {
               ].map((item) => (
                 <div key={item}
                   className="flex items-center gap-3 px-6 py-4 border-b border-[#C9A84C]/10 last:border-0">
-                  <span className="text-[#FFD700] text-[8px]">◆</span>
-                  <span className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/50 text-sm">{item}</span>
+                  <span style={{color: "#FFD700"}} className=" text-[8px]">◆</span>
+                  <span style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/50 text-sm">{item}</span>
                 </div>
               ))}
             </div>
@@ -244,10 +244,10 @@ export default function ServicesPage() {
 
       {/* CTA */}
       <div className="max-w-7xl mx-auto px-6 py-24 text-center bg-[#141414]/90 backdrop-blur-sm rounded-lg my-8">
-        <h2 className="font-bold text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] text-4xl mb-4 leading-tight">
+        <h2 style={{color: "#FFFFFF"}} className="font-bold [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] text-4xl mb-4 leading-tight">
           Not sure which tier?
         </h2>
-        <p className="text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/40 text-base mb-10 italic">
+        <p style={{color: "#FFFFFF"}} className=" [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]/40 text-base mb-10 italic">
           Start with a free discovery call. We'll tell you exactly what you need.
         </p>
         <Link href="/#contact"
