@@ -14,8 +14,8 @@ export default function ServicesPage() {
             Services
           </span>
         </div>
-        <h1 style={{color: "#FFFFFF"}} className="font-bold [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] leading-none tracking-tight mb-6"
-          style={{ fontSize: 'clamp(40px, 6vw, 80px)' }}>
+        <h1 style={{color: "#FFFFFF", fontSize: 'clamp(40px, 6vw, 80px)'}} className="font-bold [text-shadow:0_2px_8px_rgba(0,0,0,0.6)] leading-none tracking-tight mb-6"
+          >
           Infrastructure for<br />
           <em style={{color: "#FFD700"}} className=" not-italic">serious builders.</em>
         </h1>
