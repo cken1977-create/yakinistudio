@@ -116,7 +116,7 @@ export default function WorkPage() {
                   'Consulting Deck',
                 ].map((tag) => (
                   <span key={tag}
-                    className="text-[10px] tracking-[1.5px] uppercase text-white/40 border border-[#F5EFE3]/10 px-3 py-1.5">
+                    className="text-[10px] tracking-[1.5px] uppercase text-white border border-[#F5EFE3]/10 px-3 py-1.5">
                     {tag}
                   </span>
                 ))}

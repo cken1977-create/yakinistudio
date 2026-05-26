@@ -172,7 +172,7 @@ export default function ServicesPage() {
                 <ul className="flex flex-col gap-2 mb-6">
                   {service.includes.map((item) => (
                     <li key={item}
-                      className="flex items-start gap-3 text-sm text-white/40">
+                      className="flex items-start gap-3 text-sm text-white">
                       <span style={{color: "#FFD700"}} className=" text-[8px] mt-1 flex-shrink-0">
                         ◆
                       </span>
