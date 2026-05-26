@@ -25,7 +25,7 @@ export default function WorkPage() {
       </div>
 
       {/* Case Study 001 */}
-      <div className="max-w-7xl mx-auto px-6 py-24">
+      <div className="max-w-7xl mx-auto px-6 py-24 bg-[#141414]/90 backdrop-blur-sm rounded-lg my-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
 
           {/* Left */}

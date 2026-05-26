@@ -26,7 +26,7 @@ export default function ServicesPage() {
       </div>
 
       {/* Product Ladder */}
-      <div className="max-w-7xl mx-auto px-6 py-24">
+      <div className="max-w-7xl mx-auto px-6 py-24 bg-[#141414]/90 backdrop-blur-sm rounded-lg my-8">
         <div className="flex flex-col gap-1">
           {[
             {
