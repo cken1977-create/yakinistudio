@@ -11,7 +11,6 @@ export function Header({ config }: { config: BrandConfig }) {
         <Link href="/about" style={{ color: "#efe8dc", textDecoration: "none" }}>About</Link>
         <Link href="/portfolio" style={{ color: "#efe8dc", textDecoration: "none" }}>Work</Link>
         <Link href="/contact" style={{ color: "#efe8dc", textDecoration: "none" }}>Contact</Link>
-        <a href="https://composer.yakini.digital" style={{ color: "#c4a46a", textDecoration: "none" }}>Composer</a>
       </nav>
     </header>
   );
