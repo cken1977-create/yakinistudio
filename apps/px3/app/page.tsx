@@ -1,125 +1,30 @@
-'use client'
+import Link from "next/link";
+import { config } from "@/config/brand";
 
-import { Hero, Section, ServiceCard, Button } from '@yakini/ui'
-import { config } from '@/config/brand'
+const MARK = "https://cdn.midjourney.com/bcb5412a-c0e6-4027-8654-5e6b9a04ef54/0_0.png";
+const CREST_VIDEO = "https://cdn.midjourney.com/video/38673713-5cb1-4157-8fc1-b7fe1fbc402a/1.mp4";
 
 export default function HomePage() {
-  const featured = config.home.featuredServices
-    ? config.home.featuredServices.map(i => config.services.items[i]).filter(Boolean)
-    : config.services.items.slice(0, 3)
-
   return (
-    <>
-      <Hero config={config} />
-
-      {/* Featured Services */}
-      <Section padding="xl">
-        <div style={{ textAlign: 'center', marginBottom: 80 }}>
-          <div style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: 11, fontWeight: 600,
-            letterSpacing: '0.3em', textTransform: 'uppercase',
-            color: 'var(--brand-primary)', marginBottom: 16
-          }}>
-            What We Do
-          </div>
-          <h2 style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(36px, 5vw, 56px)',
-            fontWeight: 500, lineHeight: 1.15,
-            maxWidth: '18ch', margin: '0 auto 20px',
-            letterSpacing: '-0.02em'
-          }}>
-            {config.services.headline}
-          </h2>
-          <p style={{
-            fontSize: 17, color: 'var(--brand-muted)', lineHeight: 1.7,
-            maxWidth: 540, margin: '0 auto'
-          }}>
-            {config.services.subheadline}
-          </p>
-        </div>
-
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 24, marginBottom: 64
-        }}>
-          {featured.map((s, i) => (
-            <ServiceCard key={s.title} service={s} index={i} />
-          ))}
-        </div>
-
-        <div style={{ textAlign: 'center' }}>
-          <Button variant="ghost" href="/services">View All Services</Button>
-        </div>
-      </Section>
-
-      {/* About Preview */}
-      <Section padding="xl" background="var(--brand-text)">
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 80, alignItems: 'center'
-        }}>
-          <div>
-            <div style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: 11, fontWeight: 600,
-              letterSpacing: '0.3em', textTransform: 'uppercase',
-              color: 'var(--brand-primary)', marginBottom: 16
-            }}>
-              About
-            </div>
-            <h2 style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(32px, 4vw, 48px)',
-              fontWeight: 500, color: 'var(--brand-bg)',
-              marginBottom: 20, letterSpacing: '-0.02em'
-            }}>
-              {config.about.headline}
-            </h2>
-            <p style={{
-              fontSize: 17, color: 'rgba(255,255,255,0.7)',
-              lineHeight: 1.8, marginBottom: 32
-            }}>
-              {config.about.story.split('\n')[0]}
-            </p>
-            <Button variant="ghost" href="/about">Read Our Story</Button>
-          </div>
-          <div style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(32px, 4vw, 48px)',
-            fontStyle: 'italic',
-            color: 'var(--brand-bg)',
-            opacity: 0.9, lineHeight: 1.4
-          }}>
-            "{config.about.mission}"
+    <div style={{ background: "#070605", color: "#f3e6d4" }}>
+      <section style={{ minHeight: "92vh", display: "grid", placeItems: "center", padding: "3.5rem 1.5rem 4.5rem", background: "radial-gradient(70% 50% at 50% 0%, #3a1a0a 0%, #070605 58%)" }}>
+        <div style={{ maxWidth: 720, textAlign: "center" }}>
+          <p style={{ letterSpacing: "0.28em", fontSize: 11, color: "#e07a2f", textTransform: "uppercase", marginBottom: 20 }}>Odessa · Permian Basin</p>
+          <video autoPlay muted loop playsInline poster={MARK} style={{ width: "min(420px, 86vw)", height: "auto", margin: "0 auto 1.6rem", background: "#070605", filter: "drop-shadow(0 22px 48px rgba(224,122,47,0.28))" }}>
+            <source src={CREST_VIDEO} type="video/mp4" />
+          </video>
+          <h1 style={{ fontFamily: "Georgia, Times New Roman, serif", fontWeight: 400, fontSize: "clamp(2.8rem, 8vw, 5.6rem)", lineHeight: 0.92, margin: "0 0 1.1rem", color: "#f6ead8" }}>
+            Prestige
+            <br />
+            <em style={{ color: "#e07a2f", fontStyle: "italic" }}>on the pad.</em>
+          </h1>
+          <p style={{ maxWidth: 520, margin: "0 auto 2rem", color: "#b7a898", fontSize: 18, lineHeight: 1.5 }}>{config.home.hero.subheadline}</p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <Link href="/contact" style={{ background: "#e07a2f", color: "#1a0c04", padding: "0.95rem 1.4rem", textDecoration: "none", letterSpacing: "0.12em", fontSize: 12, textTransform: "uppercase", fontWeight: 700 }}>Request a crew</Link>
+            <Link href="/services" style={{ border: "1px solid #5a3a28", color: "#f3e6d4", padding: "0.95rem 1.4rem", textDecoration: "none", letterSpacing: "0.12em", fontSize: 12, textTransform: "uppercase" }}>What we send</Link>
           </div>
         </div>
-      </Section>
-
-      {/* CTA */}
-      <Section padding="xl">
-        <div style={{ textAlign: 'center', maxWidth: 680, margin: '0 auto' }}>
-          <h2 style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(40px, 6vw, 72px)',
-            fontWeight: 500, marginBottom: 24,
-            letterSpacing: '-0.02em', lineHeight: 1.1
-          }}>
-            Let's create something{' '}
-            <em style={{ color: 'var(--brand-primary)' }}>memorable</em>.
-          </h2>
-          <p style={{
-            fontSize: 18, color: 'var(--brand-muted)',
-            lineHeight: 1.7, marginBottom: 40
-          }}>
-            Every great project starts with a conversation.
-          </p>
-          <Button variant="primary" href="/contact">Start the Conversation</Button>
-        </div>
-      </Section>
-    </>
-  )
+      </section>
+    </div>
+  );
 }
