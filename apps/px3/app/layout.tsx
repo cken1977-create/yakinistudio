@@ -1,4 +1,5 @@
-import { BrandProvider, Navigation, Footer } from '@yakini/ui'
+import { BrandProvider, Footer } from '@yakini/ui'
+import { Header } from '@/components/Header'
 import { validateBrandConfig } from '@yakini/config'
 import { config } from '@/config/brand'
 
@@ -26,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <BrandProvider config={config}>
-          <Navigation config={config} />
+          <Header config={config} />
           <main style={{ minHeight: '100vh' }}>
             {children}
           </main>
