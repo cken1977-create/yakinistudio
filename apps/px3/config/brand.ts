@@ -6,7 +6,7 @@ export const config: BrandConfig = {
     dba: "PX3 Energy",
     tagline: "Production Performances · Odessa, Texas",
     description:
-      "PX3 Energy is a Permian production outfit in Odessa, Texas. We send crews to the pad that are current, accounted for, and ready to work.",
+      "PX3 Energy is a roustabout outfit in the Permian Basin — West Texas and southern New Mexico. We send crews to the pad that are current, accounted for, and ready to work.",
   },
   brand: {
     designSystem: "editorial",
@@ -38,19 +38,19 @@ export const config: BrandConfig = {
   social: [],
   services: {
     headline: "What we send",
-    subheadline: "Production work. People who can be on that pad.",
+    subheadline: "Roustabout and location labor. West Texas and southern New Mexico.",
     items: [
       {
-        title: "Production crews",
+        title: "Roustabout crews",
         description:
-          "Hands and drivers for production locations. The roster is named. The cards are dated.",
+          "Roustabout hands for locations across the Permian. The roster is named. The cards are dated.",
         icon: "01",
         features: ["Named crew sheet", "Site requirements on the job", "Swap when a card is stale"],
       },
       {
-        title: "Location support",
+        title: "Location labor",
         description:
-          "Show up current for the operator that hired you. No theater. No mystery packet.",
+          "Extra hands on the location when the operator is short. We do not take work we cannot finish. No theater. No mystery packet.",
         icon: "02",
         features: ["Owner-asserted site packs", "H2S and orientation tracked", "Clean packet or a dirty exception — never mixed"],
       },
@@ -65,7 +65,7 @@ export const config: BrandConfig = {
   about: {
     headline: "The outfit",
     subheadline: "Prestige is the standard. Production is the work.",
-    story: `PX3 Energy runs production work in the Permian from Odessa. The name on the truck is the name on the pad.
+    story: `PX3 Energy works the Permian from West Texas into southern New Mexico. The name on the truck is the name on the pad.
 We built the company the way the field actually runs: small crew, real jobs, no spare safety department. The digital layer exists so a hand is either current or honestly excepted — not guessed.`,
     mission:
       "Send the right person to the right pad with a file that can survive the gate.",
@@ -91,7 +91,7 @@ We built the company the way the field actually runs: small crew, real jobs, no 
     hero: {
       headline: "Production performances.",
       subheadline:
-        "Odessa. The Permian. A crew that can stand on the pad this morning.",
+        "Roustabout. Permian Basin. Hands that can stand on the location this morning.",
       cta: "Request a crew",
       ctaLink: "/contact",
       secondaryCta: "View services",

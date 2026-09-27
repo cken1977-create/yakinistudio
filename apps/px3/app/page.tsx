@@ -9,14 +9,14 @@ export default function HomePage() {
     <div>
       <section style={{ minHeight: "88vh", display: "grid", placeItems: "center", padding: "3.5rem 1.5rem 4rem" }}>
         <div style={{ maxWidth: 720, textAlign: "center" }}>
-          <p style={{ letterSpacing: "0.28em", fontSize: 11, color: "#e07a2f", textTransform: "uppercase", marginBottom: 20 }}>PX3 Energy · Odessa</p>
+          <p style={{ letterSpacing: "0.28em", fontSize: 11, color: "#e07a2f", textTransform: "uppercase", marginBottom: 20 }}>PX3 Energy · Permian Basin</p>
           <video autoPlay muted loop playsInline poster={MARK} style={{ width: "min(420px, 86vw)", height: "auto", margin: "0 auto 1.6rem" }}>
             <source src={CREST_VIDEO} type="video/mp4" />
           </video>
           <h1 style={{ fontFamily: "Georgia, Times New Roman, serif", fontWeight: 400, fontSize: "clamp(2.8rem, 8vw, 5.6rem)", lineHeight: 0.92, margin: "0 0 1.1rem", color: "#f6ead8" }}>
             Prestige<br /><em style={{ color: "#e07a2f", fontStyle: "italic" }}>on the pad.</em>
           </h1>
-          <p style={{ maxWidth: 520, margin: "0 auto 2rem", color: "#d2c4b4", fontSize: 18 }}>{config.home.hero.subheadline}</p>
+          <p style={{ maxWidth: 540, margin: "0 auto 2rem", color: "#d2c4b4", fontSize: 18 }}>Roustabout. West Texas and southern New Mexico. Hands that can stand on the location this morning.</p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/contact" style={{ background: "#e07a2f", color: "#1a0c04", padding: "0.95rem 1.4rem", textDecoration: "none", letterSpacing: "0.12em", fontSize: 12, textTransform: "uppercase", fontWeight: 700 }}>Request a crew</Link>
             <Link href="/services" style={{ border: "1px solid #5a3a28", color: "#f3e6d4", padding: "0.95rem 1.4rem", textDecoration: "none", letterSpacing: "0.12em", fontSize: 12, textTransform: "uppercase" }}>What we send</Link>
@@ -25,11 +25,11 @@ export default function HomePage() {
       </section>
       <section style={{ maxWidth: 980, margin: "0 auto", padding: "0 1.5rem 5rem" }}>
         <p style={{ letterSpacing: "0.22em", fontSize: 11, color: "#e07a2f", textTransform: "uppercase" }}>The work</p>
-        <h2 style={{ fontFamily: "Georgia, serif", fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 400, margin: "0.4rem 0 1.5rem" }}>Pad light. Named hands.</h2>
+        <h2 style={{ fontFamily: "Georgia, serif", fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 400, margin: "0.4rem 0 1.5rem" }}>Roustabout. Named hands.</h2>
         <img src={PAD} alt="" style={{ width: "100%", height: "auto", marginBottom: 28 }} />
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 28, alignItems: "center" }}>
           <img src={CREW} alt="" style={{ width: "100%", height: "auto" }} />
-          <p style={{ color: "#d2c4b4", fontSize: 17, lineHeight: 1.55, margin: 0 }}>PX3 Energy runs production locations in the Permian. The roster is named. The cards are dated. If a hand cannot stand on that pad this morning, he does not roll.</p>
+          <p style={{ color: "#d2c4b4", fontSize: 17, lineHeight: 1.55, margin: 0 }}>PX3 Energy is roustabout labor in the Permian Basin. The roster is named. The cards are dated. If a hand cannot stand on that location this morning, he does not roll.</p>
         </div>
       </section>
     </div>
