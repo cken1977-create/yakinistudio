@@ -2,11 +2,11 @@ import type { BrandConfig } from "@yakini/config";
 
 export const config: BrandConfig = {
   business: {
-    name: "PX3 Prestige",
-    dba: "PX3",
+    name: "PX3 Energy",
+    dba: "PX3 Energy",
     tagline: "Production Performances · Odessa, Texas",
     description:
-      "PX3 Prestige is a Permian production outfit in Odessa, Texas. We send crews to the pad that are current, accounted for, and ready to work.",
+      "PX3 Energy is a Permian production outfit in Odessa, Texas. We send crews to the pad that are current, accounted for, and ready to work.",
   },
   brand: {
     designSystem: "editorial",
@@ -65,7 +65,7 @@ export const config: BrandConfig = {
   about: {
     headline: "The outfit",
     subheadline: "Prestige is the standard. Production is the work.",
-    story: `PX3 Prestige runs production work in the Permian from Odessa. The name on the truck is the name on the pad.
+    story: `PX3 Energy runs production work in the Permian from Odessa. The name on the truck is the name on the pad.
 We built the company the way the field actually runs: small crew, real jobs, no spare safety department. The digital layer exists so a hand is either current or honestly excepted — not guessed.`,
     mission:
       "Send the right person to the right pad with a file that can survive the gate.",
@@ -111,7 +111,7 @@ We built the company the way the field actually runs: small crew, real jobs, no 
   },
   seo: {
     siteUrl: "https://px3.yakini.digital",
-    keywords: ["PX3", "PX3 Prestige", "Odessa oilfield", "Permian production", "oilfield services Odessa"],
+    keywords: ["PX3", "PX3 Energy", "Odessa oilfield", "Permian production", "oilfield services Odessa"],
     ogImage: "/mark.png",
   },
   yakini: {
