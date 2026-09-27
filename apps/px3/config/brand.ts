@@ -9,7 +9,7 @@ export const config: BrandConfig = {
       "PX3 Prestige is a Permian production outfit in Odessa, Texas. We send crews to the pad that are current, accounted for, and ready to work.",
   },
   brand: {
-    designSystem: "industrial",
+    designSystem: "editorial",
     colors: {
       primary: "#c45a1a",
       accent: "#c4a46a",
