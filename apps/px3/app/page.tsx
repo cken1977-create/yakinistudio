@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { config } from "@/config/brand";
 
-const MARK = "https://cdn.midjourney.com/bcb5412a-c0e6-4027-8654-5e6b9a04ef54/0_0.png";
-const CREST_VIDEO = "https://cdn.midjourney.com/video/38673713-5cb1-4157-8fc1-b7fe1fbc402a/1.mp4";
+const MARK = "https://cdn.midjourney.com/85a240cc-b045-47e0-a976-3d568568c6a8/0_2.png";
+const CREST_VIDEO = "https://cdn.midjourney.com/video/04a9746e-8db9-45e1-8f04-3862754ee8e5/0.mp4";
 const PAD = "https://cdn.midjourney.com/eda74f6d-5c3d-4855-9240-7d3d009c5bf6/0_0.png";
 const CREW = "https://cdn.midjourney.com/cc8f150f-43db-44ff-a8ad-2212384d88e3/0_2.png";
 
