@@ -37,6 +37,22 @@ export type SocialLink = {
   url: string
 }
 
+export type MenuItem = {
+  name: string
+  nameTranslated?: string     // e.g. Spanish, for bilingual menus
+  description?: string
+  descriptionTranslated?: string
+  price?: string               // string, not number — handles "$15", "Market", "$15 / $25"
+  dietaryTags?: string[]       // e.g. ['spicy', 'vegetarian']
+}
+
+export type MenuCategory = {
+  name: string
+  nameTranslated?: string
+  note?: string                 // e.g. "Plates include two sides, bread, pickles, onions & sauce"
+  items: MenuItem[]
+}
+
 export type BrandConfig = {
   // ── Identity ──────────────────────────────────────────────────
   business: {
@@ -88,6 +104,15 @@ export type BrandConfig = {
     headline: string            // Page headline
     subheadline: string         // Page subheadline
     items: Service[]
+  }
+
+  // ── Menu (optional — food & beverage clients only) ─────────────
+  menu?: {
+    headline: string
+    subheadline?: string
+    bilingual?: boolean
+    categories: MenuCategory[]
+    paymentNote?: string        // e.g. "Tap to pay available. Card fees & tax included."
   }
 
   // ── About Page ────────────────────────────────────────────────
@@ -309,6 +334,12 @@ export function validateBrandConfig(config: BrandConfig): { valid: boolean; erro
   if (!config.brand?.fonts?.display) errors.push('brand.fonts.display is required')
   if (!config.brand?.fonts?.body) errors.push('brand.fonts.body is required')
   if (!config.services?.items?.length) errors.push('services.items must have at least 1 item')
+  if (config.menu && !config.menu.categories?.length) errors.push('menu.categories must have at least 1 category when menu is present')
+  if (config.menu) {
+    config.menu.categories.forEach((cat, i) => {
+      if (!cat.items?.length) errors.push(`menu.categories[${i}] (${cat.name}) must have at least 1 item`)
+    })
+  }
   if (!config.home?.hero?.headline) errors.push('home.hero.headline is required')
   if (!config.seo?.siteUrl) errors.push('seo.siteUrl is required')
   if (!config.yakini?.clientId) errors.push('yakini.clientId is required')

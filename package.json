@@ -13,7 +13,9 @@
     "dev:template": "turbo dev --filter=template",
     "lint": "turbo lint",
     "dev:chef-jada": "turbo dev --filter=chef-jada",
-    "build:chef-jada": "turbo build --filter=chef-jada"
+    "build:chef-jada": "turbo build --filter=chef-jada",
+    "dev:momma-sallys": "turbo dev --filter=momma-sallys",
+    "build:momma-sallys": "turbo build --filter=momma-sallys"
   },
   "devDependencies": {
     "turbo": "latest"
