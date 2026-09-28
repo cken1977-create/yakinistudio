@@ -20,7 +20,7 @@ export function Hero({ config }: { config: BrandConfig }) {
       <style>{`
         .vs-hero {
           background:
-            linear-gradient(90deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.78) 48%, rgba(255,255,255,0.35) 100%),
+            linear-gradient(90deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.55) 42%, rgba(255,255,255,0.08) 100%),
             url('https://cdn.midjourney.com/9c6d01a7-4c8d-4b12-8f7f-ff4ad317d644/0_1.png') center 45% / cover no-repeat;
           padding: 6rem 0 6rem;
           position: relative;
@@ -175,6 +175,7 @@ export function Hero({ config }: { config: BrandConfig }) {
             0 0 0 1px rgba(255, 255, 255, 0.08);
         }
         .vs-hero-visual::before {
+          display: none !important;
           content: '';
           position: absolute;
           inset: 0;
@@ -183,6 +184,7 @@ export function Hero({ config }: { config: BrandConfig }) {
             radial-gradient(ellipse at 75% 75%, rgba(206, 17, 38, 0.18) 0%, transparent 60%);
         }
         .vs-hero-visual::after {
+          display: none !important;
           content: '';
           position: absolute;
           inset: 1.5rem;
@@ -191,6 +193,7 @@ export function Hero({ config }: { config: BrandConfig }) {
           pointer-events: none;
         }
         .vs-sankofa-emblem {
+          display: none !important;
           position: absolute;
           inset: 0;
           display: grid;
