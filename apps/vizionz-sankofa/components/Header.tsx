@@ -55,10 +55,11 @@ export function Header({ config }: { config: BrandConfig }) {
           text-decoration: none;
         }
         .vs-brand-seal {
-          width: 52px;
-          height: 52px;
-          border-radius: 50%;
-          background: ${VS_NAVY};
+          width: 72px;
+          height: 72px;
+          border-radius: 4px;
+          background: #fff;
+          object-fit: contain;
           color: #FFFFFF;
           display: grid;
           place-items: center;
@@ -228,7 +229,7 @@ export function Header({ config }: { config: BrandConfig }) {
       <header className="vs-header">
         <div className="vs-header-inner">
           <a href="/" className="vs-brand-mark" aria-label={config.business.name}>
-            <div className="vs-brand-seal">V</div>
+            <img className="vs-brand-seal" src="/vizionz-sankofa-logo.png" alt="Vizionz Sankofa" />
             <div className="vs-brand-text">
               <div className="vs-brand-name">{config.business.name}</div>
               <div className="vs-brand-descriptor">Community Empowerment</div>
