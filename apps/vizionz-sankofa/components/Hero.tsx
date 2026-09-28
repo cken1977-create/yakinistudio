@@ -19,6 +19,9 @@ export function Hero({ config }: { config: BrandConfig }) {
     <>
       <style>{`
         .vs-hero {
+          background:
+            linear-gradient(90deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.78) 48%, rgba(255,255,255,0.35) 100%),
+            url('https://cdn.midjourney.com/9c6d01a7-4c8d-4b12-8f7f-ff4ad317d644/0_1.png') center 45% / cover no-repeat;
           padding: 6rem 0 6rem;
           position: relative;
           overflow: hidden;
@@ -164,11 +167,7 @@ export function Hero({ config }: { config: BrandConfig }) {
         .vs-hero-visual {
           position: relative;
           aspect-ratio: 4 / 5;
-          background: linear-gradient(135deg,
-            ${VS_NAVY} 0%,
-            ${VS_NAVY} 35%,
-            #A20D1E 65%,
-            #005422 100%);
+          background: url('https://cdn.midjourney.com/394502e1-780d-42fa-ae68-dd2fe8be38be/0_3.png') center 60% / cover no-repeat;
           border-radius: 4px;
           overflow: hidden;
           box-shadow:
