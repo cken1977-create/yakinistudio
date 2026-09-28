@@ -229,7 +229,7 @@ export function Header({ config }: { config: BrandConfig }) {
       <header className="vs-header">
         <div className="vs-header-inner">
           <a href="/" className="vs-brand-mark" aria-label={config.business.name}>
-            <img className="vs-brand-seal" src="/vizionz-sankofa-logo.png" alt="Vizionz Sankofa" />
+            <img className="vs-brand-seal" src="https://cdn.midjourney.com/b6073321-78e6-4891-8ff8-dc4e1389d69c/0_1.png" alt="Vizionz Sankofa" />
             <div className="vs-brand-text">
               <div className="vs-brand-name">{config.business.name}</div>
               <div className="vs-brand-descriptor">Community Empowerment</div>
