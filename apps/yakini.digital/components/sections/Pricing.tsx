@@ -1,54 +1,47 @@
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
-const tiers = [
+const shapes = [
   {
-    name: 'Starter Build',
-    tag: 'Tier 1 — Authority',
-    price: '$1,500',
-    suffix: '– $2,500',
-    retainer: '+ $150/mo retainer',
+    name: 'Launch Kit',
+    tag: 'Fixed scope · 2–4 weeks',
+    price: '$10,000',
+    suffix: 'typical',
+    retainer: 'Then $200–$400/mo',
     featured: false,
     features: [
-      'Custom single-page website',
-      'Mobile-optimized design',
-      'Menu or service display',
-      'Contact & booking form',
-      'Google Analytics setup',
-      'Monthly updates & support',
+      'Private client portal',
+      'Intake, timeline, alerts',
+      'Your brand, domain, and data',
+      'Built on our product stack',
     ],
   },
   {
-    name: 'Pro Build',
-    tag: 'Tier 2 — Most Popular',
-    price: '$3,500',
-    suffix: '– $6,000',
-    retainer: '+ $250/mo retainer',
+    name: 'Launch Operate',
+    tag: 'Featured',
+    price: '$22,000',
+    suffix: 'typical',
+    retainer: 'Then $750–$1,500/mo',
     featured: true,
     features: [
-      'Full multi-section website',
-      'Supabase backend',
-      'Booking & lead capture system',
-      'Brand assets & price sheets',
-      'Client portal or dashboard',
-      'Priority monthly support',
-      'Seasonal content updates',
+      'Everything in Launch Kit',
+      'Weekly operating rhythm',
+      'Client dashboard',
+      'We run it with you',
     ],
   },
   {
-    name: 'Studio Plan',
-    tag: 'Tier 3 — Subscription',
-    price: '$500',
-    suffix: '– $800/mo',
-    retainer: 'No build fee required',
+    name: 'Launch Custom',
+    tag: 'Discovery first',
+    price: '$7,000',
+    suffix: 'discovery',
+    retainer: 'Care $2,500–$4,000/mo',
     featured: false,
     features: [
-      'Professionally managed site',
-      'Monthly content updates',
-      'Menu & pricing changes',
-      'Brand-consistent design',
-      'Hosting included',
-      'Cancel anytime',
+      'Paid discovery · keep the roadmap',
+      'Phase 1: replace the core',
+      'Phase 2: integrations & handoff',
+      'Year-one ~$75k–$120k cash',
     ],
   },
 ]
@@ -58,7 +51,6 @@ export function Pricing() {
     <section className="bg-[#141414] py-32 px-6 border-t border-[#C9A84C]/15">
       <div className="max-w-7xl mx-auto">
 
-        {/* Header */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-end mb-16">
           <div>
             <div className="flex items-center gap-3 mb-4">
@@ -69,55 +61,49 @@ export function Pricing() {
             </div>
             <h2 className="font-bold text-[#F5EFE3] leading-none tracking-tight"
               style={{ fontSize: 'clamp(36px, 5vw, 64px)' }}>
-              Two ways to<br />
-              <em className="text-[#C9A84C] not-italic">work with us.</em>
+              Launch.<br />
+              <em className="text-[#C9A84C] not-italic">Operate.</em>
             </h2>
           </div>
           <p className="text-[#F5EFE3]/50 text-base leading-relaxed">
-            Start with a full build and stay on retainer.
-            Or come in on a monthly subscription with no build fee.
-            Fixed pricing. No surprises. No scope creep. Ever.
+            We build your system, then we run it with you.
+            Ranges, not fake precision. Monthly required on hosted work.
           </p>
         </div>
 
-        {/* Tiers */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#C9A84C]/10 border border-[#C9A84C]/10">
-          {tiers.map((tier) => (
+          {shapes.map((shape) => (
             <div
-              key={tier.name}
+              key={shape.name}
               className={cn(
                 'flex flex-col p-10 transition-colors',
-                tier.featured
+                shape.featured
                   ? 'bg-[#242424] border-t-2 border-t-[#C9A84C]'
                   : 'bg-[#1C1C1C] hover:bg-[#242424]'
               )}
             >
-              {/* Tag */}
               <div className="text-[9px] tracking-[3px] uppercase text-[#C9A84C] mb-4">
-                {tier.tag}
+                {shape.tag}
               </div>
 
-              {/* Name */}
               <div className="text-[#F5EFE3] font-bold text-2xl mb-2">
-                {tier.name}
+                {shape.name}
               </div>
 
-              {/* Price */}
               <div className="mb-1">
                 <span className="text-[#C9A84C] font-bold text-4xl">
-                  {tier.price}
+                  {shape.price}
                 </span>
                 <span className="text-[#F5EFE3]/40 text-lg ml-1">
-                  {tier.suffix}
+                  {shape.suffix}
                 </span>
               </div>
               <div className="text-[#F5EFE3]/30 text-sm mb-8 pb-8 border-b border-[#F5EFE3]/08">
-                {tier.retainer}
+                {shape.retainer}
               </div>
 
-              {/* Features */}
               <ul className="flex flex-col gap-3 flex-1">
-                {tier.features.map((feature) => (
+                {shape.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3 text-sm text-[#F5EFE3]/60">
                     <span className="text-[#C9A84C] text-[8px] mt-1 flex-shrink-0">◆</span>
                     {feature}
@@ -125,26 +111,23 @@ export function Pricing() {
                 ))}
               </ul>
 
-              {/* CTA */}
               <Link
-                href="/#contact"
+                href="/pricing"
                 className={cn(
                   'mt-8 text-[10px] tracking-[2.5px] uppercase text-center py-4 transition-colors',
-                  tier.featured
+                  shape.featured
                     ? 'bg-[#C9A84C] text-[#141414] hover:bg-[#E2C97E]'
                     : 'border border-[#C9A84C]/30 text-[#C9A84C] hover:bg-[#C9A84C]/10'
                 )}
               >
-                Get Started
+                See full pricing
               </Link>
             </div>
           ))}
         </div>
 
-        {/* Note */}
         <p className="text-center text-[#F5EFE3]/25 text-sm mt-8 italic">
-          All builds include a complimentary 30-minute discovery call
-          and fixed quote within 24 hours.
+          Discovery is paid. Scope growth is a new quote. We don&apos;t launch and leave.
         </p>
 
       </div>

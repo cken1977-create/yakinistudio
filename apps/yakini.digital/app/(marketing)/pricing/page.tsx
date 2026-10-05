@@ -1,201 +1,69 @@
 'use client'
 
-import { useState } from 'react'
 import { SiteShell } from '@/components/SiteShell'
 
 // ═════════════════════════════════════════════════════════════════════════
-// YAKINI PRICING PAGE — v3 (May 25, 2026)
+// YAKINI PRICING PAGE — Launch / Operate (October 5, 2026)
 // File: apps/yakini.digital/app/(marketing)/pricing/page.tsx
 //
-// v3 changes:
-//   - Restructured from 4 tiers to 3: Core / Authority / Enterprise
-//   - Each tier now has TWO pricing columns: Custom and Vertical Edition
-//   - Vertical Edition = 10-12% premium for the five proven vertical patterns
-//   - NEW: Vertical Editions section between tiers and comparison table
-//   - Foundation → Core (rename + restructure)
-//   - Intelligence absorbed into Authority + Enterprise as included features
-//   - Yakini Intelligence tier mapping: Lite / Standard + Composer / Pro + Composer + Studios
-//   - All public commercial pricing (no contact-for-pricing on commercial tiers)
-//   - Brain trust locked: Kim/Greg/Clarence May 24-25 convergence
+// Locked model: Launch Kit · Launch Operate · Launch Custom + Operate monthly.
+// No room/house language. No Mission Control sold to clients.
+// Client dashboard only. Assessment by invitation.
 // ═════════════════════════════════════════════════════════════════════════
 
-// Three commercial tiers — each with Custom and Vertical Edition pricing
-const TIERS = [
+const LAUNCH_PRODUCTS = [
   {
-    id: 'core',
-    name: 'Core',
-    tagline: 'A real platform. Built right from day one.',
-    description: 'Custom branded platform with the Yakini foundation: real architecture, real design, real ownership, with Yakini Intelligence Lite woven into the workflow. The entry point for founders who want serious infrastructure without enterprise overhead.',
-    customSetupMin: 12000,
-    customSetupMax: 22000,
-    verticalSetupMin: 14000,
-    verticalSetupMax: 25000,
-    monthlyMin: 1800,
-    monthlyMax: 2500,
-    monthlySubtitle: 'Platform maintenance, AI refinement, support',
-    minTerm: 3,
-    aiTier: 'Yakini Intelligence Lite',
+    id: 'kit',
+    name: 'Launch Kit',
+    tagline: 'Fixed scope. Live in 2–4 weeks.',
+    typical: '$10,000',
+    range: '$8,000–$12,000',
+    monthly: '$200–$400',
+    monthlyNote: 'Hosting, monitoring, and care',
+    description:
+      'For operators who need institutional-grade infrastructure without agency pricing.',
     features: [
-      'Custom branded marketing platform',
-      'Mobile-first responsive architecture',
-      'Lead capture + customer pipeline',
-      'Brand identity foundation (logo, palette, typography)',
-      'Independent infrastructure (your domain, your data)',
-      'Yakini Intelligence Lite — embedded AI trained on your content + brand voice',
-      'SEO foundations (meta, sitemap, schema)',
-      'Google Analytics 4 setup',
-      'Monthly platform updates + maintenance',
-      'Email + chat support (24-48hr response)',
+      'Private client portal: intake, timeline, alerts',
+      'Built on our stack (Next.js / Supabase / Vercel)',
+      'Your brand, your domain, your data',
+      'Fixed scope. Live in 2–4 weeks',
     ],
-    notIncluded: [
-      'Customer portal with authentication',
-      'Multi-tenant database architecture',
-      'Composer operating layer',
-      'Yakini Studios access',
-    ],
-    bestFor: 'Solo founders, consultants, and service providers launching their first serious online presence with AI infrastructure baked in.',
-    color: 'gold',
     featured: false,
-    verticalAvailable: true,
   },
   {
-    id: 'authority',
-    name: 'Authority',
-    tagline: 'A platform that runs operations. With Composer.',
-    description: 'Multi-section platform with database, lead pipeline, customer portal, and Composer — the AI operating layer that runs your business in plain language. Yakini Intelligence Standard scaled to the workflows your business actually runs on. The tier where Yakini becomes operational infrastructure, not just a website.',
-    customSetupMin: 32000,
-    customSetupMax: 48000,
-    verticalSetupMin: 36000,
-    verticalSetupMax: 54000,
-    monthlyMin: 4500,
-    monthlyMax: 6000,
-    monthlySubtitle: 'Platform + Composer + AI refinement + priority support',
-    minTerm: 6,
-    aiTier: 'Yakini Intelligence Standard + Composer',
+    id: 'operate',
+    name: 'Launch Operate',
+    tagline: 'Full product. Weekly rhythm. Client dashboard.',
+    typical: '$22,000',
+    range: '$18,000–$28,000',
+    monthly: '$750–$1,500',
+    monthlyNote: 'Weekly rhythm — not daily white-glove',
+    description:
+      'Everything in Launch Kit, plus a weekly operating rhythm with your team and a client dashboard. The operator cockpit stays internal.',
     features: [
-      'Everything in Core, plus:',
-      'Multi-section platform with custom database',
-      'Customer portal with magic-link authentication',
-      'Lead pipeline + booking system',
-      'Composer included — AI operating layer for your business',
-      'Yakini Intelligence Standard — workflow AI, customer comms drafter, booking assistant',
-      'Brand assets package (social templates, email signatures, pitch deck)',
-      'Content strategy + monthly content updates',
-      'Quarterly performance reviews',
-      'Up to 4 platform feature updates per quarter',
-      'Priority support (same-day response)',
-      'Direct line to build team (Slack channel)',
+      'Everything in Launch Kit',
+      'Weekly rhythm with your team',
+      'Client dashboard',
+      'Monthly: $750–$1,500 — weekly rhythm, not daily white-glove',
     ],
-    notIncluded: [
-      'Multi-tenant / white-label reseller architecture',
-      'Custom AI fine-tuning on proprietary data',
-      'Third-party enterprise integrations (Salesforce, HubSpot, custom APIs)',
-      'Yakini Studios access (Enterprise tier)',
-    ],
-    bestFor: 'Growing service businesses, professional firms, consultancies, hospitality operators, and any founder ready to run real operations on AI-native infrastructure.',
-    color: 'gold',
     featured: true,
-    verticalAvailable: true,
-  },
-  {
-    id: 'enterprise',
-    name: 'Enterprise',
-    tagline: 'Category-defining platforms. With Composer + Studios.',
-    description: 'Full-custom platform development with multi-tenant architecture, third-party integrations, and the complete Yakini stack — Composer, Yakini Intelligence Pro, and Yakini Studios access. For founders building category-defining businesses, multi-state operators, franchise systems, and consortiums.',
-    customSetupMin: 105000,
-    customSetupMax: 145000,
-    verticalSetupMin: 118000,
-    verticalSetupMax: 162000,
-    monthlyMin: 11000,
-    monthlyMax: 14000,
-    monthlySubtitle: 'Full stack platform + Composer + Studios + dedicated team',
-    minTerm: 6,
-    aiTier: 'Yakini Intelligence Pro + Composer + Studios',
-    features: [
-      'Everything in Authority, plus:',
-      'Full custom architecture for your industry',
-      'Multi-tenant + multi-brand support (white-label ready)',
-      'Yakini Intelligence Pro — full 6-tool suite + custom workflow AI',
-      'Yakini Studios access — talking-head video, voiceover, training content production',
-      'Third-party integrations (Salesforce, HubSpot, custom APIs)',
-      'Custom AI fine-tuning on your proprietary data',
-      'Advanced analytics + business intelligence dashboards',
-      'Compliance + audit-ready architecture',
-      'Dedicated build team',
-      'Quarterly strategic reviews with founder',
-      'Unlimited platform feature updates',
-      'Priority emergency support (24/7)',
-    ],
-    notIncluded: [],
-    bestFor: 'Companies building category-defining platforms. Multi-state operators. Franchise systems. Consortiums. Holdings companies. Founders preparing for institutional capital.',
-    color: 'gold',
-    featured: false,
-    verticalAvailable: true,
   },
 ]
 
-// Five vertical builds — three live, two in development
-const VERTICALS = [
-  {
-    id: 'real-estate',
-    name: 'Real Estate Services',
-    status: 'LIVE',
-    proof: 'Crownpoint Strategies',
-    description: 'Lead intake calibrated to real estate workflows, fair housing compliance language, transaction document automation, buyer/seller portals, CRM integrations.',
-  },
-  {
-    id: 'professional-services',
-    name: 'Professional Services',
-    status: 'LIVE',
-    proof: 'TheyTowedMyCar',
-    description: 'Client intake, case/matter management, document workflows, billing, secure client portals. For legal, accounting, and consulting practices.',
-  },
-  {
-    id: 'workforce',
-    name: 'Workforce Development',
-    status: 'LIVE',
-    proof: 'Vizionz Sankofa',
-    description: 'Participant case management, services tracking, outcomes reporting, grant compliance, funder portals. For mission-driven workforce and reentry programs.',
-  },
-  {
-    id: 'hospitality',
-    name: 'Culinary, Hospitality & Personal Services',
-    status: 'Q3 2026',
-    proof: 'In development',
-    description: 'Booking and consultation workflows, customer profile and preference tracking, content production tools, white-glove customer portals.',
-  },
-  {
-    id: 'construction',
-    name: 'Construction & Trade Services',
-    status: 'Q4 2026',
-    proof: 'In development',
-    description: 'Lead and bid intake, project management, supplier coordination, customer-facing project portals, change order management, billing.',
-  },
+const OPERATE_ROWS = [
+  { shape: 'Launch Kit', monthly: '$200–$400' },
+  { shape: 'Launch Operate', monthly: '$750–$1,500' },
+  { shape: 'Launch Custom (care)', monthly: '$2,500–$4,000' },
 ]
 
-const COMPARISON_FEATURES = [
-  { name: 'Custom branded platform', tiers: { core: true, authority: true, enterprise: true } },
-  { name: 'Mobile-responsive architecture', tiers: { core: true, authority: true, enterprise: true } },
-  { name: 'Independent infrastructure', tiers: { core: true, authority: true, enterprise: true } },
-  { name: 'Lead capture + customer pipeline', tiers: { core: true, authority: true, enterprise: true } },
-  { name: 'Custom database architecture', tiers: { core: false, authority: true, enterprise: true } },
-  { name: 'Customer portal', tiers: { core: false, authority: 'Magic-link auth', enterprise: 'Multi-tenant' } },
-  { name: 'Yakini Intelligence', tiers: { core: 'Lite', authority: 'Standard', enterprise: 'Pro (6 tools)' } },
-  { name: 'Composer operating layer', tiers: { core: false, authority: true, enterprise: true } },
-  { name: 'Yakini Studios access', tiers: { core: false, authority: false, enterprise: true } },
-  { name: 'Workflow automation', tiers: { core: false, authority: true, enterprise: 'Advanced' } },
-  { name: 'Multi-tenant architecture', tiers: { core: false, authority: false, enterprise: 'White-label' } },
-  { name: 'Third-party integrations', tiers: { core: false, authority: false, enterprise: true } },
-  { name: 'Custom AI fine-tuning', tiers: { core: false, authority: false, enterprise: true } },
-  { name: 'Vertical Edition available', tiers: { core: true, authority: true, enterprise: true } },
-  { name: 'Support response time', tiers: { core: '24-48h', authority: 'Same day + Slack', enterprise: '24/7 emergency' } },
-  { name: 'Feature updates per quarter', tiers: { core: 'Maintenance', authority: '4', enterprise: 'Unlimited' } },
-  { name: 'Minimum term', tiers: { core: '3 months', authority: '6 months', enterprise: '6 months' } },
+const RULES = [
+  'Discovery is paid. Always.',
+  'Scope growth is a new quote — not a favor.',
+  'Monthly is required on hosted work. One-time pricing exists only for throwaway marketing sites, which we mostly decline.',
+  'Change in complexity = new band, not a renegotiation of the promise.',
 ]
 
 export default function PricingPage() {
-  const [annual, setAnnual] = useState(false)
-
   return (
     <SiteShell>
       <style>{PAGE_CSS}</style>
@@ -208,343 +76,236 @@ export default function PricingPage() {
             <span>TRANSPARENT PRICING</span>
           </div>
           <h1 className="yk-page-h1">
-            Three tiers.
+            Launch.
             <br />
-            <span className="yk-italic">Two engagement paths.</span>
-            <br />
-            <span className="yk-gold">One operating philosophy.</span>
+            <span className="yk-gold">Operate.</span>
           </h1>
           <p className="yk-page-sub">
-            Most agencies hide pricing because their numbers can't survive scrutiny.
-            We publish ours because the work justifies them.
-            Every Yakini engagement is available as a Custom build or as a Vertical Edition deployment against one of our proven industry patterns.
-          </p>
-          <p className="pr-page-sub-italic">
-            Every tier includes Yakini Intelligence. The depth scales with the engagement.
+            We build your system, then we run it with you. Ranges, not fake precision.
           </p>
         </div>
       </header>
 
-      {/* ───── BILLING TOGGLE ───── */}
-      <section className="pr-toggle-section">
-        <div className="yk-section-inner">
-          <div className="pr-toggle-wrapper">
-            <button
-              className={`pr-toggle-btn ${!annual ? 'active' : ''}`}
-              onClick={() => setAnnual(false)}
-            >
-              Monthly
-            </button>
-            <button
-              className={`pr-toggle-btn ${annual ? 'active' : ''}`}
-              onClick={() => setAnnual(true)}
-            >
-              Annual <span className="pr-toggle-save">Save 15%</span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ───── COMMERCIAL TIERS ───── */}
+      {/* ───── LAUNCH PRODUCTS ───── */}
       <section className="yk-section pr-tiers">
         <div className="yk-section-inner">
-          <div className="pr-tiers-grid">
-            {TIERS.map((tier) => {
-              const monthlyMinDisplay = annual ? Math.round(tier.monthlyMin * 0.85) : tier.monthlyMin
-              const monthlyMaxDisplay = annual ? Math.round(tier.monthlyMax * 0.85) : tier.monthlyMax
-
-              return (
-                <div
-                  key={tier.id}
-                  className={`pr-tier ${tier.featured ? 'pr-tier-featured' : ''}`}
-                >
-                  {tier.featured && (
-                    <div className="pr-tier-badge">MOST POPULAR</div>
-                  )}
-
-                  <div className="pr-tier-name">{tier.name}</div>
-                  <div className="pr-tier-tagline">{tier.tagline}</div>
-
-                  <div className="pr-tier-price-block">
-                    <div className="pr-tier-monthly">
-                      <span className="pr-price-currency">$</span>
-                      <span className="pr-price-num">{monthlyMinDisplay.toLocaleString()}</span>
-                      <span className="pr-price-range-dash">–</span>
-                      <span className="pr-price-num">{monthlyMaxDisplay.toLocaleString()}</span>
-                      <span className="pr-price-period">/mo</span>
-                    </div>
-                    <div className="pr-price-note">{tier.monthlySubtitle}</div>
-
-                    <div className="pr-setup-block">
-                      <div className="pr-setup-row">
-                        <span className="pr-setup-label">Custom setup</span>
-                        <span className="pr-setup-value">
-                          ${tier.customSetupMin.toLocaleString()} – ${tier.customSetupMax.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="pr-setup-row pr-setup-vertical">
-                        <span className="pr-setup-label">Vertical Edition</span>
-                        <span className="pr-setup-value">
-                          ${tier.verticalSetupMin.toLocaleString()} – ${tier.verticalSetupMax.toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="pr-tier-term">{tier.minTerm}-month minimum</div>
-                  </div>
-
-                  <p className="pr-tier-desc">{tier.description}</p>
-
-                  <a
-                    href="/apply"
-                    className={`pr-tier-cta ${tier.featured ? 'pr-cta-featured' : ''}`}
-                  >
-                    <span>Apply for {tier.name}</span>
-                    <span className="yk-btn-arrow">→</span>
-                  </a>
-
-                  <div className="pr-tier-section">
-                    <div className="pr-tier-section-h">INCLUDED</div>
-                    <ul className="pr-tier-list pr-list-included">
-                      {tier.features.map(f => (
-                        <li key={f}>{f}</li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {tier.notIncluded && tier.notIncluded.length > 0 && (
-                    <div className="pr-tier-section">
-                      <div className="pr-tier-section-h pr-tier-section-not">NOT INCLUDED</div>
-                      <ul className="pr-tier-list pr-list-not">
-                        {tier.notIncluded.map(f => (
-                          <li key={f}>{f}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  <div className="pr-tier-section">
-                    <div className="pr-tier-section-h">BEST FOR</div>
-                    <p className="pr-tier-bestfor">{tier.bestFor}</p>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
-          {/* Build & Own footnote */}
-          <div className="pr-build-own-note">
-            <span className="pr-build-own-eyebrow">ALTERNATIVE STRUCTURE</span>
-            Each tier is also available as a one-time <strong>Build &amp; Own</strong> engagement.
-            Yakini builds the platform; you own and operate it after delivery.
-            Contact us for ownership pricing.
-          </div>
-
-          {/* Payment + Floor notes */}
-          <div className="pr-policy-row">
-            <div className="pr-policy-card">
-              <div className="pr-policy-h">PAYMENT STRUCTURE</div>
-              <p>50% at signature · 25% at platform delivery · 25% at launch acceptance. Anthropic API and third-party services billed at cost + 15% administrative.</p>
-            </div>
-            <div className="pr-policy-card">
-              <div className="pr-policy-h">FLOOR RULES</div>
-              <p>No projects under $12,000. No websites without platform infrastructure. No clients without documented workflow. Capacity: two active client builds at any time.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ───── VERTICAL EDITIONS ───── */}
-      <section className="yk-section pr-verticals">
-        <div className="yk-section-inner">
           <div className="yk-section-tag">
-            <span className="yk-num">02</span>
-            <span>Vertical Editions</span>
+            <span className="yk-num">01</span>
+            <span>Launch — one-time</span>
           </div>
           <h2 className="yk-section-h2">
-            Five proven industry patterns.
+            Two product paths.
             <br />
-            <span className="yk-gold">Deployment, not discovery.</span>
+            <span className="yk-gold">One operating philosophy.</span>
           </h2>
 
-          <p className="pr-verticals-explainer">
-            A Vertical Edition is a Yakini engagement deployed against one of our proven industry patterns.
-            The architecture, AI prompt libraries, compliance language, and operational workflows are already built and validated.
-            Vertical Edition pricing reflects the value of deployment-grade infrastructure tuned for your industry.
-          </p>
+          <div className="pr-tiers-grid pr-tiers-grid-2">
+            {LAUNCH_PRODUCTS.map((tier) => (
+              <div
+                key={tier.id}
+                className={`pr-tier ${tier.featured ? 'pr-tier-featured' : ''}`}
+              >
+                {tier.featured && <div className="pr-tier-badge">FEATURED</div>}
 
-          <div className="pr-verticals-quote">
-            <p>
-              "Because we've already built the lead intake, the compliance language, and the transaction workflow for your industry.
-              You're not paying for discovery. You're paying for deployment."
-            </p>
-          </div>
+                <div className="pr-tier-name">{tier.name}</div>
+                <div className="pr-tier-tagline">{tier.tagline}</div>
 
-          <div className="pr-verticals-grid">
-            {VERTICALS.map((v) => (
-              <div key={v.id} className={`pr-vertical-card ${v.status === 'LIVE' ? 'pr-vertical-live' : 'pr-vertical-dev'}`}>
-                <div className="pr-vertical-status">
-                  <span className="pr-vertical-status-dot" />
-                  {v.status}
+                <div className="pr-tier-price-block">
+                  <div className="pr-typical-label">Typical</div>
+                  <div className="pr-tier-monthly">
+                    <span className="pr-price-num pr-price-num-lg">{tier.typical}</span>
+                  </div>
+                  <div className="pr-price-note">Range {tier.range}</div>
+                  <div className="pr-setup-block">
+                    <div className="pr-setup-row">
+                      <span className="pr-setup-label">Then monthly</span>
+                      <span className="pr-setup-value">{tier.monthly}</span>
+                    </div>
+                    <div className="pr-price-note" style={{ marginTop: 8, marginBottom: 0 }}>
+                      {tier.monthlyNote}
+                    </div>
+                  </div>
                 </div>
-                <h3 className="pr-vertical-name">{v.name}</h3>
-                <div className="pr-vertical-proof">
-                  <span className="pr-vertical-proof-label">PROOF</span>
-                  <span className="pr-vertical-proof-name">{v.proof}</span>
+
+                <p className="pr-tier-desc">{tier.description}</p>
+
+                <a
+                  href="/apply"
+                  className={`pr-tier-cta ${tier.featured ? 'pr-cta-featured' : ''}`}
+                >
+                  <span>Start with {tier.name}</span>
+                  <span className="yk-btn-arrow">→</span>
+                </a>
+
+                <div className="pr-tier-section">
+                  <div className="pr-tier-section-h">INCLUDED</div>
+                  <ul className="pr-tier-list pr-list-included">
+                    {tier.features.map((f) => (
+                      <li key={f}>{f}</li>
+                    ))}
+                  </ul>
                 </div>
-                <p className="pr-vertical-desc">{v.description}</p>
               </div>
             ))}
           </div>
 
-          <div className="pr-verticals-straddler">
-            <p>
-              <strong>Not sure which vertical fits?</strong> Start with the Operational Drag Audit.
-              We'll surface your dominant operational pattern and match you to the right deployment — vertical or custom.
+          {/* Launch Custom */}
+          <div className="pr-custom-card">
+            <div className="pr-custom-meta">
+              <span className="pr-custom-dot" />
+              <span>LAUNCH CUSTOM</span>
+            </div>
+            <h3 className="pr-custom-h">
+              When spreadsheets are <span className="yk-italic">running the business.</span>
+            </h3>
+            <p className="pr-custom-body">
+              Discovery first — always paid, two weeks. Half credits into Phase 1 if you continue.
+              If you don&apos;t: you keep the <strong>roadmap</strong>.
             </p>
-            <a href="/apply" className="pr-verticals-cta">
-              <span>Start the Operational Drag Audit</span>
+
+            <div className="pr-custom-grid">
+              <div className="pr-custom-phase">
+                <div className="pr-custom-phase-label">Discovery</div>
+                <div className="pr-custom-phase-price">Typical $7,000</div>
+                <div className="pr-custom-phase-range">$6,000–$8,000</div>
+                <p>Half credits into Phase 1. Keep the roadmap either way.</p>
+              </div>
+              <div className="pr-custom-phase">
+                <div className="pr-custom-phase-label">Phase 1</div>
+                <div className="pr-custom-phase-price">Typical $50,000</div>
+                <div className="pr-custom-phase-range">$40,000–$60,000</div>
+                <p>Replace the spreadsheet core.</p>
+              </div>
+              <div className="pr-custom-phase">
+                <div className="pr-custom-phase-label">Phase 2</div>
+                <div className="pr-custom-phase-price">Typical $25,000</div>
+                <div className="pr-custom-phase-range">$20,000–$35,000</div>
+                <p>Integrations, reporting, handoff.</p>
+              </div>
+              <div className="pr-custom-phase">
+                <div className="pr-custom-phase-label">Care</div>
+                <div className="pr-custom-phase-price">$2,500–$4,000</div>
+                <div className="pr-custom-phase-range">per month</div>
+                <p>Hosting, iteration, support.</p>
+              </div>
+            </div>
+
+            <div className="pr-custom-note">
+              Year-one cash for a mid-market ops install: <strong>~$75,000–$120,000</strong> against
+              $90,000–$200,000 in DIY/agency cost. We take the job when the savings worksheet clears
+              more than the fee in year one.
+            </div>
+
+            <a href="/apply" className="pr-tier-cta pr-cta-featured" style={{ alignSelf: 'flex-start' }}>
+              <span>Start with Discovery</span>
               <span className="yk-btn-arrow">→</span>
             </a>
           </div>
         </div>
       </section>
 
-      {/* ───── COMPARISON TABLE ───── */}
-      <section className="yk-section pr-comparison">
+      {/* ───── OPERATE ───── */}
+      <section className="yk-section pr-operate">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
-            <span className="yk-num">03</span>
-            <span>Side-by-side</span>
+            <span className="yk-num">02</span>
+            <span>Operate — monthly</span>
           </div>
           <h2 className="yk-section-h2">
-            Compare
+            Required on hosted work.
             <br />
-            <span className="yk-gold">every tier.</span>
+            <span className="yk-gold">We don&apos;t launch and leave.</span>
           </h2>
+          <p className="pr-operate-lead">
+            Software you don&apos;t operate is software that rots. Monthly covers hosting, monitoring,
+            care, weekly rhythm, and iteration — not tickets.
+          </p>
 
           <div className="pr-table-wrapper">
             <table className="pr-table">
               <thead>
                 <tr>
-                  <th></th>
-                  <th>Core</th>
-                  <th className="pr-th-featured">Authority</th>
-                  <th>Enterprise</th>
+                  <th>Shape</th>
+                  <th>Monthly</th>
                 </tr>
               </thead>
               <tbody>
-                {COMPARISON_FEATURES.map(feature => (
-                  <tr key={feature.name}>
-                    <td className="pr-feature-cell">{feature.name}</td>
-                    {(['core', 'authority', 'enterprise'] as const).map(t => {
-                      const val = feature.tiers[t]
-                      return (
-                        <td key={t} className={t === 'authority' ? 'pr-cell-featured' : ''}>
-                          {val === true ? (
-                            <span className="pr-check">✓</span>
-                          ) : val === false ? (
-                            <span className="pr-dash">—</span>
-                          ) : (
-                            <span className="pr-cell-text">{val}</span>
-                          )}
-                        </td>
-                      )
-                    })}
+                {OPERATE_ROWS.map((row) => (
+                  <tr key={row.shape}>
+                    <td className="pr-feature-cell">{row.shape}</td>
+                    <td>
+                      <span className="pr-cell-text pr-cell-price">{row.monthly}</span>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <p className="pr-table-footnote">
-              Nonprofit engagements scoped individually — see Mission-Aligned section below.
+          </div>
+          <p className="pr-table-footnote">
+            Set at launch from complexity (data, users, integrations, compliance).
+          </p>
+        </div>
+      </section>
+
+      {/* ───── RULES ───── */}
+      <section className="yk-section pr-rules">
+        <div className="yk-section-inner">
+          <div className="yk-section-tag">
+            <span className="yk-num">03</span>
+            <span>The rules</span>
+          </div>
+          <h2 className="yk-section-h2">
+            How engagements
+            <br />
+            <span className="yk-gold">stay clean.</span>
+          </h2>
+          <ol className="pr-rules-list">
+            {RULES.map((rule, i) => (
+              <li key={rule}>
+                <span className="pr-rules-num">{String(i + 1).padStart(2, '0')}</span>
+                <span>{rule}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ───── BY INVITATION ───── */}
+      <section className="yk-section pr-invite">
+        <div className="yk-section-inner">
+          <div className="pr-invite-card">
+            <div className="pr-invite-meta">
+              <span className="pr-invite-dot" />
+              <span>BY INVITATION</span>
+            </div>
+            <h3 className="pr-invite-h">
+              Readiness Assessment
+            </h3>
+            <p className="pr-invite-body">
+              Priced per engagement. Available by invitation until product canon is frozen.
             </p>
           </div>
         </div>
       </section>
 
-      {/* ───── NONPROFITS / MISSION-ALIGNED ───── */}
+      {/* ───── MISSION-ALIGNED (brief) ───── */}
       <section className="yk-section pr-nonprofits">
         <div className="yk-section-inner">
-          <div className="pr-nonprofits-card">
+          <div className="pr-nonprofits-card pr-nonprofits-card-brief">
             <div className="pr-nonprofits-meta">
               <span className="pr-nonprofits-dot" />
-              <span>MISSION-ALIGNED ENGAGEMENT</span>
+              <span>MISSION-ALIGNED</span>
             </div>
             <h3 className="pr-nonprofits-h">
-              Custom infrastructure for <span className="yk-italic">nonprofits and mission-driven organizations.</span>
+              Nonprofits and mission-driven organizations.
             </h3>
             <p className="pr-nonprofits-body">
               For 501(c)(3) organizations and community-serving nonprofits, pricing is structured
-              around your mission, your funders, and your operational reality — not standard commercial rates.
-              The architecture standards do not change. The platform you receive meets the same quality bar
-              as any commercial engagement.
-              <br /><br />
-              Qualifying organizations may also access funding support through the
-              <strong style={{ color: 'var(--gold)' }}> BRSA Foundation</strong>, the independent 501(c)(3) that funds access to Yakini infrastructure
-              for underserved populations.
+              around your mission and operational reality — not standard commercial rates. The
+              architecture standards do not change.
             </p>
-
-            <div className="pr-nonprofits-grid">
-              <div className="pr-nonprofits-feature">
-                <div className="pr-nonprofits-feature-h">WHAT'S INCLUDED</div>
-                <ul className="pr-tier-list pr-list-included">
-                  <li>Custom platform built to your mission and operational needs</li>
-                  <li>Donor management + grant tracking workflows (when applicable)</li>
-                  <li>Volunteer coordination + program management tools</li>
-                  <li>Yakini Intelligence layer matched to your engagement scope</li>
-                  <li>Same architecture quality as commercial tiers</li>
-                </ul>
-              </div>
-
-              <div className="pr-nonprofits-feature">
-                <div className="pr-nonprofits-feature-h">PARTNERSHIP STRUCTURE</div>
-                <ul className="pr-tier-list pr-list-included">
-                  <li>Mission-aligned engagement terms set per partnership</li>
-                  <li>BRSA Foundation funding pathway for qualifying orgs</li>
-                  <li>Pilot pricing for case-study partners (one per category)</li>
-                  <li>Transparent budget conversations from the first call</li>
-                  <li>No commercial-tier minimums applied automatically</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="pr-nonprofits-pilot">
-              <strong>Active partnership:</strong> Vizionz Sankofa (Albuquerque, NM) — first mission-aligned pilot, full case management platform live since Mother's Day 2026. Reference available for serious nonprofit conversations.
-            </div>
-
             <a href="/apply" className="pr-tier-cta pr-cta-featured" style={{ alignSelf: 'flex-start' }}>
               <span>Start the conversation</span>
-              <span className="yk-btn-arrow">→</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* ───── STRATEGIC PARTNER ───── */}
-      <section className="yk-section pr-strategic">
-        <div className="yk-section-inner">
-          <div className="pr-strategic-card">
-            <div className="pr-strategic-meta">
-              <span className="pr-strategic-dot" />
-              <span>STRATEGIC PARTNER PROGRAM</span>
-            </div>
-            <h3 className="pr-strategic-h">
-              For partners who refer business <span className="yk-italic">and earn recurring revenue.</span>
-            </h3>
-            <p className="pr-strategic-body">
-              The Strategic Partner Program is for established operators in their industries who want to
-              offer Yakini infrastructure to their networks. Partners receive co-marketing rights,
-              revenue share on deployments through their channel, and advisory input on the vertical
-              templates serving their industry. Founding partner economics apply to the first partner
-              in each vertical and do not repeat.
-            </p>
-
-            <div className="pr-strategic-active">
-              <strong>Founding partners in progress:</strong> Crownpoint Strategies (Real Estate vertical, founding deployment). Future real estate channel partners deploy at standard Vertical Edition rates.
-            </div>
-
-            <a href="/apply" className="pr-tier-cta pr-cta-featured" style={{ alignSelf: 'flex-start' }}>
-              <span>Apply for Strategic Partner</span>
               <span className="yk-btn-arrow">→</span>
             </a>
           </div>
@@ -567,81 +328,72 @@ export default function PricingPage() {
           <div className="pr-faq-list">
             <details className="pr-faq-item">
               <summary className="pr-faq-q">
-                What's the difference between Custom and Vertical Edition pricing?
+                What&apos;s the difference between Launch Kit and Launch Operate?
                 <span className="pr-faq-icon">+</span>
               </summary>
               <div className="pr-faq-a">
-                Custom is a from-zero build for industries outside our five proven verticals (Real Estate, Professional Services, Workforce Development, Hospitality, Construction). Vertical Edition is a deployment against pre-built industry infrastructure with the architecture, AI prompt libraries, compliance language, and workflows already validated. Vertical Edition costs 10-12% more because the deployment is faster, the outcome is more predictable, and the infrastructure is already proven in your industry. You're paying for deployment, not discovery.
+                Launch Kit is fixed-scope product delivery: portal, intake, timeline, alerts —
+                live in 2–4 weeks. Launch Operate includes everything in Kit, plus a weekly
+                operating rhythm with your team and a client dashboard. Monthly on Operate is
+                higher because we run with you, not just host the software.
               </div>
             </details>
 
             <details className="pr-faq-item">
               <summary className="pr-faq-q">
-                Why is the Core minimum $12,000?
+                Why is discovery paid on Custom?
                 <span className="pr-faq-icon">+</span>
               </summary>
               <div className="pr-faq-a">
-                Below $12,000, we cannot deliver real platform infrastructure with the architecture, AI integration, brand depth, and ongoing support that the Yakini name represents. Engagements under that floor produce websites, not platforms. We don't build websites. The floor protects you from getting less than you came for.
+                Discovery qualifies the work and produces a roadmap you keep whether or not you
+                continue. Half of the discovery fee credits into Phase 1 if you proceed. Unpaid
+                discovery invites scope theater; paid discovery keeps both sides honest.
               </div>
             </details>
 
             <details className="pr-faq-item">
               <summary className="pr-faq-q">
-                What does the monthly fee actually cover?
+                What does the monthly fee cover?
                 <span className="pr-faq-icon">+</span>
               </summary>
               <div className="pr-faq-a">
-                Platform hosting and infrastructure, security and uptime monitoring, AI refinement and prompt tuning, technical support, content updates, monthly platform updates, and feature improvements at the cadence defined by your tier. The monthly is not a maintenance fee — it's the ongoing engagement that keeps your platform competitive as your business grows.
+                Hosting, monitoring, and care. On Launch Operate and Custom care, it also covers
+                weekly operating rhythm and iteration — not a ticket queue. Software you
+                don&apos;t operate is software that rots. We don&apos;t launch and leave.
               </div>
             </details>
 
             <details className="pr-faq-item">
               <summary className="pr-faq-q">
-                Is Anthropic API usage included?
+                Can I buy a one-time build with no monthly?
                 <span className="pr-faq-icon">+</span>
               </summary>
               <div className="pr-faq-a">
-                Anthropic API consumption and third-party services are billed separately at cost plus 15% administrative. You see a transparent monthly statement showing actual consumption. Most customers run $30-150 per month in API costs at standard usage. Heavy-usage cases get flagged for review and potential optimization.
+                Only for throwaway marketing sites, which we mostly decline. Hosted product work
+                requires monthly. Scope growth is a new quote — not a favor.
               </div>
             </details>
 
             <details className="pr-faq-item">
               <summary className="pr-faq-q">
-                Can I switch from Custom to Vertical Edition mid-project?
+                How do you pick a number inside the range?
                 <span className="pr-faq-icon">+</span>
               </summary>
               <div className="pr-faq-a">
-                Yes, if the Operational Drag Audit surfaces that your business actually fits one of our proven verticals. We'd rather discover this at the audit phase than three months into a custom build. The Audit is the universal qualifier — it tells both of us which path serves your business best.
+                Midpoints are typical anchors. The band moves with complexity: data, users,
+                integrations, and compliance. A change in complexity is a new band — not a
+                renegotiation of the promise.
               </div>
             </details>
 
             <details className="pr-faq-item">
               <summary className="pr-faq-q">
-                What about the Build &amp; Own option?
+                When do you take a Custom job?
                 <span className="pr-faq-icon">+</span>
               </summary>
               <div className="pr-faq-a">
-                For each tier, we offer a one-time engagement structure where Yakini builds the platform, transfers full ownership at delivery, and you operate it independently afterward. No monthly. No ongoing engagement. Pricing is roughly 2.5x the Custom setup cost. Best fit for companies with in-house technical teams ready to take over operations. Most clients prefer the recurring engagement because the platform stays current and the AI keeps refining.
-              </div>
-            </details>
-
-            <details className="pr-faq-item">
-              <summary className="pr-faq-q">
-                Can existing clients keep their grandfathered pricing?
-                <span className="pr-faq-icon">+</span>
-              </summary>
-              <div className="pr-faq-a">
-                Yes. All existing Yakini clients keep the terms they signed under. New pricing applies to engagements signed from May 25, 2026 forward. Grandfathered rates do not transfer to new engagements, partner channel deployments, or contract renewals at expanded scope.
-              </div>
-            </details>
-
-            <details className="pr-faq-item">
-              <summary className="pr-faq-q">
-                How long until my platform is live?
-                <span className="pr-faq-icon">+</span>
-              </summary>
-              <div className="pr-faq-a">
-                Custom builds: 8-12 weeks from contract signature to launch, depending on tier and scope. Vertical Edition deployments: 3-5 weeks because the architecture is already built. Foundation engagements (small business formation work like Crownpoint's Foundation SOW) deploy in 7-10 business days.
+                When the savings worksheet clears more than the fee in year one. If Phase 1
+                alone doesn&apos;t clear that bar on paper, we shrink scope or decline.
               </div>
             </details>
           </div>
@@ -653,18 +405,17 @@ export default function PricingPage() {
         <div className="yk-section-inner">
           <div className="pr-final-content">
             <h2 className="pr-final-h2">
-              Start with the
+              Start with a
               <br />
-              <span className="yk-gold yk-italic">Operational Drag Audit.</span>
+              <span className="yk-gold yk-italic">conversation.</span>
             </h2>
             <p className="pr-final-sub">
-              The Audit is the universal qualifier. It surfaces where your operations are leaking value,
-              identifies which vertical pattern fits (or whether a custom build serves better),
-              and matches you to the right tier. Every Yakini engagement starts here.
+              Tell us what you&apos;re operating — we&apos;ll tell you honestly whether it&apos;s a
+              Kit, Operate, Custom, or not a fit.
             </p>
             <div className="pr-final-ctas">
               <a href="/apply" className="pr-tier-cta pr-cta-featured">
-                <span>Start the Audit</span>
+                <span>Apply</span>
                 <span className="yk-btn-arrow">→</span>
               </a>
               <a href="/process" className="pr-tier-cta">
@@ -677,66 +428,14 @@ export default function PricingPage() {
       </section>
     </SiteShell>
   )
-          }
-// =========================================================================
-// PAGE STYLES
-// ═════════════════════════════════════════════════════════════════════════
+}
+
 const PAGE_CSS = `
   /* ═══ HEADER ═══ */
   .pr-header {
     background: linear-gradient(180deg, rgba(10, 9, 8, 0.20) 0%, rgba(10, 9, 8, 0.40) 100%), url('/yakini-pricing-bg.jpg') center center / cover no-repeat;
-    min-height: 600px;
+    min-height: 520px;
     position: relative;
-  }
-  .pr-page-sub-italic {
-    margin-top: 20px;
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 18px;
-    color: var(--gold);
-    letter-spacing: 0.01em;
-  }
-
-  /* ═══ BILLING TOGGLE ═══ */
-  .pr-toggle-section {
-    background: var(--navy-deep);
-    padding: 40px 0;
-  }
-  .pr-toggle-wrapper {
-    display: inline-flex;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--line);
-    padding: 6px;
-    border-radius: 4px;
-    margin: 0 auto;
-  }
-  .pr-toggle-wrapper { display: flex; justify-content: center; }
-  .pr-toggle-btn {
-    background: transparent;
-    border: none;
-    padding: 12px 24px;
-    color: var(--muted);
-    font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-    border-radius: 2px;
-  }
-  .pr-toggle-btn.active {
-    background: var(--gold);
-    color: var(--black);
-  }
-  .pr-toggle-save {
-    margin-left: 6px;
-    font-size: 10px;
-    color: var(--gold);
-  }
-  .pr-toggle-btn.active .pr-toggle-save {
-    color: var(--black);
-    opacity: 0.7;
   }
 
   /* ═══ TIERS GRID ═══ */
@@ -749,8 +448,13 @@ const PAGE_CSS = `
     gap: 24px;
     margin-bottom: 48px;
   }
-  @media (max-width: 1100px) {
-    .pr-tiers-grid { grid-template-columns: 1fr; }
+  .pr-tiers-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 960px;
+  }
+  @media (max-width: 900px) {
+    .pr-tiers-grid,
+    .pr-tiers-grid-2 { grid-template-columns: 1fr; }
   }
   .pr-tier {
     background: rgba(255,255,255,0.02);
@@ -765,7 +469,7 @@ const PAGE_CSS = `
     background: linear-gradient(135deg, rgba(200, 168, 75, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
     transform: translateY(-8px);
   }
-  @media (max-width: 1100px) {
+  @media (max-width: 900px) {
     .pr-tier-featured { transform: none; }
   }
   .pr-tier-badge {
@@ -803,16 +507,20 @@ const PAGE_CSS = `
     border-bottom: 1px solid var(--line);
     margin-bottom: 24px;
   }
+  .pr-typical-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
   .pr-tier-monthly {
     display: flex;
     align-items: baseline;
     gap: 2px;
     margin-bottom: 8px;
-  }
-  .pr-price-currency {
-    font-family: var(--font-display);
-    font-size: 24px;
-    color: var(--cream);
   }
   .pr-price-num {
     font-family: var(--font-display);
@@ -821,18 +529,8 @@ const PAGE_CSS = `
     color: var(--cream);
     line-height: 1;
   }
-  .pr-price-range-dash {
-    font-family: var(--font-display);
-    font-size: 32px;
-    color: var(--muted);
-    margin: 0 4px;
-  }
-  .pr-price-period {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--muted);
-    margin-left: 6px;
-    letter-spacing: 0.1em;
+  .pr-price-num-lg {
+    font-size: clamp(36px, 4vw, 48px);
   }
   .pr-price-note {
     font-size: 12px;
@@ -851,9 +549,6 @@ const PAGE_CSS = `
     padding: 6px 0;
     font-size: 13px;
   }
-  .pr-setup-row.pr-setup-vertical {
-    color: var(--gold);
-  }
   .pr-setup-label {
     font-family: var(--font-mono);
     font-size: 10px;
@@ -861,24 +556,11 @@ const PAGE_CSS = `
     color: var(--muted);
     text-transform: uppercase;
   }
-  .pr-setup-row.pr-setup-vertical .pr-setup-label {
-    color: var(--gold);
-  }
   .pr-setup-value {
     font-family: var(--font-display);
-    color: var(--cream);
-    font-weight: 500;
-  }
-  .pr-setup-row.pr-setup-vertical .pr-setup-value {
     color: var(--gold);
-  }
-  .pr-tier-term {
-    margin-top: 14px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    color: var(--muted);
-    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 18px;
   }
   .pr-tier-desc {
     font-size: 14px;
@@ -928,10 +610,6 @@ const PAGE_CSS = `
     text-transform: uppercase;
     margin-bottom: 12px;
   }
-  .pr-tier-section-not {
-    color: var(--muted);
-    opacity: 0.6;
-  }
   .pr-tier-list {
     list-style: none;
     padding: 0;
@@ -951,281 +629,254 @@ const PAGE_CSS = `
     color: var(--gold);
     font-weight: 700;
   }
-  .pr-list-not li {
-    color: var(--muted);
-    opacity: 0.7;
-  }
-  .pr-list-not li::before {
-    content: '—';
-    position: absolute;
-    left: 0;
-    color: var(--muted);
-  }
-  .pr-tier-bestfor {
-    font-size: 13px;
-    line-height: 1.6;
-    color: var(--muted);
-    font-style: italic;
-  }
 
-  /* ═══ BUILD & OWN NOTE ═══ */
-  .pr-build-own-note {
-    padding: 24px 32px;
-    background: rgba(0,0,0,0.2);
-    border-left: 2px solid var(--gold);
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--cream);
-    margin-bottom: 40px;
-  }
-  .pr-build-own-eyebrow {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  /* ═══ POLICY ROW (Payment + Floor) ═══ */
-  .pr-policy-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-  }
-  @media (max-width: 800px) {
-    .pr-policy-row { grid-template-columns: 1fr; }
-  }
-  .pr-policy-card {
-    padding: 28px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid var(--line);
-  }
-  .pr-policy-h {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .pr-policy-card p {
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--cream);
-  }
-
-  /* ═══ VERTICAL EDITIONS ═══ */
-  .pr-verticals {
-    background: linear-gradient(180deg, var(--navy-deep) 0%, var(--black) 100%);
-  }
-  .pr-verticals-explainer {
-    font-size: 16px;
-    line-height: 1.7;
-    color: var(--cream);
-    max-width: 760px;
-    margin-bottom: 32px;
-  }
-  .pr-verticals-quote {
-    padding: 28px 32px;
-    background: rgba(200, 168, 75, 0.05);
-    border-left: 3px solid var(--gold);
-    margin-bottom: 48px;
-    max-width: 900px;
-  }
-  .pr-verticals-quote p {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 20px;
-    line-height: 1.5;
-    color: var(--cream);
-  }
-  .pr-verticals-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    margin-bottom: 48px;
-  }
-  .pr-vertical-card {
-    padding: 28px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid var(--line);
-    position: relative;
+  /* ═══ LAUNCH CUSTOM ═══ */
+  .pr-custom-card {
+    padding: 48px;
+    background: linear-gradient(135deg, rgba(200, 168, 75, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid var(--gold);
     display: flex;
     flex-direction: column;
+    gap: 0;
   }
-  .pr-vertical-live {
-    border-color: var(--gold);
-  }
-  .pr-vertical-dev {
-    opacity: 0.85;
-  }
-  .pr-vertical-status {
+  .pr-custom-meta {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    padding: 6px 14px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    align-self: flex-start;
+  }
+  .pr-custom-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+  .pr-custom-h {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.6vw, 40px);
+    font-weight: 500;
+    line-height: 1.15;
+    color: var(--cream);
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+  .pr-custom-body {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--cream);
+    margin-bottom: 32px;
+    max-width: 720px;
+  }
+  .pr-custom-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 28px;
+    padding: 28px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  @media (max-width: 900px) {
+    .pr-custom-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .pr-custom-grid { grid-template-columns: 1fr; }
+    .pr-custom-card { padding: 32px 24px; }
+  }
+  .pr-custom-phase-label {
     font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.22em;
     color: var(--gold);
     text-transform: uppercase;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
   }
-  .pr-vertical-status-dot {
-    width: 6px;
-    height: 6px;
-    background: var(--gold);
-    border-radius: 50%;
-  }
-  .pr-vertical-dev .pr-vertical-status {
-    color: var(--muted);
-  }
-  .pr-vertical-dev .pr-vertical-status-dot {
-    background: var(--muted);
-  }
-  .pr-vertical-name {
+  .pr-custom-phase-price {
     font-family: var(--font-display);
     font-size: 22px;
     font-weight: 500;
     color: var(--cream);
-    line-height: 1.2;
-    margin-bottom: 14px;
-    letter-spacing: -0.01em;
+    margin-bottom: 4px;
   }
-  .pr-vertical-proof {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 10px 0;
-    border-top: 1px dashed var(--line);
-    border-bottom: 1px dashed var(--line);
-    margin-bottom: 14px;
+  .pr-custom-phase-range {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 10px;
   }
-  .pr-vertical-proof-label {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.25em;
-    color: var(--gold);
-    text-transform: uppercase;
-  }
-  .pr-vertical-proof-name {
-    font-family: var(--font-display);
-    font-size: 15px;
-    color: var(--cream);
-    font-weight: 500;
-  }
-  .pr-vertical-desc {
+  .pr-custom-phase p {
     font-size: 13px;
     line-height: 1.6;
     color: var(--muted);
   }
-  .pr-verticals-straddler {
-    padding: 32px;
-    background: rgba(200, 168, 75, 0.04);
-    border: 1px solid var(--gold);
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: flex-start;
-  }
-  .pr-verticals-straddler p {
-    font-size: 15px;
+  .pr-custom-note {
+    font-size: 14px;
     line-height: 1.7;
     color: var(--cream);
-  }
-  .pr-verticals-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 22px;
-    background: var(--gold);
-    color: var(--black);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-  .pr-verticals-cta:hover {
-    background: var(--cream);
+    margin-bottom: 28px;
+    padding: 20px;
+    background: rgba(0,0,0,0.2);
+    border-left: 2px solid var(--gold);
   }
 
-  /* ═══ COMPARISON TABLE ═══ */
-  .pr-comparison {
-    background: linear-gradient(180deg, var(--black) 0%, var(--navy-deep) 100%);
+  /* ═══ OPERATE ═══ */
+  .pr-operate {
+    background: linear-gradient(180deg, var(--navy-deep) 0%, var(--black) 100%);
   }
+  .pr-operate-lead {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--cream);
+    max-width: 640px;
+    margin-bottom: 36px;
+  }
+
+  /* ═══ RULES ═══ */
+  .pr-rules {
+    background: var(--black);
+  }
+  .pr-rules-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+  .pr-rules-list li {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--cream);
+  }
+  .pr-rules-num {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+
+  /* ═══ BY INVITATION ═══ */
+  .pr-invite {
+    background: var(--navy-deep);
+  }
+  .pr-invite-card {
+    padding: 40px 48px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--line);
+    max-width: 720px;
+  }
+  .pr-invite-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  .pr-invite-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--muted);
+    border-radius: 50%;
+  }
+  .pr-invite-h {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--cream);
+    margin-bottom: 12px;
+  }
+  .pr-invite-body {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  /* ═══ TABLE ═══ */
   .pr-table-wrapper {
     overflow-x: auto;
     border: 1px solid var(--line);
     background: rgba(255,255,255,0.02);
+    max-width: 640px;
   }
   .pr-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px;
   }
   .pr-table th, .pr-table td {
     padding: 16px 20px;
     text-align: left;
     border-bottom: 1px solid var(--line);
-    font-size: 13px;
+    font-size: 14px;
   }
   .pr-table th {
     font-family: var(--font-display);
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
     color: var(--cream);
     background: rgba(255,255,255,0.03);
     border-bottom: 2px solid var(--line-strong);
   }
-  .pr-th-featured {
-    color: var(--gold) !important;
-    background: rgba(200, 168, 75, 0.08) !important;
-  }
   .pr-feature-cell {
     color: var(--cream);
     font-weight: 500;
   }
-  .pr-cell-featured {
-    background: rgba(200, 168, 75, 0.04);
-  }
-  .pr-check {
-    color: var(--gold);
-    font-size: 18px;
-    font-weight: 700;
-  }
-  .pr-dash {
-    color: var(--muted);
-    opacity: 0.5;
-  }
   .pr-cell-text {
     color: var(--cream);
-    font-size: 12px;
+  }
+  .pr-cell-price {
+    color: var(--gold);
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 500;
   }
   .pr-table-footnote {
-    margin-top: 24px;
-    text-align: center;
+    margin-top: 20px;
     font-style: italic;
     font-size: 14px;
     color: var(--muted);
   }
-    /* ═══ NONPROFITS / MISSION-ALIGNED ═══ */
+
+  /* ═══ NONPROFITS / MISSION-ALIGNED ═══ */
   .pr-nonprofits {
-    background: linear-gradient(180deg, var(--navy-deep) 0%, var(--black-soft) 100%);
+    background: linear-gradient(180deg, var(--navy-deep) 0%, var(--black-soft, var(--black)) 100%);
   }
   .pr-nonprofits-card {
-    padding: 60px;
+    padding: 48px;
     background: linear-gradient(135deg, rgba(200, 168, 75, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
     border: 1px solid var(--gold);
     position: relative;
-    max-width: 1100px;
+    max-width: 900px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .pr-nonprofits-card-brief {
+    padding: 40px 48px;
   }
   .pr-nonprofits-meta {
     display: inline-flex; align-items: center; gap: 10px;
@@ -1238,118 +889,32 @@ const PAGE_CSS = `
     letter-spacing: 0.25em;
     margin-bottom: 24px;
     text-transform: uppercase;
+    align-self: flex-start;
   }
   .pr-nonprofits-dot {
     width: 6px; height: 6px;
     background: var(--gold);
     border-radius: 50%;
-    animation: yk-dot-pulse 2s ease-in-out infinite;
   }
   .pr-nonprofits-h {
     font-family: var(--font-display);
-    font-size: clamp(28px, 3.6vw, 42px);
+    font-size: clamp(24px, 3vw, 36px);
     font-weight: 500;
     line-height: 1.15;
     color: var(--cream);
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     letter-spacing: -0.02em;
-    max-width: 22ch;
   }
   .pr-nonprofits-body {
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.8;
     color: var(--cream);
-    margin-bottom: 40px;
-    max-width: 760px;
-  }
-  .pr-nonprofits-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    margin-bottom: 40px;
-    padding: 32px 0;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-  }
-  .pr-nonprofits-feature-h {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 16px;
-  }
-  .pr-nonprofits-pilot {
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--cream);
-    margin-bottom: 32px;
-    padding: 20px;
-    background: rgba(0,0,0,0.2);
-    border-left: 2px solid var(--gold);
-  }
-  @media (max-width: 800px) {
-    .pr-nonprofits-card { padding: 40px 28px; }
-    .pr-nonprofits-grid { grid-template-columns: 1fr; gap: 32px; }
-  }
-
-  /* ═══ STRATEGIC PARTNER ═══ */
-  .pr-strategic {
-    background: var(--navy-deep);
-  }
-  .pr-strategic-card {
-    padding: 60px;
-    background: linear-gradient(135deg, rgba(200, 168, 75, 0.08) 0%, rgba(200, 168, 75, 0.02) 100%);
-    border: 2px solid var(--gold);
-    position: relative;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-  .pr-strategic-meta {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 6px 14px;
-    border: 1px solid var(--gold);
-    color: var(--gold);
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    margin-bottom: 24px;
-    text-transform: uppercase;
-  }
-  .pr-strategic-dot {
-    width: 6px; height: 6px;
-    background: var(--gold);
-    border-radius: 50%;
-    animation: yk-dot-pulse 2s ease-in-out infinite;
-  }
-  .pr-strategic-h {
-    font-family: var(--font-display);
-    font-size: clamp(32px, 4vw, 48px);
-    font-weight: 500;
-    line-height: 1.1;
-    color: var(--cream);
-    margin-bottom: 24px;
-    letter-spacing: -0.02em;
-  }
-  .pr-strategic-body {
-    font-size: 16px;
-    line-height: 1.8;
-    color: var(--cream);
-    margin-bottom: 24px;
-  }
-  .pr-strategic-active {
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--muted);
-    margin-bottom: 32px;
-    padding: 20px;
-    background: rgba(0,0,0,0.2);
-    border-left: 2px solid var(--gold);
+    margin-bottom: 28px;
+    max-width: 640px;
   }
   @media (max-width: 700px) {
-    .pr-strategic-card { padding: 40px 28px; }
+    .pr-nonprofits-card,
+    .pr-nonprofits-card-brief { padding: 32px 24px; }
   }
 
   /* ═══ FAQ ═══ */
