@@ -10,7 +10,16 @@ export default function HomePage() {
 
   return (
     <>
-      <Hero config={config} />
+      <style>{`
+        .ms-hero .yk-hero-bg {
+          background:
+            linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.5) 42%, rgba(0,0,0,0.84) 100%),
+            url('/backdrop-pit.png') center center / cover no-repeat;
+        }
+      `}</style>
+      <div className="ms-hero">
+        <Hero config={config} />
+      </div>
 
       {/* Featured Services */}
       <Section padding="xl">
@@ -56,7 +65,7 @@ export default function HomePage() {
       </Section>
 
       {/* About Preview */}
-      <Section padding="xl" background="var(--brand-text)">
+      <Section padding="xl">
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
@@ -74,13 +83,13 @@ export default function HomePage() {
             <h2 style={{
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(32px, 4vw, 48px)',
-              fontWeight: 500, color: 'var(--brand-bg)',
+              fontWeight: 500, color: 'var(--brand-text)',
               marginBottom: 20, letterSpacing: '-0.02em'
             }}>
               {config.about.headline}
             </h2>
             <p style={{
-              fontSize: 17, color: 'rgba(255,255,255,0.7)',
+              fontSize: 17, color: 'var(--brand-muted)',
               lineHeight: 1.8, marginBottom: 32
             }}>
               {config.about.story.split('\n')[0]}
@@ -91,7 +100,7 @@ export default function HomePage() {
             fontFamily: 'var(--font-display)',
             fontSize: 'clamp(32px, 4vw, 48px)',
             fontStyle: 'italic',
-            color: 'var(--brand-bg)',
+            color: 'var(--brand-text)',
             opacity: 0.9, lineHeight: 1.4
           }}>
             "{config.about.mission}"

@@ -43,18 +43,18 @@ export default function ServicesPage() {
         </div>
       </Section>
 
-      <Section padding="xl" background="var(--brand-text)">
+      <Section padding="xl">
         <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
           <h2 style={{
             fontFamily: 'var(--font-display)',
             fontSize: 'clamp(32px, 5vw, 56px)',
-            fontWeight: 500, color: 'var(--brand-bg)',
+            fontWeight: 500, color: 'var(--brand-text)',
             marginBottom: 24, lineHeight: 1.15
           }}>
             Don't see what you need?
           </h2>
           <p style={{
-            fontSize: 17, color: 'rgba(255,255,255,0.7)',
+            fontSize: 17, color: 'var(--brand-muted)',
             lineHeight: 1.7, marginBottom: 32
           }}>
             Every project is unique. Let's talk about what you're trying to accomplish.

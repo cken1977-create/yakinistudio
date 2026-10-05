@@ -28,8 +28,16 @@ export default function MenuPage() {
 
   return (
     <>
-      <Section padding="xl">
-        <div style={{ paddingTop: 80, maxWidth: 920, marginBottom: 72 }}>
+      <section style={{
+        minHeight: '88vh',
+        display: 'flex',
+        alignItems: 'flex-end',
+        padding: '140px 32px 72px',
+        background:
+          'linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.78) 100%), url(\'/backdrop-platter.png\') center center / cover no-repeat',
+      }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', width: '100%' }}>
+        <div style={{ maxWidth: 920 }}>
           <div style={{
             fontSize: 11, fontWeight: 600,
             letterSpacing: '0.3em', textTransform: 'uppercase',
@@ -55,7 +63,10 @@ export default function MenuPage() {
             </p>
           )}
         </div>
+        </div>
+      </section>
 
+      <Section padding="xl">
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
@@ -66,7 +77,7 @@ export default function MenuPage() {
               <h2 style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: 26, fontWeight: 500, fontStyle: 'italic',
-                color: 'var(--brand-primary)', marginBottom: 6
+                color: 'var(--brand-text)', marginBottom: 6
               }}>
                 {cat.name}
               </h2>
@@ -142,18 +153,18 @@ export default function MenuPage() {
         )}
       </Section>
 
-      <Section padding="xl" background="var(--brand-text)">
+      <Section padding="xl">
         <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
           <h2 style={{
             fontFamily: 'var(--font-display)',
             fontSize: 'clamp(32px, 5vw, 56px)',
-            fontWeight: 500, color: 'var(--brand-bg)',
+            fontWeight: 500, color: 'var(--brand-text)',
             marginBottom: 24, lineHeight: 1.15
           }}>
             Feeding a crowd?
           </h2>
           <p style={{
-            fontSize: 17, color: 'rgba(255,255,255,0.7)',
+            fontSize: 17, color: 'var(--brand-muted)',
             lineHeight: 1.7, marginBottom: 32
           }}>
             Catering runs the same menu, bigger batch. Tell us the date and headcount.
