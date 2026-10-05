@@ -68,7 +68,7 @@ export default function AboutPage() {
       </Section>
 
       {/* Mission */}
-      <Section padding="xl" background="var(--brand-text)">
+      <Section padding="xl">
         <div style={{ textAlign: 'center', maxWidth: 920, margin: '0 auto' }}>
           <div style={{
             fontSize: 11, fontWeight: 600,
@@ -81,7 +81,7 @@ export default function AboutPage() {
             fontFamily: 'var(--font-display)',
             fontSize: 'clamp(28px, 4vw, 48px)',
             fontStyle: 'italic',
-            color: 'var(--brand-bg)',
+            color: 'var(--brand-text)',
             lineHeight: 1.4
           }}>
             "{config.about.mission}"

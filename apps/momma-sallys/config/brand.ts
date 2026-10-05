@@ -23,12 +23,12 @@ export const config: BrandConfig = {
   brand: {
     designSystem: 'editorial',
     colors: {
-      primary: '#C6A05A',
-      accent: '#A6371F',
-      background: '#15100B',
-      text: '#F3EAD6',
-      textMuted: '#A2937C',
-      border: 'rgba(243,234,214,0.14)',
+      primary: '#C8102E',
+      accent: '#8C1D2C',
+      background: '#000000',
+      text: '#FFFFFF',
+      textMuted: '#B5B5B5',
+      border: 'rgba(255,255,255,0.16)',
     },
     fonts: {
       display: 'Fraunces',
@@ -160,6 +160,7 @@ Around town, people know the truck by its mark before they know the name — the
       ctaLink: 'tel:3254288166',
       secondaryCta: 'See the Menu',
       secondaryCtaLink: '/menu',
+      image: '/backdrop-pit.png',
     },
     featuredServices: [0, 1, 2],
   },
