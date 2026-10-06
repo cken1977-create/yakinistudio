@@ -174,15 +174,15 @@ export type OperatorBuild = {
 
 export const OPERATOR_BUILDS: OperatorBuild[] = [
   {
-    id: 'jl-industrial',
-    name: 'J&L Industrial Services',
+    id: 'industrial-operator',
+    name: 'Alabama industrial operator floor',
     label: 'INDUSTRIAL · ALABAMA',
     scope: 'Operator system for how the company runs jobs — bids, crews, job cost, and the floor work that spreadsheets leak.',
     note: 'Larger industrial build. Scoped for an established field operator — not a marketing site.',
   },
   {
-    id: 'kevin-build',
-    name: "Kevin's build",
+    id: 'enterprise-operator',
+    name: 'Enterprise-scope operator system',
     label: 'OPERATOR · ENTERPRISE SCOPE',
     scope: 'A larger operator-system engagement — proof that Yakini builds for companies that need more than a brochure.',
     note: 'Enterprise-style scope. Details stay with the client until they go live.',

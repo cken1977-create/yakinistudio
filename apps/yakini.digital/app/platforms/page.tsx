@@ -9,7 +9,7 @@ import { INDUSTRY_KITS, OPERATOR_BUILDS } from '@/lib/industry-kits'
 //
 // Purpose: Operator systems messaging, industry kits, larger builds, live proof.
 // Industry Kits come first so visitors find their vertical. Operator Builds
-// (J&L, Kevin) surface enterprise-style work without inventing LIVE metrics.
+// (anonymous — no client names) surface enterprise-style work without inventing LIVE metrics.
 // Live platforms follow as the proof. No TBD / HELD / Black-owned transportation.
 // TheyTowedMyCar featured first among live platforms.
 // ═════════════════════════════════════════════════════════════════════════
