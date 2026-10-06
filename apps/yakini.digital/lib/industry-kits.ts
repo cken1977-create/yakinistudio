@@ -175,8 +175,8 @@ export type OperatorBuild = {
 export const OPERATOR_BUILDS: OperatorBuild[] = [
   {
     id: 'industrial-operator',
-    name: 'Alabama industrial operator floor',
-    label: 'INDUSTRIAL · ALABAMA',
+    name: 'Industrial Operator Floor',
+    label: 'INDUSTRIAL · OPERATOR FLOOR',
     scope: 'Operator system for how the company runs jobs — bids, crews, job cost, and the floor work that spreadsheets leak.',
     note: 'Larger industrial build. Scoped for an established field operator — not a marketing site.',
   },
