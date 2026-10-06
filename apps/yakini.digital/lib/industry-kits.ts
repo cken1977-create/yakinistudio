@@ -30,10 +30,10 @@ export const INDUSTRY_KITS: IndustryKit[] = [
   {
     id: 'legal-advocacy-kit',
     name: 'Legal & Advocacy Kit',
-    industry: 'LEGAL SERVICES · TOW DEFENSE · CONSUMER PROTECTION',
-    short: 'Tow defense & legal',
+    industry: 'LEGAL SERVICES · LAW PRACTICE · TOW DEFENSE · CONSUMER PROTECTION',
+    short: 'Legal & law practice',
     forWho:
-      'Tow defense services, consumer advocates, and case-based legal practices still running intake on forms and spreadsheets.',
+      'Law practices, tow defense services, and consumer advocates still running intake, case queues, and client updates on forms and spreadsheets.',
     includes: [
       'Multi-step evidentiary intake',
       'AI case-strength triage with statute citations',
@@ -86,23 +86,61 @@ export const INDUSTRY_KITS: IndustryKit[] = [
     applyIndustry: 'Workforce / Reentry / Corrections',
   },
   {
+    id: 'insurance-agency-kit',
+    name: 'Insurance Agency Kit',
+    industry: 'INSURANCE · AGENCIES · BROKERS',
+    short: 'Insurance agencies',
+    forWho:
+      'Independent agencies and brokers drowning in quote requests, renewals, and policy follow-ups across inboxes and shared drives.',
+    includes: [
+      'Lead and quote intake tuned to your lines',
+      'Pipeline for new business and renewals',
+      'Client portal for documents and status',
+      'Renewal and certificate reminders',
+      'Producer and office workflow board',
+      'Client communications drafted in your voice',
+    ],
+    aiTools: ['Quote Triage', 'Renewal Summaries', 'Client Communication', 'Document Generation'],
+    status: 'ready',
+    applyIndustry: 'Insurance / Agencies / Brokers',
+  },
+  {
+    id: 'accounting-kit',
+    name: 'Accounting & Advisory Kit',
+    industry: 'ACCOUNTING · BOOKKEEPING · ADVISORY',
+    short: 'Accounting & advisory',
+    forWho:
+      'CPA firms, bookkeepers, and advisors juggling client intake, document collection, and seasonal spikes without a shared operating floor.',
+    includes: [
+      'Client onboarding and engagement intake',
+      'Secure document vault and request lists',
+      'Deadline and filing calendar',
+      'Client portal with magic-link access',
+      'Internal work queue by engagement',
+      'Client updates drafted from your notes',
+    ],
+    aiTools: ['Document Checklist', 'Client Communication', 'Deadline Summaries'],
+    status: 'ready',
+    applyIndustry: 'Accounting / Bookkeeping / Advisory',
+  },
+  {
     id: 'field-operations-kit',
     name: 'Field Operations Kit',
-    industry: 'ENERGY · TRADES · FLEET & FIELD CREWS',
-    short: 'Energy & field ops',
+    industry: 'INDUSTRIAL · ENERGY · TRADES · FLEET & FIELD CREWS',
+    short: 'Industrial & field ops',
     forWho:
-      'Oilfield service companies, trades, and fleet operators running crews across hundreds of miles on radios and clipboards.',
+      'Industrial service companies, oilfield crews, trades, and fleet operators running jobs, hours, and compliance across plants and miles — still on radios, clipboards, and spreadsheets.',
     includes: [
+      'Bids, estimates, and job pipeline',
       'Crew dispatch and job board',
-      'Mobile incident reporting with AI severity triage',
+      'Job cost through invoicing',
+      'Mobile incident and daily reporting',
       'Certification and compliance tracking',
-      'Equipment and vehicle maintenance log',
-      'Client job-status portal',
-      'Automated client reporting',
+      'Equipment log and client job-status portal',
     ],
     aiTools: ['Incident Triage', 'Compliance Verification', 'Customer Communication', 'Strategic Analysis'],
     status: 'ready',
-    applyIndustry: 'Oilfield services / Energy',
+    applyIndustry: 'Industrial / Field operations',
   },
   {
     id: 'hospitality-kit',
@@ -122,5 +160,31 @@ export const INDUSTRY_KITS: IndustryKit[] = [
     aiTools: ['Smart Quoting', 'Customer Communication', 'Letter Generation'],
     status: 'ready',
     applyIndustry: 'Private chef / Catering / Hospitality',
+  },
+]
+
+/** Larger operator / enterprise-style engagements — proof language only. No invented metrics, domains, or LIVE claims. */
+export type OperatorBuild = {
+  id: string
+  name: string
+  label: string
+  scope: string
+  note: string
+}
+
+export const OPERATOR_BUILDS: OperatorBuild[] = [
+  {
+    id: 'jl-industrial',
+    name: 'J&L Industrial Services',
+    label: 'INDUSTRIAL · ALABAMA',
+    scope: 'Operator system for how the company runs jobs — bids, crews, job cost, and the floor work that spreadsheets leak.',
+    note: 'Larger industrial build. Scoped for an established field operator — not a marketing site.',
+  },
+  {
+    id: 'kevin-build',
+    name: "Kevin's build",
+    label: 'OPERATOR · ENTERPRISE SCOPE',
+    scope: 'A larger operator-system engagement — proof that Yakini builds for companies that need more than a brochure.',
+    note: 'Enterprise-style scope. Details stay with the client until they go live.',
   },
 ]

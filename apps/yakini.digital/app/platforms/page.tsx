@@ -1,16 +1,17 @@
 'use client'
 
 import { SiteShell } from '@/components/SiteShell'
-import { INDUSTRY_KITS } from '@/lib/industry-kits'
+import { INDUSTRY_KITS, OPERATOR_BUILDS } from '@/lib/industry-kits'
 
 // ═════════════════════════════════════════════════════════════════════════
 // YAKINI PLATFORMS — Case Study Showcase
 // File: apps/yakini.digital/app/platforms/page.tsx
 //
-// Purpose: Live platforms and industry kits only.
-// Industry Kits (lib/industry-kits.ts) come first so visitors find their
-// vertical; live platforms follow as the proof. No TBD / prospective /
-// placeholder cards. TheyTowedMyCar featured first among live platforms.
+// Purpose: Operator systems messaging, industry kits, larger builds, live proof.
+// Industry Kits come first so visitors find their vertical. Operator Builds
+// (J&L, Kevin) surface enterprise-style work without inventing LIVE metrics.
+// Live platforms follow as the proof. No TBD / HELD / Black-owned transportation.
+// TheyTowedMyCar featured first among live platforms.
 // ═════════════════════════════════════════════════════════════════════════
 
 const PLATFORMS = [
@@ -117,15 +118,16 @@ export default function PlatformsPage() {
             <span>YAKINI PLATFORMS</span>
           </div>
           <h1 className="yk-page-h1">
-            Platforms for
+            Operator systems
             <br />
-            <span className="yk-italic">serious founders</span>
+            <span className="yk-italic">for serious</span>
             <br />
-            <span className="yk-gold">across every industry.</span>
+            <span className="yk-gold">operators.</span>
           </h1>
           <p className="yk-page-sub">
-            Find your industry below. Every Industry Kit is built on the same foundation
-            running our live platforms — configured for how your world actually works.
+            We don&apos;t build websites. We build operator systems — intake, workflows,
+            portals, and intelligence your business runs on. Insurance agencies, lawyers,
+            accountants, industrial crews, nonprofits — find your industry below.
           </p>
 
           <nav className="pl-jump" aria-label="Jump to your industry">
@@ -151,8 +153,8 @@ export default function PlatformsPage() {
               <span className="pl-stat-lbl">Founder-owned</span>
             </div>
             <div className="pl-stat">
-              <span className="pl-stat-num">Live</span>
-              <span className="pl-stat-lbl">No placeholders</span>
+              <span className="pl-stat-num">Ops</span>
+              <span className="pl-stat-lbl">Not websites</span>
             </div>
           </div>
         </div>
@@ -172,9 +174,9 @@ export default function PlatformsPage() {
             <span className="yk-gold">industry.</span>
           </h2>
           <p className="pl-section-lead">
-            A kit is a Yakini platform pre-configured for one vertical — intake, portal, workflows, and
-            intelligence tuned to your industry, then branded to you. Your domain. Your data. Proven kits
-            run on a live platform today. Ready kits are scoped with you in one conversation.
+            A kit is an operator system pre-configured for one vertical — intake, portal, workflows, and
+            intelligence tuned to your industry, then branded to you. Your domain. Your data. Not a brochure site.
+            Proven kits run on a live platform today. Ready kits are scoped with you in one conversation.
           </p>
 
           <div className="pl-kits-grid">
@@ -227,11 +229,57 @@ export default function PlatformsPage() {
         </div>
       </section>
 
+      {/* ───── OPERATOR SYSTEMS / LARGER BUILDS ───── */}
+      <section className="yk-section pl-ops" id="operator-systems">
+        <div className="yk-section-inner">
+          <div className="yk-section-tag">
+            <span className="yk-num">02</span>
+            <span>Operator Systems</span>
+          </div>
+          <h2 className="pl-section-h2">
+            Not a website.
+            <br />
+            <span className="yk-italic">The floor </span>
+            <span className="yk-gold">you run on.</span>
+          </h2>
+          <p className="pl-section-lead">
+            Yakini builds operator systems — custom software that takes cost out of how you run the business.
+            That includes industry kits for agencies and practices, and larger builds for established companies
+            that need job cost, crews, compliance, and billing under one roof.
+          </p>
+
+          <div className="pl-ops-callout">
+            <div className="pl-ops-callout-label">WHAT AN OPERATOR SYSTEM IS</div>
+            <p>
+              Intake, workflows, portals, intelligence, and the admin command center — owned by you.
+              Built for how your people actually work. The same discipline behind our live platforms,
+              sized for startups and for bigger company builds.
+            </p>
+          </div>
+
+          <div className="pl-ops-builds-h">LARGER BUILDS · PROOF OF SCALE</div>
+          <div className="pl-ops-grid">
+            {OPERATOR_BUILDS.map(b => (
+              <article key={b.id} id={b.id} className="pl-ops-card">
+                <div className="pl-ops-card-top">
+                  <span className="pl-ops-badge">OPERATOR BUILD</span>
+                  <span className="pl-status pl-status-electric">ENTERPRISE SCOPE</span>
+                </div>
+                <div className="pl-ops-label">{b.label}</div>
+                <h3 className="pl-ops-name">{b.name}</h3>
+                <p className="pl-ops-scope">{b.scope}</p>
+                <p className="pl-ops-note">{b.note}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ───── PLATFORMS LIST ───── */}
       <section className="yk-section pl-section" id="live">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
-            <span className="yk-num">02</span>
+            <span className="yk-num">03</span>
             <span>Live Platforms</span>
           </div>
           <h2 className="pl-section-h2">
@@ -241,7 +289,7 @@ export default function PlatformsPage() {
             <span className="yk-gold">live.</span>
           </h2>
           <p className="pl-section-lead">
-            Real founders, real deployments. Each one is the foundation of an Industry Kit above.
+            Real founders, real operator systems. Each one is the foundation of an Industry Kit above.
           </p>
           {PLATFORMS.map((p, i) => (
             <article key={p.id} id={p.id} className={`pl-card ${i === 0 ? 'pl-card-featured' : ''}`}>
@@ -346,14 +394,14 @@ export default function PlatformsPage() {
             <h2 className="pl-final-h2">
               We don't have a vertical yet.
               <br />
-              <span className="yk-italic">We have</span>
+              <span className="yk-italic">We build</span>
               <br />
-              <span className="yk-gold">a methodology.</span>
+              <span className="yk-gold">operator systems.</span>
             </h2>
             <p className="pl-final-sub">
-              Yakini doesn't build templates. We build custom infrastructure for every founder we partner with.
-              If you're operating a serious business in any industry — and your competitors are running on
-              spreadsheets — let's talk about what your platform looks like.
+              Yakini doesn't build templates or brochure sites. We build the system your business runs on —
+              for insurance agencies, law practices, accounting firms, industrial crews, and anyone still
+              leaking time and money into spreadsheets. Let's talk about what your operator system looks like.
             </p>
             <div className="pl-final-ctas">
               <a href="/apply" className="yk-btn-primary">
@@ -475,17 +523,10 @@ const PAGE_CSS = `
     border-bottom: 1px solid var(--line);
     padding-top: 110px;
   }
-  /* 6-col grid: proven kits fill row one (3 × span 2), ready kits row two (2 × span 3) */
   .pl-kits-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
-  }
-  .pl-kit { grid-column: span 2; }
-  .pl-kit-ready { grid-column: span 3; }
-  @media (max-width: 1100px) {
-    .pl-kits-grid { grid-template-columns: repeat(2, 1fr); }
-    .pl-kit, .pl-kit-ready { grid-column: span 1; }
   }
   .pl-kit {
     display: flex; flex-direction: column;
@@ -602,8 +643,101 @@ const PAGE_CSS = `
 
   @media (max-width: 700px) {
     .pl-kits-grid { grid-template-columns: 1fr; }
-    .pl-kit, .pl-kit-ready { grid-column: auto; }
     .pl-kit { padding: 28px 22px; }
+  }
+
+  /* ═══ OPERATOR SYSTEMS ═══ */
+  .pl-ops {
+    background: linear-gradient(180deg, var(--black-soft) 0%, var(--black) 100%);
+    border-bottom: 1px solid var(--line);
+    padding-top: 110px;
+  }
+  .pl-ops-callout {
+    max-width: 820px;
+    padding: 28px 32px;
+    margin-bottom: 48px;
+    border: 1px solid rgba(200, 168, 75, 0.35);
+    background: linear-gradient(180deg, rgba(200, 168, 75, 0.08) 0%, rgba(255,255,255,0.02) 100%);
+  }
+  .pl-ops-callout-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .pl-ops-callout p {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--cream);
+    margin: 0;
+  }
+  .pl-ops-builds-h {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+  .pl-ops-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 800px) {
+    .pl-ops-grid { grid-template-columns: 1fr; }
+  }
+  .pl-ops-card {
+    padding: 36px 32px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--line);
+    scroll-margin-top: 110px;
+  }
+  .pl-ops-card-top {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .pl-ops-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+  .pl-ops-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--electric);
+    margin-bottom: 12px;
+  }
+  .pl-ops-name {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 500;
+    line-height: 1.05;
+    color: var(--cream);
+    margin-bottom: 14px;
+  }
+  .pl-ops-scope {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--cream);
+    margin-bottom: 16px;
+  }
+  .pl-ops-note {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--muted);
+    margin: 0;
+    padding-top: 16px;
+    border-top: 1px dashed var(--line-strong);
   }
 
   /* ═══ PLATFORMS LIST ═══ */

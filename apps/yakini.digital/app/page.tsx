@@ -97,9 +97,9 @@ export default function HomePage() {
           </h1>
 
           <p className="yk-hero-sub">
-            We don&apos;t make websites. We build the platforms your business runs on —
-            with intelligence baked into the foundation. Deployed against proven vertical
-            patterns. Owned by you from day one.
+            We don&apos;t make websites. We build operator systems — the floor your business
+            runs on, with intelligence baked into the foundation. Industry kits for agencies
+            and practices. Larger builds for established operators. Owned by you from day one.
           </p>
 
           <div className="yk-hero-ctas">
@@ -254,9 +254,10 @@ export default function HomePage() {
               <span className="yk-gold">not discovery.</span>
             </h2>
             <p className="yk-verticals-lead">
-              An Industry Kit is a Yakini platform pre-configured for one vertical — intake, portal, workflows,
+              An Industry Kit is an operator system pre-configured for one vertical — intake, portal, workflows,
               and intelligence already built for how your industry works, then branded to you.
-              Proven kits run on a live platform today. Ready kits are scoped with you in one conversation.
+              Insurance, law, accounting, industrial, nonprofit — find your kit. Proven kits run live today;
+              ready kits are scoped with you in one conversation.
             </p>
           </div>
 
@@ -285,7 +286,7 @@ export default function HomePage() {
           <div className="yk-verticals-cta-row">
             <p className="yk-verticals-straddler">
               <strong>Not sure which kit fits?</strong> Start with the Operational Drag Audit.
-              We&apos;ll surface your dominant operational pattern and match you to the right deployment — vertical or custom.
+              We&apos;ll match you to the right operator system — industry kit or a larger custom build.
             </p>
             <a href="/apply" className="yk-btn-primary">
               <span>Start the Audit</span>
@@ -1346,7 +1347,7 @@ const CSS = `
     margin-bottom: 60px;
   }
   @media (min-width: 1280px) {
-    .yk-verticals-grid { grid-template-columns: repeat(5, 1fr); }
+    .yk-verticals-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
   }
   .yk-vertical-card {
     padding: 32px 28px;
