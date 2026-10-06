@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { SiteShell } from '@/components/SiteShell'
+import { INDUSTRY_KITS } from '@/lib/industry-kits'
 import { createClient } from '@supabase/supabase-js'
 
 // ═════════════════════════════════════════════════════════════════════════
@@ -41,6 +42,7 @@ const INDUSTRIES = [
   'Healthcare / Wellness',
   'Construction / Trades',
   'Nonprofit / Community services',
+  'Workforce / Reentry / Corrections',
   'Other',
 ]
 
@@ -95,6 +97,15 @@ export default function ApplyPage() {
   })
 
   const update = (k: keyof typeof form, v: string) => setForm({ ...form, [k]: v })
+
+  // Preselect industry when arriving from a Platforms Industry Kit (/apply?kit=<id>)
+  useEffect(() => {
+    const kitId = new URLSearchParams(window.location.search).get('kit')
+    const kit = INDUSTRY_KITS.find(k => k.id === kitId)
+    if (kit && INDUSTRIES.includes(kit.applyIndustry)) {
+      setForm(f => (f.industry ? f : { ...f, industry: kit.applyIndustry }))
+    }
+  }, [])
 
   const validateStep = (s: number): boolean => {
     setError('')
