@@ -115,15 +115,13 @@ export default function HomePage() {
               <span>· LEGACYLINE</span>
               <span>· THEYTOWEDMYCAR</span>
               <span>· VIZIONZ SANKOFA</span>
-              <span>· PETTÍT LUXE</span>
-              <span>· PX3 ENERGY</span>
               <span>· COMPOSER</span>
               <span>· YAKINI STUDIOS</span>
               <span>· LEGACYLINE</span>
               <span>· THEYTOWEDMYCAR</span>
               <span>· VIZIONZ SANKOFA</span>
-              <span>· PETTÍT LUXE</span>
-              <span>· PX3 ENERGY</span>
+              <span>· COMPOSER</span>
+              <span>· YAKINI STUDIOS</span>
             </div>
           </div>
         </div>
@@ -205,19 +203,19 @@ export default function HomePage() {
               <span className="yk-platform-arrow">View case study →</span>
             </a>
 
-            <a href="/platforms#legacyline" className="yk-platform-card">
+            <a href="/platforms#vimaa" className="yk-platform-card">
               <div className="yk-platform-meta">
                 <span className="yk-platform-status">LIVE</span>
                 <span className="yk-platform-tier">ENTERPRISE</span>
               </div>
-              <h3 className="yk-platform-name">Legacyline</h3>
+              <h3 className="yk-platform-name">Vimaa / Legacyline</h3>
               <p className="yk-platform-desc">
                 7-module readiness OS. SHA-256 deterministic scoring. Three-domain evaluator system.
               </p>
               <span className="yk-platform-arrow">→</span>
             </a>
 
-            <a href="#" className="yk-platform-card">
+            <a href="/platforms#vizionz-sankofa" className="yk-platform-card">
               <div className="yk-platform-meta">
                 <span className="yk-platform-status">LIVE</span>
                 <span className="yk-platform-tier">AUTHORITY</span>
@@ -225,30 +223,6 @@ export default function HomePage() {
               <h3 className="yk-platform-name">Vizionz Sankofa</h3>
               <p className="yk-platform-desc">
                 Albuquerque nonprofit. Case management platform serving low-income families and refugee communities.
-              </p>
-              <span className="yk-platform-arrow">→</span>
-            </a>
-
-            <a href="#" className="yk-platform-card yk-platform-soon">
-              <div className="yk-platform-meta">
-                <span className="yk-platform-status">BUILDING</span>
-                <span className="yk-platform-tier">AUTHORITY</span>
-              </div>
-              <h3 className="yk-platform-name">Pettít Luxe Group</h3>
-              <p className="yk-platform-desc">
-                Chef Jada — private dining and event catering in Chicago.
-              </p>
-              <span className="yk-platform-arrow">→</span>
-            </a>
-
-            <a href="#" className="yk-platform-card yk-platform-soon">
-              <div className="yk-platform-meta">
-                <span className="yk-platform-status">BUILDING</span>
-                <span className="yk-platform-tier">AUTHORITY</span>
-              </div>
-              <h3 className="yk-platform-name">PX3 Energy</h3>
-              <p className="yk-platform-desc">
-                Oilfield services — Odessa, Texas. Operations infrastructure.
               </p>
               <span className="yk-platform-arrow">→</span>
             </a>

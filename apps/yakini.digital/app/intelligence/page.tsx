@@ -68,7 +68,7 @@ const TOOLS = [
 const VERTICALS = [
   {
     industry: 'TOW DEFENSE',
-    name: 'Tow Defense Service',
+    name: 'TheyTowedMyCar.com',
     status: 'LIVE',
     statusColor: 'gold',
     desc: 'Wrongful tow hearings across Texas. Customer intake, AI case triage, evidentiary packet builder, hearing prep.',
@@ -80,68 +80,27 @@ const VERTICALS = [
     ],
   },
   {
-    industry: 'PRIVATE CHEF & CATERING',
-    name: 'Pettít Luxe Group',
-    status: 'BUILDING',
-    statusColor: 'electric',
-    desc: 'Luxury private dining and event catering. Booking system, client portal, event quoting, contract automation.',
+    industry: 'WORKFORCE · NONPROFIT',
+    name: 'Vizionz Sankofa',
+    status: 'LIVE',
+    statusColor: 'gold',
+    desc: 'Community nonprofit case management. Family services tracking, grant compliance, funder reporting, multi-language materials.',
     tools: [
-      { name: 'Smart Quoting', detail: 'Event proposals based on guest count, menu, location' },
-      { name: 'Customer Communication', detail: 'Pre-event coordination drafts' },
-      { name: 'Strategic Analysis', detail: 'Most profitable event types and seasons' },
-      { name: 'Letter Generation', detail: 'Vendor and venue contracts' },
+      { name: 'Document Generation', detail: 'Grant and outcome reports' },
+      { name: 'Family Communication', detail: 'Status updates across language barriers' },
+      { name: 'Pattern Analysis', detail: 'Service delivery and impact patterns' },
     ],
   },
   {
-    industry: 'OILFIELD SERVICES',
-    name: 'PX3 Energy',
-    status: 'BUILDING',
-    statusColor: 'electric',
-    desc: 'Oilfield service operations in Odessa, TX. Crew dispatch, safety incident management, client reporting, equipment tracking.',
+    industry: 'CORRECTIONS · READINESS',
+    name: 'Vimaa / Legacyline',
+    status: 'LIVE',
+    statusColor: 'gold',
+    desc: '7-module readiness OS. Deterministic scoring, evaluator workflows, evidence intake, longitudinal vault.',
     tools: [
-      { name: 'Incident Triage', detail: 'Safety incident severity assessment' },
-      { name: 'Compliance Verification', detail: 'OSHA + Texas RRC certification checks' },
-      { name: 'Letter Generation', detail: 'Incident reports and client updates' },
-      { name: 'Strategic Analysis', detail: 'Crew utilization + job profitability' },
-    ],
-  },
-  {
-    industry: 'TRUCKING & FLEET',
-    name: 'Logistics Operators',
-    status: 'PROSPECTIVE',
-    statusColor: 'muted',
-    desc: 'Fleet management and compliance. DOT compliance tracking, driver records, route optimization, claims handling.',
-    tools: [
-      { name: 'Compliance Triage', detail: 'DOT violation severity + response strategy' },
-      { name: 'Letter Generation', detail: 'Insurance claims and DOT responses' },
-      { name: 'Verification', detail: 'CDL and medical certification checks' },
-      { name: 'Strategic Analysis', detail: 'Route profitability + driver patterns' },
-    ],
-  },
-  {
-    industry: 'RESTAURANT OPERATORS',
-    name: 'Independent Restaurants',
-    status: 'PROSPECTIVE',
-    statusColor: 'muted',
-    desc: 'Independent restaurant operations. Reservations, vendor management, staff scheduling, supplier disputes.',
-    tools: [
-      { name: 'Customer Communication', detail: 'Reservation confirmations and apologies' },
-      { name: 'Letter Generation', detail: 'Vendor disputes and supplier letters' },
-      { name: 'Compliance Verification', detail: 'Health permit and license checks' },
-      { name: 'Strategic Analysis', detail: 'Profitable menu items and slow nights' },
-    ],
-  },
-  {
-    industry: 'FILM & PRODUCTION',
-    name: 'Production Companies',
-    status: 'PROSPECTIVE',
-    statusColor: 'muted',
-    desc: 'Film production operations. Project tracking, vendor management, location agreements, contract workflows.',
-    tools: [
-      { name: 'Project Triage', detail: 'Production feasibility and risk assessment' },
-      { name: 'Letter Generation', detail: 'Location agreements and crew contracts' },
-      { name: 'Customer Communication', detail: 'Talent and crew coordination' },
-      { name: 'Strategic Analysis', detail: 'Production profitability patterns' },
+      { name: 'Document Integrity', detail: 'SHA-256 evidence and assessment integrity' },
+      { name: 'Evidence Engagement Scoring', detail: 'Readiness signals from submitted evidence' },
+      { name: 'Pattern Analysis', detail: 'Longitudinal readiness trends' },
     ],
   },
 ]
@@ -173,10 +132,10 @@ export default function IntelligencePage() {
           </h1>
           <p className="yk-page-sub">
             Every Yakini platform comes with an AI layer woven into the workflow —
-            not bolted on as an afterthought. Tow defense services. Private chefs.
-            Oilfield operators. Restaurants. Trucking fleets. Production companies.
+            not bolted on as an afterthought. Tow defense. Workforce and nonprofit.
+            Readiness systems. Live products, configured to the industry.
             <br /><br />
-            Same intelligence engine. Wildly different applications. Every founder we work with gets superpowers in their industry.
+            Same intelligence engine. Different applications. Every founder we work with gets superpowers in their industry.
           </p>
         </div>
       </header>
@@ -493,7 +452,7 @@ export default function IntelligencePage() {
                   All on his own domain. All AI-assisted. All Yakini Intelligence.
                 </p>
                 <p className="int-cs-future">
-                  <strong style={{ color: 'var(--gold)' }}>This is just the first.</strong> Pettít Luxe Group, PX3 Energy, and three additional verticals are in active build — each with Yakini Intelligence configured to their specific industry.
+                  <strong style={{ color: 'var(--gold)' }}>This is just the first.</strong> Yakini Intelligence ships with every live platform — configured to that founder&apos;s industry, not bolted on later.
                 </p>
               </div>
 
