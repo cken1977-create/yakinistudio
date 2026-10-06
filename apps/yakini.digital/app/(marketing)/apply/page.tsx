@@ -32,8 +32,11 @@ const TIERS = [
 
 const INDUSTRIES = [
   'Tow defense / Legal services',
+  'Insurance / Agencies / Brokers',
+  'Accounting / Bookkeeping / Advisory',
   'Private chef / Catering / Hospitality',
   'Oilfield services / Energy',
+  'Industrial / Field operations',
   'Trucking / Fleet / Logistics',
   'Restaurant / Food service',
   'Film / Production / Creative',
