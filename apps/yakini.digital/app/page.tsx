@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { INDUSTRY_KITS } from '@/lib/industry-kits'
 
 // ═════════════════════════════════════════════════════════════════════════
 // YAKINI HOME v4 — "Digital infrastructure for serious founders."
@@ -9,6 +10,7 @@ import { useState, useEffect } from 'react'
 // v4 changes (May 26, 2026):
 //   - Brand mark replaced: CosmogramMark SVG → <img src="/yakini-lockup.jpg" />
 //   - New section: Verticals (5 cards) inserted between Platforms and Intelligence
+//     (Oct 2026: now Industry Kits, sourced from lib/industry-kits.ts)
 //   - New section: Proof (Crownpoint, TheyTowedMyCar, Vizionz Sankofa)
 //   - New section: Partner Channel teaser before Final CTA
 //   - Vizionz Sankofa status: PILOT → LIVE (Wave 3.5 deployed May 24)
@@ -243,46 +245,46 @@ export default function HomePage() {
           <div className="yk-section-head">
             <div className="yk-section-tag">
               <span className="yk-num">02·B</span>
-              <span>Vertical Editions</span>
+              <span>Industry Kits</span>
             </div>
             <h2 className="yk-section-h2">
-              Five proven industry patterns.
+              Built for your industry.
               <br />
               <span className="yk-italic">Deployment, </span>
               <span className="yk-gold">not discovery.</span>
             </h2>
             <p className="yk-verticals-lead">
-              A Vertical Edition is a Yakini engagement deployed against one of our proven industry patterns.
-              The architecture, AI prompt libraries, compliance language, and operational workflows are already built and validated.
-              You&apos;re not paying for discovery. You&apos;re paying for deployment.
+              An Industry Kit is a Yakini platform pre-configured for one vertical — intake, portal, workflows,
+              and intelligence already built for how your industry works, then branded to you.
+              Proven kits run on a live platform today. Ready kits are scoped with you in one conversation.
             </p>
           </div>
 
           <div className="yk-verticals-grid">
-            {VERTICALS.map((v) => (
+            {INDUSTRY_KITS.map((k) => (
               <a
-                key={v.id}
-                href="/pricing"
-                className={`yk-vertical-card ${v.live ? 'yk-vertical-live' : 'yk-vertical-dev'}`}
+                key={k.id}
+                href={`/platforms#${k.id}`}
+                className={`yk-vertical-card ${k.status === 'proven' ? 'yk-vertical-live' : ''}`}
               >
                 <div className="yk-vertical-status">
                   <span className="yk-vertical-status-dot" />
-                  {v.status}
+                  {k.status === 'proven' ? 'Proven · Live' : 'Ready to scope'}
                 </div>
-                <h3 className="yk-vertical-name">{v.name}</h3>
+                <h3 className="yk-vertical-name">{k.name}</h3>
                 <div className="yk-vertical-proof">
-                  <span className="yk-vertical-proof-label">PROOF</span>
-                  <span className="yk-vertical-proof-name">{v.proof}</span>
+                  <span className="yk-vertical-proof-label">{k.proof ? 'PROVEN ON' : 'BUILT ON'}</span>
+                  <span className="yk-vertical-proof-name">{k.proof ? k.proof.name : 'The Yakini platform core'}</span>
                 </div>
-                <p className="yk-vertical-desc">{v.description}</p>
-                <span className="yk-vertical-arrow">{v.live ? 'See deployment →' : 'In development →'}</span>
+                <p className="yk-vertical-desc">{k.forWho}</p>
+                <span className="yk-vertical-arrow">See the kit →</span>
               </a>
             ))}
           </div>
 
           <div className="yk-verticals-cta-row">
             <p className="yk-verticals-straddler">
-              <strong>Not sure which vertical fits?</strong> Start with the Operational Drag Audit.
+              <strong>Not sure which kit fits?</strong> Start with the Operational Drag Audit.
               We&apos;ll surface your dominant operational pattern and match you to the right deployment — vertical or custom.
             </p>
             <a href="/apply" className="yk-btn-primary">
@@ -715,49 +717,6 @@ function YakiniMark({ size = 36 }: { size?: number }) {
 }
 
 // ─── Data ───────────────────────────────────────────────
-
-const VERTICALS = [
-  {
-    id: 'real-estate',
-    name: 'Real Estate Services',
-    status: 'Q3 2026',
-    live: false,
-    proof: 'In development',
-    description: 'Lead intake, fair housing compliance language, transaction workflows, buyer/seller portals, CRM integrations. First Vertical Edition deployment in scope.',
-  },
-  {
-    id: 'professional-services',
-    name: 'Professional Services',
-    status: 'LIVE',
-    live: true,
-    proof: 'TheyTowedMyCar',
-    description: 'Client intake, case/matter management, document workflows, billing, secure client portals.',
-  },
-  {
-    id: 'workforce',
-    name: 'Workforce Development',
-    status: 'LIVE',
-    live: true,
-    proof: 'Vizionz Sankofa',
-    description: 'Participant case management, services tracking, outcomes reporting, grant compliance, funder portals.',
-  },
-  {
-    id: 'hospitality',
-    name: 'Culinary & Hospitality',
-    status: 'Q3 2026',
-    live: false,
-    proof: 'In development',
-    description: 'Booking and consultation workflows, customer preference tracking, content production, white-glove portals.',
-  },
-  {
-    id: 'construction',
-    name: 'Construction & Trade Services',
-    status: 'Q4 2026',
-    live: false,
-    proof: 'In development',
-    description: 'Lead and bid intake, project management, supplier coordination, customer project portals, change orders.',
-  },
-]
 
 const INTEL_TOOLS = [
   { name: 'Case Triage', icon: '⚖', desc: 'Strength assessment, key arguments, risk analysis, evidence checklist.' },
@@ -1385,6 +1344,9 @@ const CSS = `
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 16px;
     margin-bottom: 60px;
+  }
+  @media (min-width: 1280px) {
+    .yk-verticals-grid { grid-template-columns: repeat(5, 1fr); }
   }
   .yk-vertical-card {
     padding: 32px 28px;

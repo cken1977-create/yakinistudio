@@ -1,13 +1,16 @@
 'use client'
 
 import { SiteShell } from '@/components/SiteShell'
+import { INDUSTRY_KITS } from '@/lib/industry-kits'
 
 // ═════════════════════════════════════════════════════════════════════════
 // YAKINI PLATFORMS — Case Study Showcase
 // File: apps/yakini.digital/app/platforms/page.tsx
 //
 // Purpose: Live platforms and industry kits only.
-// No TBD / prospective / placeholder cards. TheyTowedMyCar featured first.
+// Industry Kits (lib/industry-kits.ts) come first so visitors find their
+// vertical; live platforms follow as the proof. No TBD / prospective /
+// placeholder cards. TheyTowedMyCar featured first among live platforms.
 // ═════════════════════════════════════════════════════════════════════════
 
 const PLATFORMS = [
@@ -121,10 +124,18 @@ export default function PlatformsPage() {
             <span className="yk-gold">across every industry.</span>
           </h1>
           <p className="yk-page-sub">
-            Tow defense. Readiness systems. Community nonprofits.
-            Each Yakini-built platform is custom-architected for its industry —
-            same foundation, different applications. Live products only.
+            Find your industry below. Every Industry Kit is built on the same foundation
+            running our live platforms — configured for how your world actually works.
           </p>
+
+          <nav className="pl-jump" aria-label="Jump to your industry">
+            <span className="pl-jump-label">FIND YOUR INDUSTRY</span>
+            <div className="pl-jump-chips">
+              {INDUSTRY_KITS.map(k => (
+                <a key={k.id} href={`#${k.id}`} className="pl-jump-chip">{k.short}</a>
+              ))}
+            </div>
+          </nav>
 
           <div className="pl-stats">
             <div className="pl-stat">
@@ -132,8 +143,8 @@ export default function PlatformsPage() {
               <span className="pl-stat-lbl">Live platforms</span>
             </div>
             <div className="pl-stat">
-              <span className="pl-stat-num">3</span>
-              <span className="pl-stat-lbl">Industries served</span>
+              <span className="pl-stat-num">{INDUSTRY_KITS.length}</span>
+              <span className="pl-stat-lbl">Industry kits</span>
             </div>
             <div className="pl-stat">
               <span className="pl-stat-num">100%</span>
@@ -147,9 +158,91 @@ export default function PlatformsPage() {
         </div>
       </header>
 
-      {/* ───── PLATFORMS LIST ───── */}
-      <section className="yk-section pl-section">
+      {/* ───── INDUSTRY KITS ───── */}
+      <section className="yk-section pl-kits" id="kits">
         <div className="yk-section-inner">
+          <div className="yk-section-tag">
+            <span className="yk-num">01</span>
+            <span>Industry Kits</span>
+          </div>
+          <h2 className="pl-section-h2">
+            We already built
+            <br />
+            <span className="yk-italic">for your </span>
+            <span className="yk-gold">industry.</span>
+          </h2>
+          <p className="pl-section-lead">
+            A kit is a Yakini platform pre-configured for one vertical — intake, portal, workflows, and
+            intelligence tuned to your industry, then branded to you. Your domain. Your data. Proven kits
+            run on a live platform today. Ready kits are scoped with you in one conversation.
+          </p>
+
+          <div className="pl-kits-grid">
+            {INDUSTRY_KITS.map(k => (
+              <article key={k.id} id={k.id} className={`pl-kit pl-kit-${k.status}`}>
+                <div className="pl-kit-top">
+                  <span className="pl-kit-badge">INDUSTRY KIT</span>
+                  <span className={`pl-status ${k.status === 'proven' ? 'pl-status-gold' : 'pl-status-electric'}`}>
+                    {k.status === 'proven' ? 'PROVEN · LIVE' : 'READY TO SCOPE'}
+                  </span>
+                </div>
+                <div className="pl-kit-industry">{k.industry}</div>
+                <h3 className="pl-kit-name">{k.name}</h3>
+                <p className="pl-kit-for">{k.forWho}</p>
+
+                <div className="pl-kit-includes-h">WHAT&apos;S IN THE KIT</div>
+                <ul className="pl-kit-includes">
+                  {k.includes.map(item => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+
+                <div className="pl-kit-ai">
+                  {k.aiTools.map(tool => (
+                    <span key={tool} className="pl-ai-tag">{tool}</span>
+                  ))}
+                </div>
+
+                <div className="pl-kit-proof">
+                  {k.proof ? (
+                    <>
+                      <span className="pl-kit-proof-lbl">PROVEN ON</span>
+                      <a href={`#${k.proof.anchor}`} className="pl-kit-proof-name">{k.proof.name} ↓</a>
+                    </>
+                  ) : (
+                    <>
+                      <span className="pl-kit-proof-lbl">BUILT ON</span>
+                      <span className="pl-kit-proof-name pl-kit-proof-plain">The Yakini platform core behind our live builds</span>
+                    </>
+                  )}
+                </div>
+
+                <a href={`/apply?kit=${k.id}`} className="yk-btn-ghost pl-kit-cta">
+                  <span>Start a conversation</span>
+                  <span className="yk-btn-arrow">→</span>
+                </a>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ───── PLATFORMS LIST ───── */}
+      <section className="yk-section pl-section" id="live">
+        <div className="yk-section-inner">
+          <div className="yk-section-tag">
+            <span className="yk-num">02</span>
+            <span>Live Platforms</span>
+          </div>
+          <h2 className="pl-section-h2">
+            The proof
+            <br />
+            <span className="yk-italic">is </span>
+            <span className="yk-gold">live.</span>
+          </h2>
+          <p className="pl-section-lead">
+            Real founders, real deployments. Each one is the foundation of an Industry Kit above.
+          </p>
           {PLATFORMS.map((p, i) => (
             <article key={p.id} id={p.id} className={`pl-card ${i === 0 ? 'pl-card-featured' : ''}`}>
               {/* Header strip */}
@@ -329,6 +422,190 @@ const PAGE_CSS = `
     .pl-stat { border-right: none; padding-right: 0; }
   }
 
+  /* ═══ INDUSTRY JUMP CHIPS ═══ */
+  .pl-jump {
+    margin-top: 40px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .pl-jump-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+  }
+  .pl-jump-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pl-jump-chip {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--cream);
+    text-decoration: none;
+    padding: 10px 18px;
+    border: 1px solid var(--line-strong);
+    background: rgba(10, 9, 8, 0.55);
+    transition: all 0.25s;
+  }
+  .pl-jump-chip:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: var(--gold-soft);
+  }
+
+  /* ═══ SECTION HEADS ═══ */
+  .pl-section-h2 {
+    font-family: var(--font-display);
+    font-size: clamp(44px, 6vw, 84px);
+    line-height: 0.98;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--cream);
+    margin-bottom: 28px;
+  }
+  .pl-section-lead {
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--muted);
+    max-width: 720px;
+    margin-bottom: 64px;
+  }
+
+  /* ═══ INDUSTRY KITS ═══ */
+  .pl-kits {
+    background: linear-gradient(180deg, var(--black) 0%, var(--black-soft) 100%);
+    border-bottom: 1px solid var(--line);
+    padding-top: 110px;
+  }
+  /* 6-col grid: proven kits fill row one (3 × span 2), ready kits row two (2 × span 3) */
+  .pl-kits-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
+  }
+  .pl-kit { grid-column: span 2; }
+  .pl-kit-ready { grid-column: span 3; }
+  @media (max-width: 1100px) {
+    .pl-kits-grid { grid-template-columns: repeat(2, 1fr); }
+    .pl-kit, .pl-kit-ready { grid-column: span 1; }
+  }
+  .pl-kit {
+    display: flex; flex-direction: column;
+    padding: 36px 32px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+    scroll-margin-top: 110px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .pl-kit::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s;
+  }
+  .pl-kit:hover, .pl-kit:target {
+    border-color: rgba(200, 168, 75, 0.45);
+    background: linear-gradient(180deg, rgba(200, 168, 75, 0.05) 0%, rgba(255,255,255,0.02) 100%);
+    transform: translateY(-3px);
+  }
+  .pl-kit:hover::before, .pl-kit:target::before { transform: scaleX(1); }
+  .pl-kit-proven { border-color: rgba(200, 168, 75, 0.22); }
+  .pl-kit-top {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .pl-kit-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+  .pl-kit-industry {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+  .pl-kit-name {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 2.6vw, 36px);
+    font-weight: 500;
+    line-height: 1.05;
+    color: var(--cream);
+    letter-spacing: -0.01em;
+    margin-bottom: 14px;
+  }
+  .pl-kit-for {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .pl-kit-includes-h {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .pl-kit-includes {
+    list-style: none;
+    padding: 0; margin: 0 0 24px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .pl-kit-includes li {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--cream);
+    padding-left: 14px;
+    border-left: 2px solid var(--gold);
+  }
+  .pl-kit-ai {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .pl-kit-ai .pl-ai-tag { font-size: 10px; padding: 5px 10px; }
+  .pl-kit-proof {
+    margin-top: auto;
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 14px 0;
+    border-top: 1px dashed var(--line-strong);
+    border-bottom: 1px dashed var(--line-strong);
+    margin-bottom: 24px;
+  }
+  .pl-kit-proof-lbl {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+  .pl-kit-proof-name {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--gold);
+    text-decoration: none;
+  }
+  .pl-kit-proof-name:hover { text-decoration: underline; }
+  .pl-kit-proof-plain { color: var(--cream); font-style: italic; }
+  .pl-kit-proof-plain:hover { text-decoration: none; }
+  .pl-kit-cta { align-self: flex-start; }
+
+  @media (max-width: 700px) {
+    .pl-kits-grid { grid-template-columns: 1fr; }
+    .pl-kit, .pl-kit-ready { grid-column: auto; }
+    .pl-kit { padding: 28px 22px; }
+  }
+
   /* ═══ PLATFORMS LIST ═══ */
   .pl-section {
     background: var(--black);
@@ -336,6 +613,7 @@ const PAGE_CSS = `
   }
 
   .pl-card {
+    scroll-margin-top: 110px;
     margin-bottom: 80px;
     padding: 60px;
     background: rgba(255,255,255,0.02);
