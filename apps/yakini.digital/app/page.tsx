@@ -701,6 +701,8 @@ export default function HomePage() {
 
             <div className="yk-footer-col">
               <h6>Contact</h6>
+              <a href="tel:+13466232199">Office · 1 (346) 623-2199</a>
+              <a href="tel:+13466264948">Executive · 1 (346) 626-4948</a>
               <a href="mailto:hello@yakini.digital">hello@yakini.digital</a>
               <a href="mailto:admin@yakini.digital">admin@yakini.digital</a>
               <a href="https://contracts.yakini.digital">contracts.yakini.digital</a>
