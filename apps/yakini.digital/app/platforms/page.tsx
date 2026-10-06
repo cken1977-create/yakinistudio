@@ -6,9 +6,8 @@ import { SiteShell } from '@/components/SiteShell'
 // YAKINI PLATFORMS — Case Study Showcase
 // File: apps/yakini.digital/app/platforms/page.tsx
 //
-// Purpose: Show the diversity of Yakini-built platforms across industries.
-// Every vertical gets case study treatment. TheyTowedMyCar featured as
-// the first live deployment, anchored in a constellation of others.
+// Purpose: Live platforms and industry kits only.
+// No TBD / prospective / placeholder cards. TheyTowedMyCar featured first.
 // ═════════════════════════════════════════════════════════════════════════
 
 const PLATFORMS = [
@@ -74,67 +73,11 @@ const PLATFORMS = [
     aiTools: ['Document Integrity', 'Evidence Engagement Scoring', 'Pattern Analysis'],
   },
   {
-    id: 'pettit-luxe',
-    name: 'Pettít Luxe Group',
-    subtitle: 'Private Chef & Luxury Catering',
-    industry: 'HOSPITALITY · LUXURY DINING',
-    status: 'BUILDING',
-    statusColor: 'electric',
-    tier: 'AUTHORITY TIER',
-    location: 'Chicago',
-    domain: 'pettit-luxe.com (TBD)',
-    quote: null,
-    challenge: 'Private chefs operating at the luxury tier rely on word-of-mouth and Instagram. Booking, quoting, contracts, and client relationships are managed across 6+ disconnected tools. No central system, no client portal, no scaling without losing the personal touch.',
-    solution: 'Branded platform with smart event quoting, integrated booking calendar, signed digital contracts, client portal showing past events and future bookings, and AI-drafted pre-event communications.',
-    features: [
-      { name: 'Brand-First Design', detail: 'Editorial photography layout matching Chef Jada\'s aesthetic' },
-      { name: 'Event Quoting Engine', detail: 'Dynamic quotes based on guest count, menu, location, season' },
-      { name: 'Booking System', detail: 'Calendar sync, deposit collection, contract delivery' },
-      { name: 'Client Portal', detail: 'Past events, upcoming bookings, menu archive, photo galleries' },
-      { name: 'Yakini Intelligence', detail: 'Pre-event coordination drafts, follow-up communications' },
-      { name: 'Vendor Management', detail: 'Wine pairings, equipment rentals, sous-chefs in one workflow' },
-    ],
-    metrics: [
-      { value: 'TBD', label: 'Launch target Q2 2026' },
-      { value: '$$$$', label: 'Luxury tier positioning' },
-      { value: '1-on-1', label: 'White-glove client model' },
-    ],
-    aiTools: ['Smart Quoting', 'Customer Communication', 'Strategic Analysis', 'Letter Generation'],
-  },
-  {
-    id: 'px3-energy',
-    name: 'PX3 Energy',
-    subtitle: 'Oilfield Services Operations',
-    industry: 'ENERGY · INDUSTRIAL SERVICES',
-    status: 'BUILDING',
-    statusColor: 'electric',
-    tier: 'AUTHORITY TIER',
-    location: 'Odessa, Texas',
-    domain: 'px3energy.com (TBD)',
-    quote: null,
-    challenge: 'Oilfield service companies operate across rugged conditions with crews spread over hundreds of miles. Safety incidents need fast triage. Compliance requires constant verification. Client reporting eats hours weekly. Most run on radios and clipboards.',
-    solution: 'Mobile-first operations platform with crew dispatch, safety incident management, OSHA + Texas RRC compliance verification, automated client reporting, and equipment tracking.',
-    features: [
-      { name: 'Crew Dispatch', detail: 'Real-time crew location and assignment tracking' },
-      { name: 'Safety Incident System', detail: 'Mobile incident reporting with AI severity triage' },
-      { name: 'Compliance Verification', detail: 'Auto cross-check OSHA + TX RRC certifications' },
-      { name: 'Client Portal', detail: 'Live job status, incident reports, deliverables tracking' },
-      { name: 'Yakini Intelligence', detail: 'Incident triage, crew utilization analysis, profitability patterns' },
-      { name: 'Equipment Tracking', detail: 'Maintenance schedules, deployment status, location' },
-    ],
-    metrics: [
-      { value: 'TBD', label: 'Launch target Q2 2026' },
-      { value: 'B2B', label: 'Oil & gas operators' },
-      { value: 'Mobile', label: 'Field-first design' },
-    ],
-    aiTools: ['Incident Triage', 'Compliance Verification', 'Letter Generation', 'Strategic Analysis'],
-  },
-  {
     id: 'vizionz-sankofa',
     name: 'Vizionz Sankofa',
     subtitle: 'Community Services Nonprofit',
     industry: 'NONPROFIT · COMMUNITY DEVELOPMENT',
-    status: 'PILOT',
+    status: 'LIVE',
     statusColor: 'gold',
     tier: 'FOUNDATION TIER',
     location: 'Albuquerque, NM',
@@ -155,58 +98,6 @@ const PLATFORMS = [
       { value: 'NM', label: 'Albuquerque-based' },
     ],
     aiTools: ['Document Generation', 'Family Communication', 'Pattern Analysis'],
-  },
-  {
-    id: 'transportation-services',
-    name: 'Independent Transportation Services',
-    subtitle: 'Black-Owned Mobility Operators',
-    industry: 'TRANSPORTATION · MOBILITY',
-    status: 'PROSPECTIVE',
-    statusColor: 'muted',
-    tier: 'AUTHORITY TIER',
-    location: 'Multi-market',
-    domain: 'TBD per operator',
-    quote: null,
-    challenge: 'Independent transportation operators (executive shuttles, airport runs, special events) compete against rideshare giants without infrastructure to match. Most operate via text and spreadsheet — losing bookings to faster, more polished competitors.',
-    solution: 'Operator-branded platform with online booking, real-time dispatch, driver app, customer portal showing past rides and saved routes, and AI-powered booking assistant.',
-    features: [
-      { name: 'Branded Booking Site', detail: 'Operator\'s domain, brand, pricing — not a marketplace' },
-      { name: 'Real-time Dispatch', detail: 'Driver app with assignment, navigation, status updates' },
-      { name: 'Customer Portal', detail: 'Past rides, saved routes, recurring bookings, receipts' },
-      { name: 'AI Booking Assistant', detail: 'Quote generation, route optimization, calendar coordination' },
-      { name: 'Compliance Tracking', detail: 'Driver licenses, insurance, vehicle inspections' },
-    ],
-    metrics: [
-      { value: 'Q3 2026', label: 'Target launch' },
-      { value: 'Multi-tenant', label: 'Designed for operator network' },
-    ],
-    aiTools: ['Customer Communication', 'Letter Generation', 'Strategic Analysis', 'Verification'],
-  },
-  {
-    id: 'production-co',
-    name: 'Independent Production Companies',
-    subtitle: 'Film & TV Production',
-    industry: 'CREATIVE · ENTERTAINMENT',
-    status: 'PROSPECTIVE',
-    statusColor: 'muted',
-    tier: 'INTELLIGENCE TIER',
-    location: 'Multi-market',
-    domain: 'TBD per company',
-    quote: null,
-    challenge: 'Independent production companies juggle dozens of vendors, locations, contracts, and crew across each project. Most run on PDF agreements and shared Google Drives — losing signed contracts, missing payments, struggling with project profitability analysis.',
-    solution: 'Production operations platform with project tracking, vendor and location management, integrated digital contracts, crew coordination, and AI-powered project feasibility analysis.',
-    features: [
-      { name: 'Project Hub', detail: 'Each production has its own workspace with all assets' },
-      { name: 'Vendor Management', detail: 'Locations, equipment, talent, post-production in one system' },
-      { name: 'Digital Contracts', detail: 'Crew agreements, location releases, talent contracts' },
-      { name: 'Crew Coordination', detail: 'Call sheets, schedules, payment tracking' },
-      { name: 'Yakini Intelligence', detail: 'Project feasibility analysis, profitability patterns' },
-    ],
-    metrics: [
-      { value: 'Q4 2026', label: 'Target launch' },
-      { value: 'B2B', label: 'Production company SaaS' },
-    ],
-    aiTools: ['Project Triage', 'Letter Generation', 'Customer Communication', 'Strategic Analysis'],
   },
 ]
 
@@ -230,27 +121,27 @@ export default function PlatformsPage() {
             <span className="yk-gold">across every industry.</span>
           </h1>
           <p className="yk-page-sub">
-            Tow defense services. Private chefs. Oilfield operators. Community nonprofits.
-            Transportation companies. Production studios. Each Yakini-built platform is
-            custom-architected for its industry — same foundation, wildly different applications.
+            Tow defense. Readiness systems. Community nonprofits.
+            Each Yakini-built platform is custom-architected for its industry —
+            same foundation, different applications. Live products only.
           </p>
 
           <div className="pl-stats">
             <div className="pl-stat">
-              <span className="pl-stat-num">2</span>
+              <span className="pl-stat-num">3</span>
               <span className="pl-stat-lbl">Live platforms</span>
             </div>
             <div className="pl-stat">
               <span className="pl-stat-num">3</span>
-              <span className="pl-stat-lbl">In active build</span>
-            </div>
-            <div className="pl-stat">
-              <span className="pl-stat-num">7+</span>
               <span className="pl-stat-lbl">Industries served</span>
             </div>
             <div className="pl-stat">
               <span className="pl-stat-num">100%</span>
               <span className="pl-stat-lbl">Founder-owned</span>
+            </div>
+            <div className="pl-stat">
+              <span className="pl-stat-num">Live</span>
+              <span className="pl-stat-lbl">No placeholders</span>
             </div>
           </div>
         </div>
@@ -410,7 +301,6 @@ const PAGE_CSS = `
     border-top: 1px solid var(--line);
     max-width: 800px;
   }
- }
   .pl-stat {
     display: flex; flex-direction: column;
     border-right: 1px solid var(--line);
