@@ -181,7 +181,7 @@ export default function HomePage() {
             <a href="/platforms#theytowedmycar" className="yk-platform-card yk-platform-featured">
               <div className="yk-platform-meta">
                 <span className="yk-platform-status">LIVE</span>
-                <span className="yk-platform-tier">AUTHORITY TIER</span>
+                <span className="yk-platform-tier">INTELLIGENCE TIER</span>
               </div>
               <h3 className="yk-platform-name">TheyTowedMyCar.com</h3>
               <p className="yk-platform-desc">
@@ -220,7 +220,7 @@ export default function HomePage() {
             <a href="/platforms#vizionz-sankofa" className="yk-platform-card">
               <div className="yk-platform-meta">
                 <span className="yk-platform-status">LIVE</span>
-                <span className="yk-platform-tier">AUTHORITY</span>
+                <span className="yk-platform-tier">FOUNDATION TIER</span>
               </div>
               <h3 className="yk-platform-name">Vizionz Sankofa</h3>
               <p className="yk-platform-desc">
@@ -559,22 +559,22 @@ export default function HomePage() {
           <div className="yk-proof-list">
 
             <div className="yk-proof-item">
-              <div className="yk-proof-num">02</div>
+              <div className="yk-proof-num">01</div>
               <div className="yk-proof-content">
                 <h4 className="yk-proof-name">TheyTowedMyCar</h4>
                 <p className="yk-proof-line">
-                  Operates on the Professional Services Vertical Edition pattern for consumer advocacy
+                  Operates on the Legal &amp; Advocacy Kit for consumer advocacy
                   and case intake. Five Texas counties, AI-powered case triage in 8 seconds.
                 </p>
               </div>
             </div>
 
             <div className="yk-proof-item">
-              <div className="yk-proof-num">03</div>
+              <div className="yk-proof-num">02</div>
               <div className="yk-proof-content">
                 <h4 className="yk-proof-name">Vizionz Sankofa</h4>
                 <p className="yk-proof-line">
-                  Runs on the Workforce Development Vertical Edition for participant case management
+                  Runs on the Nonprofit &amp; Community Kit for family case management
                   and outcomes reporting. Albuquerque-based, first mission-aligned deployment.
                 </p>
               </div>
@@ -745,8 +745,8 @@ const STUDIOS_OFFERINGS = [
 
 const PROCESS_STEPS = [
   { title: 'Strategic Intake', desc: 'We map your business — workflows, customers, ops, where AI multiplies you. The Operational Drag Audit lives here.', time: 'Day 1' },
-  { title: 'Architecture', desc: 'Database design, system blueprint, integration plan, security model. If a vertical pattern fits, deployment starts here.', time: 'Days 2-3' },
-  { title: 'Build', desc: 'Custom platform — not a template. Database, APIs, UI, AI tools, admin command center. Vertical Editions deploy in 3-5 weeks; custom builds in 8-12.', time: 'Days 4-21' },
+  { title: 'Architecture', desc: 'Database design, system blueprint, integration plan, security model. If an industry kit fits, deployment starts here.', time: 'Days 2-3' },
+  { title: 'Build', desc: 'Custom platform — not a template. Database, APIs, UI, AI tools, admin command center. Industry kits deploy in 3-5 weeks; custom builds in 8-12.', time: 'Days 4-21' },
   { title: 'Deploy', desc: 'Your domain, your infrastructure, your data. We hand you the keys. Composer turns on. Yakini Intelligence comes online.', time: 'Launch Day' },
   { title: 'Optimize', desc: 'Monthly platform improvements, AI refinement, new features as you grow. We don\'t disappear after launch — we operate alongside you.', time: 'Ongoing' },
 ]
