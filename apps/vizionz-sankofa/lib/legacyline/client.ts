@@ -5,13 +5,12 @@
 // VS submits intake → operator promotes → Legacyline creates Subject.
 // Substrate of the integrated-stack thesis.
 //
-// Auth model: Legacyline's actorFromRequest reads X-Actor header for
-// attribution (no secret validation). VS sends X-Actor: vizionz-sankofa
-// so the Legacyline audit trail records the organism source.
-//
-// Future hardening (TODO_FUTURE): Legacyline should validate X-Actor
-// against an allowlist or require API key. Current shape works for
-// pilot, acceptable risk during low-traffic phase.
+// Auth model (Phase S, Oct 2026): Legacyline no longer trusts X-Actor.
+// VS authenticates server-to-server with a shared bearer token,
+// VIZIONZ_SANKOFA_SERVICE_TOKEN (same value set on legacyline-core).
+// Legacyline attributes the call to "service:vizionz-sankofa" and only
+// lets this token read participants VS itself created. The token is
+// read on the server only; never expose it via NEXT_PUBLIC_*.
 
 const DEFAULT_TIMEOUT_MS = 15000
 
@@ -89,7 +88,7 @@ export async function createParticipant(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Actor': config.actor,
+        ...authHeader(config),
       },
       body: JSON.stringify(body),
       signal: controller.signal,
@@ -136,24 +135,24 @@ export async function createParticipant(
 
 type Config = {
   apiUrl: string
-  actor: string
+  serviceToken: string | null
   timeoutMs: number
+}
+
+function authHeader(config: Config): Record<string, string> {
+  return config.serviceToken
+    ? { Authorization: `Bearer ${config.serviceToken}` }
+    : {}
 }
 
 function readConfig(): Config {
   const apiUrl = process.env.LEGACYLINE_API_URL
-  const actor = process.env.LEGACYLINE_ACTOR
+  const serviceToken = process.env.VIZIONZ_SANKOFA_SERVICE_TOKEN?.trim() || null
 
   if (!apiUrl) {
     throw new LegacylineClientError({
       kind: 'config_missing',
       message: 'LEGACYLINE_API_URL not configured',
-    })
-  }
-  if (!actor) {
-    throw new LegacylineClientError({
-      kind: 'config_missing',
-      message: 'LEGACYLINE_ACTOR not configured',
     })
   }
 
@@ -162,7 +161,7 @@ function readConfig(): Config {
 
   return {
     apiUrl,
-    actor,
+    serviceToken,
     timeoutMs: Number.isFinite(timeoutMs) && timeoutMs > 0
       ? timeoutMs
       : DEFAULT_TIMEOUT_MS,
@@ -343,6 +342,12 @@ export async function getParticipant(
   }
 
   const config = readConfig()
+  if (!config.serviceToken) {
+    throw new LegacylineClientError({
+      kind: 'config_missing',
+      message: 'VIZIONZ_SANKOFA_SERVICE_TOKEN not configured (required to read Legacyline status)',
+    })
+  }
 
   const url = `${config.apiUrl.replace(/\/$/, '')}/participants/${encodeURIComponent(participantId)}`
 
@@ -358,7 +363,7 @@ export async function getParticipant(
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'X-Actor': config.actor,
+        ...authHeader(config),
       },
       signal: controller.signal,
     })
