@@ -207,7 +207,7 @@ export default function HomePage() {
               <div className="yk-platform-meta">
                 <span className="yk-platform-status">LIVE</span>
               </div>
-              <h3 className="yk-platform-name">Vimaa / Legacyline</h3>
+              <h3 className="yk-platform-name">Kamili</h3>
               <p className="yk-platform-desc">
                 7-module readiness OS. SHA-256 deterministic scoring. Three-domain evaluator system.
               </p>

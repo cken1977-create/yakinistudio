@@ -93,7 +93,7 @@ const VERTICALS = [
   },
   {
     industry: 'CORRECTIONS · READINESS',
-    name: 'Vimaa / Legacyline',
+    name: 'Kamili',
     status: 'LIVE',
     statusColor: 'gold',
     desc: '7-module readiness OS. Deterministic scoring, evaluator workflows, evidence intake, longitudinal vault.',

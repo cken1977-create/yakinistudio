@@ -22,12 +22,14 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-const TIERS = [
-  { val: 'foundation', label: 'Foundation' },
-  { val: 'authority', label: 'Authority' },
-  { val: 'intelligence', label: 'Intelligence' },
-  { val: 'enterprise', label: 'Enterprise' },
-  { val: 'unsure', label: 'Not sure yet — help me decide' },
+// Stored in the existing `tier_interest` column for backward compatibility.
+const KITS = [
+  { val: 'hospitality', label: 'Hospitality' },
+  { val: 'trucking-logistics-compliance', label: 'Trucking & Logistics Compliance' },
+  { val: 'home-healthcare-elder-care', label: 'Home Healthcare & Elder Care' },
+  { val: 'nonprofit-social-services', label: 'Nonprofit & Social Services' },
+  { val: 'reentry-corrections', label: 'Reentry & Corrections' },
+  { val: 'unsure', label: 'Not sure yet' },
 ]
 
 const INDUSTRIES = [
@@ -127,7 +129,7 @@ export default function ApplyPage() {
       if (!form.location.trim()) return setErr('Location required')
     }
     if (s === 3) {
-      if (!form.tier_interest) return setErr('Please select tier interest')
+      if (!form.tier_interest) return setErr('Please select a kit')
       if (!form.timeline) return setErr('Please select timeline')
       if (!form.current_pain.trim() || form.current_pain.length < 30) return setErr('Please describe what\'s broken (at least 30 chars)')
       if (!form.biggest_outcome.trim() || form.biggest_outcome.length < 30) return setErr('Please describe your desired outcome (at least 30 chars)')
@@ -283,7 +285,7 @@ export default function ApplyPage() {
                         <option value="">Select...</option>
                         {REVENUE_RANGES.map(r => <option key={r} value={r}>{r}</option>)}
                       </select>
-                      <span className="ap-field-hint">This helps us match you to the right tier and tell you honestly if Yakini is a fit.</span>
+                      <span className="ap-field-hint">This helps us match you to the right kit and tell you honestly if Yakini is a fit.</span>
                     </div>
 
                     <Field label="Location *" value={form.location} onChange={v => update('location', v)} placeholder="City, State (or 'Remote')" />
@@ -303,10 +305,10 @@ export default function ApplyPage() {
 
                   <div className="ap-fields">
                     <div className="ap-field">
-                      <label>Tier interest *</label>
+                      <label>Which kit? *</label>
                       <select value={form.tier_interest} onChange={e => update('tier_interest', e.target.value)}>
-                        <option value="">Select tier...</option>
-                        {TIERS.map(t => <option key={t.val} value={t.val}>{t.label}</option>)}
+                        <option value="">Select a kit...</option>
+                        {KITS.map(t => <option key={t.val} value={t.val}>{t.label}</option>)}
                       </select>
                     </div>
 
