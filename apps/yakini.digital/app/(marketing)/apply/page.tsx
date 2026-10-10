@@ -23,10 +23,10 @@ const supabase = createClient(
 )
 
 const TIERS = [
-  { val: 'foundation', label: 'Foundation · $1,500/mo' },
-  { val: 'authority', label: 'Authority · $3,000/mo' },
-  { val: 'intelligence', label: 'Intelligence · $7,500/mo' },
-  { val: 'enterprise', label: 'Enterprise · $15,000+/mo' },
+  { val: 'foundation', label: 'Foundation' },
+  { val: 'authority', label: 'Authority' },
+  { val: 'intelligence', label: 'Intelligence' },
+  { val: 'enterprise', label: 'Enterprise' },
   { val: 'unsure', label: 'Not sure yet — help me decide' },
 ]
 

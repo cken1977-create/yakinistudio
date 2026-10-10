@@ -54,7 +54,7 @@ const PLATFORMS = [
     industry: 'CORRECTIONS · WORKFORCE · NONPROFIT',
     status: 'LIVE',
     statusColor: 'gold',
-    tier: 'ENTERPRISE',
+    tier: '',
     location: 'New Mexico Pilot',
     domain: 'legacylinehq.com',
     quote: null,
@@ -83,7 +83,7 @@ const PLATFORMS = [
     industry: 'NONPROFIT · COMMUNITY DEVELOPMENT',
     status: 'LIVE',
     statusColor: 'gold',
-    tier: 'FOUNDATION TIER',
+    tier: '',
     location: 'Albuquerque, NM',
     domain: 'vizionzsankofa.org',
     quote: null,
@@ -301,7 +301,7 @@ export default function PlatformsPage() {
                 </div>
                 <div className="pl-card-strip-right">
                   <span className={`pl-status pl-status-${p.statusColor}`}>{p.status}</span>
-                  <span className="pl-tier">{p.tier}</span>
+                  {p.tier && <span className="pl-tier">{p.tier}</span>}
                 </div>
               </div>
 

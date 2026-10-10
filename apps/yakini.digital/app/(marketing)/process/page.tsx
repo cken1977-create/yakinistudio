@@ -322,8 +322,8 @@ export default function ProcessPage() {
                 <span>Apply for partnership</span>
                 <span className="yk-btn-arrow">→</span>
               </a>
-              <a href="/pricing" className="yk-btn-ghost">
-                <span>See pricing</span>
+              <a href="/apply" className="yk-btn-ghost">
+                <span>Talk to us</span>
                 <span className="yk-btn-arrow">→</span>
               </a>
             </div>
