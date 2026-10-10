@@ -56,7 +56,7 @@ const PLATFORMS = [
     statusColor: 'gold',
     tier: '',
     location: 'New Mexico Pilot',
-    domain: 'legacylinehq.com',
+    domain: 'kamilihq.com',
     quote: null,
     challenge: 'Reentry, workforce, and corrections programs lack a unified system to assess and document readiness across individuals, organizations, and partnerships. Manual paperwork, inconsistent scoring, no audit trail.',
     solution: '7-module readiness OS with deterministic SHA-256 scoring, three-domain evaluator system (Individual / OBR / FRARI), version-locked rulesets, full audit reproducibility.',

@@ -186,8 +186,8 @@ export default function AboutPage() {
                   <span className="ab-tree-tag">FRARI SCORING</span>
                   <span className="ab-tree-tag">ACQUIRABLE</span>
                 </div>
-                <a href="https://legacylinehq.com" target="_blank" rel="noopener" className="ab-tree-link">
-                  Visit legacylinehq.com →
+                <a href="https://kamilihq.com" target="_blank" rel="noopener" className="ab-tree-link">
+                  Visit kamilihq.com →
                 </a>
               </div>
 
