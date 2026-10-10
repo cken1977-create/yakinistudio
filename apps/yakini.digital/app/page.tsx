@@ -47,7 +47,6 @@ export default function HomePage() {
             <a href="/platforms">Platforms</a>
             <a href="/intelligence">Intelligence</a>
             <a href="/process">Process</a>
-            <a href="/pricing">Pricing</a>
             <a href="/about">About</a>
           </div>
 
@@ -71,7 +70,6 @@ export default function HomePage() {
           <a href="/platforms" onClick={() => setMenuOpen(false)}>Platforms</a>
           <a href="/intelligence" onClick={() => setMenuOpen(false)}>Intelligence</a>
           <a href="/process" onClick={() => setMenuOpen(false)}>Process</a>
-          <a href="/pricing" onClick={() => setMenuOpen(false)}>Pricing</a>
           <a href="/about" onClick={() => setMenuOpen(false)}>About</a>
           <a href="/apply" className="yk-mobile-cta" onClick={() => setMenuOpen(false)}>Apply →</a>
         </div>
@@ -114,12 +112,12 @@ export default function HomePage() {
 
           <div className="yk-hero-marquee">
             <div className="yk-marquee-track">
-              <span>· LEGACYLINE</span>
+              <span>· KAMILI</span>
               <span>· THEYTOWEDMYCAR</span>
               <span>· VIZIONZ SANKOFA</span>
               <span>· COMPOSER</span>
               <span>· YAKINI STUDIOS</span>
-              <span>· LEGACYLINE</span>
+              <span>· KAMILI</span>
               <span>· THEYTOWEDMYCAR</span>
               <span>· VIZIONZ SANKOFA</span>
               <span>· COMPOSER</span>
@@ -208,9 +206,8 @@ export default function HomePage() {
             <a href="/platforms#vimaa" className="yk-platform-card">
               <div className="yk-platform-meta">
                 <span className="yk-platform-status">LIVE</span>
-                <span className="yk-platform-tier">ENTERPRISE</span>
               </div>
-              <h3 className="yk-platform-name">Vimaa / Legacyline</h3>
+              <h3 className="yk-platform-name">Kamili</h3>
               <p className="yk-platform-desc">
                 7-module readiness OS. SHA-256 deterministic scoring. Three-domain evaluator system.
               </p>
@@ -220,7 +217,6 @@ export default function HomePage() {
             <a href="/platforms#vizionz-sankofa" className="yk-platform-card">
               <div className="yk-platform-meta">
                 <span className="yk-platform-status">LIVE</span>
-                <span className="yk-platform-tier">FOUNDATION TIER</span>
               </div>
               <h3 className="yk-platform-name">Vizionz Sankofa</h3>
               <p className="yk-platform-desc">
@@ -446,7 +442,7 @@ export default function HomePage() {
 
           <div className="yk-composer-availability">
             <div className="yk-availability-line" />
-            <span>Composer is included in Authority tier and above.</span>
+            <span>Composer is included with every kit.</span>
             <div className="yk-availability-line" />
           </div>
         </div>
@@ -482,10 +478,6 @@ export default function HomePage() {
             ))}
           </div>
 
-          <div className="yk-studios-coming">
-            <span className="yk-studios-coming-dot" />
-            <span>Studios opens to Enterprise tier this quarter.</span>
-          </div>
         </div>
       </section>
 
@@ -500,10 +492,6 @@ export default function HomePage() {
             <div className="yk-metric">
               <div className="yk-metric-num">8 sec</div>
               <div className="yk-metric-lbl">Average AI analysis time</div>
-            </div>
-            <div className="yk-metric">
-              <div className="yk-metric-num">7 days</div>
-              <div className="yk-metric-lbl">Foundation Engagement to operational</div>
             </div>
             <div className="yk-metric">
               <div className="yk-metric-num">100%</div>
@@ -633,8 +621,8 @@ export default function HomePage() {
                 <span>Start the Audit</span>
                 <span className="yk-btn-arrow">→</span>
               </a>
-              <a href="/pricing" className="yk-btn-ghost">
-                <span>See Pricing</span>
+              <a href="/apply" className="yk-btn-ghost">
+                <span>Talk to us</span>
               </a>
             </div>
           </div>
@@ -664,7 +652,6 @@ export default function HomePage() {
               <a href="/platforms">Platforms</a>
               <a href="/intelligence">Intelligence</a>
               <a href="/process">Process</a>
-              <a href="/pricing">Pricing</a>
               <a href="/apply">Operational Drag Audit</a>
             </div>
 

@@ -49,7 +49,7 @@ export default function AboutPage() {
               <div className="ab-founder-meta">FOUNDER · CEO</div>
               <h2 className="ab-founder-name">Clarence Kennedy</h2>
               <p className="ab-founder-role">
-                Founder of BRSA Holdings · Builder of Yakini, Legacyline, and the BRSA Foundation
+                Founder of BRSA Holdings · Builder of Yakini, Kamili, and the BRSA Foundation
               </p>
 
               <div className="ab-founder-body">
@@ -86,7 +86,7 @@ export default function AboutPage() {
 
                 <div className="ab-fact">
                   <div className="ab-fact-h">BUILDS</div>
-                  <div className="ab-fact-v">Yakini · Legacyline · TheyTowedMyCar</div>
+                  <div className="ab-fact-v">Yakini · Kamili · TheyTowedMyCar</div>
                 </div>
 
                 <div className="ab-fact">
@@ -133,7 +133,7 @@ export default function AboutPage() {
           </h2>
           <p className="ab-section-sub">
             BRSA Holdings is the parent company. Yakini is the digital infrastructure arm.
-            Legacyline is the readiness operating system. The BRSA Foundation funds access for communities
+            Kamili is the readiness operating system. The BRSA Foundation funds access for communities
             that need infrastructure but can't afford it.
             <br /><br />
             Same standards. Same rigor. Different missions.
@@ -176,7 +176,7 @@ export default function AboutPage() {
 
               <div className="ab-tree-node ab-tree-legacyline">
                 <div className="ab-tree-node-meta">VERTICAL PLATFORM</div>
-                <h3 className="ab-tree-node-name">Legacyline</h3>
+                <h3 className="ab-tree-node-name">Kamili</h3>
                 <p className="ab-tree-node-desc">
                   Readiness operating system for corrections, workforce, education, and economic development.
                   7 modules. Three subject domains. Deterministic SHA-256 scoring. Built to be acquired.
@@ -186,8 +186,8 @@ export default function AboutPage() {
                   <span className="ab-tree-tag">FRARI SCORING</span>
                   <span className="ab-tree-tag">ACQUIRABLE</span>
                 </div>
-                <a href="https://legacylinehq.com" target="_blank" rel="noopener" className="ab-tree-link">
-                  Visit legacylinehq.com →
+                <a href="https://kamilihq.com" target="_blank" rel="noopener" className="ab-tree-link">
+                  Visit kamilihq.com →
                 </a>
               </div>
 
@@ -346,7 +346,7 @@ const BELIEFS = [
   },
   {
     title: 'Standards before scale.',
-    desc: 'BRSA Holdings exists to govern standards across our platforms. Before Legacyline scales nationally, before Yakini scales to a hundred clients, the standards must be locked. Quality first. Volume follows.',
+    desc: 'BRSA Holdings exists to govern standards across our platforms. Before Kamili scales nationally, before Yakini scales to a hundred clients, the standards must be locked. Quality first. Volume follows.',
   },
 ]
 

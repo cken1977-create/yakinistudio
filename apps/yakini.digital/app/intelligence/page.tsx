@@ -93,7 +93,7 @@ const VERTICALS = [
   },
   {
     industry: 'CORRECTIONS · READINESS',
-    name: 'Vimaa / Legacyline',
+    name: 'Kamili',
     status: 'LIVE',
     statusColor: 'gold',
     desc: '7-module readiness OS. Deterministic scoring, evaluator workflows, evidence intake, longitudinal vault.',
@@ -361,18 +361,6 @@ export default function IntelligencePage() {
                 </div>
               </div>
 
-              <div className="int-roi-comparison">
-                <div className="int-comp-h">Yakini Intelligence Tier</div>
-                <div className="int-comp-pricing">
-                  <span className="int-comp-price">$10,000</span>
-                  <span className="int-comp-period">/mo</span>
-                </div>
-                <div className="int-comp-roi">
-                  ROI: <span className="yk-gold">
-                    {monthlyValue > 0 ? ((monthlyValue / 10000 - 1) * 100).toFixed(0) : 0}%
-                  </span> per month
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -534,9 +522,9 @@ export default function IntelligencePage() {
             <span>Investment</span>
           </div>
           <h2 className="yk-section-h2">
-            Intelligence tier.
+            Intelligence engagements.
             <br />
-            <span className="yk-gold">$10,000/mo.</span>
+            <span className="yk-gold">Scoped with you.</span>
           </h2>
 
           <div className="int-tier-grid">
@@ -558,11 +546,7 @@ export default function IntelligencePage() {
 
             <div className="int-tier-cta">
               <div className="int-tier-h">Strategic Partner</div>
-              <div className="int-tier-price">
-                <span className="int-tier-num">$10K</span>
-                <span className="int-tier-period">/month</span>
-              </div>
-              <div className="int-tier-setup">+ build setup fee (case-by-case)</div>
+              <div className="int-tier-setup">Scoped in one conversation.</div>
 
               <p className="int-tier-note">
                 We work with a handful of serious founders at a time. Application required.
@@ -573,9 +557,6 @@ export default function IntelligencePage() {
                 <span className="yk-btn-arrow">→</span>
               </a>
 
-              <a href="/pricing" className="int-tier-link">
-                See all tiers →
-              </a>
             </div>
           </div>
         </div>

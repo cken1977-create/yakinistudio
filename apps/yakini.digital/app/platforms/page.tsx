@@ -49,14 +49,14 @@ const PLATFORMS = [
   },
   {
     id: 'vimaa',
-    name: 'Vimaa',
+    name: 'Kamili',
     subtitle: 'Readiness Operating System',
     industry: 'CORRECTIONS · WORKFORCE · NONPROFIT',
     status: 'LIVE',
     statusColor: 'gold',
-    tier: 'ENTERPRISE',
+    tier: '',
     location: 'New Mexico Pilot',
-    domain: 'legacylinehq.com',
+    domain: 'kamilihq.com',
     quote: null,
     challenge: 'Reentry, workforce, and corrections programs lack a unified system to assess and document readiness across individuals, organizations, and partnerships. Manual paperwork, inconsistent scoring, no audit trail.',
     solution: '7-module readiness OS with deterministic SHA-256 scoring, three-domain evaluator system (Individual / OBR / FRARI), version-locked rulesets, full audit reproducibility.',
@@ -83,21 +83,21 @@ const PLATFORMS = [
     industry: 'NONPROFIT · COMMUNITY DEVELOPMENT',
     status: 'LIVE',
     statusColor: 'gold',
-    tier: 'FOUNDATION TIER',
+    tier: '',
     location: 'Albuquerque, NM',
     domain: 'vizionzsankofa.org',
     quote: null,
     challenge: 'Community nonprofits serving low-income families and refugee/immigrant populations operate on lean budgets with high accountability requirements. Grant tracking, family case management, and impact reporting must work across language barriers and limited tech literacy.',
-    solution: 'Foundational platform anchored by Vimaa integration. Case tracking for families, grant compliance reporting, impact dashboards for funders, multi-language family-facing materials.',
+    solution: 'Foundational platform anchored by Kamili integration. Case tracking for families, grant compliance reporting, impact dashboards for funders, multi-language family-facing materials.',
     features: [
       { name: 'Family Case Management', detail: 'Track services delivered to each household' },
       { name: 'Grant Compliance', detail: 'Auto-document grant deliverables and outcomes' },
       { name: 'Impact Dashboards', detail: 'Funder-ready reporting on lives touched' },
-      { name: 'Vimaa pilot', detail: 'First Track 1 + Track 2 deployment of readiness OS' },
+      { name: 'Kamili pilot', detail: 'First Track 1 + Track 2 deployment of readiness OS' },
       { name: 'Multi-language Support', detail: 'English + Spanish family-facing materials' },
     ],
     metrics: [
-      { value: 'Active', label: 'Vimaa pilot partner' },
+      { value: 'Active', label: 'Kamili pilot partner' },
       { value: 'Granted', label: 'BRSA Foundation 501(c)(3)' },
       { value: 'NM', label: 'Albuquerque-based' },
     ],
@@ -301,7 +301,7 @@ export default function PlatformsPage() {
                 </div>
                 <div className="pl-card-strip-right">
                   <span className={`pl-status pl-status-${p.statusColor}`}>{p.status}</span>
-                  <span className="pl-tier">{p.tier}</span>
+                  {p.tier && <span className="pl-tier">{p.tier}</span>}
                 </div>
               </div>
 
