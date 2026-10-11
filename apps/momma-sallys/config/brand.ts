@@ -40,7 +40,7 @@ export const config: BrandConfig = {
   },
 
   contact: {
-    email: 'hello@mommasallys.com', // TODO — placeholder; validator requires non-empty. Get real address from Nicole before launch.
+    email: 'hello@mamasallys.com',
     phone: '325-428-8166',
     location: 'Abilene, TX',
     hours: "Hours vary by day — call ahead for today's location",

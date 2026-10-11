@@ -22,5 +22,5 @@ export const HAS_PAY = /^https:\/\//i.test(SQUARE_PAY_URL)
 /** Facebook page URL — TODO from Nicole. Hidden while empty. */
 export const FACEBOOK_URL: string = ''
 
-/** Public email — TODO from Nicole. Hidden while empty. (brand.ts email is a validator placeholder and is never rendered.) */
-export const PUBLIC_EMAIL: string = ''
+/** Public email (no mailbox/forwarding set up yet). */
+export const PUBLIC_EMAIL: string = 'hello@mamasallys.com'

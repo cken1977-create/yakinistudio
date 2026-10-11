@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { PaymentOptions } from '@/components/PaymentOptions'
 import { config } from '@/config/brand'
-import { PHONE_DISPLAY, PHONE_TEL, SMS_LINK, HAS_PAY } from '@/config/site'
+import { PHONE_DISPLAY, PHONE_TEL, SMS_LINK, HAS_PAY, PUBLIC_EMAIL } from '@/config/site'
 
 export default function HomePage() {
   const menu = config.menu!
@@ -101,6 +101,7 @@ export default function HomePage() {
           <p className="ms-es" style={{ marginTop: 4, fontSize: 14 }}>¿Un evento? Llámanos con la fecha y el número de invitados.</p>
           <div className="h-ctas">
             <a href={PHONE_TEL} className="ms-btn ms-btn-red">Call About Catering</a>
+            {PUBLIC_EMAIL && <a href={`mailto:${PUBLIC_EMAIL}?subject=Catering`} className="ms-btn ms-btn-ghost">Email {PUBLIC_EMAIL}</a>}
             <a href={SMS_LINK} className="ms-btn ms-btn-ghost">Text Us</a>
           </div>
         </div>
