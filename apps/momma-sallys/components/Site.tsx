@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { PHONE_DISPLAY, PHONE_TEL, HAS_PAY, FACEBOOK_URL, PUBLIC_EMAIL } from '@/config/site'
 
 export function SiteStyles() {
@@ -38,11 +39,15 @@ export function SiteNav() {
   return (
     <header className="ms-nav">
       <div className="ms-wrap ms-nav-in">
-        <Link href="/" className="ms-logo">Momma Sally<span>&rsquo;</span>s</Link>
+        <Link href="/" className="ms-logo" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Image src="/photos/logo-badge.webp" alt="Momma Sally's logo" width={44} height={44} priority />
+          <span style={{ color: '#fff' }}>Momma Sally&rsquo;s</span>
+        </Link>
         <nav className="ms-nav-links">
           <Link href="/menu">Menu</Link>
-          <Link href="/#catering" className="ms-hide-sm">Catering</Link>
-          <Link href="/about" className="ms-hide-sm">Our Story</Link>
+          <Link href="/food-truck" className="ms-hide-sm">Food Truck</Link>
+          <Link href="/catering" className="ms-hide-sm">Catering</Link>
+          <Link href="/events" className="ms-hide-sm">Events</Link>
           {HAS_PAY && <Link href="/pay" className="ms-hide-sm">Pay</Link>}
           <a href={PHONE_TEL} className="ms-btn ms-btn-red" style={{ minHeight: 40, padding: '0 18px', fontSize: 14 }}>Call</a>
         </nav>
@@ -81,7 +86,9 @@ export function SiteFooter() {
         </div>
         <div style={{ display: 'grid', gap: 6 }}>
           <Link href="/menu">Menu / Menú</Link>
-          <Link href="/#catering">Catering</Link>
+          <Link href="/food-truck">Food Truck</Link>
+          <Link href="/catering">Catering</Link>
+          <Link href="/events">Events / Eventos</Link>
           {HAS_PAY && <Link href="/pay">Pay / Pagar</Link>}
         </div>
       </div>

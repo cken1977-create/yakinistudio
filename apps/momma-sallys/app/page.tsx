@@ -1,4 +1,11 @@
 import Link from 'next/link'
+import { Photo, type PhotoKey } from '@/components/Photos'
+
+const CATS: { href: string; title: string; es: string; text: string; cta: string; photo: PhotoKey }[] = [
+  { href: '/food-truck', title: 'Food Truck', es: 'Camión', text: 'BBQ plates off the pit — brisket, sausage, chicken & pulled pork.', cta: 'Menu & location', photo: 'brisketPlate' },
+  { href: '/catering', title: 'Catering', es: 'Banquetes', text: 'Grazing tables, buffets and charcuterie for any crowd.', cta: 'Plan catering', photo: 'grazing' },
+  { href: '/events', title: 'Events', es: 'Eventos', text: 'Party spreads and homemade desserts, cobbler to banana pudding.', cta: 'See events', photo: 'cobbler' },
+]
 import { PaymentOptions } from '@/components/PaymentOptions'
 import { config } from '@/config/brand'
 import { PHONE_DISPLAY, PHONE_TEL, SMS_LINK, HAS_PAY, PUBLIC_EMAIL } from '@/config/site'
@@ -11,7 +18,7 @@ export default function HomePage() {
     <>
       <style>{`
         .h-hero { position: relative; min-height: calc(100svh - 60px); display: flex; align-items: flex-end; padding: 96px 0 56px;
-          background: linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.55) 45%, rgba(0,0,0,.95) 100%), url('/backdrop-pit.png') center / cover no-repeat; }
+          background: linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.55) 45%, rgba(0,0,0,.95) 100%), url('/photos/sausage-brisket-plate.webp') center / cover no-repeat; }
         .h-hero h1 { font-size: clamp(42px, 11vw, 92px); letter-spacing: -.02em; line-height: 1.02; margin-bottom: 18px; max-width: 14ch; }
         .h-hero h1 em { color: var(--brand-primary); font-style: italic; }
         .h-ctas { display: grid; gap: 12px; margin-top: 28px; }
@@ -23,6 +30,8 @@ export default function HomePage() {
         .h-card h3 { font-size: 22px; margin-bottom: 8px; }
         .h-price { font-family: var(--font-display); font-size: 22px; color: #fff; white-space: nowrap; }
         .h-row { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px dotted var(--brand-border); }
+        .h-cat { display: block; border: 1px solid var(--brand-border); border-radius: 20px; padding: 10px; background: #0b0b0b; transition: border-color .15s; }
+        .h-cat:hover { border-color: var(--brand-primary); }
         .h-plate { background: linear-gradient(180deg, rgba(0,0,0,.6), rgba(0,0,0,.92)), url('/backdrop-platter.png') center / cover no-repeat; }
       `}</style>
 
@@ -39,6 +48,26 @@ export default function HomePage() {
             <Link href="/menu" className="ms-btn ms-btn-white">View Menu · Ver Menú</Link>
             <a href={PHONE_TEL} className="ms-btn ms-btn-red">Call {PHONE_DISPLAY}</a>
             {HAS_PAY && <Link href="/pay" className="ms-btn ms-btn-ghost">Pay · Pagar</Link>}
+          </div>
+        </div>
+      </section>
+
+      {/* CATEGORIES */}
+      <section className="h-sec">
+        <div className="ms-wrap">
+          <div className="ms-eyebrow">What We Do · Lo Que Hacemos</div>
+          <h2>Food truck, catering &amp; events.</h2>
+          <div className="h-grid">
+            {CATS.map(c => (
+              <Link key={c.href} href={c.href} className="h-cat">
+                <Photo k={c.photo} aspect="4 / 3" sizes="(min-width: 900px) 33vw, 100vw" />
+                <div style={{ padding: '16px 4px 4px' }}>
+                  <h3 style={{ fontSize: 26 }}>{c.title} <span className="ms-es" style={{ fontSize: 15, fontFamily: 'var(--font-body)' }}>· {c.es}</span></h3>
+                  <p style={{ color: 'var(--brand-muted)', fontSize: 15, marginTop: 4 }}>{c.text}</p>
+                  <span style={{ color: 'var(--brand-primary)', fontWeight: 700, fontSize: 14, display: 'inline-block', marginTop: 8 }}>{c.cta} →</span>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -80,30 +109,6 @@ export default function HomePage() {
             <a href={SMS_LINK} className="ms-btn ms-btn-ghost">Text Us</a>
           </div>
           <div style={{ marginTop: 32, maxWidth: 560 }}><PaymentOptions /></div>
-        </div>
-      </section>
-
-      {/* CATERING */}
-      <section className="h-sec" id="catering">
-        <div className="ms-wrap">
-          <div className="ms-eyebrow">Catering</div>
-          <h2>{config.services.subheadline}</h2>
-          <div className="h-grid">
-            {config.services.items.map(s => (
-              <div className="h-card" key={s.title}>
-                <div style={{ fontSize: 28, marginBottom: 10 }}>{s.icon}</div>
-                <h3>{s.title}</h3>
-                <p style={{ color: 'var(--brand-muted)', fontSize: 15 }}>{s.description}</p>
-              </div>
-            ))}
-          </div>
-          <p style={{ marginTop: 28, color: '#ddd' }}>Tell us the date, headcount and what you&rsquo;re craving — we&rsquo;ll put it together.</p>
-          <p className="ms-es" style={{ marginTop: 4, fontSize: 14 }}>¿Un evento? Llámanos con la fecha y el número de invitados.</p>
-          <div className="h-ctas">
-            <a href={PHONE_TEL} className="ms-btn ms-btn-red">Call About Catering</a>
-            {PUBLIC_EMAIL && <a href={`mailto:${PUBLIC_EMAIL}?subject=Catering`} className="ms-btn ms-btn-ghost">Email {PUBLIC_EMAIL}</a>}
-            <a href={SMS_LINK} className="ms-btn ms-btn-ghost">Text Us</a>
-          </div>
         </div>
       </section>
 
