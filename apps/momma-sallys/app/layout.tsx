@@ -10,6 +10,9 @@ if (!validation.valid) {
   throw new Error(`Invalid brand config: ${validation.errors.join(', ')}`)
 }
 
+// Strip the validator-only placeholder email so it never reaches the browser.
+const publicConfig = { ...config, contact: { ...config.contact, email: '' } }
+
 export const metadata: Metadata = {
   metadataBase: new URL(config.seo.siteUrl),
   title: `${config.business.name} — Texas BBQ Food Truck · Abilene, TX`,
@@ -35,7 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <BrandProvider config={config}>
+        <BrandProvider config={publicConfig}>
           <SiteStyles />
           <SiteNav />
           <main style={{ minHeight: '70vh' }}>{children}</main>

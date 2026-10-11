@@ -1,4 +1,3 @@
-'use client'
 
 import { Section, Button } from '@yakini/ui'
 import { config } from '@/config/brand'
