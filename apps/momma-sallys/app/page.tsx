@@ -18,7 +18,8 @@ export default function HomePage() {
     <>
       <style>{`
         .h-hero { position: relative; min-height: calc(100svh - 60px); display: flex; align-items: flex-end; padding: 96px 0 56px;
-          background: linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.55) 45%, rgba(0,0,0,.95) 100%), url('/photos/sausage-brisket-plate.webp') center / cover no-repeat; }
+          background: linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.55) 45%, rgba(0,0,0,.95) 100%), url('/photos/hero-brisket-sausage-mobile.webp') center 20% / cover no-repeat; }
+        @media (min-width: 700px) { .h-hero { background-image: linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.55) 45%, rgba(0,0,0,.95) 100%), url('/photos/hero-brisket-sausage.webp'); background-position: center 40%; } }
         .h-hero h1 { font-size: clamp(42px, 11vw, 92px); letter-spacing: -.02em; line-height: 1.02; margin-bottom: 18px; max-width: 14ch; }
         .h-hero h1 em { color: var(--brand-primary); font-style: italic; }
         .h-ctas { display: grid; gap: 12px; margin-top: 28px; }
