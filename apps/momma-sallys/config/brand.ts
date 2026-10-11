@@ -177,7 +177,7 @@ Around town, people know the truck by its mark before they know the name — the
   },
 
   seo: {
-    siteUrl: 'https://momma-sallys.vercel.app', // TODO — confirm final domain
+    siteUrl: 'https://mamasallys.com',
     keywords: [
       'bbq food truck abilene tx',
       'momma sallys bbq',
