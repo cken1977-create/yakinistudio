@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { PaymentOptions } from '@/components/PaymentOptions'
 import { config } from '@/config/brand'
 import { PHONE_DISPLAY, PHONE_TEL, HAS_PAY } from '@/config/site'
 
 export const metadata: Metadata = {
   title: "Menu · Menú — Momma Sally's BBQ, Abilene TX",
-  description: "Momma Sally's full bilingual BBQ menu: meat plates, Texas size nachos, sides, sweets and drinks.",
+  description: "Momma Sally's full bilingual BBQ menu: meat plates, sides, desserts and drinks.",
 }
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-')
@@ -40,7 +41,7 @@ export default function MenuPage() {
           <div className="ms-eyebrow">Menu · Menú</div>
           <h1>{menu.headline}</h1>
           {menu.subheadline && <p style={{ fontSize: 17, color: '#ddd', marginTop: 10, maxWidth: 600 }}>{menu.subheadline}</p>}
-          <p className="ms-es" style={{ fontSize: 14, marginTop: 4 }}>Cada plato incluye dos acompañamientos, pan, pepinillos, cebolla y salsa.</p>
+          <p className="ms-es" style={{ fontSize: 14, marginTop: 4 }}>Abilene, TX · Negocio local</p>
         </div>
       </section>
 
@@ -73,13 +74,10 @@ export default function MenuPage() {
           ))}
         </div>
 
-        {menu.paymentNote && (
-          <div style={{ marginTop: 40, padding: 20, border: '1px solid var(--brand-border)', borderRadius: 16, background: '#0b0b0b' }}>
-            <div className="ms-eyebrow" style={{ marginBottom: 8 }}>Payment · Pago</div>
-            <p style={{ fontSize: 15, color: '#ddd' }}>{menu.paymentNote}</p>
-            {HAS_PAY && <Link href="/pay" className="ms-btn ms-btn-red" style={{ marginTop: 16 }}>Pay Now · Pagar</Link>}
-          </div>
-        )}
+        <div style={{ marginTop: 40 }}>
+          <PaymentOptions />
+          {HAS_PAY && <Link href="/pay" className="ms-btn ms-btn-red" style={{ marginTop: 16 }}>Pay Now · Pagar</Link>}
+        </div>
 
         <div style={{ marginTop: 40, textAlign: 'center' }}>
           <h2 style={{ fontSize: 'clamp(28px, 6vw, 44px)', marginBottom: 8 }}>Feeding a crowd?</h2>

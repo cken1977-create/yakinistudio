@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { PaymentOptions } from '@/components/PaymentOptions'
 import { config } from '@/config/brand'
 import { PHONE_DISPLAY, PHONE_TEL, SMS_LINK, HAS_PAY } from '@/config/site'
 
@@ -47,7 +48,7 @@ export default function HomePage() {
         <div className="ms-wrap">
           <div className="ms-eyebrow">The Menu · El Menú</div>
           <h2>{plates.name}</h2>
-          <p style={{ color: 'var(--brand-muted)', maxWidth: 560 }}>{menu.subheadline}</p>
+          <p style={{ color: 'var(--brand-muted)', maxWidth: 560 }}>{plates.note}</p>
           <div style={{ maxWidth: 640, marginTop: 24 }}>
             {plates.items.map(item => (
               <div className="h-row" key={item.name}>
@@ -78,9 +79,7 @@ export default function HomePage() {
             <a href={PHONE_TEL} className="ms-btn ms-btn-red">Call for Today&rsquo;s Location</a>
             <a href={SMS_LINK} className="ms-btn ms-btn-ghost">Text Us</a>
           </div>
-          {menu.paymentNote && (
-            <p style={{ marginTop: 28, fontSize: 14, color: 'var(--brand-muted)' }}>{menu.paymentNote}</p>
-          )}
+          <div style={{ marginTop: 32, maxWidth: 560 }}><PaymentOptions /></div>
         </div>
       </section>
 
