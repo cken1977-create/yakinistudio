@@ -23,7 +23,7 @@ export const config: BrandConfig = {
   brand: {
     designSystem: 'editorial',
     colors: {
-      primary: '#C8102E',
+      primary: '#B3121B',
       accent: '#8C1D2C',
       background: '#000000',
       text: '#FFFFFF',
@@ -40,7 +40,7 @@ export const config: BrandConfig = {
   },
 
   contact: {
-    email: 'hello@mommasallys.com', // TODO — placeholder; validator requires non-empty. Get real address from Nicole before launch.
+    email: 'hello@mamasallys.com',
     phone: '325-428-8166',
     location: 'Abilene, TX',
     hours: "Hours vary by day — call ahead for today's location",
@@ -71,33 +71,22 @@ export const config: BrandConfig = {
   },
 
   menu: {
-    headline: 'Bill of Fare',
-    subheadline: 'Every meat plate comes with two sides, bread, pickles, onions & sauce.',
+    headline: "Mama Sally's Food Truck",
+    subheadline: 'Abilene, TX · Locally Owned',
     bilingual: true,
-    paymentNote: 'Tap to pay available. Cash, Visa & Mastercard accepted. Card fees & tax already built into the price.',
+    paymentNote: 'Prices subject to change.',
     categories: [
       {
         name: 'Meat Plates',
         nameTranslated: 'Platos de carne',
-        note: 'Plates include two sides, bread, pickles, onions & sauce.',
+        note: 'Plates include sides. · Los platos incluyen acompañamientos.',
         items: [
-          { name: 'Brisket, Sausage or Chicken', nameTranslated: 'Brisket, salchicha o pollo', price: '$15' },
-          { name: 'Pulled Pork', nameTranslated: 'Cerdo deshebrado', price: '$25' },
-          { name: 'One Meat Plate', price: '$15' },
-          { name: 'Two Meat Plate', price: '$25' },
-        ],
-      },
-      {
-        name: 'Texas Size Nachos',
-        nameTranslated: 'Nachos Tamaño Texas',
-        items: [
-          {
-            name: 'Texas Size Nachos',
-            nameTranslated: 'Nachos Tamaño Texas',
-            description: 'Crispy tortilla chips loaded with seasoned meat, melted cheese and fresh toppings.',
-            descriptionTranslated: 'Totopos crujientes cargados con carne bien sazonada y queso derretido.',
-            price: 'Ask at the truck',
-          },
+          { name: 'Brisket', nameTranslated: 'Brisket' },
+          { name: 'Sausage', nameTranslated: 'Salchicha' },
+          { name: 'Chicken', nameTranslated: 'Pollo' },
+          { name: 'Pulled Pork', nameTranslated: 'Cerdo deshebrado' },
+          { name: '1 Meat Plate', nameTranslated: 'Plato de 1 carne', price: '$15' },
+          { name: '2 Meat Plate', nameTranslated: 'Plato de 2 carnes', price: '$25' },
         ],
       },
       {
@@ -110,22 +99,23 @@ export const config: BrandConfig = {
         ],
       },
       {
-        name: 'Sweets',
+        name: 'Desserts',
         nameTranslated: 'Postres',
         items: [
-          { name: 'Cookies or Brownie', price: '$2' },
-          { name: 'Banana Pudding', price: '$5' },
-          { name: 'Pie', price: '$2' },
+          { name: 'Cookies or Brownie', nameTranslated: 'Galletas o brownie', price: '$2' },
+          { name: 'Banana Pudding', nameTranslated: 'Pudín de plátano', price: '$5' },
+          { name: 'Pie', nameTranslated: 'Pay', price: '$2' },
         ],
       },
       {
         name: 'Drinks',
         nameTranslated: 'Bebidas',
+        note: 'Prices subject to change. · Precios sujetos a cambio.',
         items: [
-          { name: 'Soda', price: '$2' },
+          { name: 'Soda', nameTranslated: 'Refresco', price: '$2' },
           { name: 'Powerade', price: '$2' },
           { name: 'Monster', price: '$4' },
-          { name: 'Water', price: 'Market' },
+          { name: 'Water', nameTranslated: 'Agua', price: 'Market Price' },
         ],
       },
     ],
@@ -145,7 +135,6 @@ Around town, people know the truck by its mark before they know the name — the
     subheadline: "What's cooking.",
     items: [
       { title: 'Meat Plates', category: 'BBQ', description: 'Brisket, sausage, chicken & pulled pork, fresh off the smoker.' },
-      { title: 'Texas Size Nachos', category: 'BBQ', description: 'Loaded nachos, Momma Sally-style.' },
       { title: 'Banana Pudding', category: 'Catering', description: 'Made to order for brunch spreads and events.' },
       // TODO — swap for real photos once Nicole sends them
     ],
@@ -177,7 +166,7 @@ Around town, people know the truck by its mark before they know the name — the
   },
 
   seo: {
-    siteUrl: 'https://momma-sallys.vercel.app', // TODO — confirm final domain
+    siteUrl: 'https://mamasallys.com',
     keywords: [
       'bbq food truck abilene tx',
       'momma sallys bbq',
