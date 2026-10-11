@@ -23,7 +23,7 @@ export const config: BrandConfig = {
   brand: {
     designSystem: 'editorial',
     colors: {
-      primary: '#C8102E',
+      primary: '#B3121B',
       accent: '#8C1D2C',
       background: '#000000',
       text: '#FFFFFF',

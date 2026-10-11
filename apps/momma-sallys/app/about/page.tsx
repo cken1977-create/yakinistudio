@@ -97,9 +97,9 @@ export default function AboutPage() {
             fontSize: 'clamp(32px, 5vw, 56px)',
             fontWeight: 500, marginBottom: 24, lineHeight: 1.15
           }}>
-            Ready to work together?
+            Hungry yet?
           </h2>
-          <Button variant="primary" href="/contact">Get In Touch</Button>
+          <Button variant="primary" href="/menu">View the Menu</Button>
         </div>
       </Section>
     </>
