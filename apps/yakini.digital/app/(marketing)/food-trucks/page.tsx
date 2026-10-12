@@ -19,7 +19,7 @@ const T = {
     exCta: 'See mamasallys.com',
     askNicole: 'Ask Nicole about her site — she’s right here.',
     tiersEyebrow: 'Packages', tiersTitle: 'Pick where to start.',
-    ask: 'Ask for pricing', everything: 'Everything in',
+    everything: 'Everything in', mo: '/mo', yr: '/yr', or: 'or', upsell: 'Serving an office park or data center? Pre-order means your regulars skip the line.',
     custom: 'Need something custom? Custom work is quoted separately.',
     ctaTitle: 'Ready when you are.', ctaBody: 'Tell us about your truck. A few questions, then we open your account.',
   },
@@ -33,23 +33,38 @@ const T = {
     exCta: 'Ver mamasallys.com',
     askNicole: 'Pregúntale a Nicole sobre su sitio — está aquí.',
     tiersEyebrow: 'Paquetes', tiersTitle: 'Elige por dónde empezar.',
-    ask: 'Pregunta por precios', everything: 'Todo lo de',
+    everything: 'Todo lo de', mo: '/mes', yr: '/año', or: 'o', upsell: '¿Atiendes un parque de oficinas o un centro de datos? Con pedidos por adelantado, tus clientes frecuentes no hacen fila.',
     custom: '¿Necesitas algo a la medida? El trabajo personalizado se cotiza aparte.',
     ctaTitle: 'Cuando estés listo.', ctaBody: 'Cuéntanos de tu negocio. Unas preguntas y abrimos tu cuenta.',
   },
 }
 
-const TIERS: { name: string; base?: string; en: string[]; es: string[] }[] = [
-  { name: 'Starter',
-    en: ['One-page mobile website', 'Your menu online', 'Menu QR code', 'Click-to-call', 'Your own .com domain'],
-    es: ['Sitio web móvil de una página', 'Tu menú en línea', 'Código QR del menú', 'Botón para llamar', 'Tu propio dominio .com'] },
-  { name: 'Grow', base: 'Starter',
-    en: ['Pay link + scan-to-pay QR (Square)', 'Catering & events page with inquiry', 'Google Business Profile setup', 'Facebook / Instagram setup'],
-    es: ['Enlace de pago + QR para pagar (Square)', 'Página de banquetes y eventos con solicitudes', 'Configuración de Perfil de Negocio en Google', 'Configuración de Facebook / Instagram'] },
-  { name: 'Full Service', base: 'Grow',
-    en: ['Online pre-order / pay-ahead for lunch rushes', 'Customer text list for your daily location', 'Monthly photo & menu updates', 'Priority support'],
-    es: ['Pedidos y pagos por adelantado para la hora pico', 'Lista de mensajes de texto con tu ubicación diaria', 'Actualizaciones mensuales de fotos y menú', 'Soporte prioritario'] },
+const TIERS: { name: string; mo: string; yr: string; base?: string; en: string[]; es: string[] }[] = [
+  { name: 'Starter', mo: '$79', yr: '$790',
+    en: ['One-page mobile website', 'Your menu online', 'Menu QR code', 'Click-to-call', 'Your own .com domain', 'Email support, 48-hour response'],
+    es: ['Sitio web móvil de una página', 'Tu menú en línea', 'Código QR del menú', 'Botón para llamar', 'Tu propio dominio .com', 'Soporte por correo, respuesta en 48 horas'] },
+  { name: 'Grow', mo: '$179', yr: '$1,790', base: 'Starter',
+    en: ['Pay link + scan-to-pay QR (Square)', 'Catering & events page with inquiry', 'Google Business Profile setup', 'Facebook / Instagram setup', '4 social posts/month — we create, write and schedule, you approve (one round of edits, no rollover)', 'Email support, 48-hour response'],
+    es: ['Enlace de pago + QR para pagar (Square)', 'Página de banquetes y eventos con solicitudes', 'Configuración de Perfil de Negocio en Google', 'Configuración de Facebook / Instagram', '4 publicaciones al mes — las creamos, escribimos y programamos, tú las apruebas (una ronda de cambios, no se acumulan)', 'Soporte por correo, respuesta en 48 horas'] },
+  { name: 'Full Service', mo: '$399', yr: '$3,990', base: 'Grow',
+    en: ['Online pre-order / pay-ahead for lunch rushes', 'Customer text list for your daily location — customers opt in, easy unsubscribe; up to 500 subscribers and 30 broadcasts/month included, extra billed at cost', 'Monthly photo & menu updates', 'Priority support'],
+    es: ['Pedidos y pagos por adelantado para la hora pico', 'Lista de mensajes de texto con tu ubicación diaria — los clientes se suscriben y pueden darse de baja fácilmente; incluye hasta 500 suscriptores y 30 envíos al mes, lo adicional se cobra al costo', 'Actualizaciones mensuales de fotos y menú', 'Soporte prioritario'] },
 ]
+
+const TERMS = {
+  en: [
+    ['No setup fee', 'Monthly plans: no setup fee with a 3-month minimum.'],
+    ['Pay yearly, get 2 months free', 'Annual plans are 10× the monthly price.'],
+    ['Live in 7 days — guaranteed', 'Live within 7 days of receiving your menu, photos, and logo, or your first month is free.'],
+    ['You own your domain', 'Your domain is registered in your name. If you cancel, the domain stays yours and everything else turns off at the end of billing.'],
+  ],
+  es: [
+    ['Sin cargo de instalación', 'Planes mensuales: sin cargo de instalación con un mínimo de 3 meses.'],
+    ['Paga al año, 2 meses gratis', 'Los planes anuales cuestan 10 veces el precio mensual.'],
+    ['En línea en 7 días — garantizado', 'En línea dentro de 7 días después de recibir tu menú, fotos y logo, o tu primer mes es gratis.'],
+    ['Tu dominio es tuyo', 'Tu dominio se registra a tu nombre. Si cancelas, el dominio sigue siendo tuyo y todo lo demás se apaga al final del periodo de facturación.'],
+  ],
+}
 
 export default function FoodTrucksPage() {
   const [lang, setLang] = useState<L>('en')
@@ -123,11 +138,22 @@ export default function FoodTrucksPage() {
             {TIERS.map(tier => (
               <div className="card" key={tier.name} style={{ display: 'flex', flexDirection: 'column' }}>
                 <h3 style={{ margin: 0, fontSize: 22, color: 'var(--gold)' }}>{tier.name}</h3>
+                <div style={{ marginTop: 10 }}><span style={{ fontSize: 36, fontWeight: 800 }}>{tier.mo}</span><span className="muted">{t.mo}</span></div>
+                <div className="muted" style={{ fontSize: 14 }}>{t.or} {tier.yr}{t.yr}</div>
+                {tier.name === 'Full Service' && <p style={{ marginTop: 12, fontSize: 14, color: 'var(--gold)', fontWeight: 600 }}>{t.upsell}</p>}
                 <ul>
                   {tier.base && <li style={{ fontWeight: 700 }}>{t.everything} {tier.base}</li>}
                   {tier[lang].map(f => <li key={f}>{f}</li>)}
                 </ul>
-                <a className="b bo" style={{ marginTop: 'auto' }} href={INTAKE_URL}>{t.ask}</a>
+                <a className="b bg" style={{ marginTop: 'auto' }} href={INTAKE_URL}>{t.start}</a>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'grid', gap: 12, marginTop: 24, gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
+            {TERMS[lang].map(([h, b]) => (
+              <div key={h} className="card" style={{ padding: 18 }}>
+                <div style={{ fontWeight: 700, color: 'var(--gold)', marginBottom: 6 }}>{h}</div>
+                <p className="muted" style={{ fontSize: 14 }}>{b}</p>
               </div>
             ))}
           </div>
