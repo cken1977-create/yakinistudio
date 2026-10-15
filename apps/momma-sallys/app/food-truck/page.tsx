@@ -6,7 +6,7 @@ import { PageHero } from '@/components/PageHero'
 import { Gallery } from '@/components/Photos'
 import { PaymentOptions } from '@/components/PaymentOptions'
 
-export const metadata: Metadata = { title: "Food Truck · Camión de comida — Momma Sally's BBQ, Abilene TX" }
+export const metadata: Metadata = { title: "Food Truck · Camión de comida — Momma Sally's BBQ, West Texas TX" }
 
 export default function FoodTruckPage() {
   const plates = config.menu!.categories[0]
@@ -42,7 +42,7 @@ export default function FoodTruckPage() {
         <div className="ms-wrap" style={{ display: 'grid', gap: 32, gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
           <div>
             <div className="ms-eyebrow">Find the Truck · Encuéntranos</div>
-            <h2 style={{ fontSize: 'clamp(30px, 7vw, 48px)', marginBottom: 10 }}>Rolling around Abilene.</h2>
+            <h2 style={{ fontSize: 'clamp(30px, 7vw, 48px)', marginBottom: 10 }}>Rolling around West Texas.</h2>
             <p style={{ color: '#ddd' }}>The truck moves and hours vary by day. Call or text for today’s location and hours.</p>
             <p className="ms-es" style={{ marginTop: 4 }}>Llámanos o envía un texto para la ubicación y el horario de hoy.</p>
             <div style={{ display: 'grid', gap: 12, marginTop: 20, maxWidth: 420 }}>

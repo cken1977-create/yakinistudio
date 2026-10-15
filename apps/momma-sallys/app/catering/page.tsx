@@ -5,7 +5,7 @@ import { Reveal, RevealStyles } from '@/components/Reveal'
 import { EmberCanvas } from '@/components/EmberCanvas'
 import { CateringBuilder } from '@/components/CateringBuilder'
 
-export const metadata: Metadata = { title: "Catering — Momma Sally's BBQ, Abilene TX" }
+export const metadata: Metadata = { title: "Catering — Momma Sally's BBQ, West Texas TX" }
 
 const MARQUEE = 'SMOKED LOW & SLOW · ABILENE, TX · CATERING · BANQUETES · '
 

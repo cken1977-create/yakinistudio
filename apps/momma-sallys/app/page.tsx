@@ -46,7 +46,7 @@ export default function HomePage() {
         <div className="h-hero-shade" />
         <div className="ms-wrap" style={{ width: '100%', position: 'relative' }}>
           <Reveal>
-            <div className="ms-eyebrow">Texas BBQ Food Truck · Abilene, TX</div>
+            <div className="ms-eyebrow">Texas BBQ Food Truck · West Texas</div>
             <h1>Smoked low &amp; slow. <em>Served hot.</em></h1>
           </Reveal>
           <Reveal delay={140}>
@@ -114,7 +114,7 @@ export default function HomePage() {
       <section className="h-sec h-plate" id="find-us">
         <div className="ms-wrap">
           <div className="ms-eyebrow">Find the Truck · Encuéntranos</div>
-          <h2>Rolling around Abilene.</h2>
+          <h2>Rolling around West Texas.</h2>
           <p style={{ color: '#ddd', maxWidth: 560, fontSize: 17 }}>
             The truck moves, and hours vary by day. Give us a call for today&rsquo;s location and hours.
           </p>
