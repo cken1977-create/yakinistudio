@@ -87,30 +87,6 @@ export default function CateringPage() {
         <CateringBuilder />
       </section>
 
-      {/* CORPORATE BAND */}
-      <section style={{ position: 'relative', overflow: 'hidden', borderTop: '1px solid var(--brand-border)' }}>
-        <div
-          style={{
-            position: 'absolute', inset: 0,
-            background: "linear-gradient(90deg, rgba(0,0,0,.9) 0%, rgba(0,0,0,.55) 55%, rgba(0,0,0,.2) 100%), url('/photos/mj-office-lunch.webp') center 30% / cover no-repeat",
-          }}
-        />
-        <div className="ms-wrap" style={{ position: 'relative', padding: '96px 20px' }}>
-          <Reveal>
-            <div className="ms-eyebrow">Corporate & Crews · Oficinas y cuadrillas</div>
-            <h2 style={{ fontSize: 'clamp(30px, 7vw, 52px)', letterSpacing: '-.02em', margin: '0 0 12px', maxWidth: '18ch' }}>
-              The lunch crowd <em style={{ color: 'var(--brand-primary)', fontStyle: 'italic' }}>follows the smoke.</em>
-            </h2>
-            <p style={{ fontSize: 17, color: '#ddd', maxWidth: 560, lineHeight: 1.6, margin: '0 0 24px' }}>
-              We post up at offices, job sites and warehouses around Abilene — pre-order for the
-              whole crew and it&rsquo;s ready when we roll in. Build the crew&rsquo;s menu above and
-              text it to us.
-            </p>
-            <a href="#quote" className="ms-btn ms-btn-red">Build a crew order · Armar pedido</a>
-          </Reveal>
-        </div>
-      </section>
-
       {/* Gallery */}
       <section style={{ padding: '24px 0 64px', borderTop: '1px solid var(--brand-border)' }}>
         <div className="ms-wrap" style={{ padding: '48px 20px 0' }}>

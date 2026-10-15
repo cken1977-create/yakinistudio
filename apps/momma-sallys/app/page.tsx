@@ -41,7 +41,7 @@ export default function HomePage() {
       {/* HERO — looping video */}
       <section className="h-hero">
         <video className="h-hero-video" autoPlay muted loop playsInline poster="/photos/hero-sunset-poster.jpg">
-          <source src="/video/hero-sunset.mp4" type="video/mp4" />
+          <source src="https://cdn.midjourney.com/video/38de4802-f597-41fa-8647-0a9db98dd2d0/1.mp4" type="video/mp4" />
         </video>
         <div className="h-hero-shade" />
         <div className="ms-wrap" style={{ width: '100%', position: 'relative' }}>
