@@ -12,7 +12,7 @@ export default function FoodTruckPage() {
   const plates = config.menu!.categories[0]
   return (
     <>
-      <PageHero eyebrow="Food Truck · Camión de comida" title="Plates off the pit." bg="/photos/open-window-dusk.png"
+      <PageHero eyebrow="Food Truck · Camión de comida" title="Plates off the pit." bg="/photos/open-window-dusk.jpg"
         lead="Brisket, sausage, chicken and pulled pork — plates include sides."
         es="Brisket, salchicha, pollo y cerdo deshebrado — los platos incluyen acompañamientos." />
 
