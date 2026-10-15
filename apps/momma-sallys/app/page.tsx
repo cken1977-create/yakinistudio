@@ -7,6 +7,7 @@ const CATS: { href: string; title: string; es: string; text: string; cta: string
   { href: '/events', title: 'Events', es: 'Eventos', text: 'Party spreads and homemade desserts, cobbler to banana pudding.', cta: 'See events', photo: 'cobbler' },
 ]
 import { PaymentOptions } from '@/components/PaymentOptions'
+import { Reveal, RevealStyles } from '@/components/Reveal'
 import { config } from '@/config/brand'
 import { PHONE_DISPLAY, PHONE_TEL, SMS_LINK, HAS_PAY, PUBLIC_EMAIL } from '@/config/site'
 
@@ -17,9 +18,9 @@ export default function HomePage() {
   return (
     <>
       <style>{`
-        .h-hero { position: relative; min-height: calc(100svh - 60px); display: flex; align-items: flex-end; padding: 96px 0 56px;
-          background: linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.55) 45%, rgba(0,0,0,.95) 100%), url('/photos/hero-brisket-sausage-mobile.webp') center 20% / cover no-repeat; }
-        @media (min-width: 700px) { .h-hero { background-image: linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.55) 45%, rgba(0,0,0,.95) 100%), url('/photos/hero-brisket-sausage.webp'); background-position: center 40%; } }
+        .h-hero { position: relative; min-height: calc(100svh - 60px); display: flex; align-items: flex-end; padding: 96px 0 56px; overflow: hidden; background: #000; }
+        .h-hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .h-hero-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.55) 45%, rgba(0,0,0,.95) 100%); }
         .h-hero h1 { font-size: clamp(42px, 11vw, 92px); letter-spacing: -.02em; line-height: 1.02; margin-bottom: 18px; max-width: 14ch; }
         .h-hero h1 em { color: var(--brand-primary); font-style: italic; }
         .h-ctas { display: grid; gap: 12px; margin-top: 28px; }
@@ -36,28 +37,41 @@ export default function HomePage() {
         .h-plate { background: linear-gradient(180deg, rgba(0,0,0,.6), rgba(0,0,0,.92)), url('/backdrop-platter.png') center / cover no-repeat; }
       `}</style>
 
-      {/* HERO */}
+      <RevealStyles />
+      {/* HERO — looping video */}
       <section className="h-hero">
-        <div className="ms-wrap" style={{ width: '100%' }}>
-          <div className="ms-eyebrow">Texas BBQ Food Truck · Abilene, TX</div>
-          <h1>Smoked low &amp; slow. <em>Served hot.</em></h1>
-          <p style={{ fontSize: 18, color: '#ddd', maxWidth: 560, lineHeight: 1.6 }}>
-            Brisket, sausage, chicken &amp; pulled pork off the pit — with real sides, sauce and something sweet.
-          </p>
-          <p className="ms-es" style={{ fontSize: 15, marginTop: 6 }}>Barbacoa texana ahumada lentamente. Menú en inglés y español.</p>
-          <div className="h-ctas">
-            <Link href="/menu" className="ms-btn ms-btn-white">View Menu · Ver Menú</Link>
-            <a href={PHONE_TEL} className="ms-btn ms-btn-red">Call {PHONE_DISPLAY}</a>
-            {HAS_PAY && <Link href="/pay" className="ms-btn ms-btn-ghost">Pay · Pagar</Link>}
-          </div>
+        <video className="h-hero-video" autoPlay muted loop playsInline poster="/photos/hero-sunset-poster.jpg">
+          <source src="/video/hero-sunset.mp4" type="video/mp4" />
+        </video>
+        <div className="h-hero-shade" />
+        <div className="ms-wrap" style={{ width: '100%', position: 'relative' }}>
+          <Reveal>
+            <div className="ms-eyebrow">Texas BBQ Food Truck · Abilene, TX</div>
+            <h1>Smoked low &amp; slow. <em>Served hot.</em></h1>
+          </Reveal>
+          <Reveal delay={140}>
+            <p style={{ fontSize: 18, color: '#ddd', maxWidth: 560, lineHeight: 1.6 }}>
+              Brisket, sausage, chicken &amp; pulled pork off the pit — with real sides, sauce and something sweet.
+            </p>
+            <p className="ms-es" style={{ fontSize: 15, marginTop: 6 }}>Barbacoa texana ahumada lentamente. Menú en inglés y español.</p>
+          </Reveal>
+          <Reveal delay={260}>
+            <div className="h-ctas">
+              <Link href="/menu" className="ms-btn ms-btn-white">View Menu · Ver Menú</Link>
+              <a href={PHONE_TEL} className="ms-btn ms-btn-red">Call {PHONE_DISPLAY}</a>
+              {HAS_PAY && <Link href="/pay" className="ms-btn ms-btn-ghost">Pay · Pagar</Link>}
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* CATEGORIES */}
       <section className="h-sec">
         <div className="ms-wrap">
-          <div className="ms-eyebrow">What We Do · Lo Que Hacemos</div>
-          <h2>Food truck, catering &amp; events.</h2>
+          <Reveal>
+            <div className="ms-eyebrow">What We Do · Lo Que Hacemos</div>
+            <h2>Food truck, catering &amp; events.</h2>
+          </Reveal>
           <div className="h-grid">
             {CATS.map(c => (
               <Link key={c.href} href={c.href} className="h-cat">
