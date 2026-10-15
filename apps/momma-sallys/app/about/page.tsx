@@ -41,7 +41,7 @@ export default function AboutPage() {
         }}>
           <div>
             <img
-              src="/photos/nicole-chef-coat-smile.webp"
+              src="/photos/nicole-chef-coat.webp"
               alt="Nicole — Momma Sally’s"
               style={{ width: '100%', borderRadius: 16, objectFit: 'cover' }}
             />
