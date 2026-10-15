@@ -72,6 +72,18 @@ export default function CateringPage() {
         </div>
       </div>
 
+      {/* Office / corporate atmosphere */}
+      <section style={{ position: 'relative', minHeight: '36svh', overflow: 'hidden', background: '#000' }}>
+        <video autoPlay muted loop playsInline style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.4 }}>
+          <source src="/video/trailer-office.mp4" type="video/mp4" />
+        </video>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,.5), rgba(0,0,0,.75))' }} />
+        <div className="ms-wrap" style={{ position: 'relative', padding: '64px 20px', textAlign: 'center' }}>
+          <div className="ms-eyebrow">Offices & Crews · Oficinas y equipos</div>
+          <h2 style={{ fontSize: 'clamp(26px, 5vw, 42px)', margin: '0 0 8px' }}>We pull up. You eat.</h2>
+        </div>
+      </section>
+
       {/* BUILDER */}
       <section className="ms-wrap" id="quote" style={{ padding: '64px 20px', scrollMarginTop: 80 }}>
         <Reveal>
@@ -111,7 +123,7 @@ export default function CateringPage() {
               Tell us about your event.
             </h2>
             <p style={{ color: '#ddd', marginBottom: 4 }}>
-              Share the date, headcount and what you&rsquo;re craving — we&rsquo;ll put it together.
+              Share the date, headcount and what you’re craving — we’ll put it together.
             </p>
             <p className="ms-es" style={{ marginBottom: 20 }}>
               Compártenos la fecha, el número de invitados y lo que se te antoja.
