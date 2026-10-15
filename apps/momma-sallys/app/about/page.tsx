@@ -1,11 +1,9 @@
-
 import { Section, Button } from '@yakini/ui'
 import { config } from '@/config/brand'
 
 export default function AboutPage() {
   return (
     <>
-      {/* Page Header */}
       <Section padding="xl">
         <div style={{ paddingTop: 80, maxWidth: 920 }}>
           <div style={{
@@ -35,7 +33,6 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      {/* Story */}
       <Section padding="lg">
         <div style={{
           display: 'grid',
@@ -43,12 +40,17 @@ export default function AboutPage() {
           gap: 80
         }}>
           <div>
+            <img
+              src="/photos/nicole-chef-coat.webp"
+              alt="Nicole — Momma Sally’s"
+              style={{ width: '100%', borderRadius: 16, objectFit: 'cover' }}
+            />
             <div style={{
               fontSize: 10, fontWeight: 700,
               letterSpacing: '0.25em', textTransform: 'uppercase',
               color: 'var(--brand-primary)',
               borderTop: '1px solid var(--brand-primary)',
-              paddingTop: 16
+              paddingTop: 16, marginTop: 20
             }}>
               Our Story
             </div>
@@ -66,7 +68,6 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      {/* Mission */}
       <Section padding="xl">
         <div style={{ textAlign: 'center', maxWidth: 920, margin: '0 auto' }}>
           <div style={{
@@ -88,7 +89,6 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      {/* CTA */}
       <Section padding="xl">
         <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
           <h2 style={{

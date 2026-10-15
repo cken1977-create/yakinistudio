@@ -1,23 +1,14 @@
 import type { BrandConfig } from '@yakini/config'
 
 /**
- * Momma Sally's — BBQ food truck, Abilene, TX.
- *
- * Proof-of-concept build for Nicole. Real logo and real menu pulled
- * from her actual menu board photos. First client using the `menu`
- * field on BrandConfig.
- *
- * TODOs below are fields Nicole hasn't supplied yet — no formal
- * intake has happened. Placeholders, not guesses.
- *
- * Held in Confidence.
+ * Momma Sally's — BBQ food truck, West Texas.
  */
 export const config: BrandConfig = {
   business: {
     name: "Momma Sally's",
-    tagline: 'Texas BBQ · Abilene, TX',
+    tagline: 'Texas BBQ · West Texas',
     description:
-      "Momma Sally's is a locally owned food truck slinging Texas-style BBQ in Abilene — brisket smoked low and slow, sausage, chicken and pulled pork, served off a full bilingual menu with real sides, not shortcuts.",
+      "Momma Sally's is a locally owned food truck slinging Texas-style BBQ across West Texas — brisket smoked low and slow, sausage, chicken and pulled pork, served off a full bilingual menu with real sides, not shortcuts.",
   },
 
   brand: {
@@ -42,11 +33,11 @@ export const config: BrandConfig = {
   contact: {
     email: 'hello@mamasallys.com',
     phone: '325-428-8166',
-    location: 'Abilene, TX',
+    location: 'West Texas',
     hours: "Hours vary by day — call ahead for today's location",
   },
 
-  social: [],  // TODO — Facebook page tagged #LLMM on the truck; confirm @Momma_Sallys handle
+  social: [],
 
   services: {
     headline: 'Catering',
@@ -64,7 +55,7 @@ export const config: BrandConfig = {
       },
       {
         title: 'Corporate & Crews',
-        description: "Pre-order plates for job sites and offices around Abilene — call ahead and it's ready when the truck rolls up.",
+        description: "Pre-order plates for job sites and offices across West Texas — call ahead and it's ready when the truck rolls up.",
         icon: '🚚',
       },
     ],
@@ -72,7 +63,7 @@ export const config: BrandConfig = {
 
   menu: {
     headline: "Mama Sally's Food Truck",
-    subheadline: 'Abilene, TX · Locally Owned',
+    subheadline: 'West Texas · Locally Owned',
     bilingual: true,
     paymentNote: 'Prices subject to change.',
     categories: [
@@ -124,7 +115,7 @@ export const config: BrandConfig = {
   about: {
     headline: 'The Truck',
     subheadline: 'Real pit, real Momma.',
-    story: `Momma Sally's is a locally owned food truck slinging Texas-style barbecue in Abilene. Brisket rides the smoker all night, the sausage has snap, and every plate comes stacked with sides made the honest way. The menu runs in English and Spanish, front to back, because good barbecue shouldn't come with a language barrier.
+    story: `Momma Sally's is a locally owned food truck slinging Texas-style barbecue across West Texas. Brisket rides the smoker all night, the sausage has snap, and every plate comes stacked with sides made the honest way. The menu runs in English and Spanish, front to back, because good barbecue shouldn't come with a language barrier.
 
 Around town, people know the truck by its mark before they know the name — the chef's hat, crossed with a spatula and fork, ringed in flame. Catch the smoke, and you already know what's coming.`,
     mission: 'No shortcuts, no frozen bags — just a hot grill and a menu written so nobody has to guess.',
@@ -136,7 +127,6 @@ Around town, people know the truck by its mark before they know the name — the
     items: [
       { title: 'Meat Plates', category: 'BBQ', description: 'Brisket, sausage, chicken & pulled pork, fresh off the smoker.' },
       { title: 'Banana Pudding', category: 'Catering', description: 'Made to order for brunch spreads and events.' },
-      // TODO — swap for real photos once Nicole sends them
     ],
   },
 
@@ -156,7 +146,7 @@ Around town, people know the truck by its mark before they know the name — the
 
   contactPage: {
     headline: 'Find Us',
-    subheadline: 'Come see us in Abilene.',
+    subheadline: 'Come see us across West Texas.',
     formIntro: "Planning an event? Tell us what you need and we'll get back to you with catering pricing.",
   },
 
@@ -168,11 +158,11 @@ Around town, people know the truck by its mark before they know the name — the
   seo: {
     siteUrl: 'https://mamasallys.com',
     keywords: [
-      'bbq food truck abilene tx',
+      'bbq food truck west texas',
       'momma sallys bbq',
-      'texas bbq abilene',
-      'food truck abilene texas',
-      'bbq catering abilene tx',
+      'texas bbq west texas',
+      'food truck west texas',
+      'bbq catering west texas',
     ],
   },
 

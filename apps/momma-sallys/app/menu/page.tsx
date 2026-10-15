@@ -5,7 +5,7 @@ import { config } from '@/config/brand'
 import { PHONE_DISPLAY, PHONE_TEL, HAS_PAY } from '@/config/site'
 
 export const metadata: Metadata = {
-  title: "Menu · Menú — Momma Sally's BBQ, Abilene TX",
+  title: "Menu · Menú — Momma Sally's BBQ, West Texas TX",
   description: "Momma Sally's full bilingual BBQ menu: meat plates, sides, desserts and drinks.",
 }
 
@@ -41,7 +41,7 @@ export default function MenuPage() {
           <div className="ms-eyebrow">Menu · Menú</div>
           <h1>{menu.headline}</h1>
           {menu.subheadline && <p style={{ fontSize: 17, color: '#ddd', marginTop: 10, maxWidth: 600 }}>{menu.subheadline}</p>}
-          <p className="ms-es" style={{ fontSize: 14, marginTop: 4 }}>Abilene, TX · Negocio local</p>
+          <p className="ms-es" style={{ fontSize: 14, marginTop: 4 }}>West Texas · Negocio local</p>
         </div>
       </section>
 

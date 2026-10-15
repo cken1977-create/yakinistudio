@@ -3,7 +3,7 @@ import { PageHero } from '@/components/PageHero'
 import { Gallery, Photo } from '@/components/Photos'
 import { ContactCTA } from '@/components/ContactCTA'
 
-export const metadata: Metadata = { title: "Events · Eventos — Momma Sally's BBQ, Abilene TX" }
+export const metadata: Metadata = { title: "Events · Eventos — Momma Sally's BBQ, West Texas TX" }
 
 export default function EventsPage() {
   return (

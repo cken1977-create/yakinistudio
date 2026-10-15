@@ -75,8 +75,8 @@ export function SiteFooter() {
       <div className="ms-wrap" style={{ display: 'grid', gap: 20, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div>
           <div className="ms-logo" style={{ color: '#fff', marginBottom: 8 }}>Momma Sally<span>&rsquo;</span>s</div>
-          <div>Texas BBQ food truck · Abilene, TX</div>
-          <div className="ms-es">Barbacoa texana · Abilene, TX</div>
+          <div>Texas BBQ food truck · West Texas</div>
+          <div className="ms-es">Barbacoa texana · West Texas</div>
         </div>
         <div style={{ display: 'grid', gap: 6 }}>
           <a href={PHONE_TEL}>{PHONE_DISPLAY}</a>
