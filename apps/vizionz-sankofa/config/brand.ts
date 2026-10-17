@@ -49,9 +49,9 @@ export const config: BrandConfig = {
     items: [
       {
         title: 'Unsheltered Outreach & Stabilization',
-        description: 'Direct outreach to unhoused neighbors across Albuquerque. In partnership with ACS, we provide stabilization support, hotel vouchers, hygiene supplies, and pathways to housing.',
+        description: 'Direct outreach to unhoused neighbors across Albuquerque. In partnership with Albuquerque Community Safety, we provide stabilization support, hotel vouchers, hygiene supplies, and pathways to housing.',
         icon: '🏠',
-        features: ['ACS partnership', 'Hotel vouchers', 'Hygiene & supplies', 'Housing pathways'],
+        features: ['Albuquerque Community Safety partnership', 'Hotel vouchers', 'Hygiene & supplies', 'Housing pathways'],
       },
       {
         title: 'Refugee & Immigrant Services',
@@ -79,9 +79,9 @@ export const config: BrandConfig = {
       },
       {
         title: 'Readiness Pilot',
-        description: 'In partnership with Legacyline and the BRSA Foundation — behavioral readiness assessment and certification for participants pursuing housing, work, or education.',
+        description: 'In partnership with Kamili and the BRSA Foundation — behavioral readiness assessment and certification for participants pursuing housing, work, or education.',
         icon: '🧭',
-        features: ['BRSA Foundation pilot', 'Legacyline platform', 'Readiness certification', 'Pathway tracking'],
+        features: ['BRSA Foundation pilot', 'Kamili platform', 'Readiness certification', 'Pathway tracking'],
       },
     ],
   },

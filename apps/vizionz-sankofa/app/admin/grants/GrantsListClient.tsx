@@ -645,7 +645,7 @@ function GrantModal({
               type="text"
               value={draft.name}
               onChange={(e) => update('name', e.target.value)}
-              placeholder='e.g. "ACS Community Reentry Q3 2026"'
+              placeholder='e.g. "Albuquerque Community Safety — Community Reentry Q3 2026"'
               style={inputStyle}
             />
           </Field>
