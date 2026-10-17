@@ -23,7 +23,7 @@ interface NumbersBandProps {
 const DEFAULT_STATS: NumberStat[] = [
   { figure: '500', accent: '+', label: 'Families Served' },
   { figure: '12',                 label: 'Years of Service' },
-  { figure: '6',                  label: 'Active Programs' },
+  { figure: '7',                  label: 'Active Programs' },
   { figure: '16',                 label: 'Coalition Partners' },
 ]
 
