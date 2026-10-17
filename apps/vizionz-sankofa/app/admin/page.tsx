@@ -13,6 +13,7 @@ import { getAccessRole } from '@/lib/supabase/auth'
 import { AskBar } from '@/components/admin/AskBar'
 import { MyDay } from '@/components/admin/MyDay'
 import { StageSummary } from '@/components/admin/StageSummary'
+import { NeedsAttention } from '@/components/admin/crm/NeedsAttention'
 
 export default async function AdminLandingPage() {
   // Enforce authentication. Redirects to /admin/login if no session.
@@ -45,6 +46,9 @@ export default async function AdminLandingPage() {
     return (
       <div>
         <AskBar greeting={`Welcome back, ${firstName}.`} voiceSettings={voiceSettings} />
+        <p style={{ margin: '0 0 20px', fontFamily: 'Georgia, serif' }}>
+          <Link href="/admin/my-day" style={{ color: '#0A2548', fontWeight: 600 }}>Open My Day</Link> for your tasks, reminders and quick logging.
+        </p>
         <MyDay supabase={supabase} />
       </div>
     )
@@ -143,6 +147,7 @@ export default async function AdminLandingPage() {
       {accessRole ? (
         <>
           <AskBar greeting={`Welcome back, ${firstName}. Ask anything.`} voiceSettings={voiceSettings} />
+          {(accessRole === 'executive' || accessRole === 'operator') && <NeedsAttention supabase={supabase} />}
           <StageSummary supabase={supabase} />
         </>
       ) : (
@@ -269,6 +274,20 @@ export default async function AdminLandingPage() {
             gap: '16px',
           }}
         >
+          <SurfaceCard
+            href="/admin/my-day"
+            kicker="Office CRM"
+            title="My Day"
+            description="Your tasks and reminders, plus “+ Log” for a call, email, meeting or note."
+            status="active"
+          />
+          <SurfaceCard
+            href="/admin/contacts"
+            kicker="Office CRM"
+            title="Contacts"
+            description="One address book: partner and agency staff, funders, donors, vendors, volunteers and their organizations."
+            status="active"
+          />
           {/* Wave 3 case management surfaces — primary */}
           <SurfaceCard
             href="/admin/participants"

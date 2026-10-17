@@ -248,7 +248,7 @@ function ViewMode({
                 fontFamily: '"DM Serif Display", Georgia, serif',
               }}
             >
-              {donor.display_name}
+              <a href={`/admin/donors/${donor.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>{donor.display_name}</a>
             </h3>
             <StatusPill status={donor.status} />
             {donor.recurring && (

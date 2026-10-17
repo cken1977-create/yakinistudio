@@ -1,6 +1,6 @@
 // VIZIONZ SANKOFA · /admin/organizations · shared types
 
-export type RelationshipKind = 'funder' | 'partner' | 'both'
+export type RelationshipKind = 'funder' | 'partner' | 'both' | 'agency'
 
 export type OrganizationStatus =
   | 'active'
@@ -82,6 +82,7 @@ export const RELATIONSHIP_KIND_LABELS: Record<RelationshipKind, string> = {
   funder: 'Funder',
   partner: 'Partner',
   both: 'Funder + Partner',
+  agency: 'Agency',
 }
 
 export const RELATIONSHIP_KIND_COLORS: Record<
@@ -91,6 +92,7 @@ export const RELATIONSHIP_KIND_COLORS: Record<
   funder: { bg: 'rgba(0, 122, 51, 0.12)', fg: '#007A33' },
   partner: { bg: 'rgba(91, 44, 143, 0.12)', fg: '#5B2C8F' },
   both: { bg: 'rgba(180, 95, 0, 0.12)', fg: '#B45F00' },
+  agency: { bg: 'rgba(10, 37, 72, 0.1)', fg: '#0A2548' },
 }
 
 export const ORGANIZATION_STATUS_LABELS: Record<OrganizationStatus, string> = {
