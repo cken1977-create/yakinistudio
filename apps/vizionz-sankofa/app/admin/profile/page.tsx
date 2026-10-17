@@ -8,6 +8,12 @@ import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 import { Card, PageIntro, SectionLabel } from '@/components/admin/ui'
 import { formatMountain } from '../team/types'
 import { ProfileClient } from './ProfileClient'
+import { MyHrRecords } from './MyHrRecords'
+import { createClient } from '@/lib/supabase/server'
+import {
+  HANDBOOK_VERSION_COLUMNS, JD_ASSIGNMENT_COLUMNS, JD_COLUMNS, latestVersion,
+  type Handbook, type HandbookAck, type HandbookVersion, type JdAssignment, type JobDescription,
+} from '@/lib/hr/model'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,6 +29,31 @@ export default async function ProfilePage() {
   void touchLastActive(user.id)
   const role = getAccessRole(user)
   const op = user.operator
+
+  // My HR records. Staff only get their own rows from RLS; executives/operators
+  // can read everyone's, so filter to "assigned to me" (directly or via my accepted invite).
+  const supabase = await createClient()
+  const [jdA, hbA, myInvites, hbs, versions, acks] = await Promise.all([
+    supabase.from('vs_jd_assignments').select(JD_ASSIGNMENT_COLUMNS).is('ended_at', null).order('assigned_at', { ascending: false }),
+    supabase.from('vs_handbook_assignments').select('handbook_id, user_id, invite_id').is('ended_at', null),
+    supabase.from('vs_invites').select('id').eq('accepted_user_id', user.id),
+    supabase.from('vs_handbooks').select('id, title, description, archived_at').is('archived_at', null).order('title'),
+    supabase.from('vs_handbook_versions').select(HANDBOOK_VERSION_COLUMNS),
+    supabase.from('vs_handbook_acks').select('version_id, user_id, read_at, signed_at, signed_name').eq('user_id', user.id),
+  ])
+  const inviteIds = new Set(((myInvites.data ?? []) as { id: string }[]).map((i) => i.id))
+  const canSeeAll = role === 'executive' || role === 'operator'
+  const mine = (a: { user_id: string | null; invite_id: string | null }) =>
+    a.user_id === user.id || (!!a.invite_id && (inviteIds.has(a.invite_id) || (!canSeeAll && !a.user_id)))
+  const assignment = ((jdA.data ?? []) as JdAssignment[]).find(mine) ?? null
+  const jd = assignment
+    ? (((await supabase.from('vs_job_descriptions').select(JD_COLUMNS).eq('id', assignment.job_description_id).maybeSingle()).data ?? null) as JobDescription | null)
+    : null
+  const myHandbookIds = new Set(((hbA.data ?? []) as { handbook_id: string; user_id: string | null; invite_id: string | null }[]).filter(mine).map((a) => a.handbook_id))
+  const hbList = ((hbs.data ?? []) as Handbook[]).filter((h) => myHandbookIds.has(h.id)).map((h) => {
+    const latest = latestVersion((versions.data ?? []) as HandbookVersion[], h.id)
+    return { handbook: h, latest, ack: latest ? ((acks.data ?? []) as HandbookAck[]).find((a) => a.version_id === latest.id) : undefined }
+  })
 
   return (
     <div>
@@ -46,6 +77,7 @@ export default async function ProfilePage() {
             Your role and email are set by an executive or operator on the Team screen.
           </p>
         </Card>
+        <MyHrRecords jd={jd} assignment={assignment} handbooks={hbList} displayName={op.display_name ?? ''} />
         <ProfileClient
           displayName={op.display_name ?? ''}
           voice={{

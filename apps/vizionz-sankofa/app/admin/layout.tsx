@@ -17,6 +17,7 @@ import { AdminSectionNav } from '@/components/admin/nav/AdminSectionNav'
 import { NavHistory } from '@/components/admin/nav/NavHistory'
 import { redirect } from 'next/navigation'
 import { signOut } from './actions/auth'
+import { createClient } from '@/lib/supabase/server'
 
 export default async function AdminLayout({
   children,
@@ -57,6 +58,13 @@ export default async function AdminLayout({
   // Role badge in the top bar, on every screen size (it used to be hidden
   // on all of them). Shows the access role and opens My Profile.
   const accessRole = getAccessRole(user)
+  // Chat unread total for the header badge (0 if chat isn't set up yet).
+  let chatUnread = 0
+  let chatMentions = 0
+  if (accessRole) {
+    const { data } = await (await createClient()).rpc('vs_chat_unread')
+    for (const r of (data ?? []) as { unread: number; mentions: number }[]) { chatUnread += r.unread; chatMentions += r.mentions }
+  }
   const badgeLabel = roleBadgeLabel(user)
   const roleBadgeColor =
     accessRole === 'executive' || accessRole === 'operator' || (!accessRole && user.role === 'operator')
@@ -188,6 +196,17 @@ export default async function AdminLayout({
                 }}
               />
             </form>
+          )}
+          {accessRole && (
+            <Link href="/admin/chat" data-testid="header-chat" aria-label={`Chat${chatUnread + chatMentions ? `, ${chatUnread} unread, ${chatMentions} mentions` : ''}`}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', minHeight: '36px', padding: '6px 10px', textDecoration: 'none',
+                color: '#0A2548', fontSize: '13px', fontWeight: 600, border: '1px solid rgba(10,10,10,0.16)', borderRadius: '6px', background: '#FFFFFF' }}>
+              Chat
+              {chatUnread + chatMentions > 0 && (
+                <span data-testid="header-chat-count" style={{ minWidth: '20px', padding: '1px 6px', borderRadius: '10px', fontSize: '12px', textAlign: 'center',
+                  background: chatMentions > 0 ? '#CE1126' : '#0A2548', color: '#FFFFFF' }}>{chatMentions > 0 ? `@${chatMentions}` : chatUnread}</span>
+              )}
+            </Link>
           )}
           <Link
             href="/admin/profile"
