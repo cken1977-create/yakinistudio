@@ -209,7 +209,7 @@ function ProgramCard({ program }: { program: PublicProgram }) {
           }}
         >
           {program.public_description ??
-            'Description coming soon. Reach out to learn more.'}
+            'Reach out to learn more about this program.'}
         </p>
         {program.duration_description && (
           <div
