@@ -60,7 +60,7 @@ export const config: BrandConfig = {
         features: ['Language access', 'Cultural support', 'Resettlement assistance', 'Family integration'],
       },
       {
-        title: 'Housing & Rental Assistance',
+        title: 'Housing Stability',
         description: 'ERAP support, hotel vouchers, utility assistance, and relocation services. Eviction prevention before crisis. Stability before everything else.',
         icon: '🏘️',
         features: ['ERAP support', 'Utility assistance', 'Relocation services', 'Eviction prevention'],

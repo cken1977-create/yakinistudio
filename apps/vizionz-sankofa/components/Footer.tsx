@@ -211,7 +211,7 @@ export function Footer({ config }: { config: BrandConfig }) {
               <ul>
                 <li><a href="/programs/unsheltered">Unsheltered Outreach</a></li>
                 <li><a href="/programs/refugee-immigrant">Refugee &amp; Immigrant</a></li>
-                <li><a href="/programs/housing">Housing Assistance</a></li>
+                <li><a href="/programs/housing">Housing Stability</a></li>
                 <li><a href="/programs/youth">Youth &amp; Education</a></li>
               </ul>
             </div>
