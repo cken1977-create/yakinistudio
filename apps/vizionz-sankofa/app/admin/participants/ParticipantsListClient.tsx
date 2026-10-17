@@ -64,6 +64,14 @@ export function ParticipantsListClient({
   }, [participants, search, tab])
 
   function exportCSV() {
+    // Pilot protection: exports are audited (fire-and-forget; the export
+    // still works if the log call is slow).
+    void createBrowserClient().rpc('vs_log_event', {
+      p_action: 'export',
+      p_table_name: 'participants',
+      p_record_id: null,
+      p_details: { rows: filtered.length, format: 'csv' },
+    })
     const headers = ["First Name","Last Name","Preferred Name","Email","Phone","City","State","Status","Intake Date","Case Manager"]
     const rows = filtered.map(p => [
       p.first_name ?? '',
@@ -738,7 +746,7 @@ function ParticipantModal({
         </Field>
 
         <Row>
-          <Field label="Date of Birth">
+          <Field label="Date of Birth (encrypted; blank keeps current)">
             <input
               type="date"
               value={draft.date_of_birth ?? ''}

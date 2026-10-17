@@ -9,6 +9,10 @@ import {
   getOperatorDisplayName,
 } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
+import { getAccessRole } from '@/lib/supabase/auth'
+import { AskBar } from '@/components/admin/AskBar'
+import { MyDay } from '@/components/admin/MyDay'
+import { StageSummary } from '@/components/admin/StageSummary'
 
 export default async function AdminLandingPage() {
   // Enforce authentication. Redirects to /admin/login if no session.
@@ -17,8 +21,36 @@ export default async function AdminLandingPage() {
   // last_active_at, no per-action writes
   void touchLastActive(user.id)
 
-  // Pull live media counts from Supabase
   const supabase = await createClient()
+  const accessRole = getAccessRole(user)
+  const voiceSettings = {
+    wakePhraseEnabled: user.operator.wake_phrase_enabled ?? false,
+    wakePhrase: user.operator.wake_phrase ?? null,
+    speakAnswers: user.operator.speak_answers ?? true,
+  }
+  const firstName = getOperatorDisplayName(user).split(' ')[0]
+
+  // Pilot homes: Intelligence is front and center on every one.
+  // Leadership (read-only): Intelligence-first landing, large text.
+  if (accessRole === 'leadership_readonly') {
+    return (
+      <div>
+        <AskBar large greeting={`Good to see you, ${firstName}. What would you like to know?`} voiceSettings={voiceSettings} />
+        <StageSummary supabase={supabase} large />
+      </div>
+    )
+  }
+  // Case manager: Intelligence + My Day + "+ Log contact".
+  if (accessRole === 'case_manager') {
+    return (
+      <div>
+        <AskBar greeting={`Welcome back, ${firstName}.`} voiceSettings={voiceSettings} />
+        <MyDay supabase={supabase} />
+      </div>
+    )
+  }
+
+  // Pull live media counts from Supabase
   const { count: mediaCount } = await supabase
     .from('media_items')
     .select('*', { count: 'exact', head: true })
@@ -108,6 +140,16 @@ export default async function AdminLandingPage() {
 
   return (
     <div>
+      {accessRole ? (
+        <>
+          <AskBar greeting={`Welcome back, ${firstName}. Ask anything.`} voiceSettings={voiceSettings} />
+          <StageSummary supabase={supabase} />
+        </>
+      ) : (
+        <p style={{ background: '#FDECEE', padding: '12px 16px', borderRadius: '4px', marginBottom: '24px', fontFamily: 'Georgia, serif' }}>
+          Your account has no data-access role yet, so client records and Intelligence are hidden. Ask Carly (operator) to set one.
+        </p>
+      )}
       {/* Welcome strip */}
       <section style={{ marginBottom: '40px' }}>
         <div

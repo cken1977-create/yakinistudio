@@ -17,13 +17,34 @@
 //   - query_calendar (when calendar substrate exists)
 // Each future tool is ~30-60 minutes of work and a single registry entry.
 
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { createAdminClient } from '@/lib/supabase/admin'
+import type { VsAccessRole } from '@/lib/supabase/auth'
 import { retrieveChunks, type RetrievedChunk } from './retrieve'
+
+// ─── Per-request context (pilot protection) ──────────────────────────────
+
+export type ToolContext = {
+  /** RLS-scoped client for the signed-in user: case managers only ever
+   *  get their own caseload back. */
+  supabase: SupabaseClient
+  role: VsAccessRole
+  /** Participant-data tools are only offered to the AI provider once a
+   *  BAA with zero data retention is signed (env VS_AI_BAA_SIGNED=true). */
+  baaSigned: boolean
+}
+
+/** Strip characters that would break out of a PostgREST or() filter. */
+function safeSearch(v: unknown): string | null {
+  if (typeof v !== 'string') return null
+  const cleaned = v.replace(/[,()*%\\:"']/g, ' ').trim().slice(0, 80)
+  return cleaned || null
+}
 
 // ─── Citation type — surfaces to UI ──────────────────────────────────────
 
 export type Citation = {
-  source_type: 'document' | 'intake' | 'donor'
+  source_type: 'document' | 'intake' | 'donor' | 'participant'
   // For document citations
   document_id?: string
   document_title?: string
@@ -37,6 +58,9 @@ export type Citation = {
   // For donor citations
   donor_id?: string
   donor_label?: string
+  // For participant citations
+  participant_id?: string
+  participant_label?: string
 }
 
 // ─── Tool result shape ───────────────────────────────────────────────────
@@ -62,12 +86,21 @@ export type AnthropicToolDefinition = {
 
 // ─── Tool registry ───────────────────────────────────────────────────────
 
-type ToolHandler = (input: Record<string, unknown>) => Promise<ToolResult>
+type ToolHandler = (input: Record<string, unknown>, ctx: ToolContext) => Promise<ToolResult>
 
 type ToolEntry = {
   definition: AnthropicToolDefinition
   handler: ToolHandler
+  /** Swap stand-in tokens back to real values before running the tool.
+   *  Must be false for tools that forward their input to an outside
+   *  provider (search_documents embeds its query with OpenAI). */
+  restoreInputs: boolean
+  /** Reads participant / intake data: hidden until a BAA is signed. */
+  participantData: boolean
+  roles: VsAccessRole[]
 }
+
+const ALL_ROLES: VsAccessRole[] = ['executive', 'operator', 'case_manager', 'leadership_readonly']
 
 const TOOL_REGISTRY: Record<string, ToolEntry> = {
   search_documents: {
@@ -98,13 +131,16 @@ const TOOL_REGISTRY: Record<string, ToolEntry> = {
       },
     },
     handler: searchDocuments,
+    restoreInputs: false,
+    participantData: false,
+    roles: ALL_ROLES,
   },
 
   query_intakes: {
     definition: {
       name: 'query_intakes',
       description:
-        'Query the intake requests from families seeking help. Use this when the ' +
+        'Query the intake requests (get-help form) from people seeking help. Use this when the ' +
         'question is about who has requested services, intake volume, recent intakes, ' +
         'or patterns in family needs. Returns up to 20 matching intake records with ' +
         'summary information. Use this for questions like "how many families requested ' +
@@ -133,6 +169,39 @@ const TOOL_REGISTRY: Record<string, ToolEntry> = {
       },
     },
     handler: queryIntakes,
+    restoreInputs: true,
+    participantData: true,
+    roles: ALL_ROLES,
+  },
+
+  query_participants: {
+    definition: {
+      name: 'query_participants',
+      description:
+        'Look up participants (clients) the asker is allowed to see: stage in the ' +
+        'client flow, status, returning-client flag, last contact and next action. ' +
+        'Use for questions about a specific client, a caseload, who is stuck in a ' +
+        'stage, or who has not been contacted recently. Names in results appear as ' +
+        'stand-in tokens; refer to people by those tokens.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          search: { type: 'string', description: 'Optional name to look for (a stand-in token is fine).' },
+          stage: {
+            type: 'string',
+            description:
+              'Optional client-flow stage: intake, review, consent_signed, enrolled, ' +
+              'receiving_services, readiness_evaluation, certified, exited.',
+          },
+          no_contact_days: { type: 'number', description: 'Optional: only clients with no logged contact in this many days.' },
+          returning_only: { type: 'boolean', description: 'Optional: only returning clients.' },
+        },
+      },
+    },
+    handler: queryParticipants,
+    restoreInputs: true,
+    participantData: true,
+    roles: ALL_ROLES,
   },
 
   query_donors: {
@@ -161,21 +230,35 @@ const TOOL_REGISTRY: Record<string, ToolEntry> = {
       },
     },
     handler: queryDonors,
+    restoreInputs: true,
+    participantData: false,
+    roles: ['executive', 'operator', 'leadership_readonly'],
   },
 }
 
 // ─── Public interface ────────────────────────────────────────────────────
 
-export function getToolDefinitions(): AnthropicToolDefinition[] {
-  return Object.values(TOOL_REGISTRY).map((entry) => entry.definition)
+function allowed(entry: ToolEntry, ctx: ToolContext): boolean {
+  return entry.roles.includes(ctx.role) && (!entry.participantData || ctx.baaSigned)
+}
+
+export function getToolDefinitions(ctx: ToolContext): AnthropicToolDefinition[] {
+  return Object.values(TOOL_REGISTRY)
+    .filter((entry) => allowed(entry, ctx))
+    .map((entry) => entry.definition)
+}
+
+export function toolRestoresInputs(name: string): boolean {
+  return TOOL_REGISTRY[name]?.restoreInputs ?? false
 }
 
 export async function executeTool(
   name: string,
-  input: Record<string, unknown>
+  input: Record<string, unknown>,
+  ctx: ToolContext
 ): Promise<ToolResult> {
   const entry = TOOL_REGISTRY[name]
-  if (!entry) {
+  if (!entry || !allowed(entry, ctx)) {
     return {
       content: `Unknown tool: ${name}. Available tools: ${Object.keys(TOOL_REGISTRY).join(', ')}.`,
       citations: [],
@@ -184,7 +267,7 @@ export async function executeTool(
     }
   }
   try {
-    return await entry.handler(input)
+    return await entry.handler(input, ctx)
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
     return {
@@ -198,7 +281,7 @@ export async function executeTool(
 
 // ─── Tool handlers ───────────────────────────────────────────────────────
 
-async function searchDocuments(input: Record<string, unknown>): Promise<ToolResult> {
+async function searchDocuments(input: Record<string, unknown>, _ctx: ToolContext): Promise<ToolResult> {
   const query = typeof input.query === 'string' ? input.query : ''
   const k = typeof input.k === 'number' && input.k > 0 && input.k <= 20
     ? Math.floor(input.k)
@@ -253,21 +336,18 @@ async function searchDocuments(input: Record<string, unknown>): Promise<ToolResu
   }
 }
 
-async function queryIntakes(input: Record<string, unknown>): Promise<ToolResult> {
+async function queryIntakes(input: Record<string, unknown>, ctx: ToolContext): Promise<ToolResult> {
   const status = typeof input.status === 'string' ? input.status : null
-  const search = typeof input.search === 'string' ? input.search : null
+  const search = safeSearch(input.search)
   const sinceDays =
     typeof input.since_days === 'number' && input.since_days > 0
       ? Math.floor(input.since_days)
       : null
 
-  const supabase = createAdminClient()
-  let q = supabase
+  // RLS-scoped: case managers only see intakes assigned to them.
+  let q = ctx.supabase
     .from('intake_requests')
-    .select(
-      'id, status, first_name, last_name, email, phone, request_summary, ' +
-      'family_size, housing_status, requested_program, created_at'
-    )
+    .select('id, status, full_name, email, phone, request_type, details, is_returning, created_at')
     .order('created_at', { ascending: false })
     .limit(20)
 
@@ -277,91 +357,126 @@ async function queryIntakes(input: Record<string, unknown>): Promise<ToolResult>
     q = q.gte('created_at', cutoff)
   }
   if (search) {
-    // Case-insensitive search across name, summary, program.
-    q = q.or(
-      `first_name.ilike.%${search}%,last_name.ilike.%${search}%,` +
-      `request_summary.ilike.%${search}%,requested_program.ilike.%${search}%`
-    )
+    q = q.or(`full_name.ilike.%${search}%,request_type.ilike.%${search}%,details.ilike.%${search}%`)
   }
 
   const { data, error } = await q
-
   if (error) {
-    return {
-      content: `Intake query failed: ${error.message}`,
-      citations: [],
-      ok: false,
-      error: error.message,
-    }
+    return { content: `Intake query failed: ${error.message}`, citations: [], ok: false, error: error.message }
   }
-
   if (!data || data.length === 0) {
     return {
-      content:
-        'No intake requests matched the filters. Try broadening the search ' +
-        'or removing status/date filters.',
+      content: 'No intake requests matched the filters. Try broadening the search or removing status/date filters.',
       citations: [],
       ok: true,
     }
   }
 
-  // Format intakes for Anthropic. Each intake on a numbered row with
-  // bounded fields. The model can reference rows by number in its answer.
   type IntakeRow = {
-    id: string
-    status: string
-    first_name: string | null
-    last_name: string | null
-    email: string | null
-    phone: string | null
-    request_summary: string | null
-    family_size: number | null
-    housing_status: string | null
-    requested_program: string | null
-    created_at: string
+    id: string; status: string; full_name: string; email: string | null; phone: string | null
+    request_type: string | null; details: string | null; is_returning: boolean | null; created_at: string
   }
   const rows = data as unknown as IntakeRow[]
-    const formatted = rows
+  // Contact details are deliberately NOT included: the AI never needs them.
+  const formatted = rows
     .map((r, i) => {
-      const name = [r.first_name, r.last_name].filter(Boolean).join(' ') || 'Unknown'
-      const created = new Date(r.created_at).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-      const lines = [
-        `[${i + 1}] ${name} — Status: ${r.status} — Submitted: ${created}`,
-      ]
-      if (r.email) lines.push(`    Contact: ${r.email}${r.phone ? ', ' + r.phone : ''}`)
-      if (r.family_size) lines.push(`    Family size: ${r.family_size}`)
-      if (r.housing_status) lines.push(`    Housing status: ${r.housing_status}`)
-      if (r.requested_program) lines.push(`    Requested program: ${r.requested_program}`)
-      if (r.request_summary) lines.push(`    Summary: ${r.request_summary}`)
+      const created = new Date(r.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+      const lines = [`[${i + 1}] ${r.full_name} — Status: ${r.status} — Submitted: ${created}`]
+      if (r.request_type) lines.push(`    Request type: ${r.request_type}`)
+      if (r.is_returning) lines.push('    Returning client: yes')
+      if (r.details) lines.push(`    Details: ${r.details.slice(0, 500)}`)
       return lines.join('\n')
     })
     .join('\n\n')
 
-  const citations: Citation[] = rows.map((r) => {
-    const name = [r.first_name, r.last_name].filter(Boolean).join(' ') || 'Unknown'
-    const summary = r.requested_program || r.housing_status || 'intake'
-    return {
-      source_type: 'intake',
-      intake_id: r.id,
-      intake_label: `${name} — ${summary}`,
-    }
-  })
+  const citations: Citation[] = rows.map((r) => ({
+    source_type: 'intake',
+    intake_id: r.id,
+    intake_label: `${r.full_name} — ${r.request_type ?? 'intake'}`,
+  }))
 
   return {
-    content:
-      `Found ${rows.length} intake record${rows.length === 1 ? '' : 's'}:\n\n${formatted}`,
+    content: `Found ${rows.length} intake record${rows.length === 1 ? '' : 's'}:\n\n${formatted}`,
     citations,
+    ok: true,
+  }
+}
+
+// ─── query_participants handler (RLS-scoped) ─────────────────────────────
+
+async function queryParticipants(input: Record<string, unknown>, ctx: ToolContext): Promise<ToolResult> {
+  const search = safeSearch(input.search)
+  const stage = typeof input.stage === 'string' ? input.stage : null
+  const noContactDays =
+    typeof input.no_contact_days === 'number' && input.no_contact_days > 0 ? Math.floor(input.no_contact_days) : null
+  const returningOnly = input.returning_only === true
+
+  let q = ctx.supabase
+    .from('participants')
+    .select('id, first_name, last_name, preferred_name, status, current_stage, stage_changed_at, is_returning, primary_case_manager_id')
+    .order('stage_changed_at', { ascending: true })
+    .limit(noContactDays ? 200 : 25)
+  if (stage) q = q.eq('current_stage', stage)
+  if (returningOnly) q = q.eq('is_returning', true)
+  if (search) {
+    const parts = search.split(/\s+/).filter(Boolean).slice(0, 3)
+    q = q.or(parts.map((p) => `first_name.ilike.%${p}%,last_name.ilike.%${p}%,preferred_name.ilike.%${p}%`).join(','))
+  }
+  const { data, error } = await q
+  if (error) return { content: `Participant query failed: ${error.message}`, citations: [], ok: false, error: error.message }
+  type PRow = {
+    id: string; first_name: string; last_name: string; preferred_name: string | null; status: string
+    current_stage: string; stage_changed_at: string; is_returning: boolean; primary_case_manager_id: string | null
+  }
+  let rows = (data ?? []) as unknown as PRow[]
+  if (rows.length === 0) {
+    return { content: 'No participants matched (or none are visible to you).', citations: [], ok: true }
+  }
+
+  const ids = rows.map((r) => r.id)
+  const { data: notes } = await ctx.supabase
+    .from('case_notes')
+    .select('participant_id, occurred_at, next_action, next_action_due')
+    .in('participant_id', ids)
+    .order('occurred_at', { ascending: false })
+  const last = new Map<string, { occurred_at: string; next_action: string | null; next_action_due: string | null }>()
+  for (const n of (notes ?? []) as Array<{ participant_id: string; occurred_at: string; next_action: string | null; next_action_due: string | null }>) {
+    if (!last.has(n.participant_id)) last.set(n.participant_id, n)
+  }
+  const now = Date.now()
+  if (noContactDays) {
+    rows = rows.filter((r) => {
+      const l = last.get(r.id)
+      return !l || now - new Date(l.occurred_at).getTime() > noContactDays * 86400000
+    }).slice(0, 25)
+  }
+
+  const days = (iso: string) => Math.floor((now - new Date(iso).getTime()) / 86400000)
+  const formatted = rows.map((r, i) => {
+    const name = `${r.first_name} ${r.last_name}`
+    const l = last.get(r.id)
+    const lines = [
+      `[${i + 1}] ${name} — stage: ${r.current_stage} (${days(r.stage_changed_at)} days) — status: ${r.status}${r.is_returning ? ' — RETURNING client' : ''}`,
+      `    Last contact: ${l ? `${days(l.occurred_at)} days ago` : 'none logged'}`,
+    ]
+    if (l?.next_action) lines.push(`    Next action: ${l.next_action}${l.next_action_due ? ` (due ${l.next_action_due})` : ''}`)
+    return lines.join('\n')
+  }).join('\n\n')
+
+  return {
+    content: `Found ${rows.length} participant${rows.length === 1 ? '' : 's'}:\n\n${formatted}`,
+    citations: rows.map((r) => ({
+      source_type: 'participant' as const,
+      participant_id: r.id,
+      participant_label: `${r.first_name} ${r.last_name} — ${r.current_stage}`,
+    })),
     ok: true,
   }
 }
 
 // ─── query_donors handler ────────────────────────────────────────────────
 
-async function queryDonors(input: Record<string, unknown>): Promise<ToolResult> {
+async function queryDonors(input: Record<string, unknown>, _ctx: ToolContext): Promise<ToolResult> {
   const status = typeof input.status === 'string' ? input.status : null
   const donorType = typeof input.donor_type === 'string' ? input.donor_type : null
   const tags = Array.isArray(input.tags)
@@ -376,7 +491,7 @@ async function queryDonors(input: Record<string, unknown>): Promise<ToolResult> 
     typeof input.last_gift_within_days === 'number' && input.last_gift_within_days > 0
       ? Math.floor(input.last_gift_within_days)
       : null
-  const search = typeof input.search === 'string' ? input.search.trim() : null
+  const search = safeSearch(input.search)
 
   const supabase = createAdminClient()
   let q = supabase
@@ -431,9 +546,9 @@ async function queryDonors(input: Record<string, unknown>): Promise<ToolResult> 
     const dollars = (r.total_lifetime_amount_cents / 100).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
     const lastGift = r.last_gift_date ? new Date(r.last_gift_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'never'
     const lines = [
-      `[${i + 1}] ${r.display_name} — ${r.donor_type} Â· ${r.status}`,
+      `[${i + 1}] ${r.display_name} — ${r.donor_type} · ${r.status}`,
       `    Lifetime: $${dollars} across ${r.total_gifts_count} gift${r.total_gifts_count === 1 ? '' : 's'}`,
-      `    Last gift: ${lastGift}${r.recurring ? ' Â· recurring' : ''}`,
+      `    Last gift: ${lastGift}${r.recurring ? ' · recurring' : ''}`,
     ]
     if (r.email || r.phone) lines.push(`    Contact: ${[r.email, r.phone].filter(Boolean).join(', ')}`)
     if (r.tags && r.tags.length > 0) lines.push(`    Tags: ${r.tags.join(', ')}`)

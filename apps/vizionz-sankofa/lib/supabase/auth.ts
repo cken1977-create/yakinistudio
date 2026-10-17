@@ -21,13 +21,29 @@ import { createClient } from './server'
 
 // ─── Types ──────────────────────────────────────────────────────────
 
-export type VsOperatorRole = 'operator' | 'employee' | 'pending'
+export type VsOperatorRole = 'operator' | 'employee' | 'pending' | 'principal'
+
+// Pilot data-access role (vs_operators.access_role). Enforced in the
+// database by RLS; the app uses it only to choose which home to show.
+//   executive / operator  → full participant access
+//   case_manager          → own caseload only
+//   leadership_readonly   → read-only, Intelligence-first landing
+//   null                  → no participant data
+export type VsAccessRole =
+  | 'executive'
+  | 'operator'
+  | 'case_manager'
+  | 'leadership_readonly'
 
 export type VsOperatorRow = {
   user_id: string
   email: string
   display_name: string | null
   role: VsOperatorRole
+  access_role: VsAccessRole | null
+  wake_phrase_enabled?: boolean
+  wake_phrase?: string | null
+  speak_answers?: boolean
   invited_by: string | null
   invited_at: string
   activated_at: string | null
@@ -89,12 +105,15 @@ async function loadCurrentOperator(): Promise<
     return { kind: 'pending', user, operator }
   }
 
-  // role is 'operator' or 'employee' and not revoked
+  // role is 'operator', 'principal' or 'employee' and not revoked.
+  // Principals (the three existing live accounts) have full operator
+  // authority; before this change they were silently treated as
+  // non-operators and redirected away from operator-only pages.
   return {
     kind: 'authorized',
     user,
     operator,
-    role: operator.role as 'operator' | 'employee',
+    role: operator.role === 'employee' ? 'employee' : 'operator',
   }
 }
 
@@ -257,3 +276,14 @@ export function getOperatorDisplayName(user: AuthenticatedOperator): string {
   return 'Operator'
 }
 
+
+// ─── Pilot access role helpers ─────────────────────────────────────
+
+export function getAccessRole(user: AuthenticatedOperator): VsAccessRole | null {
+  return user.operator.access_role ?? null
+}
+
+/** True for roles that can ask Intelligence (everyone with an access role). */
+export function canUseIntelligence(user: AuthenticatedOperator): boolean {
+  return getAccessRole(user) !== null
+}
