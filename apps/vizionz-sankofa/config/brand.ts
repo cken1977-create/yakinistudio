@@ -118,7 +118,7 @@ export const config: BrandConfig = {
   },
 
   portal: {
-    enabled: true,
+    enabled: false, // template portal removed (pilot); staff use /admin
     welcomeMessage: 'Welcome back. Manage participants, track services, upload event photos, and review the work.',
   },
 

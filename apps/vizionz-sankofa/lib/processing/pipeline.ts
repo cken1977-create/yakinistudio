@@ -19,6 +19,8 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { extractByMimeType, type ExtractedDocument } from './extractors'
 import { chunkBySentences, countTokens } from './chunking'
 import { embedChunks } from './embeddings'
+import { PiiVault } from '@/lib/intelligence/pii'
+import { loadKnownNames } from '@/lib/intelligence/known-names'
 
 const STORAGE_BUCKET = 'vs-documents'
 const MAX_TOTAL_TOKENS = 1_000_000
@@ -72,7 +74,12 @@ export async function processDocument(documentId: string): Promise<void> {
     }
 
     // 7. Embed all chunks in batch.
-    const chunkTexts = chunkRows.map((c) => c.content)
+    //    Pilot protection: names, contact details and IDs are replaced with
+    //    stand-in tokens before the text goes to the embedding provider.
+    //    The stored chunk keeps the original text (it never leaves VS's DB
+    //    except through the Intelligence path, which redacts again).
+    const vault = new PiiVault(await loadKnownNames())
+    const chunkTexts = chunkRows.map((c) => vault.redact(c.content))
     const embeddings = await embedChunks(chunkTexts)
 
     if (embeddings.length !== chunkRows.length) {

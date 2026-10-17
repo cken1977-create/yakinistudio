@@ -13,6 +13,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { TabsClient } from './TabsClient'
+import { SensitiveFields } from './SensitiveFields'
 import type {
   CaseNoteRecord,
   CaseNoteWithStaff,
@@ -69,6 +70,14 @@ export default async function ParticipantDetailPage({
   }
 
   const participant = participantData as unknown as ParticipantRecord
+
+  // Pilot protection: every view of a participant record is audited.
+  await supabase.rpc('vs_log_event', {
+    p_action: 'view',
+    p_table_name: 'participants',
+    p_record_id: id,
+    p_details: null,
+  })
 
   // Case notes
   const { data: notesData } = await supabase
@@ -277,6 +286,8 @@ export default async function ParticipantDetailPage({
         <StatusPillServer status={participant.status} />
         {participant.legacyline_subject_id && <LegacylinePillServer />}
       </div>
+
+      <SensitiveFields participantId={participant.id} />
 
       {/* Quick facts */}
       <div
