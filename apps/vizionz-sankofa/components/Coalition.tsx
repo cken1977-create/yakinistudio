@@ -66,12 +66,6 @@ const DEFAULT_ITEMS: CoalitionItem[] = [
   },
   {
     kind: 'funder',
-    role: 'Food Security',
-    name: 'Roadrunner Food Bank of New Mexico',
-    description: 'Regional food bank supplying our monthly community food distributions across Albuquerque.',
-  },
-  {
-    kind: 'funder',
     role: 'Civic Funder',
     name: 'United Way of North Central New Mexico',
     description: 'Sustained civic support for our community service work across the region.',
