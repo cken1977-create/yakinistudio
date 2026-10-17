@@ -22,9 +22,9 @@ interface NumbersBandProps {
 
 const DEFAULT_STATS: NumberStat[] = [
   { figure: '500', accent: '+', label: 'Families Served' },
-  { figure: '11',                 label: 'Years of Service' },
+  { figure: '12',                 label: 'Years of Service' },
   { figure: '6',                  label: 'Active Programs' },
-  { figure: '8',  accent: '+', label: 'Coalition Partners' },
+  { figure: '16',                 label: 'Coalition Partners' },
 ]
 
 export function NumbersBand({ stats = DEFAULT_STATS }: NumbersBandProps) {
