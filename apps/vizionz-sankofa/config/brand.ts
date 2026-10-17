@@ -79,9 +79,9 @@ export const config: BrandConfig = {
       },
       {
         title: 'Readiness Pilot',
-        description: 'In partnership with Legacyline and the BRSA Foundation — behavioral readiness assessment and certification for participants pursuing housing, work, or education.',
+        description: 'In partnership with Kamili and the BRSA Foundation — behavioral readiness assessment and certification for participants pursuing housing, work, or education.',
         icon: '🧭',
-        features: ['BRSA Foundation pilot', 'Legacyline platform', 'Readiness certification', 'Pathway tracking'],
+        features: ['BRSA Foundation pilot', 'Kamili platform', 'Readiness certification', 'Pathway tracking'],
       },
     ],
   },

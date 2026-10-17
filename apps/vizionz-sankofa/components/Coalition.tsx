@@ -41,7 +41,7 @@ const DEFAULT_ITEMS: CoalitionItem[] = [
   { kind: 'partner', role: 'Coalition Partner', name: "God's Warehouse" },
   { kind: 'partner', role: 'Coalition Partner', name: 'Los Jardines' },
   { kind: 'partner', role: 'Coalition Partner', name: 'Tenderlove' },
-  { kind: 'partner', role: 'Coalition Partner', name: 'Lea County Saves' },
+  { kind: 'partner', role: 'Coalition Partner', name: 'Lea County Sage' },
   { kind: 'partner', role: 'Coalition Partner', name: 'Future Innovate Academy' },
   { kind: 'partner', role: 'Sister Organization', name: 'Women With Vizionz', description: 'Led by Denise Kennedy — focused on women in our community navigating healing, work, and family stability.' },
   { kind: 'partner', role: 'Standards Authority', name: 'BRSA Foundations', description: 'Funding access to readiness evaluation and certification programs for the communities we serve.' },
