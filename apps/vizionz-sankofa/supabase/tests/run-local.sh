@@ -21,3 +21,4 @@ $PSQL -f tests/seed-fake.sql
 psql -v ON_ERROR_STOP=1 -d "$DB" -f tests/rls-audit-tests.sql
 psql -v ON_ERROR_STOP=1 -d "$DB" -f tests/obr-coalition-tests.sql
 psql -v ON_ERROR_STOP=1 -d "$DB" -f tests/funder-wave2-tests.sql
+psql -v ON_ERROR_STOP=1 -d "$DB" -f tests/crm-tests.sql

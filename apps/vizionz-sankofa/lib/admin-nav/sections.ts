@@ -14,9 +14,12 @@ export type AdminSection = {
 
 const EXEC_OP: VsAccessRole[] = ['executive', 'operator']
 const EXEC_OP_LEAD: VsAccessRole[] = ['executive', 'operator', 'leadership_readonly']
+const ALL_ROLES: VsAccessRole[] = ['executive', 'operator', 'case_manager', 'leadership_readonly']
 
 export const ADMIN_SECTIONS: AdminSection[] = [
   { href: '/admin', label: 'Home', roles: 'all' },
+  { href: '/admin/my-day', label: 'My Day', roles: ALL_ROLES },
+  { href: '/admin/contacts', label: 'Contacts', roles: ALL_ROLES },
   { href: '/admin/participants', label: 'Participants', roles: 'all' },
   { href: '/admin/intakes', label: 'Get Help Requests', roles: [...EXEC_OP, 'case_manager', 'leadership_readonly'] },
   { href: '/admin/cohorts', label: 'Cohorts', roles: 'all' },
@@ -33,6 +36,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   { href: '/admin/media', label: 'Photos & Videos', roles: EXEC_OP },
   { href: '/admin/intelligence', label: 'Intelligence', roles: 'all' },
   { href: '/admin/team', label: 'Team', roles: EXEC_OP },
+  { href: '/admin/search', label: 'Search', roles: ALL_ROLES },
 ]
 
 // Labels for screens that are not in the main nav.
@@ -46,6 +50,10 @@ const EXTRA_LABELS: Array<[RegExp, string]> = [
   [/^\/admin\/desk$/, 'Operator Desk'],
   [/^\/admin\/reports\/[^/]+$/, 'funder report'],
   [/^\/admin\/profile$/, 'My Profile'],
+  [/^\/admin\/contacts\/[^/]+$/, 'contact'],
+  [/^\/admin\/organizations\/[^/]+$/, 'organization'],
+  [/^\/admin\/grants\/[^/]+$/, 'grant'],
+  [/^\/admin\/donors\/[^/]+$/, 'donor'],
 ]
 
 export function sectionsForRole(role: VsAccessRole | null): AdminSection[] {

@@ -310,7 +310,7 @@ function GrantRow({ grant }: { grant: GrantWithJoins }) {
             fontFamily: '"DM Serif Display", Georgia, serif',
           }}
         >
-          {grant.name}
+          <a href={`/admin/grants/${grant.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>{grant.name}</a>
         </h3>
         <StatusPill status={grant.status} />
         {deadline.date && (

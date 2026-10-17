@@ -31,6 +31,11 @@ import type {
 } from '../types'
 import { PARTICIPANT_STATUS_LABELS } from '../types'
 import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
+import { ParticipantTasks } from '@/components/admin/crm/ParticipantTasks'
+import { loadStaff } from '@/lib/crm/load'
+import { TASK_COLUMNS, canWriteSubject, isExecOrOp, type TaskRow } from '@/lib/crm/model'
+import { getAccessRole } from '@/lib/supabase/auth'
+import { todayMountain } from '@/components/admin/ui'
 
 export const dynamic = 'force-dynamic'
 
@@ -227,6 +232,14 @@ export default async function ParticipantDetailPage({
     participant.last_name ? participant.last_name.charAt(0) + '.' : ''
   }`.trim()
 
+  // Office CRM: tasks about this client (RLS: caseload + who the task is for).
+  const accessRole = getAccessRole(user)
+  const [crmTasks, crmStaff] = await Promise.all([
+    supabase.from('vs_tasks').select(TASK_COLUMNS).eq('subject_type', 'participant').eq('subject_id', participant.id)
+      .order('due_on', { ascending: true, nullsFirst: false }),
+    loadStaff(supabase),
+  ])
+
   const caseManager = participant.primary_case_manager_id
     ? staff.find((s) => s.id === participant.primary_case_manager_id)
     : undefined
@@ -313,6 +326,16 @@ export default async function ParticipantDetailPage({
           }
         />
       </div>
+
+      <ParticipantTasks
+        participantId={participant.id}
+        tasks={(crmTasks.data ?? []) as unknown as TaskRow[]}
+        staff={crmStaff}
+        today={todayMountain()}
+        currentUserId={user.id}
+        canAdd={canWriteSubject(accessRole, 'participant')}
+        canEditAny={isExecOrOp(accessRole)}
+      />
 
       {/* Tabs */}
       <TabsClient
