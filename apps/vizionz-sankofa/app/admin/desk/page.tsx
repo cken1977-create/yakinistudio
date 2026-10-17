@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { requireOperatorOrEmployee, getOperatorDisplayName } from "@/lib/supabase/auth"
 import { createClient } from "@/lib/supabase/server"
+import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 
 export default async function DeskPage() {
   const user = await requireOperatorOrEmployee()
@@ -36,6 +37,7 @@ export default async function DeskPage() {
 
   return (
     <main style={{ maxWidth: 980, margin: "0 auto", padding: "2rem 1.2rem 4rem" }}>
+      <AdminCrumbs trail={[{ label: 'Operator Desk' }]} fallbackHref="/admin" fallbackLabel="Operations" />
       <p style={{ letterSpacing: "0.16em", textTransform: "uppercase", fontSize: 12, color: "#CE1126" }}>Operator desk</p>
       <h1 style={{ fontFamily: "Georgia, serif", fontWeight: 500, fontSize: "clamp(2rem, 4vw, 3rem)", margin: "0.2rem 0 1rem" }}>
         Good morning{name ? `, ${name}` : ""}.

@@ -73,6 +73,15 @@ export default function AdminLoginPage() {
           }}
         />
 
+        {/* Original Vizionz Sankofa logo */}
+        <img
+          src="/vizionz-sankofa-original-logo-256.png"
+          alt="Vizionz Sankofa"
+          width={96}
+          height={96}
+          style={{ display: 'block', width: '96px', height: '96px', marginBottom: '20px' }}
+        />
+
         {/* Kicker */}
         <div
           style={{

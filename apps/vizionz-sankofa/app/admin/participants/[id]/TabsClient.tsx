@@ -5,7 +5,7 @@
 // Tab navigation for participant detail page. Owns active-tab state.
 // Wave 3 fully shipped: Notes + Services + Documents + Assessments.
 
-import { useState } from 'react'
+import { useUrlState } from '@/components/admin/nav/useUrlState'
 import { CaseNotesTab } from './CaseNotesTab'
 import { ServicesTab } from './ServicesTab'
 import { DocumentsTab } from './DocumentsTab'
@@ -48,9 +48,10 @@ export function TabsClient({
   defaultAdministrator: string | null
   operatorName: string
 }) {
-  const [activeTab, setActiveTab] = useState<TabKey>('notes')
-
   const tabKeys: TabKey[] = ['notes', 'services', 'documents', 'assessments']
+  // Active tab lives in the URL (?tab=services) so back / refresh / a shared
+  // link return to the same tab.
+  const [activeTab, setActiveTab] = useUrlState<TabKey>('tab', 'notes', tabKeys)
 
   return (
     <div>

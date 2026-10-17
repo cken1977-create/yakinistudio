@@ -9,6 +9,7 @@ import { requireOperator } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 import { UploadSection } from './UploadSection'
 import { MediaItemCard, type MediaItem } from './MediaItemCard'
+import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 
 export const dynamic = 'force-dynamic'
 
@@ -58,6 +59,7 @@ export default async function MediaAdminPage({
 
   return (
     <div>
+      <AdminCrumbs trail={[{ label: 'Photos & Videos' }]} fallbackHref="/admin" fallbackLabel="Operations" />
       {/* Header */}
       <section style={{ marginBottom: '32px' }}>
         <div

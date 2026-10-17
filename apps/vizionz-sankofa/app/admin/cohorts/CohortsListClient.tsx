@@ -7,6 +7,7 @@
 // for enrollment management (ships next as File 12).
 
 import { useMemo, useState, useTransition } from 'react'
+import { useUrlState } from '@/components/admin/nav/useUrlState'
 import Link from 'next/link'
 import { createClient as createBrowserClient } from '@/lib/supabase/client'
 import type {
@@ -40,8 +41,8 @@ export function CohortsListClient({
   staff: StaffOption[]
 }) {
   const [cohorts, setCohorts] = useState<CohortWithJoins[]>(initialCohorts)
-  const [search, setSearch] = useState('')
-  const [tab, setTab] = useState<'all' | CohortStatus>('all')
+  const [search, setSearch] = useUrlState<string>('q', '')
+  const [tab, setTab] = useUrlState<'all' | CohortStatus>('status', 'all')
   const [adding, setAdding] = useState(false)
 
   const filtered = useMemo(() => {

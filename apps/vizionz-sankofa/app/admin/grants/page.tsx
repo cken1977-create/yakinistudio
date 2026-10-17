@@ -21,6 +21,7 @@ import type {
   StaffOption,
 } from './types'
 import { getRelevantDeadline, getDeadlineUrgency } from './types'
+import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 
 export const dynamic = 'force-dynamic'
 
@@ -129,6 +130,7 @@ export default async function GrantsPage() {
 
   return (
     <div>
+      <AdminCrumbs trail={[{ label: 'Grants Pipeline' }]} fallbackHref="/admin" fallbackLabel="Operations" />
       {/* Welcome strip */}
       <section style={{ marginBottom: '40px' }}>
         <div

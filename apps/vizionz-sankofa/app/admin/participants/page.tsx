@@ -11,6 +11,7 @@ import {
 import { createClient } from '@/lib/supabase/server'
 import { ParticipantsListClient } from './ParticipantsListClient'
 import type { ParticipantRecord, StaffRecord } from './types'
+import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 
 export const dynamic = 'force-dynamic'
 
@@ -56,14 +57,12 @@ export default async function ParticipantsPage() {
   const totalCount = participants.length
   const activeCount = participants.filter((p) => p.status === 'active').length
   const intakeCount = participants.filter((p) => p.status === 'intake').length
-  const inLegacyline = participants.filter(
-    (p) => p.legacyline_subject_id !== null,
-  ).length
 
   const greetingName = getOperatorDisplayName(user)
 
   return (
     <div>
+      <AdminCrumbs trail={[{ label: 'Participants' }]} fallbackHref="/admin" fallbackLabel="Operations" />
       {/* Welcome strip */}
       <section style={{ marginBottom: '40px' }}>
         <div
@@ -127,11 +126,6 @@ export default async function ParticipantsPage() {
           label="In Intake"
           value={intakeCount.toString()}
           accent="#CE1126"
-        />
-        <SubstrateStat
-          label="In Legacyline"
-          value={`${inLegacyline} / ${totalCount}`}
-          accent="#5B2C8F"
         />
       </section>
 

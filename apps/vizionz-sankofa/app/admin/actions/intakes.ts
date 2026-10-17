@@ -128,7 +128,7 @@ export async function updateIntakeStatus(
     return {
       ok: false,
       error:
-        'Use the Promote to Legacyline button to create the participant. Status cannot be set directly.',
+        'Use the Promote to Kamili button to create the participant. Status cannot be set directly.',
     }
   }
 
@@ -253,7 +253,7 @@ export async function promoteIntakeToLegacyline(
   if (intake.legacyline_participant_id) {
     return {
       ok: false,
-      error: `Already promoted to Legacyline (participant ${intake.legacyline_participant_id})`,
+      error: `Already promoted to Kamili (participant ${intake.legacyline_participant_id})`,
     }
   }
 
@@ -316,7 +316,7 @@ export async function promoteIntakeToLegacyline(
     // can manually reconcile.
     return {
       ok: false,
-      error: `Legacyline participant created (${participant.participant_id}) but VS update failed: ${updateError.message}. Contact engineering.`,
+      error: `Kamili participant created (${participant.participant_id}) but VS update failed: ${updateError.message}. Contact engineering.`,
     }
   }
 
@@ -373,7 +373,7 @@ export async function refreshLegacylineStatus(
   if (!intake.legacyline_participant_id) {
     return {
       ok: false,
-      error: 'This intake has not been promoted to Legacyline yet',
+      error: 'This intake has not been promoted to Kamili yet',
     }
   }
 
@@ -422,7 +422,7 @@ export async function refreshLegacylineStatus(
   if (updateError) {
     return {
       ok: false,
-      error: `Legacyline returned status '${participant.status}' but VS cache update failed: ${updateError.message}`,
+      error: `Kamili returned status '${participant.status}' but VS cache update failed: ${updateError.message}`,
     }
   }
 

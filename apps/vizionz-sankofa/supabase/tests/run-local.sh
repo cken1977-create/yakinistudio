@@ -19,3 +19,4 @@ echo "re-applying migrations (idempotency check)"
 for f in migrations/*.sql; do $PSQL -f "$f" >/dev/null 2>&1 || { echo "re-apply failed: $f"; exit 1; }; done
 $PSQL -f tests/seed-fake.sql
 psql -v ON_ERROR_STOP=1 -d "$DB" -f tests/rls-audit-tests.sql
+psql -v ON_ERROR_STOP=1 -d "$DB" -f tests/obr-coalition-tests.sql

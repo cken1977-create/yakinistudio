@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { requireOperatorOrEmployee, getOperatorDisplayName, touchLastActive } from '@/lib/supabase/auth'
 import SheetsPickerClient from './SheetsPickerClient'
+import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 
 export default async function SheetsPickerPage({
   params,
@@ -34,11 +35,14 @@ export default async function SheetsPickerPage({
     .order('created_at', { ascending: false })
 
   return (
-    <SheetsPickerClient
-      displayName={displayName}
-      connectionId={connection_id}
-      googleEmail={connection.google_email}
-      existingMappings={existingMappings ?? []}
-    />
+    <>
+      <AdminCrumbs trail={[{ label: 'Google Integration', href: '/admin/integrations/google' }, { label: 'Google Sheets' }]} fallbackHref="/admin/integrations/google" fallbackLabel="Google Integration" />
+  <SheetsPickerClient
+        displayName={displayName}
+        connectionId={connection_id}
+        googleEmail={connection.google_email}
+        existingMappings={existingMappings ?? []}
+      />
+    </>
   )
 }

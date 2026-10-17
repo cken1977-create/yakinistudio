@@ -97,7 +97,7 @@ export async function createParticipant(
     if (err instanceof Error && err.name === 'AbortError') {
       throw new LegacylineClientError({
         kind: 'timeout',
-        message: `Legacyline did not respond within ${config.timeoutMs}ms`,
+        message: `Kamili did not respond within ${config.timeoutMs}ms`,
       })
     }
     throw new LegacylineClientError({
@@ -113,7 +113,7 @@ export async function createParticipant(
     throw new LegacylineClientError({
       kind: 'http_error',
       status: response.status,
-      message: `Legacyline returned ${response.status}`,
+      message: `Kamili returned ${response.status}`,
       body: bodyText.slice(0, 500), // cap for safety
     })
   }
@@ -124,7 +124,7 @@ export async function createParticipant(
   } catch {
     throw new LegacylineClientError({
       kind: 'unexpected',
-      message: 'Legacyline returned non-JSON response',
+      message: 'Kamili returned non-JSON response',
     })
   }
 
@@ -235,7 +235,7 @@ function assertParticipantResponse(
   if (typeof raw !== 'object' || raw === null) {
     throw new LegacylineClientError({
       kind: 'unexpected',
-      message: 'Legacyline response was not an object',
+      message: 'Kamili response was not an object',
     })
   }
 
@@ -246,7 +246,7 @@ function assertParticipantResponse(
     if (typeof v !== 'string' || v.length === 0) {
       throw new LegacylineClientError({
         kind: 'unexpected',
-        message: `Legacyline response missing required string field: ${key}`,
+        message: `Kamili response missing required string field: ${key}`,
       })
     }
     return v
@@ -314,7 +314,7 @@ export type ParticipantStatus =
   | 'evaluated'
   | 'certified'
   | 'revoked'
-  | string // accept unknown statuses gracefully — Legacyline may add more
+  | string // accept unknown statuses gracefully — Kamili may add more
 
 export type GetParticipantResponse = {
   id: string
@@ -345,7 +345,7 @@ export async function getParticipant(
   if (!config.serviceToken) {
     throw new LegacylineClientError({
       kind: 'config_missing',
-      message: 'VIZIONZ_SANKOFA_SERVICE_TOKEN not configured (required to read Legacyline status)',
+      message: 'VIZIONZ_SANKOFA_SERVICE_TOKEN not configured (required to read Kamili status)',
     })
   }
 
@@ -371,7 +371,7 @@ export async function getParticipant(
     if (err instanceof Error && err.name === 'AbortError') {
       throw new LegacylineClientError({
         kind: 'timeout',
-        message: `Legacyline did not respond within ${config.timeoutMs}ms`,
+        message: `Kamili did not respond within ${config.timeoutMs}ms`,
       })
     }
     throw new LegacylineClientError({
@@ -386,7 +386,7 @@ export async function getParticipant(
     throw new LegacylineClientError({
       kind: 'http_error',
       status: 404,
-      message: `Participant ${participantId} not found in Legacyline`,
+      message: `Participant ${participantId} not found in Kamili`,
     })
   }
 
@@ -395,7 +395,7 @@ export async function getParticipant(
     throw new LegacylineClientError({
       kind: 'http_error',
       status: response.status,
-      message: `Legacyline returned ${response.status}`,
+      message: `Kamili returned ${response.status}`,
       body: bodyText.slice(0, 500),
     })
   }
@@ -406,7 +406,7 @@ export async function getParticipant(
   } catch {
     throw new LegacylineClientError({
       kind: 'unexpected',
-      message: 'Legacyline returned non-JSON response',
+      message: 'Kamili returned non-JSON response',
     })
   }
 
@@ -419,7 +419,7 @@ function assertGetParticipantResponse(
   if (typeof raw !== 'object' || raw === null) {
     throw new LegacylineClientError({
       kind: 'unexpected',
-      message: 'Legacyline response was not an object',
+      message: 'Kamili response was not an object',
     })
   }
 
@@ -430,7 +430,7 @@ function assertGetParticipantResponse(
     if (typeof v !== 'string' || v.length === 0) {
       throw new LegacylineClientError({
         kind: 'unexpected',
-        message: `Legacyline GET /participants response missing required field: ${key}`,
+        message: `Kamili GET /participants response missing required field: ${key}`,
       })
     }
     return v

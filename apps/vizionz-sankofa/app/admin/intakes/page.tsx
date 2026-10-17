@@ -9,6 +9,7 @@
 import { requireOperatorOrEmployee } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 import { IntakeRow, type IntakeRecord } from './IntakeRow'
+import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,7 +38,7 @@ const FILTER_LABELS: Record<FilterValue, string> = {
   contacted: 'Contacted',
   in_progress: 'In Progress',
   resolved: 'Resolved',
-  promoted_to_legacyline: 'Legacyline',
+  promoted_to_legacyline: 'Kamili',
   closed_no_response: 'Closed',
 }
 
@@ -55,7 +56,7 @@ const STATUS_GROUP_LABELS: Record<IntakeRecord['status'], string> = {
   contacted: 'Contacted',
   in_progress: 'In Progress',
   resolved: 'Resolved',
-  promoted_to_legacyline: 'Promoted to Legacyline',
+  promoted_to_legacyline: 'Promoted to Kamili',
   closed_no_response: 'Closed — No Response',
 }
 
@@ -95,6 +96,7 @@ export default async function IntakesAdminPage({
 
   return (
     <div>
+      <AdminCrumbs trail={[{ label: 'Get Help Requests' }]} fallbackHref="/admin" fallbackLabel="Operations" />
       {/* Header */}
       <section style={{ marginBottom: '32px' }}>
         <div

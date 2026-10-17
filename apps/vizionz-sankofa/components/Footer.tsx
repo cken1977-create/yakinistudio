@@ -61,7 +61,10 @@ export function Footer({ config }: { config: BrandConfig }) {
           width: 48px;
           height: 48px;
           border-radius: 50%;
-          background: ${VS_NAVY};
+          background: #FFFFFF;
+          object-fit: contain;
+          padding: 4px;
+          box-sizing: border-box;
           color: #FFFFFF;
           display: grid;
           place-items: center;
@@ -182,7 +185,7 @@ export function Footer({ config }: { config: BrandConfig }) {
 
             <div className="vs-footer-brand">
               <div className="vs-footer-brand-mark">
-                <div className="vs-footer-seal">V</div>
+                <img className="vs-footer-seal" src="/vizionz-sankofa-mark-96.png" alt="" width={48} height={48} />
                 <div>
                   <div className="vs-footer-brand-name">{config.business.name}</div>
                   <div className="vs-footer-brand-descriptor">Community Empowerment</div>

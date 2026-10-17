@@ -343,20 +343,19 @@ export default async function AdminLandingPage() {
             status="active"
           />
 
-          {/* Coming next */}
           <SurfaceCard
-            href="#"
-            kicker="Legacyline · Wave 3"
-            title="OBR & Readiness"
-            description="Onboard subjects into the Legacyline readiness platform. View FRARI scores and certification status."
-            status="coming"
+            href="/admin/obr"
+            kicker="OBR"
+            title="Organizational Behavioral Readiness"
+            description="VS's own OBR intake: governance, staff, policy and financial sections, evidence uploads for the checklist, and the evaluator's decision."
+            status="active"
           />
           <SurfaceCard
-            href="#"
-            kicker="Coalition · Wave 4"
+            href="/admin/coalition"
+            kicker="Coalition"
             title="Coalition Partners"
-            description="MOU tracking, partner check-ins, shared program coordination across the coalition."
-            status="coming"
+            description="MOU tracking, partner check-ins, and shared program coordination across the coalition."
+            status="active"
           />
         </div>
       </section>
@@ -411,7 +410,11 @@ function ActivityFeed({ items }: { items: ActivityItem[] }) {
               }}
             >
               <div>
-                <p style={{ fontSize: '13px', fontWeight: 600, color: '#0A0A0A', margin: '0 0 4px' }}>{name}</p>
+                <p style={{ fontSize: '13px', fontWeight: 600, color: '#0A0A0A', margin: '0 0 4px' }}>
+                  <Link href={`/admin/participants/${item.participant_id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                    {name}
+                  </Link>
+                </p>
                 <p style={{ fontSize: '13px', color: 'rgba(10, 10, 10, 0.6)', margin: 0, lineHeight: 1.5 }}>{preview}</p>
               </div>
               <span style={{ fontSize: '11px', color: 'rgba(10, 10, 10, 0.4)', whiteSpace: 'nowrap' }}>{date}</span>

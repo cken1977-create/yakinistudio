@@ -17,6 +17,7 @@ import type {
   ProgramOption,
   StaffOption,
 } from './types'
+import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 
 export const dynamic = 'force-dynamic'
 
@@ -109,6 +110,7 @@ export default async function CohortsPage() {
 
   return (
     <div>
+      <AdminCrumbs trail={[{ label: 'Cohorts' }]} fallbackHref="/admin" fallbackLabel="Operations" />
       {/* Welcome strip */}
       <section style={{ marginBottom: '40px' }}>
         <div

@@ -9,6 +9,7 @@
 // lifecycle in one form — 20+ fields, organized by phase.
 
 import { useMemo, useState, useTransition } from 'react'
+import { useUrlState } from '@/components/admin/nav/useUrlState'
 import { createClient as createBrowserClient } from '@/lib/supabase/client'
 import type {
   GrantWithJoins,
@@ -59,10 +60,10 @@ export function GrantsListClient({
   staff: StaffOption[]
 }) {
   const [grants, setGrants] = useState<GrantWithJoins[]>(initialGrants)
-  const [search, setSearch] = useState('')
-  const [statusTab, setStatusTab] = useState<'all' | GrantStatus>('all')
+  const [search, setSearch] = useUrlState<string>('q', '')
+  const [statusTab, setStatusTab] = useUrlState<'all' | GrantStatus>('status', 'all')
   const [urgencyTab, setUrgencyTab] =
-    useState<'any' | 'urgent_only' | 'this_month'>('any')
+    useUrlState<'any' | 'urgent_only' | 'this_month'>('due', 'any')
   const [adding, setAdding] = useState(false)
 
   const filtered = useMemo(() => {

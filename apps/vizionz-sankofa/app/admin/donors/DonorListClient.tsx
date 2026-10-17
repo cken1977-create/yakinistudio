@@ -7,6 +7,7 @@
 // and ImportCSVButton in the action row.
 
 import { useState, useMemo } from 'react'
+import { useUrlState, useUrlFlag } from '@/components/admin/nav/useUrlState'
 import { DonorRow } from './DonorRow'
 import { AddDonorButton } from './AddDonorButton'
 import { ImportCSVButton } from './ImportCSVButton'
@@ -19,10 +20,10 @@ import {
 } from './types'
 
 export function DonorListClient({ donors }: { donors: DonorRecord[] }) {
-  const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<DonorStatus | 'all'>('all')
-  const [typeFilter, setTypeFilter] = useState<DonorType | 'all'>('all')
-  const [recurringOnly, setRecurringOnly] = useState(false)
+  const [search, setSearch] = useUrlState<string>('q', '')
+  const [statusFilter, setStatusFilter] = useUrlState<DonorStatus | 'all'>('status', 'all')
+  const [typeFilter, setTypeFilter] = useUrlState<DonorType | 'all'>('type', 'all')
+  const [recurringOnly, setRecurringOnly] = useUrlFlag('recurring')
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim()

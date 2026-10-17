@@ -12,6 +12,7 @@ import {
 import { createClient } from '@/lib/supabase/server'
 import { DonorListClient } from './DonorListClient'
 import { type DonorRecord, formatCurrency } from './types'
+import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 
 export const dynamic = 'force-dynamic'
 
@@ -45,6 +46,7 @@ export default async function DonorsPage() {
 
   return (
     <div>
+      <AdminCrumbs trail={[{ label: 'Donor Management' }]} fallbackHref="/admin" fallbackLabel="Operations" />
       {/* Welcome strip */}
       <section style={{ marginBottom: '40px' }}>
         <div

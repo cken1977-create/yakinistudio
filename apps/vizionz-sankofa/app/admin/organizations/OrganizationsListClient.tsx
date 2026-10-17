@@ -8,6 +8,7 @@
 // links open the /funder/[token] surface scoped to that org's outcomes.
 
 import { useMemo, useState, useTransition } from 'react'
+import { useUrlState } from '@/components/admin/nav/useUrlState'
 import { createClient as createBrowserClient } from '@/lib/supabase/client'
 import type {
   OrganizationWithTokens,
@@ -52,9 +53,9 @@ export function OrganizationsListClient({
 }) {
   const [orgs, setOrgs] =
     useState<OrganizationWithTokens[]>(initialOrganizations)
-  const [search, setSearch] = useState('')
-  const [kindTab, setKindTab] = useState<'all' | RelationshipKind>('all')
-  const [statusTab, setStatusTab] = useState<'all' | OrganizationStatus>('all')
+  const [search, setSearch] = useUrlState<string>('q', '')
+  const [kindTab, setKindTab] = useUrlState<'all' | RelationshipKind>('kind', 'all')
+  const [statusTab, setStatusTab] = useUrlState<'all' | OrganizationStatus>('status', 'all')
   const [adding, setAdding] = useState(false)
   const [tokenManagerOrg, setTokenManagerOrg] =
     useState<OrganizationWithTokens | null>(null)
