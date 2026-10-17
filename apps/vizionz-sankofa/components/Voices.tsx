@@ -13,7 +13,7 @@
 //   - Italic quote in Newsreader (or Cormorant Garamond on founder card)
 //
 // Voices are passed as props with optional `featured` flag for founder.
-// Default values match VS's three voices: Khadijah, Maria L., Denise.
+// Default values match VS's three voices: Khadijah and Denise (placeholder participant quote removed Oct 17 2026).
 // ═════════════════════════════════════════════════════════════════════════
 
 import { VS_NAVY, VS_RED, VS_INK, VS_GREEN } from './TriColorRule'
@@ -37,11 +37,6 @@ const DEFAULT_VOICES: Voice[] = [
     role: 'Founder & Executive Director',
     quote: 'I built Vizionz Sankofa because I saw families with nowhere to turn, and I refused to look away. Sankofa means we go back for the wisdom we need to move forward — and we bring that wisdom to whoever walks through our door, regardless of where they come from. This work is about dignity. Always.',
     featured: true,
-  },
-  {
-    name: 'Maria L.',
-    role: 'Program Participant',
-    quote: 'Vizionz Sankofa met me when I had nothing. They didn\'t ask me where I came from before they helped — they just helped. Now I have a place to live and my children are in school.',
   },
   {
     name: 'Denise Kennedy',
@@ -87,7 +82,7 @@ export function Voices({ voices = DEFAULT_VOICES }: VoicesProps) {
 
         .vs-voices-grid {
           display: grid;
-          grid-template-columns: 1.4fr 1fr 1fr;
+          grid-template-columns: 1.4fr 1fr;
           gap: 2rem;
         }
 
