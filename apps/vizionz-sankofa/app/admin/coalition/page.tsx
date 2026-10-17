@@ -35,6 +35,9 @@ export default async function CoalitionPage() {
     .from('organizations')
     .select(PARTNER_ORG_COLUMNS)
     .in('relationship_kind', ['partner', 'both'])
+    // Retired partners (status inactive) stay in the database with their
+    // agreements and check-ins, but leave the coalition list.
+    .or('status.is.null,status.neq.inactive')
     .order('name', { ascending: true })
   const orgs = (orgData ?? []) as unknown as PartnerOrg[]
   const ids = orgs.map((o) => o.id)

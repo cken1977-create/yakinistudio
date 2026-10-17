@@ -49,9 +49,9 @@ export const config: BrandConfig = {
     items: [
       {
         title: 'Unsheltered Outreach & Stabilization',
-        description: 'Direct outreach to unhoused neighbors across Albuquerque. In partnership with ACS, we provide stabilization support, hotel vouchers, hygiene supplies, and pathways to housing.',
+        description: 'Direct outreach to unhoused neighbors across Albuquerque. In partnership with Albuquerque Community Safety, we provide stabilization support, hotel vouchers, hygiene supplies, and pathways to housing.',
         icon: '🏠',
-        features: ['ACS partnership', 'Hotel vouchers', 'Hygiene & supplies', 'Housing pathways'],
+        features: ['Albuquerque Community Safety partnership', 'Hotel vouchers', 'Hygiene & supplies', 'Housing pathways'],
       },
       {
         title: 'Refugee & Immigrant Services',

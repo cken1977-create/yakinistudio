@@ -230,7 +230,7 @@ export function Footer({ config }: { config: BrandConfig }) {
 
           <div className="vs-footer-bar">
             <div>
-              <span className="vs-mono">EIN PENDING</span>
+              <span className="vs-mono">EIN 47-1318487</span>
               <span className="vs-footer-bar-divider">·</span>
               <span>{config.business.name} is a 501(c)(3) tax-exempt organization. Contributions are tax-deductible.</span>
             </div>
