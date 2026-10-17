@@ -368,7 +368,7 @@ function LegacylinePillServer() {
           'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
       }}
     >
-      In Legacyline
+      In Kamili
     </span>
   )
 }

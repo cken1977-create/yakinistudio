@@ -588,7 +588,7 @@ function LegacylinePill() {
           'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
       }}
     >
-      Legacyline
+      Kamili
     </span>
   )
 }

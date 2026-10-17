@@ -57,7 +57,7 @@ const STATUS_LABELS: Record<IntakeRecord['status'], string> = {
   contacted: 'Contacted',
   in_progress: 'In Progress',
   resolved: 'Resolved',
-  promoted_to_legacyline: 'Legacyline',
+  promoted_to_legacyline: 'Kamili',
   closed_no_response: 'Closed',
 }
 
@@ -290,7 +290,7 @@ export function IntakeRow({
               </strong>{' '}
               You can mark contacted, save notes, and update status to
               Contacted or In Progress. To resolve, close, promote to
-              Legacyline, or delete this intake, ask an operator.
+              Kamili, or delete this intake, ask an operator.
             </div>
           )}
 
@@ -694,7 +694,7 @@ function PromoteToLegacyline({
           cursor: disabled ? 'wait' : 'pointer',
         }}
       >
-        Promote to Legacyline →
+        Promote to Kamili →
       </button>
     )
   }
@@ -747,7 +747,7 @@ function PromoteToLegacyline({
             'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
         }}
       >
-        Promote to Legacyline
+        Promote to Kamili
       </div>
 
       <div
@@ -836,7 +836,7 @@ function PromoteToLegacyline({
                 : 1,
           }}
         >
-          {submitting ? 'Promoting…' : 'Create Legacyline participant'}
+          {submitting ? 'Promoting…' : 'Create Kamili participant'}
         </button>
         <button
           type="button"
@@ -1184,7 +1184,7 @@ function LegacylinePromotedStrip({
               marginBottom: '2px',
             }}
           >
-            Promoted to Legacyline
+            Promoted to Kamili
           </div>
           <div style={{ fontSize: '14px', fontWeight: 600 }}>
             {intake.legacyline_registry_id ?? intake.legacyline_participant_id}
@@ -1195,8 +1195,8 @@ function LegacylinePromotedStrip({
           type="button"
           onClick={handleRefresh}
           disabled={disabled || refreshing}
-          aria-label="Refresh status from Legacyline"
-          title="Refresh status from Legacyline"
+          aria-label="Refresh status from Kamili"
+          title="Refresh status from Kamili"
           style={{
             display: 'flex',
             alignItems: 'center',

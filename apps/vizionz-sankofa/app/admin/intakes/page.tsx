@@ -38,7 +38,7 @@ const FILTER_LABELS: Record<FilterValue, string> = {
   contacted: 'Contacted',
   in_progress: 'In Progress',
   resolved: 'Resolved',
-  promoted_to_legacyline: 'Legacyline',
+  promoted_to_legacyline: 'Kamili',
   closed_no_response: 'Closed',
 }
 
@@ -56,7 +56,7 @@ const STATUS_GROUP_LABELS: Record<IntakeRecord['status'], string> = {
   contacted: 'Contacted',
   in_progress: 'In Progress',
   resolved: 'Resolved',
-  promoted_to_legacyline: 'Promoted to Legacyline',
+  promoted_to_legacyline: 'Promoted to Kamili',
   closed_no_response: 'Closed — No Response',
 }
 

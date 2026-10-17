@@ -23,7 +23,8 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   { href: '/admin/programs', label: 'Programs', roles: 'all' },
   { href: '/admin/organizations', label: 'Funders & Partners', roles: EXEC_OP_LEAD },
   { href: '/admin/coalition', label: 'Coalition Partners', roles: 'all' },
-  { href: '/admin/obr', label: 'OBR & Readiness', roles: 'all' },
+  // OBR = Organizational Behavioral Readiness (VS's own intake). Not for case managers.
+  { href: '/admin/obr', label: 'OBR', roles: EXEC_OP_LEAD },
   { href: '/admin/grants', label: 'Grants', roles: EXEC_OP_LEAD },
   { href: '/admin/donors', label: 'Donors', roles: EXEC_OP_LEAD },
   { href: '/admin/documents', label: 'Documents', roles: EXEC_OP },
@@ -36,7 +37,7 @@ const EXTRA_LABELS: Array<[RegExp, string]> = [
   [/^\/admin\/participants\/[^/]+$/, 'participant'],
   [/^\/admin\/cohorts\/[^/]+$/, 'cohort'],
   [/^\/admin\/coalition\/[^/]+$/, 'partner'],
-  [/^\/admin\/obr\/[^/]+$/, 'OBR profile'],
+  [/^\/admin\/obr\/[^/]+$/, 'OBR intake'],
   [/^\/admin\/integrations\/google\/[^/]+\/sheets$/, 'Google Sheets'],
   [/^\/admin\/integrations\/google$/, 'Google Integration'],
   [/^\/admin\/desk$/, 'Operator Desk'],

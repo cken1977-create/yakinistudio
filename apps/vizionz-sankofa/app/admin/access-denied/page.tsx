@@ -89,7 +89,7 @@ export default async function AccessDeniedPage() {
         >
           Your account has employee access to Vizionz Sankofa Operations,
           but this surface — managing media, deleting intakes, or promoting
-          subjects to Legacyline — is reserved for full operators like
+          subjects to Kamili — is reserved for full operators like
           Khadijah and other organizational leadership.
         </p>
 

@@ -345,9 +345,9 @@ export default async function AdminLandingPage() {
 
           <SurfaceCard
             href="/admin/obr"
-            kicker="Readiness · OBR"
-            title="OBR & Readiness"
-            description="Organizational readiness for VS under the BRSA standard: intake, evidence checklist, and evaluator ratings. Plus who is in individual readiness."
+            kicker="OBR"
+            title="Organizational Behavioral Readiness"
+            description="VS's own OBR intake: governance, staff, policy and financial sections, evidence uploads for the checklist, and the evaluator's decision."
             status="active"
           />
           <SurfaceCard

@@ -83,6 +83,22 @@ UPDATE vs_obr_evidence SET status = 'verified' WHERE item_key = 'bylaws';
 SELECT vs_test.ok((SELECT status = 'verified' FROM vs_obr_evidence WHERE item_key = 'bylaws'),
   'operator can update OBR evidence');
 
+-- Evidence upload: object in the private bucket + metadata row
+INSERT INTO storage.objects (bucket_id, name)
+VALUES ('vs-obr-evidence', '00000000-0000-0000-0000-00000000ab01/bylaws/fake-bylaws.pdf');
+INSERT INTO vs_obr_evidence_files (profile_id, evidence_id, storage_path, file_name, mime_type, size_bytes, uploaded_by_name)
+SELECT profile_id, id, '00000000-0000-0000-0000-00000000ab01/bylaws/fake-bylaws.pdf', 'fake-bylaws.pdf',
+       'application/pdf', 1234, 'Test Operator'
+  FROM vs_obr_evidence WHERE item_key = 'bylaws';
+SELECT vs_test.ok((SELECT count(*) FROM vs_obr_evidence_files) = 1 AND (SELECT count(*) FROM storage.objects
+  WHERE bucket_id = 'vs-obr-evidence') = 1, 'operator can upload an OBR evidence file to the private bucket');
+DO $$ BEGIN
+  INSERT INTO vs_obr_evidence_files (profile_id, evidence_id, storage_path, file_name)
+  SELECT profile_id, id, 'elsewhere/x.pdf', 'x.pdf' FROM vs_obr_evidence WHERE item_key = 'bylaws';
+  RAISE EXCEPTION 'FAIL: evidence file outside its profile folder accepted';
+EXCEPTION WHEN check_violation THEN RAISE NOTICE 'PASS: evidence files must sit under the profile folder';
+END $$;
+
 -- ── Leadership read-only ────────────────────────────────────────────────────
 SELECT vs_test.login('00000000-0000-0000-0000-0000000000d1', 'test.leadership@example.test');
 SELECT vs_test.ok((SELECT count(*) FROM vs_obr_profiles) = 1 AND (SELECT count(*) FROM vs_obr_ratings) = 1,
@@ -105,10 +121,32 @@ DO $$ BEGIN
 EXCEPTION WHEN insufficient_privilege THEN RAISE NOTICE 'PASS: leadership cannot record OBR ratings';
 END $$;
 
+SELECT vs_test.ok((SELECT count(*) FROM vs_obr_evidence_files) = 1, 'leadership can see evidence file metadata');
+SELECT vs_test.ok((SELECT count(*) FROM storage.objects WHERE bucket_id = 'vs-obr-evidence') = 0,
+  'leadership cannot open OBR evidence files in storage');
+DO $$ BEGIN
+  INSERT INTO storage.objects (bucket_id, name) VALUES ('vs-obr-evidence', '00000000-0000-0000-0000-00000000ab01/x/lead.pdf');
+  RAISE EXCEPTION 'FAIL: leadership uploaded OBR evidence';
+EXCEPTION WHEN insufficient_privilege THEN RAISE NOTICE 'PASS: leadership cannot upload OBR evidence';
+END $$;
+
 -- ── Case manager ────────────────────────────────────────────────────────────
 SELECT vs_test.login('00000000-0000-0000-0000-0000000000c1', 'test.cm.a@example.test');
 SELECT vs_test.ok((SELECT count(*) FROM vs_obr_profiles) = 0 AND (SELECT count(*) FROM vs_obr_ratings) = 0
   AND (SELECT count(*) FROM vs_obr_evidence) = 0, 'case manager sees no OBR records');
+SELECT vs_test.ok((SELECT count(*) FROM vs_obr_evidence_files) = 0
+  AND (SELECT count(*) FROM storage.objects WHERE bucket_id = 'vs-obr-evidence') = 0,
+  'case manager sees no OBR evidence files');
+DO $$ BEGIN
+  INSERT INTO storage.objects (bucket_id, name) VALUES ('vs-obr-evidence', '00000000-0000-0000-0000-00000000ab01/x/cm.pdf');
+  RAISE EXCEPTION 'FAIL: case manager uploaded OBR evidence';
+EXCEPTION WHEN insufficient_privilege THEN RAISE NOTICE 'PASS: case manager cannot upload OBR evidence';
+END $$;
+DO $$ BEGIN
+  PERFORM public.vs_obr_monitor_summary();
+  RAISE EXCEPTION 'FAIL: signed-in user can call the OBR monitor export';
+EXCEPTION WHEN insufficient_privilege THEN RAISE NOTICE 'PASS: signed-in users cannot call the OBR monitor export';
+END $$;
 SELECT vs_test.ok((SELECT count(*) FROM vs_partner_agreements) = 1 AND (SELECT count(*) FROM vs_partner_programs) = 1,
   'case manager can read partner agreements and shared programs');
 SELECT vs_test.ok((SELECT count(*) FROM vs_partner_checkins) = 0, 'case manager cannot read partner check-in notes');
@@ -135,7 +173,32 @@ DO $$ BEGIN
   RAISE EXCEPTION 'FAIL: anon can query OBR profiles';
 EXCEPTION WHEN insufficient_privilege THEN RAISE NOTICE 'PASS: anonymous visitors cannot query OBR profiles';
 END $$;
+DO $$ BEGIN
+  PERFORM public.vs_obr_monitor_summary();
+  RAISE EXCEPTION 'FAIL: anon can call the OBR monitor export';
+EXCEPTION WHEN insufficient_privilege THEN RAISE NOTICE 'PASS: anonymous visitors cannot call the OBR monitor export';
+END $$;
 RESET ROLE;
+
+-- ── Monitor export (service_role only) ──────────────────────────────────────
+SET ROLE service_role;
+SELECT set_config('request.jwt.claims', '{"role":"service_role"}', false);
+CREATE TEMP TABLE obr_mon AS SELECT public.vs_obr_monitor_summary() AS j;
+RESET ROLE;
+SELECT vs_test.ok((SELECT j->'profile'->>'status' = 'rated' FROM obr_mon), 'monitor export reports the OBR status');
+SELECT vs_test.ok((SELECT (j->'checklist'->>'total')::int = 7 AND (j->'checklist'->>'complete')::int = 1
+                     AND (j->'checklist'->>'percent_complete')::numeric = 14.3 FROM obr_mon),
+  'monitor export reports checklist completion percent');
+SELECT vs_test.ok((SELECT (j->'items'->0->>'file_count')::int = 1
+                     AND j->'items'->0->'files'->0->>'file_name' = 'fake-bylaws.pdf' FROM obr_mon),
+  'monitor export lists uploaded evidence metadata');
+SELECT vs_test.ok((SELECT j->'latest_decision'->>'standard_version' = 'TEST-1.0' FROM obr_mon),
+  'monitor export carries the latest evaluator decision');
+SELECT vs_test.ok((SELECT NOT (j::text ILIKE '%storage_path%' OR j::text ILIKE '%/bylaws/%'
+                     OR j::text ILIKE '%Fake board binder%' OR j::text ILIKE '%participant%'
+                     OR EXISTS (SELECT 1 FROM participants p WHERE j::text ILIKE '%' || p.last_name || '%'))
+                   FROM obr_mon),
+  'monitor export has no participant data, notes or storage paths');
 
 -- ── Audit trail ─────────────────────────────────────────────────────────────
 SELECT vs_test.ok(EXISTS (SELECT 1 FROM vs_audit_log WHERE table_name = 'vs_obr_ratings' AND action = 'INSERT'
@@ -147,5 +210,7 @@ SELECT vs_test.ok(EXISTS (SELECT 1 FROM vs_audit_log WHERE table_name = 'vs_part
   'partner agreement changes are audited with old and new values');
 SELECT vs_test.ok(EXISTS (SELECT 1 FROM vs_audit_log WHERE table_name = 'vs_partner_checkins' AND action = 'INSERT'),
   'partner check-ins are audited');
+SELECT vs_test.ok(EXISTS (SELECT 1 FROM vs_audit_log WHERE table_name = 'vs_obr_evidence_files' AND action = 'INSERT'
+                   AND actor_role = 'operator'), 'OBR evidence uploads are audited');
 
 \echo ALL VS OBR + COALITION DB TESTS PASSED

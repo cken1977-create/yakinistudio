@@ -1,9 +1,10 @@
 'use client'
 
-// VIZIONZ SANKOFA · OBR profile detail
+// VIZIONZ SANKOFA · OBR (Organizational Behavioral Readiness) intake
 //   Intake    — identity, governance & leadership, staff, policy & compliance,
 //               financial (the OBR intake sections)
-//   Evidence  — checklist; each item records who attested, the source and date
+//   Evidence  — checklist; staff upload the documents (private bucket
+//               vs-obr-evidence) and record who attested and when
 //   Ratings   — append-only decision records from a certified evaluator
 // Executives and operators edit; read-only leadership sees everything but
 // cannot change it. The database enforces the same rules (RLS).
@@ -40,8 +41,12 @@ import {
   EVIDENCE_ITEMS,
   EVIDENCE_STATUS_LABELS,
   OBR_DOMAINS,
+  OBR_EVIDENCE_BUCKET,
+  OBR_FILE_COLUMNS,
+  OBR_MAX_FILE_BYTES,
   OBR_STATUS_LABELS,
   type CertificationStatus,
+  type ObrEvidenceFile,
   type DocumentOption,
   type EvidenceKey,
   type EvidenceStatus,
@@ -59,6 +64,7 @@ export function ObrDetailClient({
   evidence: initialEvidence,
   ratings: initialRatings,
   documents,
+  files: initialFiles,
   canEdit,
   operatorName,
 }: {
@@ -66,6 +72,7 @@ export function ObrDetailClient({
   evidence: ObrEvidence[]
   ratings: ObrRating[]
   documents: DocumentOption[]
+  files: ObrEvidenceFile[]
   canEdit: boolean
   operatorName: string
 }) {
@@ -73,15 +80,17 @@ export function ObrDetailClient({
   const [profile, setProfile] = useState(initialProfile)
   const [evidence, setEvidence] = useState(initialEvidence)
   const [ratings, setRatings] = useState(initialRatings)
+  const [files, setFiles] = useState(initialFiles)
 
   const onFile = evidence.filter((e) => e.status !== 'missing').length
   const latest = ratings[0] ?? null
 
   return (
     <div>
-      <PageIntro kicker={profile.is_self ? 'Readiness · OBR · Vizionz Sankofa' : 'Readiness · OBR · Coalition partner'} title={profile.display_name}>
-        Organizational readiness intake and evidence. A certified evaluator reviews it against the
-        BRSA OBR standard and issues the rating; the decision is recorded under Ratings.
+      <PageIntro kicker="OBR · Organizational Behavioral Readiness" title={profile.is_self ? 'Vizionz Sankofa OBR intake' : profile.display_name}>
+        VS&apos;s own OBR intake and evidence. Upload each document to its checklist item; Clarence
+        monitors progress. A certified evaluator reviews it against the BRSA OBR standard and issues
+        the rating; the decision is recorded under Ratings.
       </PageIntro>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center', marginBottom: '24px' }}>
@@ -92,7 +101,7 @@ export function ObrDetailClient({
           </Pill>
         )}
         <Meta>
-          Evidence {onFile}/{EVIDENCE_ITEMS.length} on file · Updated {formatDay(profile.updated_at)}
+          Evidence {onFile}/{EVIDENCE_ITEMS.length} on file · {files.length} file{files.length === 1 ? '' : 's'} uploaded · Updated {formatDay(profile.updated_at)}
         </Meta>
       </div>
 
@@ -114,9 +123,11 @@ export function ObrDetailClient({
           profileId={profile.id}
           evidence={evidence}
           documents={documents}
+          files={files}
           canEdit={canEdit}
           operatorName={operatorName}
           onChange={setEvidence}
+          onFilesChange={setFiles}
         />
       )}
       {tab === 'ratings' && (
@@ -410,30 +421,150 @@ function SectionForm({
 
 // ─── Evidence ───────────────────────────────────────────────────────────────
 
+const EVIDENCE_COLS = 'id, profile_id, item_key, label, status, document_id, source, notes, attested_by_name, attested_at, updated_at'
+
+function safeFileName(name: string): string {
+  return name.replace(/[^a-zA-Z0-9._-]/g, '-').replace(/-+/g, '-').slice(0, 100) || 'file'
+}
+
+function formatBytes(n: number | null): string {
+  if (n === null || n === undefined) return ''
+  if (n < 1024) return `${n} B`
+  if (n < 1024 * 1024) return `${Math.round(n / 1024)} KB`
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`
+}
+
 function EvidenceTab({
   profileId,
   evidence,
   documents,
+  files,
   canEdit,
   operatorName,
   onChange,
+  onFilesChange,
 }: {
   profileId: string
   evidence: ObrEvidence[]
   documents: DocumentOption[]
+  files: ObrEvidenceFile[]
   canEdit: boolean
   operatorName: string
   onChange: (rows: ObrEvidence[]) => void
+  onFilesChange: (rows: ObrEvidenceFile[]) => void
 }) {
   const [editing, setEditing] = useState<EvidenceKey | null>(null)
+  const [busyKey, setBusyKey] = useState<string | null>(null)
+  const [fileError, setFileError] = useState<{ key: string; message: string } | null>(null)
   const byKey = useMemo(() => new Map(evidence.map((e) => [e.item_key, e])), [evidence])
   const docTitle = useMemo(() => new Map(documents.map((d) => [d.id, d.title])), [documents])
+  const filesByEvidence = useMemo(() => {
+    const m = new Map<string, ObrEvidenceFile[]>()
+    for (const f of files) m.set(f.evidence_id, [...(m.get(f.evidence_id) ?? []), f])
+    return m
+  }, [files])
+
+  async function upload(itemKey: EvidenceKey, label: string, picked: FileList | null) {
+    if (!picked || picked.length === 0) return
+    setFileError(null)
+    const list = Array.from(picked)
+    const tooBig = list.find((f) => f.size > OBR_MAX_FILE_BYTES)
+    if (tooBig) {
+      setFileError({ key: itemKey, message: `${tooBig.name} is over 25 MB.` })
+      return
+    }
+    setBusyKey(itemKey)
+    const supabase = createBrowserClient()
+    try {
+      // Make sure the checklist item exists; an upload marks a missing item "on file".
+      let row = byKey.get(itemKey) ?? null
+      let rows = evidence
+      if (!row || row.status === 'missing') {
+        const { data, error } = await supabase
+          .from('vs_obr_evidence')
+          .upsert(
+            {
+              profile_id: profileId,
+              item_key: itemKey,
+              label,
+              status: 'on_file',
+              source: row?.source ?? 'Uploaded file',
+              notes: row?.notes ?? null,
+              document_id: row?.document_id ?? null,
+              attested_by_name: operatorName,
+              attested_at: new Date().toISOString(),
+            },
+            { onConflict: 'profile_id,item_key' },
+          )
+          .select(EVIDENCE_COLS)
+          .single()
+        if (error || !data) throw new Error(error?.message ?? 'Could not record the checklist item.')
+        row = data as unknown as ObrEvidence
+        rows = [...evidence.filter((e) => e.item_key !== itemKey), row]
+        onChange(rows)
+      }
+      const added: ObrEvidenceFile[] = []
+      for (const file of list) {
+        const path = `${profileId}/${itemKey}/${Date.now()}-${safeFileName(file.name)}`
+        const { error: upErr } = await supabase.storage
+          .from(OBR_EVIDENCE_BUCKET)
+          .upload(path, file, { contentType: file.type || 'application/octet-stream', upsert: false })
+        if (upErr) throw new Error(`Upload failed: ${upErr.message}`)
+        const { data: meta, error: metaErr } = await supabase
+          .from('vs_obr_evidence_files')
+          .insert({
+            profile_id: profileId,
+            evidence_id: row.id,
+            storage_path: path,
+            file_name: file.name,
+            mime_type: file.type || null,
+            size_bytes: file.size,
+            uploaded_by_name: operatorName,
+          })
+          .select(OBR_FILE_COLUMNS)
+          .single()
+        if (metaErr || !meta) {
+          await supabase.storage.from(OBR_EVIDENCE_BUCKET).remove([path])
+          throw new Error(metaErr?.message ?? 'Could not save the file record.')
+        }
+        added.push(meta as unknown as ObrEvidenceFile)
+      }
+      onFilesChange([...files, ...added])
+    } catch (e) {
+      setFileError({ key: itemKey, message: e instanceof Error ? e.message : 'Upload failed.' })
+    } finally {
+      setBusyKey(null)
+    }
+  }
+
+  async function openFile(f: ObrEvidenceFile) {
+    const supabase = createBrowserClient()
+    const { data, error } = await supabase.storage.from(OBR_EVIDENCE_BUCKET).createSignedUrl(f.storage_path, 60)
+    if (error || !data?.signedUrl) {
+      setFileError({ key: f.evidence_id, message: error?.message ?? 'Could not open the file.' })
+      return
+    }
+    window.open(data.signedUrl, '_blank', 'noopener')
+  }
+
+  async function removeFile(f: ObrEvidenceFile) {
+    if (!window.confirm(`Remove ${f.file_name}?`)) return
+    const supabase = createBrowserClient()
+    const { error } = await supabase.from('vs_obr_evidence_files').delete().eq('id', f.id)
+    if (error) {
+      setFileError({ key: f.evidence_id, message: error.message })
+      return
+    }
+    await supabase.storage.from(OBR_EVIDENCE_BUCKET).remove([f.storage_path])
+    onFilesChange(files.filter((x) => x.id !== f.id))
+  }
 
   return (
     <div>
       <p style={{ fontSize: '14px', color: 'rgba(10, 10, 10, 0.65)', margin: '0 0 16px', lineHeight: 1.55, maxWidth: '680px' }}>
-        Mark each document as on file once it is in the Document Library, and as verified once
-        someone has checked it. Only attest to what you have seen yourself.
+        Upload each document to its checklist item (PDF, Word, image; up to 25 MB). Uploading marks
+        the item on file; mark it verified once someone has checked it. Only attest to what you have
+        seen yourself. Files are private to executives and operators.
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {EVIDENCE_ITEMS.map((item) => {
@@ -462,11 +593,56 @@ function EvidenceTab({
                   {row?.notes && <p style={{ fontSize: '13px', margin: '6px 0 0', color: 'rgba(10, 10, 10, 0.7)' }}>{row.notes}</p>}
                 </div>
                 {canEdit && (
-                  <button type="button" onClick={() => setEditing(item.key)} style={miniBtn()}>
-                    {row ? 'Update' : 'Record'}
-                  </button>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    <label
+                      style={{ ...miniBtn(busyKey === item.key), position: 'relative', display: 'inline-flex', alignItems: 'center', cursor: busyKey === item.key ? 'wait' : 'pointer' }}
+                    >
+                      {busyKey === item.key ? 'Uploading…' : 'Upload file'}
+                      <input
+                        type="file"
+                        multiple
+                        data-testid={`obr-upload-${item.key}`}
+                        disabled={busyKey !== null}
+                        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.png,.jpg,.jpeg,.heic,image/*,application/pdf"
+                        onChange={(e) => {
+                          void upload(item.key, item.label, e.target.files)
+                          e.target.value = ''
+                        }}
+                        style={{ position: 'absolute', width: 1, height: 1, opacity: 0, overflow: 'hidden' }}
+                      />
+                    </label>
+                    <button type="button" onClick={() => setEditing(item.key)} style={miniBtn()}>
+                      {row ? 'Update' : 'Record'}
+                    </button>
+                  </div>
                 )}
               </div>
+              {row && (filesByEvidence.get(row.id) ?? []).length > 0 && (
+                <ul style={{ listStyle: 'none', margin: '12px 0 0', padding: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {(filesByEvidence.get(row.id) ?? []).map((f) => (
+                    <li
+                      key={f.id}
+                      style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(10, 10, 10, 0.06)', paddingTop: '6px' }}
+                    >
+                      <span style={{ fontSize: '13px', minWidth: 0, overflowWrap: 'anywhere' }}>
+                        📄 {f.file_name}
+                        <span style={{ color: 'rgba(10, 10, 10, 0.55)', fontFamily: MONO, fontSize: '11px' }}>
+                          {' · '}{formatBytes(f.size_bytes)} · {f.uploaded_by_name ?? 'Staff'} · {formatDay(f.uploaded_at)}
+                        </span>
+                      </span>
+                      {canEdit && (
+                        <span style={{ display: 'flex', gap: '6px' }}>
+                          <button type="button" onClick={() => void openFile(f)} style={miniBtn()}>Open</button>
+                          <button type="button" onClick={() => void removeFile(f)} style={miniBtn()}>Remove</button>
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {fileError && (fileError.key === item.key || (row && fileError.key === row.id)) && (
+                <p role="alert" style={{ color: '#CE1126', fontSize: '13px', margin: '8px 0 0' }}>{fileError.message}</p>
+              )}
             </Card>
           )
         })}
@@ -555,7 +731,7 @@ function EvidenceModal({
           ))}
         </select>
       </Field>
-      <Field label="Document in the library" hint="Upload it under Documents first if it is not listed.">
+      <Field label="Also in the Document Library (optional)" hint="Use Upload file on the checklist to attach the document itself.">
         <select value={documentId} onChange={(e) => setDocumentId(e.target.value)} style={inputStyle}>
           <option value="">— None linked —</option>
           {documents.map((d) => (

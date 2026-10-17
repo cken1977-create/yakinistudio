@@ -57,9 +57,6 @@ export default async function ParticipantsPage() {
   const totalCount = participants.length
   const activeCount = participants.filter((p) => p.status === 'active').length
   const intakeCount = participants.filter((p) => p.status === 'intake').length
-  const inLegacyline = participants.filter(
-    (p) => p.legacyline_subject_id !== null,
-  ).length
 
   const greetingName = getOperatorDisplayName(user)
 
@@ -129,11 +126,6 @@ export default async function ParticipantsPage() {
           label="In Intake"
           value={intakeCount.toString()}
           accent="#CE1126"
-        />
-        <SubstrateStat
-          label="In Legacyline"
-          value={`${inLegacyline} / ${totalCount}`}
-          accent="#5B2C8F"
         />
       </section>
 

@@ -47,7 +47,7 @@ test('labels for back control and breadcrumbs', () => {
   assert.equal(labelForAdminPath('/admin/participants/123'), 'participant')
   assert.equal(labelForAdminPath('/admin/coalition'), 'Coalition Partners')
   assert.equal(labelForAdminPath('/admin/coalition/abc?tab=checkins'), 'partner')
-  assert.equal(labelForAdminPath('/admin/obr/abc'), 'OBR profile')
+  assert.equal(labelForAdminPath('/admin/obr/abc'), 'OBR intake')
   assert.equal(labelForAdminPath('/admin/integrations/google/x/sheets'), 'Google Sheets')
 })
 
@@ -55,6 +55,8 @@ test('section nav is role-aware and marks the active section', () => {
   const cm = sectionsForRole('case_manager').map((s) => s.href)
   assert.ok(cm.includes('/admin/participants'))
   assert.ok(!cm.includes('/admin/donors'))
+  assert.ok(!cm.includes('/admin/obr'), 'case managers do not see OBR')
+  assert.ok(sectionsForRole('leadership_readonly').some((s) => s.href === '/admin/obr'))
   assert.ok(sectionsForRole('operator').some((s) => s.href === '/admin/media'))
   assert.equal(sectionsForRole(null).every((s) => s.roles === 'all'), true)
   assert.equal(isActiveSection('/admin', '/admin/participants'), false)

@@ -1,14 +1,13 @@
-// VIZIONZ SANKOFA · /admin/obr — OBR & Readiness
+// VIZIONZ SANKOFA · /admin/obr — Organizational Behavioral Readiness (OBR)
 //
-// Two parts:
-//   1. Organizational readiness (OBR): VS is the first organization to go
-//      through the BRSA OBR standard. VS keeps the org intake + evidence
-//      checklist here; a certified evaluator issues the rating, which is
-//      recorded as an append-only decision record (standard version, rationale).
-//   2. Individual readiness: where participants are in the readiness stages
-//      (read from the client-flow stage data; scoped by RLS to what the
-//      signed-in person may see).
-// No readiness-vendor branding in VS operations (build brief v3, section 2).
+// OBR is VS's own onboarding / intake that measures Vizionz Sankofa's
+// organizational behavioral readiness for Yakini (BRSA standard). VS staff
+// complete the intake and upload evidence for the checklist; Clarence
+// monitors it from his side through the read-only export
+// public.vs_obr_monitor_summary(). A certified evaluator issues the rating,
+// recorded as an append-only decision (standard version, rationale).
+// Executive / operator edit; leadership_readonly reads; case managers have
+// no access (RLS enforces the same).
 
 import Link from 'next/link'
 import {
@@ -20,7 +19,6 @@ import { createClient } from '@/lib/supabase/server'
 import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 import {
   Card,
-  EmptyState,
   Meta,
   Notice,
   PageIntro,
@@ -37,38 +35,25 @@ import { ObrStartClient } from './ObrStartClient'
 import {
   CERTIFICATION_LABELS,
   EVIDENCE_ITEMS,
+  EVIDENCE_STATUS_LABELS,
+  OBR_FULL_NAME,
   OBR_STATUS_LABELS,
   type CertificationStatus,
+  type EvidenceStatus,
   type ObrStatus,
 } from './types'
 
 export const dynamic = 'force-dynamic'
 
-type ProfileRow = {
-  id: string
-  is_self: boolean
-  organization_id: string | null
-  display_name: string
-  status: ObrStatus
-  updated_at: string
-}
+type ProfileRow = { id: string; status: ObrStatus; updated_at: string; submitted_at: string | null }
 type RatingRow = {
-  profile_id: string
   certification_status: CertificationStatus
   rating_label: string | null
   standard_version: string
   reviewed_on: string
   expires_on: string | null
-  created_at: string
 }
-type ReadinessParticipant = {
-  id: string
-  first_name: string
-  last_name: string
-  preferred_name: string | null
-  current_stage: string
-  stage_changed_at: string | null
-}
+type EvidenceRow = { id: string; item_key: string; status: EvidenceStatus }
 
 export default async function ObrPage() {
   const user = await requireOperatorOrEmployee()
@@ -77,209 +62,145 @@ export default async function ObrPage() {
   const canSeeObr = role === 'executive' || role === 'operator' || role === 'leadership_readonly'
   const canEdit = role === 'executive' || role === 'operator'
 
+  const crumbs = <AdminCrumbs trail={[{ label: 'OBR' }]} fallbackHref="/admin" fallbackLabel="Operations" />
+
+  if (!canSeeObr) {
+    return (
+      <div>
+        {crumbs}
+        <PageIntro kicker="OBR" title={OBR_FULL_NAME} />
+        <Notice>OBR is available to executives, operators and leadership.</Notice>
+      </div>
+    )
+  }
+
   const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('vs_obr_profiles')
+    .select('id, status, updated_at, submitted_at')
+    .eq('is_self', true)
+    .maybeSingle()
+  const missing = isMissingTable(error)
+  const profile = (data ?? null) as ProfileRow | null
 
-  // ── Organizational readiness ──────────────────────────────────────────
-  let obrMissing = false
-  let profiles: ProfileRow[] = []
-  const latestRating = new Map<string, RatingRow>()
-  const evidenceOnFile = new Map<string, number>()
-  let partnerOptions: { id: string; name: string }[] = []
-
-  if (canSeeObr) {
-    const { data, error } = await supabase
-      .from('vs_obr_profiles')
-      .select('id, is_self, organization_id, display_name, status, updated_at')
-      .order('is_self', { ascending: false })
-      .order('display_name', { ascending: true })
-    if (isMissingTable(error)) obrMissing = true
-    profiles = (data ?? []) as unknown as ProfileRow[]
-
-    if (!obrMissing && profiles.length > 0) {
-      const ids = profiles.map((p) => p.id)
-      const [{ data: ratings }, { data: evidence }] = await Promise.all([
-        supabase
-          .from('vs_obr_ratings')
-          .select('profile_id, certification_status, rating_label, standard_version, reviewed_on, expires_on, created_at')
-          .in('profile_id', ids)
-          .order('created_at', { ascending: false }),
-        supabase.from('vs_obr_evidence').select('profile_id, status').in('profile_id', ids),
-      ])
-      for (const r of (ratings ?? []) as unknown as RatingRow[]) {
-        if (!latestRating.has(r.profile_id)) latestRating.set(r.profile_id, r)
-      }
-      for (const e of (evidence ?? []) as { profile_id: string; status: string }[]) {
-        if (e.status !== 'missing') evidenceOnFile.set(e.profile_id, (evidenceOnFile.get(e.profile_id) ?? 0) + 1)
-      }
+  let evidence: EvidenceRow[] = []
+  const filesByEvidence = new Map<string, number>()
+  let latest: RatingRow | null = null
+  if (profile) {
+    const [{ data: ev }, { data: files }, { data: ratings }] = await Promise.all([
+      supabase.from('vs_obr_evidence').select('id, item_key, status').eq('profile_id', profile.id),
+      supabase.from('vs_obr_evidence_files').select('evidence_id').eq('profile_id', profile.id),
+      supabase
+        .from('vs_obr_ratings')
+        .select('certification_status, rating_label, standard_version, reviewed_on, expires_on')
+        .eq('profile_id', profile.id)
+        .order('created_at', { ascending: false })
+        .limit(1),
+    ])
+    evidence = (ev ?? []) as EvidenceRow[]
+    for (const f of (files ?? []) as { evidence_id: string }[]) {
+      filesByEvidence.set(f.evidence_id, (filesByEvidence.get(f.evidence_id) ?? 0) + 1)
     }
-
-    if (!obrMissing && canEdit) {
-      const { data: orgs } = await supabase
-        .from('organizations')
-        .select('id, name, relationship_kind')
-        .in('relationship_kind', ['partner', 'both'])
-        .order('name', { ascending: true })
-      const taken = new Set(profiles.map((p) => p.organization_id).filter(Boolean))
-      partnerOptions = ((orgs ?? []) as { id: string; name: string }[]).filter((o) => !taken.has(o.id))
-    }
+    latest = ((ratings ?? [])[0] ?? null) as RatingRow | null
   }
 
-  const selfProfile = profiles.find((p) => p.is_self) ?? null
-  const certifiedCount = profiles.filter((p) => latestRating.get(p.id)?.certification_status === 'certified').length
-
-  // ── Individual readiness (client-flow stages) ─────────────────────────
-  let stageMissing = false
-  let readinessPeople: ReadinessParticipant[] = []
-  {
-    const { data, error } = await supabase
-      .from('participants')
-      .select('id, first_name, last_name, preferred_name, current_stage, stage_changed_at')
-      .in('current_stage', ['readiness_evaluation', 'certified'])
-      .order('stage_changed_at', { ascending: true })
-      .limit(200)
-    if (error) stageMissing = true
-    readinessPeople = (data ?? []) as unknown as ReadinessParticipant[]
-  }
-  const { count: sentToReadiness } = await supabase
-    .from('participants')
-    .select('id', { count: 'exact', head: true })
-    .not('legacyline_subject_id', 'is', null)
-
-  const inEvaluation = readinessPeople.filter((p) => p.current_stage === 'readiness_evaluation')
-  const certifiedPeople = readinessPeople.filter((p) => p.current_stage === 'certified')
+  const byKey = new Map(evidence.map((e) => [e.item_key, e]))
+  const complete = EVIDENCE_ITEMS.filter((i) => {
+    const s = byKey.get(i.key)?.status
+    return s === 'on_file' || s === 'verified'
+  }).length
+  const pct = Math.round((1000 * complete) / EVIDENCE_ITEMS.length) / 10
+  const fileCount = [...filesByEvidence.values()].reduce((a, b) => a + b, 0)
 
   return (
     <div>
-      <AdminCrumbs trail={[{ label: 'OBR & Readiness' }]} fallbackHref="/admin" fallbackLabel="Operations" />
-      <PageIntro kicker="Readiness · OBR" title="OBR & Readiness">
-        Organizational readiness (OBR) under the BRSA standard — Vizionz Sankofa is the first
-        organization to go through it — and where participants stand in individual readiness.
-        A certified evaluator issues every rating. Nothing here is scored automatically.
+      {crumbs}
+      <PageIntro kicker="OBR · Vizionz Sankofa" title={OBR_FULL_NAME}>
+        VS&apos;s own OBR intake under the BRSA standard. Staff complete the intake sections and
+        upload evidence for each checklist item; Clarence monitors progress from his side. A
+        certified evaluator issues the rating. Nothing here is scored automatically.
       </PageIntro>
 
-      {canSeeObr && (
+      {missing ? (
+        <Notice>
+          The OBR tables are not in the database yet. Apply migration{' '}
+          <code>20261017000600_vs_obr_readiness.sql</code> to turn this section on.
+        </Notice>
+      ) : !profile ? (
+        <Card>
+          <div style={{ fontSize: '18px', fontWeight: 600, fontFamily: SERIF, marginBottom: '6px' }}>
+            Start the VS OBR intake
+          </div>
+          <p style={{ fontSize: '14px', color: 'rgba(10, 10, 10, 0.65)', margin: '0 0 14px', lineHeight: 1.55 }}>
+            Governance, staff, policy and financial sections, plus the evidence checklist with
+            document uploads.
+          </p>
+          {canEdit ? <ObrStartClient /> : <Meta>Not started yet. An executive or operator can start it.</Meta>}
+        </Card>
+      ) : (
         <>
           <StatStrip>
-            <Stat label="OBR profiles" value={obrMissing ? '—' : profiles.length} accent="#5B2C8F" />
-            <Stat label="OBR certified" value={obrMissing ? '—' : certifiedCount} accent="#007A33" />
-            <Stat label="In readiness evaluation" value={stageMissing ? '—' : inEvaluation.length} accent="#B45F00" />
-            <Stat label="Participants certified" value={stageMissing ? '—' : certifiedPeople.length} />
+            <Stat label="Status" value={OBR_STATUS_LABELS[profile.status]} accent="#5B2C8F" />
+            <Stat label="Checklist complete" value={`${pct}%`} accent="#007A33" />
+            <Stat label="Evidence files" value={fileCount} />
+            <Stat
+              label="Evaluator decision"
+              value={latest ? CERTIFICATION_LABELS[latest.certification_status] : 'None yet'}
+              accent="#B45F00"
+            />
           </StatStrip>
 
-          <section style={{ marginBottom: '48px' }}>
-            <SectionLabel>Organizational readiness (OBR)</SectionLabel>
-
-            {obrMissing ? (
-              <Notice>
-                The OBR tables are not in the database yet. Apply migration{' '}
-                <code>20261017000600_vs_obr_readiness.sql</code> to turn this section on.
-              </Notice>
-            ) : (
-              <>
-                {!selfProfile && (
-                  <Card style={{ marginBottom: '16px' }}>
-                    <div style={{ fontSize: '18px', fontWeight: 600, fontFamily: SERIF, marginBottom: '6px' }}>
-                      Vizionz Sankofa OBR
-                    </div>
-                    <p style={{ fontSize: '14px', color: 'rgba(10, 10, 10, 0.65)', margin: '0 0 14px', lineHeight: 1.55 }}>
-                      Start the organizational readiness intake for VS: governance, staff, policy and
-                      financial sections, plus the evidence checklist.
-                    </p>
-                    {canEdit ? (
-                      <ObrStartClient mode="self" />
-                    ) : (
-                      <Meta>Not started yet. An executive or operator can start it.</Meta>
-                    )}
-                  </Card>
-                )}
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {profiles.map((p) => {
-                    const r = latestRating.get(p.id)
-                    const onFile = evidenceOnFile.get(p.id) ?? 0
-                    const certTone =
-                      r?.certification_status === 'certified'
-                        ? TONES.green
-                        : r?.certification_status === 'not_certified' || r?.certification_status === 'revoked'
-                        ? TONES.red
-                        : r?.certification_status === 'expired'
-                        ? TONES.amber
-                        : TONES.grey
-                    return (
-                      <Link key={p.id} href={`/admin/obr/${p.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <Card style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <div style={{ minWidth: 0, flex: '1 1 260px' }}>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center', marginBottom: '6px' }}>
-                              <h3 style={{ fontSize: '17px', fontWeight: 600, margin: 0, fontFamily: SERIF }}>{p.display_name}</h3>
-                              {p.is_self && <Pill {...TONES.navy}>Vizionz Sankofa</Pill>}
-                              <Pill>{OBR_STATUS_LABELS[p.status]}</Pill>
-                              {r && <Pill {...certTone}>{CERTIFICATION_LABELS[r.certification_status]}</Pill>}
-                            </div>
-                            <Meta>
-                              Evidence {onFile}/{EVIDENCE_ITEMS.length} on file
-                              {r ? ` · ${r.rating_label ? r.rating_label + ' · ' : ''}Standard ${r.standard_version} · Reviewed ${formatDay(r.reviewed_on)}` : ' · No rating yet'}
-                              {r?.expires_on ? ` · Expires ${formatDay(r.expires_on)}` : ''}
-                            </Meta>
-                          </div>
-                          <span style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#CE1126' }}>
-                            Open →
-                          </span>
-                        </Card>
-                      </Link>
-                    )
-                  })}
+          <Link href={`/admin/obr/${profile.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Card style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
+              <div style={{ minWidth: 0, flex: '1 1 260px' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center', marginBottom: '6px' }}>
+                  <h3 style={{ fontSize: '17px', fontWeight: 600, margin: 0, fontFamily: SERIF }}>Vizionz Sankofa OBR intake</h3>
+                  <Pill>{OBR_STATUS_LABELS[profile.status]}</Pill>
+                  {latest && (
+                    <Pill {...(latest.certification_status === 'certified' ? TONES.green : TONES.grey)}>
+                      {CERTIFICATION_LABELS[latest.certification_status]}
+                    </Pill>
+                  )}
                 </div>
+                <Meta>
+                  Evidence {complete}/{EVIDENCE_ITEMS.length} on file · {fileCount} file{fileCount === 1 ? '' : 's'} uploaded
+                  {latest ? ` · Standard ${latest.standard_version} · Reviewed ${formatDay(latest.reviewed_on)}` : ''}
+                  {latest?.expires_on ? ` · Expires ${formatDay(latest.expires_on)}` : ''}
+                  {' · '}Updated {formatDay(profile.updated_at)}
+                </Meta>
+              </div>
+              <span style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#CE1126' }}>
+                Open →
+              </span>
+            </Card>
+          </Link>
 
-                {canEdit && partnerOptions.length > 0 && (
-                  <div style={{ marginTop: '16px' }}>
-                    <ObrStartClient mode="partner" partners={partnerOptions} />
-                  </div>
-                )}
-              </>
-            )}
-          </section>
+          <SectionLabel>Evidence checklist</SectionLabel>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {EVIDENCE_ITEMS.map((item) => {
+              const row = byKey.get(item.key)
+              const status: EvidenceStatus = row?.status ?? 'missing'
+              const n = row ? filesByEvidence.get(row.id) ?? 0 : 0
+              const tone = status === 'verified' ? TONES.green : status === 'on_file' ? TONES.purple : TONES.grey
+              return (
+                <Link
+                  key={item.key}
+                  href={`/admin/obr/${profile.id}?tab=evidence`}
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  <Card style={{ padding: '12px 18px', display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '15px', fontWeight: 600 }}>{item.label}</span>
+                    <span style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <Meta>{n} file{n === 1 ? '' : 's'}</Meta>
+                      <Pill {...tone}>{EVIDENCE_STATUS_LABELS[status]}</Pill>
+                    </span>
+                  </Card>
+                </Link>
+              )
+            })}
+          </div>
         </>
       )}
-
-      <section style={{ marginBottom: '32px' }}>
-        <SectionLabel>Individual readiness</SectionLabel>
-        <p style={{ fontSize: '14px', color: 'rgba(10, 10, 10, 0.65)', margin: '0 0 16px', lineHeight: 1.55, maxWidth: '680px' }}>
-          Participants in the readiness evaluation or certified stage{role === 'case_manager' ? ' on your caseload' : ''}.
-          {typeof sentToReadiness === 'number' ? ` ${sentToReadiness} participant${sentToReadiness === 1 ? '' : 's'} sent to readiness so far.` : ''}{' '}
-          Scores and certification come back from the evaluator and show on each participant&apos;s file.
-        </p>
-        {stageMissing ? (
-          <Notice>
-            Client-flow stages are not in the database yet. Apply migration{' '}
-            <code>20261017000500_vs_client_flow_and_voice.sql</code> to see readiness stages here.
-          </Notice>
-        ) : readinessPeople.length === 0 ? (
-          <EmptyState title="No one in readiness yet">
-            When a participant moves to the readiness evaluation stage they appear here.
-          </EmptyState>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {readinessPeople.map((p) => (
-              <Link key={p.id} href={`/admin/participants/${p.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <Card style={{ padding: '14px 18px', display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center' }}>
-                    <span style={{ fontSize: '15px', fontWeight: 600 }}>
-                      {p.preferred_name || p.first_name} {p.last_name}
-                    </span>
-                    {p.current_stage === 'certified' ? (
-                      <Pill {...TONES.green}>Certified</Pill>
-                    ) : (
-                      <Pill {...TONES.amber}>Readiness evaluation</Pill>
-                    )}
-                  </div>
-                  <Meta>Since {formatDay(p.stage_changed_at)}</Meta>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        )}
-      </section>
-
     </div>
   )
 }

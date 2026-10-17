@@ -1,5 +1,12 @@
-// VIZIONZ SANKOFA · OBR (Organizational Readiness) types
+// VIZIONZ SANKOFA · OBR (Organizational Behavioral Readiness) types
 // Mirrors supabase/migrations/20261017000600_vs_obr_readiness.sql
+
+export const OBR_FULL_NAME = 'Organizational Behavioral Readiness'
+
+// Private storage bucket for uploaded evidence (executive / operator only).
+// Files live under <profile_id>/<item_key>/...
+export const OBR_EVIDENCE_BUCKET = 'vs-obr-evidence'
+export const OBR_MAX_FILE_BYTES = 25 * 1024 * 1024
 
 export type ObrStatus = 'not_started' | 'in_progress' | 'ready_for_review' | 'submitted' | 'rated'
 
@@ -132,7 +139,7 @@ export type ObrRating = {
   created_at: string
 }
 
-// OBR domains (BRSA organizational readiness): governance & leadership,
+// OBR domains (BRSA organizational behavioral readiness): governance & leadership,
 // staff, policy & compliance, financial. Scores are entered as the evaluator
 // issued them; nothing is computed here.
 export const OBR_DOMAINS: { key: string; label: string }[] = [
@@ -143,3 +150,18 @@ export const OBR_DOMAINS: { key: string; label: string }[] = [
 ]
 
 export type DocumentOption = { id: string; title: string; category: string; document_date: string | null }
+
+export type ObrEvidenceFile = {
+  id: string
+  profile_id: string
+  evidence_id: string
+  storage_path: string
+  file_name: string
+  mime_type: string | null
+  size_bytes: number | null
+  uploaded_by_name: string | null
+  uploaded_at: string
+}
+
+export const OBR_FILE_COLUMNS =
+  'id, profile_id, evidence_id, storage_path, file_name, mime_type, size_bytes, uploaded_by_name, uploaded_at'

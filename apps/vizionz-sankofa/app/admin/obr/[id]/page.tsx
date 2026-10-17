@@ -1,5 +1,6 @@
-// VIZIONZ SANKOFA · /admin/obr/[id] — one OBR profile
-// Intake sections, evidence checklist, and the rating history.
+// VIZIONZ SANKOFA · /admin/obr/[id] — the VS OBR (Organizational Behavioral
+// Readiness) intake: intake sections, evidence checklist with uploads, and
+// the evaluator decision history. Case managers have no access.
 
 import { notFound } from 'next/navigation'
 import {
@@ -13,7 +14,10 @@ import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 import { Notice, PageIntro, isMissingTable } from '@/components/admin/ui'
 import { ObrDetailClient } from './ObrDetailClient'
 import {
+  OBR_FILE_COLUMNS,
+  OBR_FULL_NAME,
   OBR_PROFILE_COLUMNS,
+  type ObrEvidenceFile,
   type DocumentOption,
   type ObrEvidence,
   type ObrProfile,
@@ -28,6 +32,16 @@ export default async function ObrProfilePage({ params }: { params: Promise<{ id:
   void touchLastActive(user.id)
   const role = getAccessRole(user)
   const canEdit = role === 'executive' || role === 'operator'
+  const canSeeObr = canEdit || role === 'leadership_readonly'
+  if (!canSeeObr) {
+    return (
+      <div>
+        <AdminCrumbs trail={[{ label: 'OBR', href: '/admin/obr' }, { label: 'OBR intake' }]} fallbackHref="/admin" fallbackLabel="Operations" />
+        <PageIntro kicker="OBR" title={OBR_FULL_NAME} />
+        <Notice>OBR is available to executives, operators and leadership.</Notice>
+      </div>
+    )
+  }
 
   const supabase = await createClient()
   const { data, error } = await supabase.from('vs_obr_profiles').select(OBR_PROFILE_COLUMNS).eq('id', id).maybeSingle()
@@ -35,8 +49,8 @@ export default async function ObrProfilePage({ params }: { params: Promise<{ id:
   if (isMissingTable(error)) {
     return (
       <div>
-        <AdminCrumbs trail={[{ label: 'OBR & Readiness', href: '/admin/obr' }, { label: 'OBR profile' }]} fallbackHref="/admin/obr" fallbackLabel="OBR & Readiness" />
-        <PageIntro kicker="Readiness · OBR" title="OBR profile" />
+        <AdminCrumbs trail={[{ label: 'OBR', href: '/admin/obr' }, { label: 'OBR intake' }]} fallbackHref="/admin/obr" fallbackLabel="OBR" />
+        <PageIntro kicker="OBR" title={OBR_FULL_NAME} />
         <Notice>
           The OBR tables are not in the database yet. Apply migration <code>20261017000600_vs_obr_readiness.sql</code>.
         </Notice>
@@ -46,7 +60,7 @@ export default async function ObrProfilePage({ params }: { params: Promise<{ id:
   if (error || !data) notFound()
   const profile = data as unknown as ObrProfile
 
-  const [{ data: evidence }, { data: ratings }, { data: docs }] = await Promise.all([
+  const [{ data: evidence }, { data: ratings }, { data: docs }, { data: files }] = await Promise.all([
     supabase
       .from('vs_obr_evidence')
       .select('id, profile_id, item_key, label, status, document_id, source, notes, attested_by_name, attested_at, updated_at')
@@ -67,20 +81,22 @@ export default async function ObrProfilePage({ params }: { params: Promise<{ id:
           .order('uploaded_at', { ascending: false })
           .limit(300)
       : Promise.resolve({ data: [] }),
+    supabase.from('vs_obr_evidence_files').select(OBR_FILE_COLUMNS).eq('profile_id', id).order('uploaded_at', { ascending: true }),
   ])
 
   return (
     <div>
       <AdminCrumbs
-        trail={[{ label: 'OBR & Readiness', href: '/admin/obr' }, { label: profile.display_name }]}
+        trail={[{ label: 'OBR', href: '/admin/obr' }, { label: profile.is_self ? 'VS OBR intake' : profile.display_name }]}
         fallbackHref="/admin/obr"
-        fallbackLabel="OBR & Readiness"
+        fallbackLabel="OBR"
       />
       <ObrDetailClient
         profile={profile}
         evidence={(evidence ?? []) as unknown as ObrEvidence[]}
         ratings={(ratings ?? []) as unknown as ObrRating[]}
         documents={(docs ?? []) as unknown as DocumentOption[]}
+        files={(files ?? []) as unknown as ObrEvidenceFile[]}
         canEdit={canEdit}
         operatorName={getOperatorDisplayName(user)}
       />
