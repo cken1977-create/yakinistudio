@@ -23,6 +23,9 @@ export async function GET(request: NextRequest) {
     })
 
     if (!error) {
+      // Invited staff get their pre-assigned role on first sign-in. Harmless
+      // for everyone else (returns null); ignored if the migration is absent.
+      await supabase.rpc('vs_accept_invite')
       // Session created. Redirect to admin (or wherever 'next' points).
       redirect(next)
     }

@@ -22,10 +22,8 @@ export default async function ParticipantsPage() {
   const supabase = await createClient()
 
   // Fetch participants
-  const { data: participantsData, error: participantsError } = await supabase
-    .from('participants')
-    .select(
-      'id, first_name, last_name, preferred_name, date_of_birth, ' +
+  const PARTICIPANT_COLS =
+    'id, first_name, last_name, preferred_name, date_of_birth, ' +
         'phone_primary, phone_secondary, email, ' +
         'address_line1, address_line2, city, state, zip, ' +
         'gender, race_ethnicity, primary_language, ' +
@@ -36,9 +34,14 @@ export default async function ParticipantsPage() {
         'consent_to_services, consent_to_share_data, consent_to_photos, ' +
         'consent_signed_at, intake_notes, ' +
         'legacyline_subject_id, legacyline_pushed_at, legacyline_consent_signed, ' +
-        'created_at, updated_at',
-    )
-    .order('intake_date', { ascending: false })
+        'created_at, updated_at'
+  const listParticipants = (cols: string) =>
+    supabase.from('participants').select(cols).order('intake_date', { ascending: false })
+  // service_county arrives with migration 0900; read without it until then.
+  let { data: participantsData, error: participantsError } = await listParticipants(PARTICIPANT_COLS + ', service_county')
+  if (participantsError && /service_county/.test(participantsError.message)) {
+    ;({ data: participantsData, error: participantsError } = await listParticipants(PARTICIPANT_COLS))
+  }
 
   const participants = (
     participantsError ? [] : (participantsData ?? [])

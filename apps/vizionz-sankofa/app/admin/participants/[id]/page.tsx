@@ -105,17 +105,19 @@ export default async function ParticipantDetailPage({
   }))
 
   // Services delivered
-  const { data: servicesData } = await supabase
-    .from('services_delivered')
-    .select(
-      'id, participant_id, service_type_id, delivered_by_id, delivered_at, ' +
-        'units, outcome, related_cohort_id, notes, cost_amount, ' +
-        'cost_funded_by, created_at, ' +
-        'service_type:service_type_id (name, category, countable_unit), ' +
-        'staff:delivered_by_id (full_name)',
-    )
-    .eq('participant_id', id)
-    .order('delivered_at', { ascending: false })
+  const SERVICE_COLS =
+    'id, participant_id, service_type_id, delivered_by_id, delivered_at, ' +
+    'units, outcome, related_cohort_id, notes, cost_amount, ' +
+    'cost_funded_by, created_at, ' +
+    'service_type:service_type_id (name, category, countable_unit), ' +
+    'staff:delivered_by_id (full_name)'
+  const listServices = (cols: string) =>
+    supabase.from('services_delivered').select(cols).eq('participant_id', id).order('delivered_at', { ascending: false })
+  // funder_key / service_county arrive with migration 0900.
+  let { data: servicesData, error: servicesError } = await listServices(SERVICE_COLS + ', funder_key, service_county')
+  if (servicesError && /funder_key|service_county/.test(servicesError.message)) {
+    ;({ data: servicesData, error: servicesError } = await listServices(SERVICE_COLS))
+  }
 
   type ServiceWithJoin = ServiceDeliveredRecord & {
     service_type: {

@@ -18,6 +18,9 @@
 import { redirect } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
 import { createClient } from './server'
+import { ACCESS_ROLE_LABELS } from './roles'
+
+export { ACCESS_ROLE_LABELS }
 
 // ─── Types ──────────────────────────────────────────────────────────
 
@@ -85,11 +88,21 @@ async function loadCurrentOperator(): Promise<
     return { kind: 'unauthenticated' }
   }
 
-  const { data: operatorRow, error } = await supabase
-    .from('vs_operators')
-    .select('*')
-    .eq('user_id', user.id)
-    .maybeSingle()
+  const readRow = () => supabase.from('vs_operators').select('*').eq('user_id', user.id).maybeSingle()
+  let { data: operatorRow, error } = await readRow()
+
+  // Invite flow: someone signing in with no role yet picks up the role an
+  // executive/operator pre-assigned to their email (vs_accept_invite, 1000).
+  // Best effort: before that migration is applied the call just fails.
+  if (!error && (!operatorRow || (operatorRow.role === 'pending' && !operatorRow.revoked_at))) {
+    const { error: acceptError } = await supabase.rpc('vs_accept_invite')
+    // Re-read even when this call granted nothing: the layout and the page
+    // load in parallel, so the other request may have just accepted it.
+    // Different URL on purpose (.in instead of .eq): Next.js memoizes
+    // identical GET fetches within one render and would return the old row.
+    if (!acceptError)
+      ({ data: operatorRow, error } = await supabase.from('vs_operators').select('*').in('user_id', [user.id]).maybeSingle())
+  }
 
   if (error || !operatorRow) {
     return { kind: 'no_operator_row', user }
@@ -240,10 +253,16 @@ export async function getOperator(): Promise<User | null> {
 export async function touchLastActive(userId: string): Promise<void> {
   try {
     const supabase = await createClient()
-    await supabase
-      .from('vs_operators')
-      .update({ last_active_at: new Date().toISOString() })
-      .eq('user_id', userId)
+    // vs_touch_last_active (1200) works for every role; the direct update
+    // below is the fallback before it is applied (RLS lets only
+    // executives / operators update their row that way).
+    const { error } = await supabase.rpc('vs_touch_last_active')
+    if (error) {
+      await supabase
+        .from('vs_operators')
+        .update({ last_active_at: new Date().toISOString() })
+        .eq('user_id', userId)
+    }
   } catch {
     // Silently swallow — activity tracking is not load-bearing.
   }
@@ -286,4 +305,11 @@ export function getAccessRole(user: AuthenticatedOperator): VsAccessRole | null 
 /** True for roles that can ask Intelligence (everyone with an access role). */
 export function canUseIntelligence(user: AuthenticatedOperator): boolean {
   return getAccessRole(user) !== null
+}
+
+/** Badge text for the signed-in user (access role; falls back to the account role). */
+export function roleBadgeLabel(user: AuthenticatedOperator): string {
+  const r = getAccessRole(user)
+  if (r) return ACCESS_ROLE_LABELS[r]
+  return user.role === 'operator' ? 'Operator' : 'Employee'
 }

@@ -10,6 +10,8 @@ import { requireOperatorOrEmployee } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 import { IntakeRow, type IntakeRecord } from './IntakeRow'
 import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
+import Link from 'next/link'
+import { pageHref, pageInfo, pageRange, parsePage, type PageInfo } from '@/lib/admin-nav/pagination'
 
 export const dynamic = 'force-dynamic'
 
@@ -67,7 +69,7 @@ function isValidFilter(value: string | undefined): value is FilterValue {
 export default async function IntakesAdminPage({
   searchParams,
 }: {
-  searchParams: Promise<{ filter?: string }>
+  searchParams: Promise<{ filter?: string; page?: string }>
 }) {
   const viewer = await requireOperatorOrEmployee()
 
@@ -78,18 +80,31 @@ export default async function IntakesAdminPage({
 
   const supabase = await createClient()
 
-  // Fetch intakes — filtered if specified, all otherwise
-  let query = supabase
-    .from('intake_requests')
-    .select('*')
-    .order('created_at', { ascending: false })
-
-  if (filter !== 'all') {
-    query = query.eq('status', filter)
+  // Fetch one page of intakes (newest first) — filtered if specified.
+  const requestedPage = parsePage(params.page)
+  const fetchPage = (page: number) => {
+    const { from, to } = pageRange(page, INTAKE_PAGE_SIZE)
+    let q = supabase
+      .from('intake_requests')
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(from, to)
+    if (filter !== 'all') q = q.eq('status', filter)
+    return q
   }
-
-  const { data, error } = await query
+  let { data, error, count } = await fetchPage(requestedPage)
+  if (error?.code === 'PGRST103') {
+    // Asked for rows past the end: PostgREST refuses the range; count again.
+    ;({ data, error, count } = await fetchPage(1))
+  }
+  let info = pageInfo(requestedPage, INTAKE_PAGE_SIZE, count ?? 0)
+  // Past the last page (e.g. a stale link): show the last page instead.
+  if (!error && info.page !== requestedPage) {
+    ;({ data, error, count } = await fetchPage(info.page))
+    info = pageInfo(info.page, INTAKE_PAGE_SIZE, count ?? 0)
+  }
   const intakes = (data ?? []) as IntakeRecord[]
+  const pagerParams = { filter: filter === 'all' ? undefined : filter }
 
   // Count for filter pills (independent of current filter)
   const counts = await fetchStatusCounts(supabase)
@@ -208,7 +223,49 @@ export default async function IntakesAdminPage({
       {!error && intakes.length > 0 && filter !== 'all' && (
         <FlatList intakes={intakes} filter={filter} viewerRole={viewer.role} />
       )}
+
+      {!error && info.total > 0 && (
+        <Pager info={info} prev={pageHref('/admin/intakes', pagerParams, info.page - 1)} next={pageHref('/admin/intakes', pagerParams, info.page + 1)} />
+      )}
     </div>
+  )
+}
+
+// ─── Pager ─────────────────────────────────────────────────────────────
+
+const INTAKE_PAGE_SIZE = 25
+
+function Pager({ info, prev, next }: { info: PageInfo; prev: string; next: string }) {
+  const link = (enabled: boolean): React.CSSProperties => ({
+    fontSize: '13px',
+    fontWeight: 600,
+    padding: '10px 16px',
+    minHeight: '44px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    borderRadius: '4px',
+    border: '1px solid rgba(10, 10, 10, 0.2)',
+    color: enabled ? '#0A0A0A' : 'rgba(10, 10, 10, 0.35)',
+    background: '#FFFFFF',
+    textDecoration: 'none',
+    pointerEvents: enabled ? 'auto' : 'none',
+  })
+  return (
+    <nav
+      aria-label="Pages"
+      data-testid="intake-pager"
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginTop: '24px', flexWrap: 'wrap' }}
+    >
+      <Link href={prev} style={link(info.page > 1)} aria-disabled={info.page <= 1} data-testid="intake-prev">
+        ← Newer
+      </Link>
+      <span style={{ fontSize: '13px', color: 'rgba(10, 10, 10, 0.6)' }}>
+        {info.from + 1}–{info.to + 1} of {info.total} · page {info.page} of {info.pages}
+      </span>
+      <Link href={next} style={link(info.page < info.pages)} aria-disabled={info.page >= info.pages} data-testid="intake-next">
+        Older →
+      </Link>
+    </nav>
   )
 }
 

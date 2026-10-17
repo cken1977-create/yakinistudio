@@ -26,10 +26,13 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   // OBR = Organizational Behavioral Readiness (VS's own intake). Not for case managers.
   { href: '/admin/obr', label: 'OBR', roles: EXEC_OP_LEAD },
   { href: '/admin/grants', label: 'Grants', roles: EXEC_OP_LEAD },
+  // Built from the single participant entry; RLS limits case managers to their caseload.
+  { href: '/admin/reports', label: 'Funder Reports', roles: 'all' },
   { href: '/admin/donors', label: 'Donors', roles: EXEC_OP_LEAD },
   { href: '/admin/documents', label: 'Documents', roles: EXEC_OP },
   { href: '/admin/media', label: 'Photos & Videos', roles: EXEC_OP },
   { href: '/admin/intelligence', label: 'Intelligence', roles: 'all' },
+  { href: '/admin/team', label: 'Team', roles: EXEC_OP },
 ]
 
 // Labels for screens that are not in the main nav.
@@ -41,6 +44,8 @@ const EXTRA_LABELS: Array<[RegExp, string]> = [
   [/^\/admin\/integrations\/google\/[^/]+\/sheets$/, 'Google Sheets'],
   [/^\/admin\/integrations\/google$/, 'Google Integration'],
   [/^\/admin\/desk$/, 'Operator Desk'],
+  [/^\/admin\/reports\/[^/]+$/, 'funder report'],
+  [/^\/admin\/profile$/, 'My Profile'],
 ]
 
 export function sectionsForRole(role: VsAccessRole | null): AdminSection[] {

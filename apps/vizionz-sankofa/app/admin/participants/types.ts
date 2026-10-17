@@ -59,6 +59,8 @@ export type ParticipantRecord = {
   legacyline_subject_id: string | null
   legacyline_pushed_at: string | null
   legacyline_consent_signed: boolean | null
+  // Funder reporting (migration 0900). Optional: absent until it is applied.
+  service_county?: 'bernalillo' | 'lea' | 'other' | null
   created_at: string
   updated_at: string
 }
@@ -82,6 +84,7 @@ export type ParticipantEditableFields = {
   consent_to_services: boolean | null
   consent_to_share_data: boolean | null
   consent_to_photos: boolean | null
+  service_county?: 'bernalillo' | 'lea' | 'other' | null
 }
 
 export type StaffRecord = {
