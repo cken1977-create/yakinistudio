@@ -55,6 +55,9 @@ const DEFAULT_ITEMS: CoalitionItem[] = [
   // To add a partner: one line here, plus one row in the coalition SQL.
 
   // Funders & Institutional Support
+  { kind: 'funder', role: 'State Funder', name: 'Housing New Mexico' },
+  { kind: 'funder', role: 'State Funder', name: 'State of New Mexico' },
+  { kind: 'funder', role: 'State Senator', name: 'Senator Mimi Stewart' },
   {
     kind: 'funder',
     role: 'Foundation',
