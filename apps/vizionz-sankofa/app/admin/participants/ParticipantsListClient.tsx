@@ -660,6 +660,7 @@ function ParticipantModal({
     consent_to_services: participant?.consent_to_services ?? false,
     consent_to_share_data: participant?.consent_to_share_data ?? false,
     consent_to_photos: participant?.consent_to_photos ?? false,
+    service_county: participant?.service_county ?? null,
   })
   const [pending, startTransition] = useTransition()
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -679,11 +680,15 @@ function ParticipantModal({
     setErrorMsg(null)
     startTransition(async () => {
       const supabase = createBrowserClient()
+      // Only send service_county once the column exists (migration 0900) or a
+      // county was picked, so saving still works before the update is applied.
+      const payload: ParticipantEditableFields = { ...draft }
+      if (payload.service_county == null && !(participant && 'service_county' in participant)) delete payload.service_county
 
       if (mode === 'edit' && participant) {
         const { data, error } = await supabase
           .from('participants')
-          .update(draft)
+          .update(payload)
           .eq('id', participant.id)
           .select()
           .single()
@@ -696,7 +701,7 @@ function ParticipantModal({
       } else {
         const { data, error } = await supabase
           .from('participants')
-          .insert(draft)
+          .insert(payload)
           .select()
           .single()
 
@@ -848,6 +853,22 @@ function ParticipantModal({
               onChange={(e) => update('zip', e.target.value || null)}
               style={{ ...inputStyle, maxWidth: '120px' }}
             />
+          </Field>
+        </Row>
+
+        <Row>
+          <Field label="Service county (Housing NM reports)">
+            <select
+              value={draft.service_county ?? ''}
+              onChange={(e) => update('service_county', (e.target.value || null) as ParticipantEditableFields['service_county'])}
+              style={inputStyle}
+              data-testid="participant-service-county"
+            >
+              <option value="">Not recorded</option>
+              <option value="bernalillo">Bernalillo County</option>
+              <option value="lea">Lea County</option>
+              <option value="other">Other county</option>
+            </select>
           </Field>
         </Row>
 

@@ -11,6 +11,7 @@ import {
   requireOperatorOrEmployee,
   getOperatorDisplayName,
   getAccessRole,
+  roleBadgeLabel,
 } from '@/lib/supabase/auth'
 import { AdminSectionNav } from '@/components/admin/nav/AdminSectionNav'
 import { NavHistory } from '@/components/admin/nav/NavHistory'
@@ -53,10 +54,16 @@ export default async function AdminLayout({
   // getOperatorDisplayName in lib/supabase/auth.ts.
   const displayName = getOperatorDisplayName(user)
 
-  // Wave 2.5: Role badge in topbar — visible signal of access level
-  const isOperator = user.role === 'operator'
-  const roleBadgeLabel = isOperator ? 'Operator' : 'Employee'
-  const roleBadgeColor = isOperator ? '#0A2548' : '#CE1126'
+  // Role badge in the top bar, on every screen size (it used to be hidden
+  // on all of them). Shows the access role and opens My Profile.
+  const accessRole = getAccessRole(user)
+  const badgeLabel = roleBadgeLabel(user)
+  const roleBadgeColor =
+    accessRole === 'executive' || accessRole === 'operator' || (!accessRole && user.role === 'operator')
+      ? '#0A2548'
+      : accessRole === 'leadership_readonly'
+        ? '#007A33'
+        : '#CE1126'
 
   return (
     <div
@@ -78,6 +85,7 @@ export default async function AdminLayout({
 
       {/* Operator header */}
       <header
+        className="vs-admin-header"
         style={{
           background: '#FFFFFF',
           borderBottom: '1px solid rgba(10, 10, 10, 0.08)',
@@ -147,18 +155,28 @@ export default async function AdminLayout({
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '16px',
+            gap: '12px',
           }}
         >
-          <div
-            style={{
-              display: 'none',
-              alignItems: 'center',
-              gap: '10px',
-            }}
-            className="vs-admin-email-desktop"
+          <style>{`
+            .vs-admin-who { display: flex; align-items: center; gap: 10px; text-decoration: none; min-height: 36px; }
+            .vs-admin-who:focus-visible { outline: 2px solid #0A2548; outline-offset: 2px; }
+            @media (max-width: 640px) {
+              .vs-admin-who-name { display: none; }
+              .vs-admin-role-badge { padding: 3px 7px !important; letter-spacing: 0.08em !important; }
+              .vs-admin-header { padding: 12px 14px !important; gap: 8px !important; }
+              .vs-admin-signout { padding: 8px 10px !important; letter-spacing: 0.04em !important; }
+            }
+          `}</style>
+          <Link
+            href="/admin/profile"
+            className="vs-admin-who"
+            title={`${displayName} · ${badgeLabel} — My Profile`}
+            aria-label={`Signed in as ${displayName}, ${badgeLabel}. Open my profile.`}
+            data-testid="role-badge-link"
           >
             <span
+              className="vs-admin-who-name"
               style={{
                 fontSize: '13px',
                 color: 'rgba(10, 10, 10, 0.75)',
@@ -168,6 +186,8 @@ export default async function AdminLayout({
               {displayName}
             </span>
             <span
+              className="vs-admin-role-badge"
+              data-testid="role-badge"
               style={{
                 display: 'inline-block',
                 padding: '3px 9px',
@@ -178,17 +198,19 @@ export default async function AdminLayout({
                 color: '#FFFFFF',
                 background: roleBadgeColor,
                 borderRadius: '2px',
+                whiteSpace: 'nowrap',
                 fontFamily:
                   'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
               }}
             >
-              {roleBadgeLabel}
+              {badgeLabel}
             </span>
-          </div>
+          </Link>
 
           <form action={signOut}>
             <button
               type="submit"
+              className="vs-admin-signout"
               style={{
                 fontSize: '12px',
                 fontWeight: 600,

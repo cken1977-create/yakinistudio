@@ -21,6 +21,7 @@ import {
   SERVICE_CATEGORY_COLORS,
 } from './types'
 import type { StaffRecord } from '../types'
+import { FUNDERS, SERVICE_COUNTY_LABELS, funderByKey, isServiceCounty } from '@/lib/funder-reports/funders'
 
 export function ServicesTab({
   participantId,
@@ -311,6 +312,8 @@ function ServiceRow({ service }: { service: ServiceWithJoins }) {
         {formatDateTime(service.delivered_at)}
         {service.delivered_by_name && ` · ${service.delivered_by_name}`}
         {service.cost_funded_by && ` · Funded by ${service.cost_funded_by}`}
+        {service.funder_key && ` · Report: ${funderByKey(service.funder_key)?.short ?? service.funder_key}`}
+        {isServiceCounty(service.service_county) && ` · ${SERVICE_COUNTY_LABELS[service.service_county]}`}
       </div>
       {service.notes && (
         <div
@@ -467,6 +470,9 @@ function LogServiceModal({
         notes: draft.notes,
         cost_amount: draft.cost_amount,
         cost_funded_by: draft.cost_funded_by,
+        // Only sent when picked, so logging still works before migration 0900.
+        ...(draft.funder_key ? { funder_key: draft.funder_key } : {}),
+        ...(draft.service_county ? { service_county: draft.service_county } : {}),
       }
 
       const { data, error } = await supabase
@@ -644,6 +650,37 @@ function LogServiceModal({
               placeholder="ACS, ACF, City of ABQ, general fund, etc."
               style={inputStyle}
             />
+          </Field>
+        </Row>
+
+        <Row>
+          <Field label="Funder report">
+            <select
+              value={draft.funder_key ?? ''}
+              onChange={(e) => update('funder_key', e.target.value || null)}
+              style={inputStyle}
+              data-testid="service-funder"
+            >
+              <option value="">Not tagged</option>
+              {FUNDERS.map((f) => (
+                <option key={f.key} value={f.key}>
+                  {f.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Service county">
+            <select
+              value={draft.service_county ?? ''}
+              onChange={(e) => update('service_county', e.target.value || null)}
+              style={inputStyle}
+              data-testid="service-county"
+            >
+              <option value="">Participant&apos;s county</option>
+              <option value="bernalillo">Bernalillo County</option>
+              <option value="lea">Lea County</option>
+              <option value="other">Other county</option>
+            </select>
           </Field>
         </Row>
 

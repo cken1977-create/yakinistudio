@@ -114,6 +114,9 @@ export type ServiceDeliveredRecord = {
   notes: string | null
   cost_amount: string | null
   cost_funded_by: string | null
+  // Funder reporting (migration 0900). Optional until it is applied.
+  funder_key?: string | null
+  service_county?: string | null
   created_at: string
 }
 
@@ -132,6 +135,8 @@ export type ServiceEditableFields = {
   notes: string | null
   cost_amount: string | null
   cost_funded_by: string | null
+  funder_key?: string | null
+  service_county?: string | null
 }
 
 export const SERVICE_OUTCOME_LABELS: Record<ServiceOutcome, string> = {

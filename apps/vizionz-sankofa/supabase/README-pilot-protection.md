@@ -12,6 +12,10 @@ Built Oct 16–17, 2026 on branch `vs-pilot-protection`. **Not applied to the li
 | `…0600_vs_obr_readiness.sql` | OBR (Organizational Behavioral Readiness): VS's own onboarding/intake for Yakini's BRSA standard. `vs_obr_profiles` (the VS intake: governance, staff, policy, financial), `vs_obr_evidence` (checklist with attestation), `vs_obr_evidence_files` (uploaded evidence metadata; files in the private storage bucket `vs-obr-evidence`, executive/operator only), `vs_obr_ratings` (evaluator decisions exactly as issued, with standard version; append-only), and the read-only monitor export `vs_obr_monitor_summary()` (service_role only). Executive/operator write, leadership read-only (no file downloads), case managers no access. Audited. |
 | `…0700_vs_coalition_partners.sql` | Coalition partners on top of `organizations` (partner / both): `vs_partner_agreements` (MOU/data-sharing, dates, signatories, participant-data flag), `vs_partner_checkins` (summary, next due → `organizations.next_touch_due`), `vs_partner_programs` (shared program/cohort coordination). Case managers can read agreements and shared programs, not check-ins. Audited. |
 | `…0800_vs_staff_full_name.sql` | Fixes an existing live bug: the app selects `staff.full_name`, which doesn't exist on live (cohort list empty, staff pickers blank). Adds it as a generated column from first + last name. |
+| `…0900_vs_funder_reporting.sql` | One-entry funder reporting: `service_county` (bernalillo / lea / other) on `participants` and `services_delivered`, `services_delivered.funder_key` (acf, bernalillo_county, state_nm, city_abq, medicaid, housing_nm). `vs_report_flags(ids)` gives birth year + masked Medicaid last-4 for rows the caller may see (nothing decrypted). |
+| `…1000_vs_invites.sql` | `vs_invites` (email + pre-assigned access role, optional staff link). Executive/operator only; audited. `vs_accept_invite()` runs at sign-in and applies the invite to the signed-in user's own email only; the access-role guard allows exactly that one change. |
+| `…1100_vs_role_change_audit.sql` | Adds `ROLE_CHANGE` to the audit actions; every change to a staff account's role, access role or revoked state writes who / whose / from / to (and whether it came from an invite). |
+| `…1200_vs_profile_and_activity.sql` | `vs_update_my_profile(name)` and `vs_touch_last_active()` (own row only, any role); `vs_operator_activity` view (per-person counts from the audit log, last 30 days; executives/operators only through the log's own RLS). |
 
 ## Test locally (fake data only)
 
@@ -19,11 +23,11 @@ Built Oct 16–17, 2026 on branch `vs-pilot-protection`. **Not applied to the li
 # needs Postgres 15+ with pgvector
 sudo -u postgres apps/vizionz-sankofa/supabase/tests/run-local.sh
 ```
-Builds a throwaway DB from `schema/live-baseline-2026-10-16.sql` (schema only, read from live, no rows), applies all migrations twice (idempotency), seeds fake users per role and runs `tests/rls-audit-tests.sql` (54 checks) then `tests/obr-coalition-tests.sql`.
+Builds a throwaway DB from `schema/live-baseline-2026-10-16.sql` (schema only, read from live, no rows), applies all migrations twice (idempotency), seeds fake users per role and runs `tests/rls-audit-tests.sql` (54 checks) then `tests/obr-coalition-tests.sql` and `tests/funder-wave2-tests.sql`.
 
 ## Apply to live (Clarence, after review)
 1. Supabase dashboard → Database → Backups: confirm a fresh backup exists.
-2. SQL editor: run the eight files **in order** (0100 → 0800) (or `supabase db push`).
+2. SQL editor: run the twelve files **in order** (0100 → 1200) (or `supabase db push`). Paste-ready copies without comments are in `/workspace/vs-sql/`.
 3. Set each person's `access_role` (and link case managers via `staff.auth_user_id`).
 4. Deploy the app branch only after step 2 — the new homes read `access_role`.
 
@@ -49,3 +53,15 @@ or, with supabase-js on a server: `createClient(url, serviceRoleKey).rpc('vs_obr
 Poll it on a schedule (e.g. hourly); `generated_at` marks the snapshot time.
 The Mission Control side is not built here. When OBR is separated from the VS
 system later, this function is the contract to keep (`schema_version: 1`).
+
+## Funder reports (0900)
+
+`/admin/reports` builds six funder reports — Albuquerque Community Foundation
+(fiscal sponsor: all activity), Bernalillo County, State of NM, City of
+Albuquerque, Medicaid and Housing New Mexico (split Bernalillo / Lea) — from the
+participants and services already logged. Tag each logged service with its
+funder and, if different from the participant's, its service county. Reports
+are aggregate and de-identified; RLS limits a case manager to their caseload.
+CSV summary for anyone who can view; the participant-list CSV is executive /
+operator only and lists only participants with an active `share_funder`
+consent. Every view and export is written to `vs_audit_log`.
