@@ -44,8 +44,8 @@ export const config: BrandConfig = {
   social: [],
 
   services: {
-    headline: 'Six programs, one promise.',
-    subheadline: 'Direct support, advocacy, and education across six program areas — designed for the realities of the communities we serve in New Mexico.',
+    headline: 'Seven programs, one promise.',
+    subheadline: 'Direct support, advocacy, and education across seven program areas — designed for the realities of the communities we serve in New Mexico.',
     items: [
       {
         title: 'Unsheltered Outreach & Stabilization',
@@ -76,6 +76,12 @@ export const config: BrandConfig = {
         description: 'Job-seeking, education, training, and social service referrals for parents, guardians, and caregivers — the people who hold our communities together.',
         icon: '👨‍👩‍👧‍👦',
         features: ['Job-seeking assistance', 'Education & training', 'Social service referrals', 'Caregiver resources'],
+      },
+      {
+        title: 'Sankofa Center',
+        description: 'Services that target the senior population, ages 55 and over.',
+        icon: '🌳',
+        features: ['Seniors 55 and over'],
       },
       {
         title: 'Readiness Pilot',
