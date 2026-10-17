@@ -1,14 +1,14 @@
 import type { BrandConfig } from '@yakini/config'
 
 /**
- * Momma Sally's — BBQ food truck, West Texas.
+ * Momma Sally's — Southern food truck, West Texas.
  */
 export const config: BrandConfig = {
   business: {
     name: "Momma Sally's",
-    tagline: 'Texas BBQ · West Texas',
+    tagline: "More than BBQ, it's a Southern experience.",
     description:
-      "Momma Sally's is a locally owned food truck slinging Texas-style BBQ across West Texas — brisket smoked low and slow, sausage, chicken and pulled pork, served off a full bilingual menu with real sides, not shortcuts.",
+      "More than BBQ, it's a Southern experience. Cooked with love, served with soul. Momma Sally's is a locally owned Southern food truck in West Texas — brisket, sausage, chicken and pulled pork, served off a full bilingual menu with real sides, not shortcuts.",
   },
 
   brand: {
@@ -115,7 +115,7 @@ export const config: BrandConfig = {
   about: {
     headline: 'The Truck',
     subheadline: 'Real pit, real Momma.',
-    story: `Momma Sally's is a locally owned food truck slinging Texas-style barbecue across West Texas. Brisket rides the smoker all night, the sausage has snap, and every plate comes stacked with sides made the honest way. The menu runs in English and Spanish, front to back, because good barbecue shouldn't come with a language barrier.
+    story: `Momma Sally's is a locally owned Southern food truck slinging barbecue across West Texas. Brisket rides the smoker all night, the sausage has snap, and every plate comes stacked with sides made the honest way. The menu runs in English and Spanish, front to back, because good barbecue shouldn't come with a language barrier.
 
 Around town, people know the truck by its mark before they know the name — the chef's hat, crossed with a spatula and fork, ringed in flame. Catch the smoke, and you already know what's coming.`,
     mission: 'No shortcuts, no frozen bags — just a hot grill and a menu written so nobody has to guess.',
@@ -132,7 +132,7 @@ Around town, people know the truck by its mark before they know the name — the
 
   home: {
     hero: {
-      headline: "Momma Sally's smokes it low & slow.",
+      headline: "More than BBQ, it's a Southern experience.",
       subheadline:
         'Brisket, sausage, chicken and pulled pork, pulled straight off the pit — plus the sides, the sauce, and the sweet stuff to finish it off.',
       cta: 'Call to Order',
@@ -160,7 +160,7 @@ Around town, people know the truck by its mark before they know the name — the
     keywords: [
       'bbq food truck west texas',
       'momma sallys bbq',
-      'texas bbq west texas',
+      'southern food truck west texas',
       'food truck west texas',
       'bbq catering west texas',
     ],

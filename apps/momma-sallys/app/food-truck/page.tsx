@@ -43,8 +43,8 @@ export default function FoodTruckPage() {
           <div>
             <div className="ms-eyebrow">Find the Truck · Encuéntranos</div>
             <h2 style={{ fontSize: 'clamp(30px, 7vw, 48px)', marginBottom: 10 }}>Rolling around West Texas.</h2>
-            <p style={{ color: '#ddd' }}>The truck moves and hours vary by day. Call or text for today’s location and hours.</p>
-            <p className="ms-es" style={{ marginTop: 4 }}>Llámanos o envía un texto para la ubicación y el horario de hoy.</p>
+            <p style={{ color: '#ddd' }}>Different stops, same great flavor! Call for our daily location.</p>
+            <p className="ms-es" style={{ marginTop: 4 }}>Diferentes paradas, ¡el mismo gran sabor! Llámanos para saber nuestra ubicación del día.</p>
             <div style={{ display: 'grid', gap: 12, marginTop: 20, maxWidth: 420 }}>
               <a href={PHONE_TEL} className="ms-btn ms-btn-red">Call for Today’s Location</a>
               <a href={SMS_LINK} className="ms-btn ms-btn-ghost">Text Us</a>
