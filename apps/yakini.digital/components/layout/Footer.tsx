@@ -10,7 +10,6 @@ const services = [
 const company = [
   { label: 'Work', href: '/work' },
   { label: 'Process', href: '/process' },
-  { label: 'Pricing', href: '/pricing' },
 ]
 
 export function Footer() {

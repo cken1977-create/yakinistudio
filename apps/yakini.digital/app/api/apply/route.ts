@@ -185,12 +185,13 @@ function buildApplicantEmail(data: any) {
 }
 
 function buildAdminEmail(data: any, applicationId: string) {
-  const tierLabels: Record<string, string> = {
-    foundation: 'Foundation · $1,500/mo',
-    authority: 'Authority · $3,000/mo',
-    intelligence: 'Intelligence · $7,500/mo',
-    enterprise: 'Enterprise · $15,000+/mo',
-    unsure: 'Unsure — wants help deciding',
+  const kitLabels: Record<string, string> = {
+    hospitality: 'Hospitality',
+    'trucking-logistics-compliance': 'Trucking & Logistics Compliance',
+    'home-healthcare-elder-care': 'Home Healthcare & Elder Care',
+    'nonprofit-social-services': 'Nonprofit & Social Services',
+    'reentry-corrections': 'Reentry & Corrections',
+    unsure: 'Not sure yet',
   }
 
   return `
@@ -218,8 +219,8 @@ function buildAdminEmail(data: any, applicationId: string) {
             <div style="font-size: 14px; color: #050E1F; font-weight: 600; margin-top: 4px;">${data.revenue_range || 'Not provided'}</div>
           </div>
           <div>
-            <div style="font-size: 10px; letter-spacing: 0.2em; color: #888; font-weight: 700; text-transform: uppercase;">TIER INTEREST</div>
-            <div style="font-size: 14px; color: #050E1F; font-weight: 600; margin-top: 4px;">${tierLabels[data.tier_interest] || data.tier_interest || 'Not specified'}</div>
+            <div style="font-size: 10px; letter-spacing: 0.2em; color: #888; font-weight: 700; text-transform: uppercase;">WHICH KIT</div>
+            <div style="font-size: 14px; color: #050E1F; font-weight: 600; margin-top: 4px;">${kitLabels[data.tier_interest] || data.tier_interest || 'Not specified'}</div>
           </div>
           <div>
             <div style="font-size: 10px; letter-spacing: 0.2em; color: #888; font-weight: 700; text-transform: uppercase;">TIMELINE</div>

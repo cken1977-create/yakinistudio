@@ -82,7 +82,7 @@ export const INDUSTRY_KITS: IndustryKit[] = [
     ],
     aiTools: ['Document Integrity', 'Evidence Engagement Scoring', 'Pattern Analysis'],
     status: 'proven',
-    proof: { name: 'Vimaa / Legacyline', anchor: 'vimaa' },
+    proof: { name: 'Kamili', anchor: 'vimaa' },
     applyIndustry: 'Workforce / Reentry / Corrections',
   },
   {

@@ -47,7 +47,6 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <a href="/platforms">Platforms</a>
             <a href="/intelligence">Intelligence</a>
             <a href="/process">Process</a>
-            <a href="/pricing">Pricing</a>
             <a href="/about">About</a>
           </div>
 
@@ -71,7 +70,6 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <a href="/platforms" onClick={() => setMenuOpen(false)}>Platforms</a>
           <a href="/intelligence" onClick={() => setMenuOpen(false)}>Intelligence</a>
           <a href="/process" onClick={() => setMenuOpen(false)}>Process</a>
-          <a href="/pricing" onClick={() => setMenuOpen(false)}>Pricing</a>
           <a href="/about" onClick={() => setMenuOpen(false)}>About</a>
           <a href="/apply" className="yk-mobile-cta" onClick={() => setMenuOpen(false)}>Apply →</a>
         </div>
@@ -104,7 +102,6 @@ export function SiteShell({ children }: { children: ReactNode }) {
               <a href="/platforms">Platforms</a>
               <a href="/intelligence">Intelligence</a>
               <a href="/process">Process</a>
-              <a href="/pricing">Pricing</a>
             </div>
 
             <div className="yk-footer-col">
