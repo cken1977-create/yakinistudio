@@ -11,7 +11,6 @@ import {
 } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import { EnrollmentsClient } from './EnrollmentsClient'
 import type {
   CohortDetailWithJoins,
@@ -21,6 +20,7 @@ import type {
   AvailableParticipant,
 } from './types'
 import { COHORT_STATUS_LABELS, COHORT_STATUS_COLORS } from './types'
+import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 
 export const dynamic = 'force-dynamic'
 
@@ -122,24 +122,11 @@ export default async function CohortDetailPage({
 
   return (
     <div>
-      {/* Back link */}
-      <Link
-        href="/admin/cohorts"
-        style={{
-          display: 'inline-block',
-          fontSize: '13px',
-          fontWeight: 600,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          color: '#5B2C8F',
-          textDecoration: 'none',
-          marginBottom: '24px',
-          fontFamily:
-            'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
-        }}
-      >
-        ← All Cohorts
-      </Link>
+      <AdminCrumbs
+        trail={[{ label: 'Cohorts', href: '/admin/cohorts' }, { label: cohort.name }]}
+        fallbackHref="/admin/cohorts"
+        fallbackLabel="Cohorts"
+      />
 
       {/* Substrate eyebrow */}
       <div

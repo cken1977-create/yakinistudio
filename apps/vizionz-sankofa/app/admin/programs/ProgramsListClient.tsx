@@ -10,6 +10,7 @@
 //  - Optimistic UI refresh on save
 
 import { useMemo, useState, useTransition } from 'react'
+import { useUrlState } from '@/components/admin/nav/useUrlState'
 import { createClient as createBrowserClient } from '@/lib/supabase/client'
 import type { ProgramEditableFields, ProgramRecord } from './types'
 
@@ -21,8 +22,8 @@ export function ProgramsListClient({
   initialPrograms: ProgramRecord[]
 }) {
   const [programs, setPrograms] = useState<ProgramRecord[]>(initialPrograms)
-  const [search, setSearch] = useState('')
-  const [tab, setTab] = useState<TabKey>('all')
+  const [search, setSearch] = useUrlState<string>('q', '')
+  const [tab, setTab] = useUrlState<TabKey>('tab', 'all')
   const [editing, setEditing] = useState<ProgramRecord | null>(null)
 
   const filtered = useMemo(() => {

@@ -9,6 +9,7 @@
 //   3. Per-enrollment status editor (mark withdrew, mark completed, add notes)
 
 import { useMemo, useState, useTransition } from 'react'
+import Link from 'next/link'
 import { createClient as createBrowserClient } from '@/lib/supabase/client'
 import type {
   EnrollmentWithParticipant,
@@ -278,7 +279,12 @@ function EnrollmentRow({
               margin: 0,
             }}
           >
-            {displayName}
+            <Link
+              href={`/admin/participants/${enrollment.participant_id}`}
+              style={{ color: 'inherit', textDecoration: 'none' }}
+            >
+              {displayName}
+            </Link>
           </h3>
           <StatusPill status={enrollment.status} />
         </div>

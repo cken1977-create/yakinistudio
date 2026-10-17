@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { requireOperatorOrEmployee, getOperatorDisplayName, touchLastActive } from '@/lib/supabase/auth'
 import GoogleIntegrationClient from './GoogleIntegrationClient'
+import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 
 export default async function GoogleIntegrationPage({
   searchParams,
@@ -36,13 +37,16 @@ export default async function GoogleIntegrationPage({
   const errorCode = params.error ?? null
 
   return (
-    <GoogleIntegrationClient
-      displayName={displayName}
-      connection={connection ?? null}
-      mappings={mappings ?? []}
-      justConnected={justConnected}
-      connectedEmail={connectedEmail}
-      errorCode={errorCode}
-    />
+    <>
+      <AdminCrumbs trail={[{ label: 'Google Integration' }]} fallbackHref="/admin" fallbackLabel="Operations" />
+  <GoogleIntegrationClient
+        displayName={displayName}
+        connection={connection ?? null}
+        mappings={mappings ?? []}
+        justConnected={justConnected}
+        connectedEmail={connectedEmail}
+        errorCode={errorCode}
+      />
+    </>
   )
 }

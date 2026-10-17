@@ -11,6 +11,7 @@ import {
 } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 import { IntelligenceChat } from './IntelligenceChat'
+import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,6 +44,7 @@ export default async function IntelligencePage() {
 
   return (
     <div>
+      <AdminCrumbs trail={[{ label: 'Yakini Intelligence' }]} fallbackHref="/admin" fallbackLabel="Operations" />
       {/* Welcome strip */}
       <section style={{ marginBottom: '40px' }}>
         <div

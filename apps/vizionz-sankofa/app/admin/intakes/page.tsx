@@ -9,6 +9,7 @@
 import { requireOperatorOrEmployee } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 import { IntakeRow, type IntakeRecord } from './IntakeRow'
+import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 
 export const dynamic = 'force-dynamic'
 
@@ -95,6 +96,7 @@ export default async function IntakesAdminPage({
 
   return (
     <div>
+      <AdminCrumbs trail={[{ label: 'Get Help Requests' }]} fallbackHref="/admin" fallbackLabel="Operations" />
       {/* Header */}
       <section style={{ marginBottom: '32px' }}>
         <div

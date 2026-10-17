@@ -11,7 +11,6 @@ import {
 } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import { TabsClient } from './TabsClient'
 import { SensitiveFields } from './SensitiveFields'
 import type {
@@ -31,6 +30,7 @@ import type {
   StaffRecord,
 } from '../types'
 import { PARTICIPANT_STATUS_LABELS } from '../types'
+import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 
 export const dynamic = 'force-dynamic'
 
@@ -220,30 +220,22 @@ export default async function ParticipantDetailPage({
       ? `${participant.preferred_name} (${participant.first_name} ${participant.last_name})`
       : `${participant.first_name} ${participant.last_name}`
 
+  // Breadcrumb shows first name + last initial only.
+  const crumbName = `${participant.preferred_name?.trim() || participant.first_name} ${
+    participant.last_name ? participant.last_name.charAt(0) + '.' : ''
+  }`.trim()
+
   const caseManager = participant.primary_case_manager_id
     ? staff.find((s) => s.id === participant.primary_case_manager_id)
     : undefined
 
   return (
     <div>
-      {/* Back link */}
-      <Link
-        href="/admin/participants"
-        style={{
-          display: 'inline-block',
-          fontSize: '13px',
-          fontWeight: 600,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          color: '#5B2C8F',
-          textDecoration: 'none',
-          marginBottom: '24px',
-          fontFamily:
-            'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
-        }}
-      >
-        ← All Participants
-      </Link>
+      <AdminCrumbs
+        trail={[{ label: 'Participants', href: '/admin/participants' }, { label: crumbName }]}
+        fallbackHref="/admin/participants"
+        fallbackLabel="Participants"
+      />
 
       {/* Substrate eyebrow */}
       <div

@@ -10,6 +10,7 @@ import { DOCUMENT_CATEGORY_LABELS, type DocumentCategory } from './types'
 import { DocumentRow } from './DocumentRow'
 import UploadButton from './UploadButton'
 import { DocumentsListPolling } from './DocumentsListPolling'
+import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 
 export const dynamic = 'force-dynamic'
 
@@ -118,6 +119,7 @@ export default async function DocumentsPage({
 
   return (
     <>
+      <AdminCrumbs trail={[{ label: 'Document Library' }]} fallbackHref="/admin" fallbackLabel="Operations" />
       {/* Page kicker + title row */}
       <div style={{ marginBottom: '24px' }}>
         <div

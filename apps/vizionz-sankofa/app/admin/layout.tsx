@@ -6,10 +6,14 @@
 
 import { headers } from 'next/headers'
 import Link from 'next/link'
+import { Suspense } from 'react'
 import {
   requireOperatorOrEmployee,
   getOperatorDisplayName,
+  getAccessRole,
 } from '@/lib/supabase/auth'
+import { AdminSectionNav } from '@/components/admin/nav/AdminSectionNav'
+import { NavHistory } from '@/components/admin/nav/NavHistory'
 import { redirect } from 'next/navigation'
 import { signOut } from './actions/auth'
 
@@ -94,26 +98,23 @@ export default async function AdminLayout({
             color: '#0A0A0A',
           }}
         >
-          {/* Navy circular seal with italic V — matches public site Header */}
-          <div
+          {/* Original Vizionz Sankofa mark (bird + map), in the seal's place */}
+          <img
+            src="/vizionz-sankofa-mark-96.png"
+            alt=""
+            width={36}
+            height={36}
             style={{
               width: '36px',
               height: '36px',
               borderRadius: '50%',
-              background: '#0A2548',
+              background: '#FFFFFF',
               border: '2px solid #CE1126',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#FFFFFF',
-              fontFamily: '"DM Serif Display", Georgia, serif',
-              fontSize: '18px',
-              fontStyle: 'italic',
-              fontWeight: 600,
+              objectFit: 'contain',
+              padding: '2px',
+              boxSizing: 'border-box',
             }}
-          >
-            V
-          </div>
+          />
           <div>
             <div
               style={{
@@ -206,6 +207,13 @@ export default async function AdminLayout({
           </form>
         </div>
       </header>
+
+      {/* Section nav — on every admin screen, including detail pages, so any
+          section is one tap away (sticky; scrolls sideways on phones). */}
+      <AdminSectionNav accessRole={getAccessRole(user)} />
+      <Suspense fallback={null}>
+        <NavHistory />
+      </Suspense>
 
       {/* Main content */}
       <main

@@ -11,6 +11,7 @@ import {
 import { createClient } from '@/lib/supabase/server'
 import { ParticipantsListClient } from './ParticipantsListClient'
 import type { ParticipantRecord, StaffRecord } from './types'
+import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 
 export const dynamic = 'force-dynamic'
 
@@ -64,6 +65,7 @@ export default async function ParticipantsPage() {
 
   return (
     <div>
+      <AdminCrumbs trail={[{ label: 'Participants' }]} fallbackHref="/admin" fallbackLabel="Operations" />
       {/* Welcome strip */}
       <section style={{ marginBottom: '40px' }}>
         <div

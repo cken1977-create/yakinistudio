@@ -6,6 +6,8 @@
 // save via Supabase, optimistic UI refresh, Legacyline status badges.
 
 import { useMemo, useState, useTransition } from 'react'
+import Link from 'next/link'
+import { useUrlState } from '@/components/admin/nav/useUrlState'
 import { createClient as createBrowserClient } from '@/lib/supabase/client'
 import type {
   ParticipantEditableFields,
@@ -39,8 +41,14 @@ export function ParticipantsListClient({
 }) {
   const [participants, setParticipants] =
     useState<ParticipantRecord[]>(initialParticipants)
-  const [search, setSearch] = useState('')
-  const [tab, setTab] = useState<'all' | ParticipantStatus>('all')
+  // Search + status tab live in the URL so "open a participant, then back"
+  // returns to the same filtered list.
+  const [search, setSearch] = useUrlState<string>('q', '')
+  const [tab, setTab] = useUrlState<'all' | ParticipantStatus>(
+    'status',
+    'all',
+    STATUS_TABS.map((t) => t.key),
+  )
   const [editing, setEditing] = useState<ParticipantRecord | null>(null)
   const [adding, setAdding] = useState(false)
 
@@ -400,13 +408,14 @@ function ParticipantRow({
         borderRadius: '8px',
         padding: '20px 22px',
         background: '#FFFFFF',
-        display: 'grid',
-        gridTemplateColumns: '1fr auto',
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
         gap: '16px',
         alignItems: 'center',
       }}
     >
-      <div style={{ minWidth: 0 }}>
+      <div style={{ minWidth: 0, flex: '1 1 260px' }}>
         <div
           style={{
             display: 'flex',
@@ -425,7 +434,12 @@ function ParticipantRow({
               fontFamily: '"DM Serif Display", Georgia, serif',
             }}
           >
-            {displayName}
+            <Link
+              href={`/admin/participants/${participant.id}`}
+              style={{ color: 'inherit', textDecoration: 'none' }}
+            >
+              {displayName}
+            </Link>
           </h3>
           <StatusPill status={participant.status} />
           {participant.legacyline_subject_id && <LegacylinePill />}
@@ -456,38 +470,65 @@ function ParticipantRow({
           </div>
         )}
       </div>
-      <button
-        onClick={onEdit}
+      <div
         style={{
-          padding: '8px 16px',
-          border: '1px solid #0A0A0A',
-          background: '#FFFFFF',
-          color: '#0A0A0A',
-          borderRadius: '6px',
-          fontSize: '13px',
-          fontWeight: 500,
-          cursor: 'pointer',
-          fontFamily: 'inherit',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '8px',
+          justifyContent: 'flex-end',
         }}
       >
-        Open
-      </button>
-          <button
-            onClick={() => setQuickNote(true)}
-            style={{
-              padding: '8px 16px',
-              border: '1px solid rgba(10,10,10,0.16)',
-              background: '#FFFFFF',
-              color: '#0A0A0A',
-              borderRadius: '6px',
-              fontSize: '13px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
-          >
-            + Note
-          </button>
+        <Link
+          href={`/admin/participants/${participant.id}`}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            padding: '8px 16px',
+            border: '1px solid #0A0A0A',
+            background: '#0A0A0A',
+            color: '#FFFFFF',
+            borderRadius: '6px',
+            fontSize: '13px',
+            fontWeight: 500,
+            textDecoration: 'none',
+            fontFamily: 'inherit',
+          }}
+        >
+          Open
+        </Link>
+        <button
+          onClick={onEdit}
+          style={{
+            padding: '8px 16px',
+            border: '1px solid #0A0A0A',
+            background: '#FFFFFF',
+            color: '#0A0A0A',
+            borderRadius: '6px',
+            fontSize: '13px',
+            fontWeight: 500,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          Edit
+        </button>
+        <button
+          onClick={() => setQuickNote(true)}
+          style={{
+            padding: '8px 16px',
+            border: '1px solid rgba(10,10,10,0.16)',
+            background: '#FFFFFF',
+            color: '#0A0A0A',
+            borderRadius: '6px',
+            fontSize: '13px',
+            fontWeight: 500,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          + Note
+        </button>
+      </div>
           {quickNote && (
             <QuickNoteModal
               participantId={participant.id}

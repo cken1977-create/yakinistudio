@@ -185,10 +185,21 @@ export function Header({ config }: { config: BrandConfig }) {
           .vs-cta-group { display: none; }
           .vs-burger { display: flex; }
 
-          .vs-mobile-menu {
+          /* Clip box keeps the closed (off-screen) menu from widening the
+             page on phones, which made mobile browsers zoom out. */
+          .vs-mobile-menu-clip {
             position: fixed;
             top: 88px;
             left: 0; right: 0; bottom: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 99;
+          }
+          .vs-mobile-menu {
+            position: absolute;
+            top: 0;
+            left: 0; right: 0; bottom: 0;
+            pointer-events: ${mobileOpen ? 'auto' : 'none'};
             background: #FFFFFF;
             padding: 2rem 1.5rem;
             display: flex;
@@ -222,14 +233,16 @@ export function Header({ config }: { config: BrandConfig }) {
           }
         }
         @media (min-width: 901px) {
-          .vs-mobile-menu { display: none; }
+          .vs-mobile-menu, .vs-mobile-menu-clip { display: none; }
         }
       `}</style>
 
       <header className="vs-header">
         <div className="vs-header-inner">
           <a href="/" className="vs-brand-mark" aria-label={config.business.name}>
-            <img className="vs-brand-seal" src="https://cdn.midjourney.com/b6073321-78e6-4891-8ff8-dc4e1389d69c/0_1.png" alt="Vizionz Sankofa" />
+            {/* Original Vizionz Sankofa logo, restored at VS leadership's request.
+                The later redesign (public/vizionz-sankofa-logo.png) stays in the repo, unused. */}
+            <img className="vs-brand-seal" src="/vizionz-sankofa-original-logo.webp" alt="Vizionz Sankofa" width={72} height={72} />
             <div className="vs-brand-text">
               <div className="vs-brand-name">{config.business.name}</div>
               <div className="vs-brand-descriptor">Community Empowerment</div>
@@ -261,6 +274,7 @@ export function Header({ config }: { config: BrandConfig }) {
           </button>
         </div>
 
+        <div className="vs-mobile-menu-clip">
         <div className="vs-mobile-menu" aria-hidden={!mobileOpen}>
           {NAV_LINKS.map(link => (
             <a
@@ -280,6 +294,7 @@ export function Header({ config }: { config: BrandConfig }) {
               Get Help
             </a>
           </div>
+        </div>
         </div>
       </header>
     </>
