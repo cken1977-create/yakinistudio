@@ -12,11 +12,11 @@ if (!validation.valid) {
 
 export const metadata: Metadata = {
   metadataBase: new URL(config.seo.siteUrl),
-  title: `${config.business.name} — Texas BBQ Food Truck · West Texas`,
+  title: `${config.business.name} — Southern Food Truck · West Texas`,
   description: config.business.description,
   keywords: config.seo.keywords,
   openGraph: {
-    title: `${config.business.name} — Texas BBQ · West Texas`,
+    title: `${config.business.name} — More than BBQ, it's a Southern experience.`,
     description: config.business.description,
     url: config.seo.siteUrl,
     siteName: config.business.name,

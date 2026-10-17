@@ -46,14 +46,14 @@ export default function HomePage() {
         <div className="h-hero-shade" />
         <div className="ms-wrap" style={{ width: '100%', position: 'relative' }}>
           <Reveal>
-            <div className="ms-eyebrow">Texas BBQ Food Truck · West Texas</div>
-            <h1>Smoked low &amp; slow. <em>Served hot.</em></h1>
+            <div className="ms-eyebrow">Southern Food Truck · West Texas</div>
+            <h1>More than BBQ, <em>it&rsquo;s a Southern experience.</em></h1>
           </Reveal>
           <Reveal delay={140}>
             <p style={{ fontSize: 18, color: '#ddd', maxWidth: 560, lineHeight: 1.6 }}>
-              Brisket, sausage, chicken &amp; pulled pork off the pit — with real sides, sauce and something sweet.
+              Cooked with love, served with soul. Brisket, sausage, chicken &amp; pulled pork off the pit — with real sides, sauce and something sweet.
             </p>
-            <p className="ms-es" style={{ fontSize: 15, marginTop: 6 }}>Barbacoa texana ahumada lentamente. Menú en inglés y español.</p>
+            <p className="ms-es" style={{ fontSize: 15, marginTop: 6 }}>Más que BBQ, es una experiencia sureña. Cocinado con amor, servido con alma. Menú en inglés y español.</p>
           </Reveal>
           <Reveal delay={260}>
             <div className="h-ctas">
@@ -116,9 +116,9 @@ export default function HomePage() {
           <div className="ms-eyebrow">Find the Truck · Encuéntranos</div>
           <h2>Rolling around West Texas.</h2>
           <p style={{ color: '#ddd', maxWidth: 560, fontSize: 17 }}>
-            The truck moves, and hours vary by day. Give us a call for today&rsquo;s location and hours.
+            Different stops, same great flavor! Call for our daily location.
           </p>
-          <p className="ms-es" style={{ marginTop: 6 }}>Llámanos para la ubicación y el horario de hoy.</p>
+          <p className="ms-es" style={{ marginTop: 6 }}>Diferentes paradas, ¡el mismo gran sabor! Llámanos para saber nuestra ubicación del día.</p>
           <div className="h-ctas">
             <a href={PHONE_TEL} className="ms-btn ms-btn-red">Call for Today&rsquo;s Location</a>
             <a href={SMS_LINK} className="ms-btn ms-btn-ghost">Text Us</a>

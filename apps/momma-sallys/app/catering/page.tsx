@@ -7,7 +7,7 @@ import { CateringBuilder } from '@/components/CateringBuilder'
 
 export const metadata: Metadata = { title: "Catering — Momma Sally's BBQ, West Texas TX" }
 
-const MARQUEE = 'SMOKED LOW & SLOW · ABILENE, TX · CATERING · BANQUETES · '
+const MARQUEE = "MORE THAN BBQ, IT'S A SOUTHERN EXPERIENCE · COOKED WITH LOVE, SERVED WITH SOUL · ABILENE, TX · CATERING · BANQUETES · "
 
 export default function CateringPage() {
   return (
