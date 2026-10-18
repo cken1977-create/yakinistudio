@@ -9,6 +9,7 @@ export default function EventsPage() {
   return (
     <>
       <PageHero eyebrow="Events · Eventos" title="Spreads worth celebrating." bg="/photos/peach-cobbler.webp"
+        tagline="Where every bite is a celebration." taglineEs="Donde cada bocado es una celebración."
         lead="Birthdays, showers, weddings and get-togethers — BBQ, buffets and homemade desserts."
         es="Cumpleaños, baby showers, bodas y reuniones — barbacoa, bufés y postres caseros." />
       <section className="ms-wrap" style={{ padding: '48px 20px' }}>
