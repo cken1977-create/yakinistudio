@@ -6,7 +6,7 @@
 //
 // Section flow (top to bottom):
 //   Hero            → philosophical anchor + dual CTAs
-//   NumbersBand     → credibility (500+, 11 yrs, 6 programs, 8+ partners)
+//   NumbersBand     → credibility (500+, 12 yrs, 6 programs, 16 partners)
 //   Mission         → founding doctrine (the 2014 quote)
 //   Programs        → six programs, the operational manifest
 //   Voices          → three voices, founder dominant

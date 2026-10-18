@@ -647,7 +647,7 @@ function LogServiceModal({
               type="text"
               value={draft.cost_funded_by ?? ''}
               onChange={(e) => update('cost_funded_by', e.target.value || null)}
-              placeholder="ACS, ACF, City of ABQ, general fund, etc."
+              placeholder="Albuquerque Community Safety, ACF, City of ABQ, general fund, etc."
               style={inputStyle}
             />
           </Field>

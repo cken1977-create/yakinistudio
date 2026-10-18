@@ -44,14 +44,14 @@ export const config: BrandConfig = {
   social: [],
 
   services: {
-    headline: 'Six programs, one promise.',
-    subheadline: 'Direct support, advocacy, and education across six program areas — designed for the realities of the communities we serve in New Mexico.',
+    headline: 'Seven programs, one promise.',
+    subheadline: 'Direct support, advocacy, and education across seven program areas — designed for the realities of the communities we serve in New Mexico.',
     items: [
       {
         title: 'Unsheltered Outreach & Stabilization',
-        description: 'Direct outreach to unhoused neighbors across Albuquerque. In partnership with ACS, we provide stabilization support, hotel vouchers, hygiene supplies, and pathways to housing.',
+        description: 'Direct outreach to unhoused neighbors across Albuquerque. In partnership with Albuquerque Community Safety, we provide stabilization support, hotel vouchers, hygiene supplies, and pathways to housing.',
         icon: '🏠',
-        features: ['ACS partnership', 'Hotel vouchers', 'Hygiene & supplies', 'Housing pathways'],
+        features: ['Albuquerque Community Safety partnership', 'Hotel vouchers', 'Hygiene & supplies', 'Housing pathways'],
       },
       {
         title: 'Refugee & Immigrant Services',
@@ -60,7 +60,7 @@ export const config: BrandConfig = {
         features: ['Language access', 'Cultural support', 'Resettlement assistance', 'Family integration'],
       },
       {
-        title: 'Housing & Rental Assistance',
+        title: 'Housing Stability',
         description: 'ERAP support, hotel vouchers, utility assistance, and relocation services. Eviction prevention before crisis. Stability before everything else.',
         icon: '🏘️',
         features: ['ERAP support', 'Utility assistance', 'Relocation services', 'Eviction prevention'],
@@ -78,10 +78,16 @@ export const config: BrandConfig = {
         features: ['Job-seeking assistance', 'Education & training', 'Social service referrals', 'Caregiver resources'],
       },
       {
+        title: 'Sankofa Center',
+        description: 'Services that target the senior population, ages 55 and over.',
+        icon: '🌳',
+        features: ['Seniors 55 and over'],
+      },
+      {
         title: 'Readiness Pilot',
-        description: 'In partnership with Legacyline and the BRSA Foundation — behavioral readiness assessment and certification for participants pursuing housing, work, or education.',
+        description: 'In partnership with Kamili and the BRSA Foundation — behavioral readiness assessment and certification for participants pursuing housing, work, or education.',
         icon: '🧭',
-        features: ['BRSA Foundation pilot', 'Legacyline platform', 'Readiness certification', 'Pathway tracking'],
+        features: ['BRSA Foundation pilot', 'Kamili platform', 'Readiness certification', 'Pathway tracking'],
       },
     ],
   },

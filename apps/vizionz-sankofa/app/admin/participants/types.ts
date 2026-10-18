@@ -23,6 +23,9 @@ export type ReferralSource =
   | 'event'
   | 'social_media'
   | 'other'
+  | 'hmis'
+  | 'acs'
+  | 'refugee_agency'
 
 export type ParticipantRecord = {
   id: string
@@ -117,4 +120,8 @@ export const REFERRAL_SOURCE_LABELS: Record<ReferralSource, string> = {
   event: 'Event',
   social_media: 'Social Media',
   other: 'Other',
+  // Values that exist in the live referral_source enum.
+  hmis: 'HMIS',
+  acs: 'Albuquerque Community Safety',
+  refugee_agency: 'Refugee Agency',
 }

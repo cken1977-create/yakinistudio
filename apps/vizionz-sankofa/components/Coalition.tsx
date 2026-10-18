@@ -7,7 +7,7 @@
 //
 // Two distinct sub-groups under one section:
 //   - "Coalition Partners" — orgs we work alongside (peers, sister orgs,
-//     city partners, academic partners). 6 cards in 3-column grid.
+//     state partners, community organizations). one card per partner in a 3-column grid.
 //   - "Funders & Institutional Support" — orgs that fund the work
 //     (foundations, food banks, civic funders). 3 cards in 3-column grid.
 //
@@ -27,7 +27,7 @@ export interface CoalitionItem {
   kind: 'partner' | 'funder'
   name: string
   role: string                  // "Standards Authority", "Foundation", etc.
-  description: string
+  description?: string
 }
 
 interface CoalitionProps {
@@ -35,56 +35,34 @@ interface CoalitionProps {
 }
 
 const DEFAULT_ITEMS: CoalitionItem[] = [
-  // Coalition Partners
-  {
-    kind: 'partner',
-    role: 'Standards Authority',
-    name: 'BRSA Foundation',
-    description: 'Funding access to readiness evaluation and certification programs for the communities we serve.',
-  },
-  {
-    kind: 'partner',
-    role: 'Pilot Platform',
-    name: 'Legacyline',
-    description: 'Vizionz Sankofa is the primary pilot partner for individual readiness and organizational behavioral readiness.',
-  },
-  {
-    kind: 'partner',
-    role: 'City Partner',
-    name: 'Albuquerque Community Services',
-    description: "The city's behavioral health and unsheltered response — we partner on outreach, stabilization, and pathways forward.",
-  },
-  {
-    kind: 'partner',
-    role: 'Sister Organization',
-    name: 'Women with Vizionz',
-    description: 'Led by Denise Kennedy — focused on women in our community navigating healing, work, and family stability.',
-  },
-  {
-    kind: 'partner',
-    role: 'Community Partner',
-    name: 'Big Chef Bowie Cares',
-    description: "Led by Chef Don Bowie — bringing food security and culinary workforce pathways into the coalition's reach.",
-  },
-  {
-    kind: 'partner',
-    role: 'Academic Partners',
-    name: 'UNM Diversity & African American Affairs',
-    description: "Cultural humility curricula, health equity research, and student support across UNM's Health Sciences Center.",
-  },
+  // Coalition Partners — the list Khadijah confirmed (Oct 17 2026). Names as written.
+  { kind: 'partner', role: 'Coalition Partner', name: 'Burque Against Racism' },
+  { kind: 'partner', role: 'Coalition Partner', name: 'UmojaABQ' },
+  { kind: 'partner', role: 'Coalition Partner', name: "God's Warehouse" },
+  { kind: 'partner', role: 'Coalition Partner', name: 'Los Jardines' },
+  { kind: 'partner', role: 'Coalition Partner', name: 'Tenderlove' },
+  { kind: 'partner', role: 'Coalition Partner', name: 'Lea County Sage' },
+  { kind: 'partner', role: 'Coalition Partner', name: 'Future Innovate Academy' },
+  { kind: 'partner', role: 'Sister Organization', name: 'Women With Vizionz', description: 'Led by Denise Kennedy — focused on women in our community navigating healing, work, and family stability.' },
+  { kind: 'partner', role: 'Standards Authority', name: 'BRSA Foundations', description: 'Funding access to readiness evaluation and certification programs for the communities we serve.' },
+  { kind: 'partner', role: 'State Partner', name: 'State Office of African American Affairs' },
+  { kind: 'partner', role: 'State Partner', name: 'State Martin Luther King Commission' },
+  { kind: 'partner', role: 'Coalition Partner', name: 'Center of Black Excellence' },
+  { kind: 'partner', role: 'Coalition Partner', name: 'Cultivate Coders' },
+  { kind: 'partner', role: 'Coalition Partner', name: 'Maddox Foundation' },
+  { kind: 'partner', role: 'Coalition Partner', name: 'United Way of Lea County' },
+  { kind: 'partner', role: 'Coalition Partner', name: 'Habitat for Humanity Hobbs' },
+  // To add a partner: one line here, plus one row in the coalition SQL.
 
   // Funders & Institutional Support
+  { kind: 'funder', role: 'State Funder', name: 'Housing New Mexico' },
+  { kind: 'funder', role: 'State Funder', name: 'State of New Mexico' },
+  { kind: 'funder', role: 'State Senator', name: 'Senator Mimi Stewart' },
   {
     kind: 'funder',
     role: 'Foundation',
     name: 'Albuquerque Community Foundation',
     description: 'Major New Mexico grantmaker supporting our community programs and capacity building.',
-  },
-  {
-    kind: 'funder',
-    role: 'Food Security',
-    name: 'Roadrunner Food Bank of New Mexico',
-    description: 'Regional food bank supplying our monthly community food distributions across Albuquerque.',
   },
   {
     kind: 'funder',
@@ -247,7 +225,7 @@ export function Coalition({ items = DEFAULT_ITEMS }: CoalitionProps) {
                   <article key={`partner-${idx}`} className="vs-coalition-item">
                     <span className="vs-coalition-role">{item.role}</span>
                     <h3 className="vs-coalition-name">{item.name}</h3>
-                    <p className="vs-coalition-desc">{item.description}</p>
+                    {item.description && <p className="vs-coalition-desc">{item.description}</p>}
                   </article>
                 ))}
               </div>
