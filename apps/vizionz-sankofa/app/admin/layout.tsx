@@ -161,6 +161,7 @@ export default async function AdminLayout({
           <style>{`
             .vs-admin-who { display: flex; align-items: center; gap: 10px; text-decoration: none; min-height: 36px; }
             .vs-admin-who:focus-visible { outline: 2px solid #0A2548; outline-offset: 2px; }
+            @media (max-width: 900px) { .vs-admin-search { display: none; } }
             @media (max-width: 640px) {
               .vs-admin-who-name { display: none; }
               .vs-admin-role-badge { padding: 3px 7px !important; letter-spacing: 0.08em !important; }
@@ -168,6 +169,26 @@ export default async function AdminLayout({
               .vs-admin-signout { padding: 8px 10px !important; letter-spacing: 0.04em !important; }
             }
           `}</style>
+          {accessRole && (
+            <form action="/admin/search" role="search" className="vs-admin-search">
+              <input
+                name="q"
+                type="search"
+                placeholder="Search…"
+                aria-label="Search contacts, clients, grants, tasks"
+                minLength={2}
+                style={{
+                  width: '200px',
+                  padding: '8px 12px',
+                  border: '1px solid rgba(10, 10, 10, 0.16)',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontFamily: 'inherit',
+                  background: '#FFFFFF',
+                }}
+              />
+            </form>
+          )}
           <Link
             href="/admin/profile"
             className="vs-admin-who"
