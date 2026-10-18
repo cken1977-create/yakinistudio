@@ -20,6 +20,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   { href: '/admin', label: 'Home', roles: 'all' },
   { href: '/admin/my-day', label: 'My Day', roles: ALL_ROLES },
   { href: '/admin/contacts', label: 'Contacts', roles: ALL_ROLES },
+  { href: '/admin/chat', label: 'Chat', roles: ALL_ROLES },
   { href: '/admin/participants', label: 'Participants', roles: 'all' },
   { href: '/admin/intakes', label: 'Get Help Requests', roles: [...EXEC_OP, 'case_manager', 'leadership_readonly'] },
   { href: '/admin/cohorts', label: 'Cohorts', roles: 'all' },
@@ -36,6 +37,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   { href: '/admin/media', label: 'Photos & Videos', roles: EXEC_OP },
   { href: '/admin/intelligence', label: 'Intelligence', roles: 'all' },
   { href: '/admin/team', label: 'Team', roles: EXEC_OP },
+  { href: '/admin/hr', label: 'Staff Records', roles: EXEC_OP },
   { href: '/admin/search', label: 'Search', roles: ALL_ROLES },
 ]
 
