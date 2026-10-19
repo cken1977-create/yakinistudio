@@ -1,12 +1,10 @@
 import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
+import { clientSession } from '@/lib/server/guard'
 import Link from 'next/link'
 
 export default async function ClientDashboard() {
-  const cookieStore = await cookies()
-  const clientCookie = cookieStore.get('yakini_client')
-  
-  if (!clientCookie) {
+  const session = await clientSession()
+  if (!session) {
     redirect('/client/login')
   }
 
@@ -24,7 +22,7 @@ export default async function ClientDashboard() {
               Welcome back.
             </h1>
             <p className="text-[#F5EFE3]/30 text-sm">
-              {clientCookie.value}
+              {session.e}
             </p>
           </div>
           <form action="/api/auth/signout" method="post">

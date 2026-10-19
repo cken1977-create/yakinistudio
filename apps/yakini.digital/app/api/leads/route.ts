@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase'
+import { rest, clientIp, isTestRecipient } from '@/lib/esign/server'
+import { esc, rateLimited, tooMany } from '@/lib/server/guard'
 import { Lead } from '@/types'
 import { Resend } from 'resend'
 
@@ -7,42 +8,42 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: NextRequest) {
   try {
-    const body: Lead = await req.json()
+    if (rateLimited(`leads:${clientIp(req.headers) ?? 'unknown'}`, 5, 60 * 60_000)) return tooMany()
+    const raw = await req.json()
+    const cut = (v: unknown, n: number) => (v == null ? null : String(v).trim().slice(0, n))
+    const body = {
+      name: cut(raw.name, 120), email: cut(raw.email, 254), company: cut(raw.company, 160),
+      service: cut(raw.service, 120), budget: cut(raw.budget, 60), message: cut(raw.message, 5000),
+    } as Lead
 
-    if (!body.name || !body.email || !body.service || !body.message) {
+    if (!body.name || !body.email || !body.service || !body.message || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    const supabase = createClient()
-    const { data, error } = await supabase
-      .from('leads')
-      .insert([{
-        name: body.name,
-        email: body.email,
-        company: body.company ?? null,
-        service: body.service,
-        budget: body.budget ?? null,
-        message: body.message,
-      }])
-      .select()
-
-    if (error) {
-      console.error('Supabase error:', error)
+    // Server-only key: the leads table is not open to the public.
+    const ins = await rest<unknown[]>('leads', {
+      method: 'POST',
+      prefer: 'return=representation',
+      body: { name: body.name, email: body.email, company: body.company ?? null, service: body.service, budget: body.budget ?? null, message: body.message },
+    })
+    const data = ins.data
+    if (!ins.ok) {
+      console.error('Supabase error:', ins.status, ins.error?.message)
       return NextResponse.json({ error: 'Failed to save lead' }, { status: 500 })
     }
 
-    await resend.emails.send({
+    if (!isTestRecipient(body.email)) await resend.emails.send({
       from: 'Yakini <onboarding@resend.dev>',
       to: 'cken1977@gmail.com',
-      subject: 'New Lead: ' + body.name + ' — ' + body.service,
-      html: '<div style="font-family:sans-serif;padding:32px"><h2>New Inquiry</h2><p><strong>Name:</strong> ' + body.name + '</p><p><strong>Email:</strong> ' + body.email + '</p><p><strong>Service:</strong> ' + body.service + '</p><p><strong>Budget:</strong> ' + (body.budget ?? 'Not specified') + '</p><p><strong>Message:</strong> ' + body.message + '</p></div>',
+      subject: ('New Lead: ' + body.name + ' — ' + body.service).replace(/[\r\n]+/g, ' ').slice(0, 200),
+      html: '<div style="font-family:sans-serif;padding:32px"><h2>New Inquiry</h2><p><strong>Name:</strong> ' + esc(body.name) + '</p><p><strong>Email:</strong> ' + esc(body.email) + '</p><p><strong>Service:</strong> ' + esc(body.service) + '</p><p><strong>Budget:</strong> ' + esc(body.budget ?? 'Not specified') + '</p><p><strong>Message:</strong> ' + esc(body.message) + '</p></div>',
     })
 
-    await resend.emails.send({
+    if (!isTestRecipient(body.email)) await resend.emails.send({
       from: 'Yakini <onboarding@resend.dev>',
       to: body.email,
       subject: 'We received your inquiry.',
-      html: '<div style="font-family:sans-serif;padding:32px"><h2>Hi ' + body.name.split(' ')[0] + ',</h2><p>We received your inquiry about ' + body.service + ' and will follow up within 24 hours.</p><p>— Yakini</p></div>',
+      html: '<div style="font-family:sans-serif;padding:32px"><h2>Hi ' + esc(body.name.split(' ')[0]) + ',</h2><p>We received your inquiry about ' + esc(body.service) + ' and will follow up within 24 hours.</p><p>— Yakini</p></div>',
     })
 
     return NextResponse.json({ success: true, data }, { status: 201 })

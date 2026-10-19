@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { SiteShell } from '@/components/SiteShell'
 import { INDUSTRY_KITS } from '@/lib/industry-kits'
-import { createClient } from '@supabase/supabase-js'
 
 // ═════════════════════════════════════════════════════════════════════════
 // YAKINI APPLY PAGE
@@ -17,10 +16,6 @@ import { createClient } from '@supabase/supabase-js'
 // of this file in Yakini's Supabase SQL editor.
 // ═════════════════════════════════════════════════════════════════════════
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
 
 const TIERS = [
   { val: 'foundation', label: 'Foundation · $1,500/mo' },

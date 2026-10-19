@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { clientIp, isTestRecipient, rest } from '@/lib/esign/server'
+import { esc, rateLimited, tooMany } from '@/lib/server/guard'
 
 // ═════════════════════════════════════════════════════════════════════════
 // YAKINI APPLICATION API
@@ -10,14 +11,18 @@ import { createClient } from '@supabase/supabase-js'
 // 3. Sends an admin notification to admin@yakini.digital
 // ═════════════════════════════════════════════════════════════════════════
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const RESEND_API_KEY = process.env.RESEND_API_KEY!
 const ADMIN_EMAIL = process.env.YAKINI_ADMIN_EMAIL || 'admin@yakini.digital'
 
 export async function POST(req: NextRequest) {
   try {
+    if (rateLimited(`apply:${clientIp(req.headers) ?? 'unknown'}`, 5, 60 * 60_000)) return tooMany()
     const data = await req.json()
+    if (typeof data !== 'object' || data === null) return NextResponse.json({ error: 'Bad request' }, { status: 400 })
+    for (const [k, v] of Object.entries(data)) {
+      if (v != null && typeof v !== 'string') return NextResponse.json({ error: `Bad field ${k}` }, { status: 400 })
+      if (typeof v === 'string' && v.length > 5000) return NextResponse.json({ error: `${k} is too long` }, { status: 400 })
+    }
 
     // Validate required fields
     if (!data.full_name || !data.email || !data.business_name || !data.industry) {
@@ -28,14 +33,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Valid email required' }, { status: 400 })
     }
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
-      auth: { persistSession: false }
-    })
+    // HTML-escaped copy for the emails (the database gets the raw text).
+    const view: Record<string, string> = Object.fromEntries(Object.entries(data).map(([k, v]) => [k, esc(v)]))
+    if (!/^https?:\/\//i.test(String(data.business_website ?? ''))) view.business_website = ''
 
-    // 1. Save to database
-    const { data: app, error: insertErr } = await supabase
-      .from('partnership_applications')
-      .insert({
+    // 1. Save to database (server-only key; the table is not open to the public)
+    const ins = await rest<{ id: string }[]>('partnership_applications', {
+      method: 'POST',
+      prefer: 'return=representation',
+      body: {
         full_name: data.full_name,
         email: data.email.toLowerCase().trim(),
         phone: data.phone || null,
@@ -53,17 +59,19 @@ export async function POST(req: NextRequest) {
         why_yakini: data.why_yakini || null,
         additional: data.additional || null,
         status: 'new',
-      })
-      .select()
-      .single()
+      },
+    })
+    const app = ins.ok ? (ins.data ?? [])[0] : null
+    const insertErr = app ? null : (ins.error ?? { message: `status ${ins.status}` })
 
-    if (insertErr) {
+    if (insertErr || !app) {
       console.error('Insert error:', insertErr)
       return NextResponse.json({ error: 'Could not save application' }, { status: 500 })
     }
 
     // 2. Send applicant confirmation
-    if (RESEND_API_KEY) {
+    // Test submissions (reserved test domains) send no email at all.
+    if (RESEND_API_KEY && !isTestRecipient(data.email)) {
       try {
         await fetch('https://api.resend.com/emails', {
           method: 'POST',
@@ -75,7 +83,7 @@ export async function POST(req: NextRequest) {
             from: 'Yakini <hello@yakini.digital>',
             to: data.email,
             subject: 'Your Yakini partnership application — received.',
-            html: buildApplicantEmail(data),
+            html: buildApplicantEmail(view),
           })
         })
       } catch (e) {
@@ -94,7 +102,7 @@ export async function POST(req: NextRequest) {
             from: 'Yakini Apply <hello@yakini.digital>',
             to: ADMIN_EMAIL,
             subject: `🔥 New Application: ${data.full_name} — ${data.business_name}`,
-            html: buildAdminEmail(data, app.id),
+            html: buildAdminEmail(view, app.id),
           })
         })
       } catch (e) {
