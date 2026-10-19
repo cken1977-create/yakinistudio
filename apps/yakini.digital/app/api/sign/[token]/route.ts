@@ -3,7 +3,7 @@ import {
   buildContractDocument, canonicalText, sha256Hex, isExpired, TOKEN_RE, CONSENT_TEXT,
   type ContractRow, type ContractFieldRow,
 } from '@/lib/esign/document'
-import { rest, isMissingColumn, clientIp, isTestRecipient, EsignConfigError } from '@/lib/esign/server'
+import { rest, isMissingColumn, clientIp, isTestRecipient, EsignConfigError, keyKind } from '@/lib/esign/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,7 +19,7 @@ function json(body: unknown, status = 200) {
 async function load(token: string) {
   if (!TOKEN_RE.test(token)) return null
   const r = await rest<ContractRow[]>(`contracts?signing_token=eq.${token}&select=${COLS}&limit=1`)
-  if (!r.ok) throw new Error(`contract lookup failed (${r.status})`)
+  if (!r.ok) throw new Error(`contract lookup failed (${r.status}) ${r.error?.message ?? ''} [key ${keyKind()}]`)
   return r.data?.[0] ?? null
 }
 

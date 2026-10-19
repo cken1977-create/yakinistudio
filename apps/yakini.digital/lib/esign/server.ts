@@ -74,3 +74,18 @@ export function clientIp(h: Headers): string | null {
 export function isTestRecipient(email: string | null | undefined): boolean {
   return !!email && /@(example\.(com|net|org)|[^@]+\.(test|example|invalid))$/i.test(email.trim())
 }
+
+/** Shape of the configured key, for error logs only (never the key itself). */
+export function keyKind(): string {
+  const k = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() ?? ''
+  if (!k) return 'missing'
+  if (k.startsWith('sb_secret_')) return 'sb_secret'
+  if (k.startsWith('sb_publishable_')) return 'sb_publishable'
+  if (k.split('.').length === 3) {
+    try {
+      const p = JSON.parse(Buffer.from(k.split('.')[1], 'base64url').toString('utf8'))
+      return `jwt role=${p.role ?? '?'} ref=${p.ref ?? '?'}`
+    } catch { return 'jwt (unreadable)' }
+  }
+  return 'other'
+}
