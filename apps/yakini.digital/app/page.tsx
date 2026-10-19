@@ -1,7 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { INDUSTRY_KITS } from '@/lib/industry-kits'
+import {
+  FLAT_PRICING_NOTE,
+  KIT_TIERS,
+  SELF_SERVE_PLANS,
+  kitPriceLabel,
+  selfServePriceLabel,
+} from '@/lib/pricing'
 
 // ═════════════════════════════════════════════════════════════════════════
 // YAKINI HOME v4 — "Digital infrastructure for serious founders."
@@ -35,13 +43,13 @@ export default function HomePage() {
       {/* ───── NAV ───── */}
       <nav className={`yk-nav ${scrolled ? 'scrolled' : ''}`}>
         <div className="yk-nav-inner">
-          <a href="/" className="yk-brand" aria-label="Yakini home">
+          <Link href="/" className="yk-brand" aria-label="Yakini home">
             <YakiniMark size={36} />
             <div className="yk-brand-text">
               <span className="yk-brand-name">YAKINI</span>
               <span className="yk-brand-sub">DIGITAL INFRASTRUCTURE</span>
             </div>
-          </a>
+          </Link>
 
           <div className="yk-nav-center">
             <a href="/platforms">Platforms</a>
@@ -181,7 +189,7 @@ export default function HomePage() {
             <a href="/platforms#theytowedmycar" className="yk-platform-card yk-platform-featured">
               <div className="yk-platform-meta">
                 <span className="yk-platform-status">LIVE</span>
-                <span className="yk-platform-tier">INTELLIGENCE TIER</span>
+                <span className="yk-platform-tier">CLIENT-OWNED</span>
               </div>
               <h3 className="yk-platform-name">TheyTowedMyCar.com</h3>
               <p className="yk-platform-desc">
@@ -208,7 +216,7 @@ export default function HomePage() {
             <a href="/platforms#vimaa" className="yk-platform-card">
               <div className="yk-platform-meta">
                 <span className="yk-platform-status">LIVE</span>
-                <span className="yk-platform-tier">ENTERPRISE</span>
+                <span className="yk-platform-tier">CLIENT-OWNED</span>
               </div>
               <h3 className="yk-platform-name">Vimaa / Legacyline</h3>
               <p className="yk-platform-desc">
@@ -220,7 +228,7 @@ export default function HomePage() {
             <a href="/platforms#vizionz-sankofa" className="yk-platform-card">
               <div className="yk-platform-meta">
                 <span className="yk-platform-status">LIVE</span>
-                <span className="yk-platform-tier">FOUNDATION TIER</span>
+                <span className="yk-platform-tier">CLIENT-OWNED</span>
               </div>
               <h3 className="yk-platform-name">Vizionz Sankofa</h3>
               <p className="yk-platform-desc">
@@ -446,7 +454,7 @@ export default function HomePage() {
 
           <div className="yk-composer-availability">
             <div className="yk-availability-line" />
-            <span>Composer is included in Authority tier and above.</span>
+            <span>Composer is included in every fully built kit.</span>
             <div className="yk-availability-line" />
           </div>
         </div>
@@ -484,7 +492,7 @@ export default function HomePage() {
 
           <div className="yk-studios-coming">
             <span className="yk-studios-coming-dot" />
-            <span>Studios opens to Enterprise tier this quarter.</span>
+            <span>Studios is quoted with a custom kit build.</span>
           </div>
         </div>
       </section>
@@ -503,7 +511,7 @@ export default function HomePage() {
             </div>
             <div className="yk-metric">
               <div className="yk-metric-num">7 days</div>
-              <div className="yk-metric-lbl">Foundation Engagement to operational</div>
+              <div className="yk-metric-lbl">From kickoff to operational</div>
             </div>
             <div className="yk-metric">
               <div className="yk-metric-num">100%</div>
@@ -588,23 +596,23 @@ export default function HomePage() {
           <div className="yk-partners-card">
             <div className="yk-partners-meta">
               <span className="yk-partners-dot" />
-              <span>STRATEGIC PARTNER PROGRAM</span>
+              <span>FLAT PRICING</span>
             </div>
             <h2 className="yk-partners-h">
-              For partners who refer business <span className="yk-italic">and earn recurring revenue.</span>
+              Pricing is flat. <span className="yk-italic">No share of revenue.</span>
             </h2>
             <p className="yk-partners-body">
-              The Strategic Partner Program is for established operators who want to offer Yakini
-              infrastructure to their networks. Partners receive co-marketing rights, revenue share
-              on deployments through their channel, and advisory input on the vertical templates
-              serving their industry. Founding partner economics apply to the first partner in each
-              vertical and do not repeat.
+              {FLAT_PRICING_NOTE} Self-serve is {selfServePriceLabel(SELF_SERVE_PLANS[0])} for{' '}
+              {SELF_SERVE_PLANS[0].name} and {selfServePriceLabel(SELF_SERVE_PLANS[1])} for{' '}
+              {SELF_SERVE_PLANS[1].name}. Fully built kits start at {kitPriceLabel(KIT_TIERS[0])}.
+              Custom kit builds are quoted separately. If you want Yakini in front of operators you
+              already work with, apply and we will tell you which path fits.
             </p>
             <div className="yk-partners-active">
-              <strong>Founding partner conversations underway.</strong> Real Estate, Hospitality, and Workforce Development verticals are actively scoping channel partner relationships. Founding partner economics apply only to the first partner in each vertical.
+              <strong>One price list.</strong> The number on the pricing page is the number. Custom kit builds are quoted separately, still as a flat fee.
             </div>
             <a href="/apply" className="yk-btn-primary yk-partners-cta">
-              <span>Apply for Strategic Partner</span>
+              <span>Apply</span>
               <span className="yk-btn-arrow">→</span>
             </a>
           </div>

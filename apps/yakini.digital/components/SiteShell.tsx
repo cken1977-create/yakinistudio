@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, ReactNode } from 'react'
+import Link from 'next/link'
 
 // ═════════════════════════════════════════════════════════════════════════
 // YAKINI SITE SHELL
@@ -33,7 +34,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       {/* ───── NAV ───── */}
       <nav className={`yk-nav ${scrolled ? 'scrolled' : ''}`}>
         <div className="yk-nav-inner">
-          <a href="/" className="yk-brand">
+          <Link href="/" className="yk-brand">
             <div className="yk-brand-mark">
               <span className="yk-brand-y">Y</span>
             </div>
@@ -41,7 +42,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
               <span className="yk-brand-name">YAKINI</span>
               <span className="yk-brand-sub">DIGITAL INFRASTRUCTURE</span>
             </div>
-          </a>
+          </Link>
 
           <div className="yk-nav-center">
             <a href="/platforms">Platforms</a>

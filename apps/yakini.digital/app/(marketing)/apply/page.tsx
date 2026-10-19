@@ -1,8 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState } from 'react'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { SiteShell } from '@/components/SiteShell'
 import { INDUSTRY_KITS } from '@/lib/industry-kits'
+import { OFFER_CHOICES, OFFER_GROUPS } from '@/lib/pricing'
 
 // ═════════════════════════════════════════════════════════════════════════
 // YAKINI APPLY PAGE
@@ -16,14 +19,6 @@ import { INDUSTRY_KITS } from '@/lib/industry-kits'
 // of this file in Yakini's Supabase SQL editor.
 // ═════════════════════════════════════════════════════════════════════════
 
-
-const TIERS = [
-  { val: 'foundation', label: 'Foundation · $1,500/mo' },
-  { val: 'authority', label: 'Authority · $3,000/mo' },
-  { val: 'intelligence', label: 'Intelligence · $7,500/mo' },
-  { val: 'enterprise', label: 'Enterprise · $15,000+/mo' },
-  { val: 'unsure', label: 'Not sure yet — help me decide' },
-]
 
 const INDUSTRIES = [
   'Tow defense / Legal services',
@@ -66,6 +61,14 @@ const REVENUE_RANGES = [
 type Step = 1 | 2 | 3 | 4 | 'success'
 
 export default function ApplyPage() {
+  return (
+    <Suspense fallback={null}>
+      <ApplyForm />
+    </Suspense>
+  )
+}
+
+function ApplyForm() {
   const [step, setStep] = useState<Step>(1)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -96,14 +99,26 @@ export default function ApplyPage() {
 
   const update = (k: keyof typeof form, v: string) => setForm({ ...form, [k]: v })
 
-  // Preselect industry when arriving from a Platforms Industry Kit (/apply?kit=<id>)
-  useEffect(() => {
-    const kitId = new URLSearchParams(window.location.search).get('kit')
-    const kit = INDUSTRY_KITS.find(k => k.id === kitId)
-    if (kit && INDUSTRIES.includes(kit.applyIndustry)) {
-      setForm(f => (f.industry ? f : { ...f, industry: kit.applyIndustry }))
+  // Preselect industry (?kit=) and plan (?tier=) from the URL. Adjusting state
+  // during render keeps the first paint aligned with the query string.
+  const searchParams = useSearchParams()
+  const tierParam = searchParams.get('tier') ?? ''
+  const kitId = searchParams.get('kit') ?? ''
+  const kit = INDUSTRY_KITS.find(k => k.id === kitId)
+  const presetIndustry = kit && INDUSTRIES.includes(kit.applyIndustry) ? kit.applyIndustry : ''
+  const presetTier = OFFER_CHOICES.some(choice => choice.val === tierParam) ? tierParam : ''
+  const presetKey = `${presetTier}|${presetIndustry}`
+  const [appliedPreset, setAppliedPreset] = useState<string | null>(null)
+  if (appliedPreset !== presetKey) {
+    setAppliedPreset(presetKey)
+    if (presetIndustry || presetTier) {
+      setForm(current => ({
+        ...current,
+        industry: current.industry || presetIndustry,
+        tier_interest: current.tier_interest || presetTier,
+      }))
     }
-  }, [])
+  }
 
   const validateStep = (s: number): boolean => {
     setError('')
@@ -122,7 +137,7 @@ export default function ApplyPage() {
       if (!form.location.trim()) return setErr('Location required')
     }
     if (s === 3) {
-      if (!form.tier_interest) return setErr('Please select tier interest')
+      if (!form.tier_interest) return setErr('Please select a self-serve plan, a kit, or custom')
       if (!form.timeline) return setErr('Please select timeline')
       if (!form.current_pain.trim() || form.current_pain.length < 30) return setErr('Please describe what\'s broken (at least 30 chars)')
       if (!form.biggest_outcome.trim() || form.biggest_outcome.length < 30) return setErr('Please describe your desired outcome (at least 30 chars)')
@@ -166,8 +181,8 @@ export default function ApplyPage() {
       if (!res.ok) throw new Error(data.error || 'Submission failed')
 
       setStep('success')
-    } catch (e: any) {
-      setError(e.message || 'Something went wrong. Try again.')
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Something went wrong. Try again.')
     }
     setSubmitting(false)
   }
@@ -181,7 +196,7 @@ export default function ApplyPage() {
         <div className="yk-page-header-inner">
           <div className="yk-eyebrow">
             <span className="yk-eyebrow-dot" />
-            <span>STRATEGIC PARTNER APPLICATION</span>
+            <span>APPLICATION</span>
           </div>
           <h1 className="yk-page-h1">
             <span className="yk-italic">Apply for</span>
@@ -190,7 +205,7 @@ export default function ApplyPage() {
           </h1>
           <p className="yk-page-sub">
             Yakini is selective. We work with a handful of serious founders at a time.
-            This application takes 5-7 minutes and gives us what we need to know if we're a fit
+            This application takes 5-7 minutes and gives us what we need to know if we&apos;re a fit
             before either of us invests further time. Real conversations come after real applications.
           </p>
         </div>
@@ -234,7 +249,7 @@ export default function ApplyPage() {
                   <h2 className="ap-step-h">Tell us about <span className="yk-italic">you.</span></h2>
                   <p className="ap-step-sub">
                     Yakini works with founders and decision-makers directly.
-                    We don't run intake calls with project managers or marketing assistants.
+                    We don&apos;t run intake calls with project managers or marketing assistants.
                   </p>
 
                   <div className="ap-fields">
@@ -278,7 +293,7 @@ export default function ApplyPage() {
                         <option value="">Select...</option>
                         {REVENUE_RANGES.map(r => <option key={r} value={r}>{r}</option>)}
                       </select>
-                      <span className="ap-field-hint">This helps us match you to the right tier and tell you honestly if Yakini is a fit.</span>
+                      <span className="ap-field-hint">This helps us match you to the right plan or kit and tell you honestly if Yakini is a fit.</span>
                     </div>
 
                     <Field label="Location *" value={form.location} onChange={v => update('location', v)} placeholder="City, State (or 'Remote')" />
@@ -298,10 +313,16 @@ export default function ApplyPage() {
 
                   <div className="ap-fields">
                     <div className="ap-field">
-                      <label>Tier interest *</label>
+                      <label>Plan, kit, or custom *</label>
                       <select value={form.tier_interest} onChange={e => update('tier_interest', e.target.value)}>
-                        <option value="">Select tier...</option>
-                        {TIERS.map(t => <option key={t.val} value={t.val}>{t.label}</option>)}
+                        <option value="">Select a self-serve plan, a kit, or custom...</option>
+                        {OFFER_GROUPS.map(group => (
+                          <optgroup key={group.id} label={group.label}>
+                            {OFFER_CHOICES.filter(choice => choice.group === group.id).map(choice => (
+                              <option key={choice.val} value={choice.val}>{choice.label}</option>
+                            ))}
+                          </optgroup>
+                        ))}
                       </select>
                     </div>
 
@@ -314,7 +335,7 @@ export default function ApplyPage() {
                     </div>
 
                     <div className="ap-field">
-                      <label>What's broken right now? *</label>
+                      <label>What&apos;s broken right now? *</label>
                       <textarea
                         value={form.current_pain}
                         onChange={e => update('current_pain', e.target.value)}
@@ -325,7 +346,7 @@ export default function ApplyPage() {
                     </div>
 
                     <div className="ap-field">
-                      <label>What's the biggest outcome you want from this platform? *</label>
+                      <label>What&apos;s the biggest outcome you want from this platform? *</label>
                       <textarea
                         value={form.biggest_outcome}
                         onChange={e => update('biggest_outcome', e.target.value)}
@@ -394,19 +415,19 @@ export default function ApplyPage() {
                     <h3>What happens next:</h3>
                     <ol>
                       <li><strong>Within 48 hours</strong> — We review your application carefully (no auto-replies).</li>
-                      <li><strong>If it's a fit</strong> — We email you to schedule a 30-minute strategic intake call.</li>
-                      <li><strong>If it's not a fit yet</strong> — We tell you why honestly and recommend next steps.</li>
+                      <li><strong>If it&apos;s a fit</strong> — We email you to schedule a 30-minute strategic intake call.</li>
+                      <li><strong>If it&apos;s not a fit yet</strong> — We tell you why honestly and recommend next steps.</li>
                     </ol>
                   </div>
 
                   <p className="ap-success-note">
-                    Either way, you'll hear from us. Keep an eye on <strong style={{ color: 'var(--cream)' }}>{form.email}</strong>.
+                    Either way, you&apos;ll hear from us. Keep an eye on <strong style={{ color: 'var(--cream)' }}>{form.email}</strong>.
                   </p>
 
-                  <a href="/" className="yk-btn-ghost">
+                  <Link href="/" className="yk-btn-ghost">
                     <span>Back to home</span>
                     <span className="yk-btn-arrow">→</span>
-                  </a>
+                  </Link>
                 </div>
               )}
 
@@ -445,13 +466,13 @@ export default function ApplyPage() {
                 <div className="ap-sidebar-card">
                   <div className="ap-sidebar-h">WHY THE APPLICATION?</div>
                   <p>
-                    Most agencies will take any client willing to pay. Yakini doesn't.
+                    Most agencies will take any client willing to pay. Yakini doesn&apos;t.
                     The application exists because misaligned partnerships waste both our time.
                   </p>
                 </div>
 
                 <div className="ap-sidebar-card">
-                  <div className="ap-sidebar-h">WHAT WE'RE LOOKING FOR</div>
+                  <div className="ap-sidebar-h">WHAT WE&apos;RE LOOKING FOR</div>
                   <ul>
                     <li>Decision-makers, not gatekeepers</li>
                     <li>Real businesses with real operations</li>
@@ -462,7 +483,7 @@ export default function ApplyPage() {
 
                 <div className="ap-sidebar-card">
                   <div className="ap-sidebar-h">DIRECT CONTACT</div>
-                  <p>If you'd rather skip the form:</p>
+                  <p>If you&apos;d rather skip the form:</p>
                   <a href="mailto:hello@yakini.digital" className="ap-sidebar-email">hello@yakini.digital</a>
                 </div>
               </div>

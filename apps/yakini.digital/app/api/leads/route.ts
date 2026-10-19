@@ -4,7 +4,11 @@ import { esc, rateLimited, tooMany } from '@/lib/server/guard'
 import { Lead } from '@/types'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getResend() {
+  const key = process.env.RESEND_API_KEY
+  if (!key) return null
+  return new Resend(key)
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -32,14 +36,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to save lead' }, { status: 500 })
     }
 
-    if (!isTestRecipient(body.email)) await resend.emails.send({
+    const resend = getResend()
+    if (resend && !isTestRecipient(body.email)) await resend.emails.send({
       from: 'Yakini <onboarding@resend.dev>',
       to: 'cken1977@gmail.com',
       subject: ('New Lead: ' + body.name + ' — ' + body.service).replace(/[\r\n]+/g, ' ').slice(0, 200),
       html: '<div style="font-family:sans-serif;padding:32px"><h2>New Inquiry</h2><p><strong>Name:</strong> ' + esc(body.name) + '</p><p><strong>Email:</strong> ' + esc(body.email) + '</p><p><strong>Service:</strong> ' + esc(body.service) + '</p><p><strong>Budget:</strong> ' + esc(body.budget ?? 'Not specified') + '</p><p><strong>Message:</strong> ' + esc(body.message) + '</p></div>',
     })
 
-    if (!isTestRecipient(body.email)) await resend.emails.send({
+    if (resend && !isTestRecipient(body.email)) await resend.emails.send({
       from: 'Yakini <onboarding@resend.dev>',
       to: body.email,
       subject: 'We received your inquiry.',

@@ -1,10 +1,10 @@
 import Link from 'next/link'
 
 const services = [
-  { label: 'Authority Sites', href: '/services' },
-  { label: 'Conversion Systems', href: '/services' },
-  { label: 'Operations', href: '/services' },
-  { label: 'Mobile Apps', href: '/services' },
+  { label: 'Platforms', href: '/platforms' },
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'Food trucks', href: '/food-trucks' },
+  { label: 'Apply', href: '/apply' },
 ]
 
 const company = [

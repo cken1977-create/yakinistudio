@@ -2,6 +2,18 @@
 
 import { useState } from 'react'
 import { SiteShell } from '@/components/SiteShell'
+import {
+  FLAT_PRICING_NOTE,
+  KIT_INCLUDES,
+  KIT_TIERS,
+  PASS_THROUGH_NOTE,
+  SELF_SERVE_PLANS,
+  kitMonthlyLabel,
+  kitSetupLabel,
+  selfServeMonthlyLabel,
+  selfServePriceLabel,
+  selfServeSetupLabel,
+} from '@/lib/pricing'
 
 // ═════════════════════════════════════════════════════════════════════════
 // YAKINI INTELLIGENCE — Sales Page v2
@@ -10,7 +22,7 @@ import { SiteShell } from '@/components/SiteShell'
 // v2 changes:
 // - Multi-vertical positioning (6 industries shown)
 // - Yakini Intelligence branding (no Claude references)
-// - Garland reframed as "First Strategic Partner" not "the example"
+// - Garland shown as a live platform, not a priced tier
 // - New "Across Industries" section with vertical-specific use cases
 // ═════════════════════════════════════════════════════════════════════════
 
@@ -180,7 +192,7 @@ export default function IntelligencePage() {
             <div className="yk-demo-section">
               <div className="yk-demo-section-h">📋 ASSESSMENT</div>
               <p className="int-demo-assessment">
-                Strong case based on customer's claim of no visible signage at apartment complex.
+                Strong case based on customer&apos;s claim of no visible signage at apartment complex.
                 Texas law requires specific signage standards, and absence of proper posting is
                 a classic winning argument in tow hearings.
               </p>
@@ -217,8 +229,8 @@ export default function IntelligencePage() {
               <div className="yk-demo-section-h">📸 EVIDENCE TO COLLECT</div>
               <ul className="yk-demo-list">
                 <li>Current photos of parking area showing lack of signage</li>
-                <li>Tow company's authorization documentation</li>
-                <li>Apple Towing's VSF license status</li>
+                <li>Tow company&apos;s authorization documentation</li>
+                <li>Apple Towing&apos;s VSF license status</li>
                 <li>Property management contract authorizing tows</li>
               </ul>
             </div>
@@ -233,7 +245,7 @@ export default function IntelligencePage() {
           </div>
 
           <p className="int-demo-aside">
-            This is from <strong style={{ color: 'var(--gold)' }}>TheyTowedMyCar.com</strong>, our first live Strategic Partner platform.
+            This is from <strong style={{ color: 'var(--gold)' }}>TheyTowedMyCar.com</strong>, a live platform the founder owns.
             The same intelligence engine adapts to every industry we build for —
             see the breakdown below.
           </p>
@@ -362,15 +374,16 @@ export default function IntelligencePage() {
               </div>
 
               <div className="int-roi-comparison">
-                <div className="int-comp-h">Yakini Intelligence Tier</div>
+                <div className="int-comp-h">Flat pricing</div>
                 <div className="int-comp-pricing">
-                  <span className="int-comp-price">$10,000</span>
-                  <span className="int-comp-period">/mo</span>
+                  <span className="int-comp-price">{selfServeSetupLabel(SELF_SERVE_PLANS[0])}</span>
+                  <span className="int-comp-period">setup</span>
                 </div>
                 <div className="int-comp-roi">
-                  ROI: <span className="yk-gold">
-                    {monthlyValue > 0 ? ((monthlyValue / 10000 - 1) * 100).toFixed(0) : 0}%
-                  </span> per month
+                  Operate is {selfServePriceLabel(SELF_SERVE_PLANS[0])}. Operate Plus is{' '}
+                  {selfServePriceLabel(SELF_SERVE_PLANS[1])}. Kits start at{' '}
+                  <span className="yk-gold">{kitSetupLabel(KIT_TIERS[0])}</span> setup.
+                  There is no separate intelligence rate.
                 </div>
               </div>
             </div>
@@ -415,12 +428,12 @@ export default function IntelligencePage() {
         </div>
       </section>
 
-      {/* ───── FIRST STRATEGIC PARTNER ───── */}
+      {/* ───── LIVE PLATFORM ───── */}
       <section className="yk-section int-case-study">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
             <span className="yk-num">05</span>
-            <span>First Strategic Partner</span>
+            <span>Live platform</span>
           </div>
 
           <div className="int-cs-grid">
@@ -432,7 +445,7 @@ export default function IntelligencePage() {
                 <span className="yk-gold">TheyTowedMyCar.com</span>
               </h2>
               <p className="int-cs-quote">
-                "This is legit. I had no idea this kind of platform was even possible for someone like me."
+                &quot;This is legit. I had no idea this kind of platform was even possible for someone like me.&quot;
               </p>
               <p className="int-cs-attribution">— Garland, Founder · First reaction to seeing the platform</p>
 
@@ -505,7 +518,7 @@ export default function IntelligencePage() {
                   </div>
                   <div className="int-cs-feature">
                     <span className="int-cs-feature-dot">●</span>
-                    <span>Auto revenue share tracking</span>
+                    <span>Automatic revenue tracking</span>
                   </div>
                   <div className="int-cs-feature">
                     <span className="int-cs-feature-dot">●</span>
@@ -534,47 +547,47 @@ export default function IntelligencePage() {
             <span>Investment</span>
           </div>
           <h2 className="yk-section-h2">
-            Intelligence tier.
+            Same price list.
             <br />
-            <span className="yk-gold">$10,000/mo.</span>
+            <span className="yk-gold">No separate rate.</span>
           </h2>
 
           <div className="int-tier-grid">
             <div className="int-tier-included">
-              <h3>Included in every Intelligence engagement:</h3>
+              <h3>Yakini Intelligence follows the plan or kit you buy:</h3>
               <ul>
-                <li>Custom platform built for your industry (not a template)</li>
-                <li>Independent infrastructure (your domain, your data)</li>
-                <li>Database architecture + multi-tenant ready</li>
-                <li>Customer-facing portal with auth</li>
-                <li>Admin command center built for your workflow</li>
-                <li>All 6 Yakini Intelligence tools, configured for your vertical</li>
-                <li>Email automation + notifications</li>
-                <li>Continuous AI refinement (monthly tuning)</li>
-                <li>Platform updates + new features as you grow</li>
-                <li>Direct line to your build team</li>
+                <li>Self-serve Operate is {selfServePriceLabel(SELF_SERVE_PLANS[0])}. Operate Plus is {selfServePriceLabel(SELF_SERVE_PLANS[1])}. The setup fee is one time. A Yakini operator sets it up.</li>
+                <li>Fully built kits start at {kitSetupLabel(KIT_TIERS[0])} setup and {kitMonthlyLabel(KIT_TIERS[0])}.</li>
+                {KIT_INCLUDES.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+                <li>{PASS_THROUGH_NOTE}</li>
+                <li>{FLAT_PRICING_NOTE}</li>
+                <li>Custom kit builds are quoted separately.</li>
               </ul>
             </div>
 
             <div className="int-tier-cta">
-              <div className="int-tier-h">Strategic Partner</div>
+              <div className="int-tier-h">{SELF_SERVE_PLANS[0].name}</div>
               <div className="int-tier-price">
-                <span className="int-tier-num">$10K</span>
-                <span className="int-tier-period">/month</span>
+                <span className="int-tier-num">{selfServeSetupLabel(SELF_SERVE_PLANS[0])}</span>
+                <span className="int-tier-period">setup</span>
               </div>
-              <div className="int-tier-setup">+ build setup fee (case-by-case)</div>
+              <div className="int-tier-setup">
+                Then {selfServeMonthlyLabel(SELF_SERVE_PLANS[0])}. {SELF_SERVE_PLANS[1].name} is {selfServePriceLabel(SELF_SERVE_PLANS[1])}. Kit prices are on the price list. Custom work is quoted separately.
+              </div>
 
               <p className="int-tier-note">
-                We work with a handful of serious founders at a time. Application required.
+                We work with a handful of serious founders at a time. Application required for a kit or a custom quote.
               </p>
 
-              <a href="/apply" className="yk-btn-primary int-tier-btn">
-                <span>Apply for partnership</span>
+              <a href="/pricing" className="yk-btn-primary int-tier-btn">
+                <span>See pricing</span>
                 <span className="yk-btn-arrow">→</span>
               </a>
 
-              <a href="/pricing" className="int-tier-link">
-                See all tiers →
+              <a href="/apply" className="int-tier-link">
+                Apply for a kit or a quote →
               </a>
             </div>
           </div>
@@ -597,9 +610,9 @@ export default function IntelligencePage() {
               <span className="yk-gold">Compete on infrastructure.</span>
             </h2>
             <p className="int-final-sub">
-              Marketing firms can't build what we build. They don't make software.
+              Marketing firms can&apos;t build what we build. They don&apos;t make software.
               When you have Yakini Intelligence configured for your industry,
-              your competitors aren't just behind on marketing — they're behind on the fundamental capability of their business.
+              your competitors aren&apos;t just behind on marketing — they&apos;re behind on the fundamental capability of their business.
             </p>
             <div className="int-final-ctas">
               <a href="/apply" className="yk-btn-primary">

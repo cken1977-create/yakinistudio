@@ -2,22 +2,7 @@
 
 import { useState } from 'react'
 import { Lead } from '@/types'
-
-const services = [
-  'Authority Site — $1,500+',
-  'Pro Build — $3,500+',
-  'Studio Plan — $500/mo',
-  'Mobile App — $10,000+',
-  'Custom Project',
-]
-
-const budgets = [
-  'Under $2,000',
-  '$2,000 – $5,000',
-  '$5,000 – $10,000',
-  '$10,000+',
-  'Not sure yet',
-]
+import { OFFER_CHOICES } from '@/lib/pricing'
 
 export function IntakeForm() {
   const [form, setForm] = useState<Partial<Lead>>({})
@@ -75,9 +60,8 @@ export function IntakeForm() {
               <em className="text-[#C9A84C] not-italic">future.</em>
             </h2>
             <p className="text-[#F5EFE3]/50 text-base leading-relaxed mb-12">
-              Schedule a free 30-minute discovery call. We'll scope
-              your project and send a fixed quote within 24 hours.
-              No commitment required.
+              The first conversation is a free 30-minute Drag Audit.
+              Tell us whether you want a self-serve plan, a kit, or a custom quote.
             </p>
 
             {/* Info */}
@@ -85,8 +69,8 @@ export function IntakeForm() {
               {[
                 { label: 'Email', value: 'hello@yakini.digital' },
                 { label: 'Response Time', value: 'Within 24 hours' },
-                { label: 'Discovery Call', value: 'Free — 30 minutes' },
-                { label: 'Quote Delivery', value: 'Fixed price in 24 hours' },
+                { label: 'Drag Audit', value: 'Free — 30 minutes' },
+                { label: 'Next step', value: 'Plan, kit, or a custom quote' },
               ].map((item) => (
                 <div
                   key={item.label}
@@ -151,41 +135,22 @@ export function IntakeForm() {
               />
             </div>
 
-            {/* Service + Budget */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-2">
-                <label className="text-[9px] tracking-[3px] uppercase text-[#F5EFE3]/40">
-                  Service *
-                </label>
-                <select
-                  name="service"
-                  required
-                  value={form.service ?? ''}
-                  onChange={handleChange}
-                  className="bg-[#242424] border border-[#F5EFE3]/10 text-[#F5EFE3] px-4 py-3 text-sm outline-none focus:border-[#C9A84C] transition-colors appearance-none"
-                >
-                  <option value="">Select...</option>
-                  {services.map((s) => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-[9px] tracking-[3px] uppercase text-[#F5EFE3]/40">
-                  Budget
-                </label>
-                <select
-                  name="budget"
-                  value={form.budget ?? ''}
-                  onChange={handleChange}
-                  className="bg-[#242424] border border-[#F5EFE3]/10 text-[#F5EFE3] px-4 py-3 text-sm outline-none focus:border-[#C9A84C] transition-colors appearance-none"
-                >
-                  <option value="">Select...</option>
-                  {budgets.map((b) => (
-                    <option key={b} value={b}>{b}</option>
-                  ))}
-                </select>
-              </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-[9px] tracking-[3px] uppercase text-[#F5EFE3]/40">
+                Plan, kit, or custom *
+              </label>
+              <select
+                name="service"
+                required
+                value={form.service ?? ''}
+                onChange={handleChange}
+                className="bg-[#242424] border border-[#F5EFE3]/10 text-[#F5EFE3] px-4 py-3 text-sm outline-none focus:border-[#C9A84C] transition-colors appearance-none"
+              >
+                <option value="">Select...</option>
+                {OFFER_CHOICES.map((choice) => (
+                  <option key={choice.val} value={choice.label}>{choice.label}</option>
+                ))}
+              </select>
             </div>
 
             {/* Message */}
@@ -218,7 +183,7 @@ export function IntakeForm() {
             {/* Feedback */}
             {status === 'success' && (
               <p className="text-center text-sm text-[#8A9E8C] italic">
-                ✓ Inquiry received. We'll be in touch within 24 hours.
+                ✓ Inquiry received. We&apos;ll be in touch within 24 hours.
               </p>
             )}
             {status === 'error' && (

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
 const navItems = [
-  { label: 'Services', href: '/services' },
+  { label: 'Platforms', href: '/platforms' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Work', href: '/work' },
   { label: 'Process', href: '/process' },

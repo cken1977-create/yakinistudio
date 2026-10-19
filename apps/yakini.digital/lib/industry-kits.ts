@@ -163,7 +163,7 @@ export const INDUSTRY_KITS: IndustryKit[] = [
   },
 ]
 
-/** Larger operator / enterprise-style engagements — proof language only. No invented metrics, domains, or LIVE claims. */
+/** Larger operator engagements — proof language only. No invented metrics, domains, or LIVE claims. */
 export type OperatorBuild = {
   id: string
   name: string
@@ -182,9 +182,9 @@ export const OPERATOR_BUILDS: OperatorBuild[] = [
   },
   {
     id: 'enterprise-operator',
-    name: 'Enterprise-scope operator system',
-    label: 'OPERATOR · ENTERPRISE SCOPE',
+    name: 'Larger operator system',
+    label: 'OPERATOR · LARGER BUILD',
     scope: 'A larger operator-system engagement — proof that Yakini builds for companies that need more than a brochure.',
-    note: 'Enterprise-style scope. Details stay with the client until they go live.',
+    note: 'Larger custom scope, quoted separately. Details stay with the client until they go live.',
   },
 ]
