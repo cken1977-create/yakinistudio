@@ -20,6 +20,7 @@ import {
   selfServePriceLabel,
   selfServeSetupCovers,
   selfServeSetupLabel,
+  selfServeStartUrl,
   supportBeyond,
   supportScope,
 } from '@/lib/pricing'
@@ -97,7 +98,7 @@ export default function PricingPage() {
                 </div>
 
                 <a
-                  href={PORTAL_SIGNUP_URL}
+                  href={selfServeStartUrl(plan.id)}
                   className="pr-tier-cta pr-cta-featured"
                   target="_blank"
                   rel="noopener noreferrer"

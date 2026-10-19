@@ -2,6 +2,7 @@
 
 import { useState, useEffect, ReactNode } from 'react'
 import Link from 'next/link'
+import { PORTAL_START_URL } from '@/lib/pricing'
 
 // ═════════════════════════════════════════════════════════════════════════
 // YAKINI SITE SHELL
@@ -52,8 +53,8 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <a href="/about">About</a>
           </div>
 
-          <a href="/apply" className="yk-nav-cta">
-            <span>Apply</span>
+          <a href={PORTAL_START_URL} className="yk-nav-cta" target="_blank" rel="noopener noreferrer">
+            <span>Start now</span>
             <span className="yk-nav-cta-arrow">→</span>
           </a>
 
@@ -74,7 +75,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <a href="/process" onClick={() => setMenuOpen(false)}>Process</a>
           <a href="/pricing" onClick={() => setMenuOpen(false)}>Pricing</a>
           <a href="/about" onClick={() => setMenuOpen(false)}>About</a>
-          <a href="/apply" className="yk-mobile-cta" onClick={() => setMenuOpen(false)}>Apply →</a>
+          <a href={PORTAL_START_URL} className="yk-mobile-cta" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Start now →</a>
         </div>
       )}
 
@@ -110,6 +111,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
             <div className="yk-footer-col">
               <h6>Company</h6>
+              <a href={PORTAL_START_URL} target="_blank" rel="noopener noreferrer">Start now</a>
               <a href="/about">About</a>
               <a href="/apply">Apply</a>
               <a href="https://brsafoundation.org">BRSA Foundation</a>
