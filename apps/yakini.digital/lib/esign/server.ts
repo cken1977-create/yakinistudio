@@ -9,8 +9,12 @@ const BASE = `https://${CONTRACTS_PROJECT_REF}.supabase.co/rest/v1`
 export class EsignConfigError extends Error {}
 
 function serviceKey(): string {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()
   if (!key) throw new EsignConfigError('SUPABASE_SERVICE_ROLE_KEY is not set')
+  const envUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()
+  if (envUrl && !envUrl.includes(CONTRACTS_PROJECT_REF)) {
+    throw new EsignConfigError('NEXT_PUBLIC_SUPABASE_URL is not the contracts project, so its service key is not either')
+  }
   // Legacy JWT keys carry the project ref; refuse a key for a different project.
   const parts = key.split('.')
   if (parts.length === 3) {
@@ -40,7 +44,8 @@ export async function rest<T = unknown>(
     method: init.method ?? 'GET',
     headers: {
       apikey: key,
-      Authorization: `Bearer ${key}`,
+      // Legacy JWT keys go in Authorization too; new sb_secret_ keys must only be sent as apikey.
+      ...(key.split('.').length === 3 ? { Authorization: `Bearer ${key}` } : {}),
       'Content-Type': 'application/json',
       ...(init.prefer ? { Prefer: init.prefer } : {}),
     },
