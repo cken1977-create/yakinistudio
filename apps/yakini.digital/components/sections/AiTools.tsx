@@ -112,14 +112,14 @@ export function AiTools() {
             Yakini Intelligence
           </div>
           <h3 className="text-[#F5EFE3] font-bold text-2xl mb-3">
-            Included in every Pro Build and above.
+            See plans and kits on the pricing page.
           </h3>
           <p className="text-[#F5EFE3]/40 text-sm leading-relaxed mb-8 max-w-lg mx-auto">
             Become a Yakini client and get full access to every AI tool —
             menu building, recipe costing, pricing strategy, business operations,
             and industry-specific intelligence built for your vertical.
           </p>
-          <Link href="/#contact"
+          <Link href="/pricing"
             className="text-[11px] tracking-[2.5px] uppercase bg-[#C9A84C] text-[#141414] px-10 py-4 font-medium hover:bg-[#E2C97E] transition-colors inline-block">
             Start a Project to Get Access
           </Link>

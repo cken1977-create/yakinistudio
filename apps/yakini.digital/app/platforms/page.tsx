@@ -22,7 +22,7 @@ const PLATFORMS = [
     industry: 'LEGAL SERVICES · CONSUMER PROTECTION',
     status: 'LIVE',
     statusColor: 'gold',
-    tier: 'INTELLIGENCE TIER',
+    tier: 'CLIENT-OWNED',
     location: 'Texas · 5 Counties',
     domain: 'theytowedmycar.com',
     quote: 'This is legit. I had no idea this kind of platform was even possible for someone like me.',
@@ -35,7 +35,7 @@ const PLATFORMS = [
       { name: 'Customer Portal', detail: 'Magic-link auth, case status tracking, hearing date display' },
       { name: 'Admin Command Center', detail: 'Case queue with filters, status updates, internal notes' },
       { name: 'Yakini Intelligence', detail: 'Case strength assessment in 8 seconds with TX statute citations' },
-      { name: 'Revenue Automation', detail: 'Per-case revenue share auto-tracked when status set to WON' },
+      { name: 'Revenue Automation', detail: 'Per-case revenue tracked when status is set to WON' },
       { name: 'Email Pipeline', detail: 'Customer + admin + Yakini notifications on every event' },
       { name: 'VSF Database', detail: 'Searchable Texas Vehicle Storage Facility directory' },
     ],
@@ -54,7 +54,7 @@ const PLATFORMS = [
     industry: 'CORRECTIONS · WORKFORCE · NONPROFIT',
     status: 'LIVE',
     statusColor: 'gold',
-    tier: 'ENTERPRISE',
+    tier: 'CLIENT-OWNED',
     location: 'New Mexico Pilot',
     domain: 'legacylinehq.com',
     quote: null,
@@ -83,7 +83,7 @@ const PLATFORMS = [
     industry: 'NONPROFIT · COMMUNITY DEVELOPMENT',
     status: 'LIVE',
     statusColor: 'gold',
-    tier: 'FOUNDATION TIER',
+    tier: 'CLIENT-OWNED',
     location: 'Albuquerque, NM',
     domain: 'vizionzsankofa.org',
     quote: null,
@@ -263,7 +263,7 @@ export default function PlatformsPage() {
               <article key={b.id} id={b.id} className="pl-ops-card">
                 <div className="pl-ops-card-top">
                   <span className="pl-ops-badge">OPERATOR BUILD</span>
-                  <span className="pl-status pl-status-electric">ENTERPRISE SCOPE</span>
+                  <span className="pl-status pl-status-electric">QUOTED SEPARATELY</span>
                 </div>
                 <div className="pl-ops-label">{b.label}</div>
                 <h3 className="pl-ops-name">{b.name}</h3>
@@ -319,7 +319,7 @@ export default function PlatformsPage() {
               {/* Quote (if present) */}
               {p.quote && (
                 <div className="pl-card-quote">
-                  <p>"{p.quote}"</p>
+                  <p>&quot;{p.quote}&quot;</p>
                   <span className="pl-card-quote-by">— {p.quoteBy}</span>
                 </div>
               )}
@@ -389,19 +389,19 @@ export default function PlatformsPage() {
           <div className="pl-final-content">
             <div className="yk-eyebrow">
               <span className="yk-eyebrow-dot" />
-              <span>YOUR INDUSTRY ISN'T LISTED?</span>
+              <span>YOUR INDUSTRY ISN&apos;T LISTED?</span>
             </div>
             <h2 className="pl-final-h2">
-              We don't have a vertical yet.
+              We don&apos;t have a vertical yet.
               <br />
               <span className="yk-italic">We build</span>
               <br />
               <span className="yk-gold">operator systems.</span>
             </h2>
             <p className="pl-final-sub">
-              Yakini doesn't build templates or brochure sites. We build the system your business runs on —
+              Yakini doesn&apos;t build templates or brochure sites. We build the system your business runs on —
               for insurance agencies, law practices, accounting firms, industrial crews, and anyone still
-              leaking time and money into spreadsheets. Let's talk about what your operator system looks like.
+              leaking time and money into spreadsheets. Let&apos;s talk about what your operator system looks like.
             </p>
             <div className="pl-final-ctas">
               <a href="/apply" className="yk-btn-primary">

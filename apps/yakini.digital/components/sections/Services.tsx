@@ -1,13 +1,9 @@
-import { cn } from '@/lib/utils'
-
 const services = [
   {
     number: '01',
-    tier: 'Authority',
     title: 'Website Design & Development',
     description:
       'Custom-built sites that load fast, look premium, and convert. No templates. No shortcuts. Your site becomes your hardest working employee.',
-    price: 'From $1,500',
     items: [
       'Custom Next.js development',
       'Mobile-optimized design',
@@ -18,13 +14,11 @@ const services = [
   },
   {
     number: '02',
-    tier: 'Conversion',
     title: 'Booking & Lead Systems',
     description:
       'Not just a contact form. A full lead capture system — bookings, inquiries, quotes, and client data stored and organized automatically.',
-    price: 'From $3,500',
     items: [
-      'Everything in Authority',
+      'Lead capture with the site',
       'Supabase database backend',
       'Booking & inquiry system',
       'Lead dashboard',
@@ -33,11 +27,9 @@ const services = [
   },
   {
     number: '03',
-    tier: 'Operations',
     title: 'Client Portals & Dashboards',
     description:
       'Internal tools that run your business — quote builders, booking pipelines, client history, menu update panels, and light CRM systems.',
-    price: 'From $6,000',
     items: [
       'Everything in Conversion',
       'Client-facing portal',
@@ -48,11 +40,9 @@ const services = [
   },
   {
     number: '04',
-    tier: 'Retention',
     title: 'Mobile Apps',
     description:
       'Client-facing mobile apps for ordering, loyalty, memberships, and retention. Built in React Native — shares code with your web stack.',
-    price: 'From $10,000',
     items: [
       'Everything in Operations',
       'iOS & Android app',
@@ -96,7 +86,7 @@ export function Services() {
                   {service.number}
                 </span>
                 <span className="text-[9px] tracking-[3px] uppercase text-[#C9A84C] border border-[#C9A84C]/30 px-3 py-1">
-                  {service.tier}
+                  See pricing
                 </span>
               </div>
 
@@ -122,11 +112,11 @@ export function Services() {
 
               {/* Price */}
               <div className="mt-auto pt-4 border-t border-[#F5EFE3]/08 flex items-center justify-between">
-                <span className="text-[#C9A84C] font-bold text-lg">
-                  {service.price}
-                </span>
+                <a href="/pricing" className="text-[#C9A84C] font-bold text-sm tracking-wide">
+                  Plans and kits
+                </a>
                 <span className="text-[10px] tracking-[2px] uppercase text-[#F5EFE3]/30 group-hover:text-[#C9A84C] transition-colors">
-                  Learn More →
+                  See pricing →
                 </span>
               </div>
             </div>

@@ -97,15 +97,7 @@ export default function ContractsPage() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [filter, setFilter] = useState('all')
 
-  useEffect(() => { loadContracts() }, [])
-
-  const showToast = (msg: string) => {
-    setToast(msg); setToastVisible(true)
-    setTimeout(() => setToastVisible(false), 3500)
-  }
-
   const loadContracts = async () => {
-    setLoading(true)
     try {
       const res = await fetch('/api/dashboard/contracts', { cache: 'no-store' })
       if (res.status === 401) { window.location.href = '/dashboard/login'; return }
@@ -113,6 +105,17 @@ export default function ContractsPage() {
       setContracts((await res.json()).contracts ?? [])
     } catch (e) { console.error(e) }
     setLoading(false)
+  }
+
+  useEffect(() => {
+    // Server list, loaded once after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadContracts()
+  }, [])
+
+  const showToast = (msg: string) => {
+    setToast(msg); setToastVisible(true)
+    setTimeout(() => setToastVisible(false), 3500)
   }
 
   const set = (key: keyof NewContract, val: string | string[]) =>
@@ -398,7 +401,7 @@ export default function ContractsPage() {
                       <div className="yc-input-prefix-wrap">
                         <span className="yc-prefix">$</span>
                         <input className="yc-input yc-input-prefixed" value={form.setup_fee}
-                          onChange={e => set('setup_fee', e.target.value)} placeholder="2,500" />
+                          onChange={e => set('setup_fee', e.target.value)} placeholder="Amount" />
                       </div>
                     </div>
                     <div className="yc-field">
@@ -406,7 +409,7 @@ export default function ContractsPage() {
                       <div className="yc-input-prefix-wrap">
                         <span className="yc-prefix">$</span>
                         <input className="yc-input yc-input-prefixed" value={form.monthly_retainer}
-                          onChange={e => set('monthly_retainer', e.target.value)} placeholder="1,499" />
+                          onChange={e => set('monthly_retainer', e.target.value)} placeholder="Amount" />
                       </div>
                     </div>
                     <div className="yc-field">

@@ -1,48 +1,43 @@
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
+import {
+  CUSTOM_OFFER,
+  FLAT_PRICING_NOTE,
+  KIT_TIERS,
+  PASS_THROUGH_NOTE,
+  PORTAL_SIGNUP_URL,
+  SELF_SERVE_PLANS,
+  SELF_SERVE_SETUP_NOTE,
+  kitPriceLabel,
+  selfServePriceLabel,
+} from '@/lib/pricing'
 
 const shapes = [
+  ...SELF_SERVE_PLANS.map((plan) => ({
+    name: plan.name,
+    tag: 'Self-serve plan',
+    price: selfServePriceLabel(plan),
+    detail: SELF_SERVE_SETUP_NOTE,
+    href: PORTAL_SIGNUP_URL,
+    external: true,
+    features: plan.includes.slice(0, 4),
+  })),
   {
-    name: 'Launch Kit',
-    tag: 'Fixed scope · 2–4 weeks',
-    price: '$10,000',
-    suffix: 'typical',
-    retainer: 'Then $200–$400/mo',
-    featured: false,
-    features: [
-      'Private client portal',
-      'Intake, timeline, alerts',
-      'Your brand, domain, and data',
-      'Built on our product stack',
-    ],
+    name: 'Fully built kits',
+    tag: 'Pilot through House',
+    price: kitPriceLabel(KIT_TIERS[0]).replace(/ · 6-month minimum$/, ''),
+    detail: 'Crew and above have a six-month minimum.',
+    href: '/pricing',
+    external: false,
+    features: KIT_TIERS.map((tier) => `${tier.name} · ${kitPriceLabel(tier)}`),
   },
   {
-    name: 'Launch Operate',
-    tag: 'Featured',
-    price: '$22,000',
-    suffix: 'typical',
-    retainer: 'Then $750–$1,500/mo',
-    featured: true,
-    features: [
-      'Everything in Launch Kit',
-      'Weekly operating rhythm',
-      'Client dashboard',
-      'We run it with you',
-    ],
-  },
-  {
-    name: 'Launch Custom',
-    tag: 'Discovery first',
-    price: '$7,000',
-    suffix: 'discovery',
-    retainer: 'Care $2,500–$4,000/mo',
-    featured: false,
-    features: [
-      'Paid discovery · keep the roadmap',
-      'Phase 1: replace the core',
-      'Phase 2: integrations & handoff',
-      'Year-one ~$75k–$120k cash',
-    ],
+    name: CUSTOM_OFFER.name,
+    tag: 'Quoted separately',
+    price: 'Quoted',
+    detail: CUSTOM_OFFER.summary,
+    href: '/apply?tier=custom',
+    external: false,
+    features: [FLAT_PRICING_NOTE, PASS_THROUGH_NOTE],
   },
 ]
 
@@ -61,26 +56,20 @@ export function Pricing() {
             </div>
             <h2 className="font-bold text-[#F5EFE3] leading-none tracking-tight"
               style={{ fontSize: 'clamp(36px, 5vw, 64px)' }}>
-              Launch.<br />
-              <em className="text-[#C9A84C] not-italic">Operate.</em>
+              One price list.<br />
+              <em className="text-[#C9A84C] not-italic">Flat.</em>
             </h2>
           </div>
           <p className="text-[#F5EFE3]/50 text-base leading-relaxed">
-            We build your system, then we run it with you.
-            Ranges, not fake precision. Monthly required on hosted work.
+            {FLAT_PRICING_NOTE} Self-serve plans, fully built kits, or a custom quote.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#C9A84C]/10 border border-[#C9A84C]/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-px bg-[#C9A84C]/10 border border-[#C9A84C]/10">
           {shapes.map((shape) => (
             <div
               key={shape.name}
-              className={cn(
-                'flex flex-col p-10 transition-colors',
-                shape.featured
-                  ? 'bg-[#242424] border-t-2 border-t-[#C9A84C]'
-                  : 'bg-[#1C1C1C] hover:bg-[#242424]'
-              )}
+              className="flex flex-col p-10 bg-[#1C1C1C]"
             >
               <div className="text-[9px] tracking-[3px] uppercase text-[#C9A84C] mb-4">
                 {shape.tag}
@@ -91,15 +80,12 @@ export function Pricing() {
               </div>
 
               <div className="mb-1">
-                <span className="text-[#C9A84C] font-bold text-4xl">
+                <span className="text-[#C9A84C] font-bold text-3xl">
                   {shape.price}
-                </span>
-                <span className="text-[#F5EFE3]/40 text-lg ml-1">
-                  {shape.suffix}
                 </span>
               </div>
               <div className="text-[#F5EFE3]/30 text-sm mb-8 pb-8 border-b border-[#F5EFE3]/08">
-                {shape.retainer}
+                {shape.detail}
               </div>
 
               <ul className="flex flex-col gap-3 flex-1">
@@ -112,22 +98,18 @@ export function Pricing() {
               </ul>
 
               <Link
-                href="/pricing"
-                className={cn(
-                  'mt-8 text-[10px] tracking-[2.5px] uppercase text-center py-4 transition-colors',
-                  shape.featured
-                    ? 'bg-[#C9A84C] text-[#141414] hover:bg-[#E2C97E]'
-                    : 'border border-[#C9A84C]/30 text-[#C9A84C] hover:bg-[#C9A84C]/10'
-                )}
+                href={shape.href}
+                {...(shape.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                className="mt-8 text-[10px] tracking-[2.5px] uppercase text-center py-4 transition-colors border border-[#C9A84C]/30 text-[#C9A84C] hover:bg-[#C9A84C]/10"
               >
-                See full pricing
+                {shape.external ? 'Sign up' : 'See pricing'}
               </Link>
             </div>
           ))}
         </div>
 
         <p className="text-center text-[#F5EFE3]/25 text-sm mt-8 italic">
-          Discovery is paid. Scope growth is a new quote. We don&apos;t launch and leave.
+          {PASS_THROUGH_NOTE}
         </p>
 
       </div>

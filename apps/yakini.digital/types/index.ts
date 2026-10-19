@@ -13,8 +13,6 @@ export interface Service {
   id: string
   title: string
   description: string
-  tier: 'authority' | 'conversion' | 'operations' | 'retention'
-  price_from: number
 }
 
 export type NavItem = {

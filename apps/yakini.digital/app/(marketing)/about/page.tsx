@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { SiteShell } from '@/components/SiteShell'
 
 // ═════════════════════════════════════════════════════════════════════════
@@ -23,7 +24,7 @@ export default function AboutPage() {
             <span>ABOUT YAKINI</span>
           </div>
           <h1 className="yk-page-h1">
-            We don't <span className="yk-italic">sell websites.</span>
+            We don&apos;t <span className="yk-italic">sell websites.</span>
             <br />
             We build <span className="yk-gold">infrastructure</span>
             <br />
@@ -66,8 +67,8 @@ export default function AboutPage() {
                 </p>
                 <p>
                   Every one of these founders deserves real infrastructure. Custom platforms.
-                  AI tools. Independent ownership. Most agencies won't build this for them
-                  because it's harder than selling a WordPress template.
+                  AI tools. Independent ownership. Most agencies won&apos;t build this for them
+                  because it&apos;s harder than selling a WordPress template.
                 </p>
                 <p>
                   <strong style={{ color: 'var(--gold)' }}>Yakini exists because we will.</strong>
@@ -75,7 +76,7 @@ export default function AboutPage() {
               </div>
 
               <div className="ab-founder-quote">
-                <p>"Most agencies sell you a website. We sell you the infrastructure your business runs on."</p>
+                <p>&quot;Most agencies sell you a website. We sell you the infrastructure your business runs on.&quot;</p>
                 <span>— Clarence · Founder</span>
               </div>
             </div>
@@ -134,7 +135,7 @@ export default function AboutPage() {
           <p className="ab-section-sub">
             BRSA Holdings is the parent company. Yakini is the digital infrastructure arm.
             Legacyline is the readiness operating system. The BRSA Foundation funds access for communities
-            that need infrastructure but can't afford it.
+            that need infrastructure but can&apos;t afford it.
             <br /><br />
             Same standards. Same rigor. Different missions.
           </p>
@@ -171,7 +172,7 @@ export default function AboutPage() {
                   <span className="ab-tree-tag">AI ENGINE</span>
                   <span className="ab-tree-tag">REVENUE GENERATOR</span>
                 </div>
-                <a href="/" className="ab-tree-link">You are here →</a>
+                <Link href="/" className="ab-tree-link">You are here →</Link>
               </div>
 
               <div className="ab-tree-node ab-tree-legacyline">
@@ -269,11 +270,11 @@ export default function AboutPage() {
             </div>
 
             <div className="ab-who-card ab-who-no">
-              <div className="ab-who-h">WE DON'T BUILD FOR</div>
+              <div className="ab-who-h">WE DON&apos;T BUILD FOR</div>
               <ul>
                 <li>Founders looking for the cheapest possible website</li>
                 <li>Committees that need three-month decision cycles</li>
-                <li>Businesses where "we'll figure out AI later"</li>
+                <li>Businesses where &quot;we&apos;ll figure out AI later&quot;</li>
                 <li>Clients who want to license templates, not own platforms</li>
                 <li>Anyone whose business model relies on us being slow</li>
                 <li>Vanity projects without real operational backing</li>
@@ -282,7 +283,7 @@ export default function AboutPage() {
           </div>
 
           <p className="ab-who-footer">
-            We say no more often than we say yes. That's how we maintain quality.
+            We say no more often than we say yes. That&apos;s how we maintain quality.
           </p>
         </div>
       </section>
@@ -303,7 +304,7 @@ export default function AboutPage() {
               <span className="yk-gold">we mean it.</span>
             </h2>
             <p className="ab-final-sub">
-              The application process exists to make sure we're a fit before either of us invests time.
+              The application process exists to make sure we&apos;re a fit before either of us invests time.
               Real partnerships start with real conversations.
             </p>
             <div className="ab-final-ctas">

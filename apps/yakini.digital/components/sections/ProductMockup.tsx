@@ -20,7 +20,7 @@ export function ProductMockup() {
           </h2>
           <p className="text-[#F5EFE3]/50 text-base leading-relaxed max-w-xl">
             Every Yakini client gets access to AI tools built for their industry.
-            Here's what it looks like in practice.
+            Here&apos;s what it looks like in practice.
           </p>
         </div>
 
@@ -108,7 +108,7 @@ export function ProductMockup() {
                   <div className="text-[#F5EFE3]/50 text-xs tracking-[2px] uppercase mb-3">
                     Client Access Only
                   </div>
-                  <Link href="/#contact"
+                  <Link href="/pricing"
                     className="text-[10px] tracking-[2px] uppercase bg-[#C9A84C] text-[#141414] px-6 py-2 inline-block hover:bg-[#E2C97E] transition-colors">
                     Get Access →
                   </Link>
@@ -139,9 +139,9 @@ export function ProductMockup() {
         <div className="mt-8 text-center">
           <p className="text-[#F5EFE3]/30 text-sm italic mb-4">
             Menu Builder, Recipe Costing, Pricing Strategy, Business Operations,
-            and Industry Intelligence — included in every Pro Build and above.
+            and Industry Intelligence. See plans and kits on the pricing page.
           </p>
-          <Link href="/#contact"
+          <Link href="/pricing"
             className="text-[11px] tracking-[2.5px] uppercase bg-[#C9A84C] text-[#141414] px-10 py-4 font-medium hover:bg-[#E2C97E] transition-colors inline-block">
             Start a Project to Get Access
           </Link>

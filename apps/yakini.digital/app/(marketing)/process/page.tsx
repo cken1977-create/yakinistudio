@@ -142,7 +142,7 @@ export default function ProcessPage() {
             <span className="yk-gold">Fifteen days.</span>
           </h1>
           <p className="yk-page-sub">
-            Most agencies take three months to launch a website. We deploy custom platforms in two weeks because we don't waste your time.
+            Most agencies take three months to launch a website. We deploy custom platforms in two weeks because we don&apos;t waste your time.
             Five phases. Clear deliverables. No hidden process.
             Real timelines from real Yakini builds.
           </p>
@@ -282,7 +282,7 @@ export default function ProcessPage() {
                 <div className="pc-guarantee-num">2.</div>
                 <div className="pc-guarantee-content">
                   <h4>No surprise scope creep.</h4>
-                  <p>The architecture phase locks scope before code is written. If we discover something mid-build that requires re-scoping, we pause and have an honest conversation about it. We don't bury surprise costs in invoices.</p>
+                  <p>The architecture phase locks scope before code is written. If we discover something mid-build that requires re-scoping, we pause and have an honest conversation about it. We don&apos;t bury surprise costs in invoices.</p>
                 </div>
               </div>
 
@@ -290,7 +290,7 @@ export default function ProcessPage() {
                 <div className="pc-guarantee-num">3.</div>
                 <div className="pc-guarantee-content">
                   <h4>Real deadlines, real platforms.</h4>
-                  <p>If we say Day 15, we mean Day 15. Garland's TheyTowedMyCar.com platform was built and live in one continuous session. That kind of velocity is what custom infrastructure looks like when you're working with builders, not committee designers.</p>
+                  <p>If we say Day 15, we mean Day 15. Garland&apos;s TheyTowedMyCar.com platform was built and live in one continuous session. That kind of velocity is what custom infrastructure looks like when you&apos;re working with builders, not committee designers.</p>
                 </div>
               </div>
             </div>
@@ -309,7 +309,7 @@ export default function ProcessPage() {
             <h2 className="pc-final-h2">
               Apply for partnership.
               <br />
-              <span className="yk-italic">We'll book your</span>
+              <span className="yk-italic">We&apos;ll book your</span>
               <br />
               <span className="yk-gold">strategic intake.</span>
             </h2>

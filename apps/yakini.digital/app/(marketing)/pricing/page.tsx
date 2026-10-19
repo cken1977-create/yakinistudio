@@ -1,147 +1,110 @@
 'use client'
 
 import { SiteShell } from '@/components/SiteShell'
-
-// ═════════════════════════════════════════════════════════════════════════
-// YAKINI PRICING PAGE — Launch / Operate (October 5, 2026)
-// File: apps/yakini.digital/app/(marketing)/pricing/page.tsx
-//
-// Locked model: Launch Kit · Launch Operate · Launch Custom + Operate monthly.
-// No room/house language. No Mission Control sold to clients.
-// Client dashboard only. Assessment by invitation.
-// ═════════════════════════════════════════════════════════════════════════
-
-const LAUNCH_PRODUCTS = [
-  {
-    id: 'kit',
-    name: 'Launch Kit',
-    tagline: 'Fixed scope. Live in 2–4 weeks.',
-    typical: '$10,000',
-    range: '$8,000–$12,000',
-    monthly: '$200–$400',
-    monthlyNote: 'Hosting, monitoring, and care',
-    description:
-      'For operators who need institutional-grade infrastructure without agency pricing.',
-    features: [
-      'Private client portal: intake, timeline, alerts',
-      'Built on our stack (Next.js / Supabase / Vercel)',
-      'Your brand, your domain, your data',
-      'Fixed scope. Live in 2–4 weeks',
-    ],
-    featured: false,
-  },
-  {
-    id: 'operate',
-    name: 'Launch Operate',
-    tagline: 'Full product. Weekly rhythm. Client dashboard.',
-    typical: '$22,000',
-    range: '$18,000–$28,000',
-    monthly: '$750–$1,500',
-    monthlyNote: 'Weekly rhythm — not daily white-glove',
-    description:
-      'Everything in Launch Kit, plus a weekly operating rhythm with your team and a client dashboard. The operator cockpit stays internal.',
-    features: [
-      'Everything in Launch Kit',
-      'Weekly rhythm with your team',
-      'Client dashboard',
-      'Monthly: $750–$1,500 — weekly rhythm, not daily white-glove',
-    ],
-    featured: true,
-  },
-]
-
-const OPERATE_ROWS = [
-  { shape: 'Launch Kit', monthly: '$200–$400' },
-  { shape: 'Launch Operate', monthly: '$750–$1,500' },
-  { shape: 'Launch Custom (care)', monthly: '$2,500–$4,000' },
-]
+import {
+  CUSTOM_OFFER,
+  FLAT_PRICING_NOTE,
+  KIT_INCLUDES,
+  KIT_TIERS,
+  PASS_THROUGH_NOTE,
+  PORTAL_SIGNUP_URL,
+  SELF_SERVE_PLANS,
+  SELF_SERVE_SETUP_NOTE,
+  formatUsd,
+  kitMonthlyLabel,
+  kitSetupLabel,
+  selfServeMonthlyLabel,
+  selfServePriceLabel,
+  selfServeSetupLabel,
+} from '@/lib/pricing'
 
 const RULES = [
-  'Discovery is paid. Always.',
-  'Scope growth is a new quote — not a favor.',
-  'Monthly is required on hosted work. One-time pricing exists only for throwaway marketing sites, which we mostly decline.',
-  'Change in complexity = new band, not a renegotiation of the promise.',
+  FLAT_PRICING_NOTE,
+  PASS_THROUGH_NOTE,
+  'Crew, Staff, and House have a six-month minimum.',
+  'Custom kit builds are quoted separately.',
+  'The first conversation is a free 30-minute Drag Audit.',
 ]
 
 export default function PricingPage() {
+  const operate = SELF_SERVE_PLANS[0]
+  const operatePlus = SELF_SERVE_PLANS[1]
+
   return (
     <SiteShell>
       <style>{PAGE_CSS}</style>
 
-      {/* ───── HEADER ───── */}
       <header className="yk-page-header pr-header">
         <div className="yk-page-header-inner">
           <div className="yk-eyebrow">
             <span className="yk-eyebrow-dot" />
-            <span>TRANSPARENT PRICING</span>
+            <span>PRICING</span>
           </div>
           <h1 className="yk-page-h1">
-            Launch.
+            One price list.
             <br />
-            <span className="yk-gold">Operate.</span>
+            <span className="yk-gold">Flat.</span>
           </h1>
           <p className="yk-page-sub">
-            We build your system, then we run it with you. Ranges, not fake precision.
+            A self-serve plan, a fully built kit, or a custom build.
+            Yakini does not take a share of revenue.
           </p>
         </div>
       </header>
 
-      {/* ───── LAUNCH PRODUCTS ───── */}
       <section className="yk-section pr-tiers">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
             <span className="yk-num">01</span>
-            <span>Launch — one-time</span>
+            <span>Self-serve plans</span>
           </div>
           <h2 className="yk-section-h2">
-            Two product paths.
+            Sign up and start.
             <br />
-            <span className="yk-gold">One operating philosophy.</span>
+            <span className="yk-gold">A Yakini operator sets it up.</span>
           </h2>
+          <p className="pr-operate-lead">
+            Businesses sign up at the portal and get their own client portal on the plan they choose.
+            {` ${SELF_SERVE_SETUP_NOTE}`}
+          </p>
 
           <div className="pr-tiers-grid pr-tiers-grid-2">
-            {LAUNCH_PRODUCTS.map((tier) => (
-              <div
-                key={tier.id}
-                className={`pr-tier ${tier.featured ? 'pr-tier-featured' : ''}`}
-              >
-                {tier.featured && <div className="pr-tier-badge">FEATURED</div>}
-
-                <div className="pr-tier-name">{tier.name}</div>
-                <div className="pr-tier-tagline">{tier.tagline}</div>
+            {SELF_SERVE_PLANS.map((plan) => (
+              <div key={plan.id} className="pr-tier">
+                <div className="pr-tier-name">{plan.name}</div>
+                <div className="pr-tier-tagline">{plan.summary}</div>
 
                 <div className="pr-tier-price-block">
-                  <div className="pr-typical-label">Typical</div>
+                  <div className="pr-typical-label">Setup</div>
                   <div className="pr-tier-monthly">
-                    <span className="pr-price-num pr-price-num-lg">{tier.typical}</span>
+                    <span className="pr-price-num pr-price-num-lg">{selfServeSetupLabel(plan)}</span>
                   </div>
-                  <div className="pr-price-note">Range {tier.range}</div>
                   <div className="pr-setup-block">
                     <div className="pr-setup-row">
                       <span className="pr-setup-label">Then monthly</span>
-                      <span className="pr-setup-value">{tier.monthly}</span>
+                      <span className="pr-setup-value">{selfServeMonthlyLabel(plan)}</span>
                     </div>
-                    <div className="pr-price-note" style={{ marginTop: 8, marginBottom: 0 }}>
-                      {tier.monthlyNote}
-                    </div>
+                  </div>
+                  <div className="pr-price-note" style={{ marginTop: 12, marginBottom: 0 }}>
+                    One-time operator setup
                   </div>
                 </div>
 
-                <p className="pr-tier-desc">{tier.description}</p>
-
                 <a
-                  href="/apply"
-                  className={`pr-tier-cta ${tier.featured ? 'pr-cta-featured' : ''}`}
+                  href={PORTAL_SIGNUP_URL}
+                  className="pr-tier-cta pr-cta-featured"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <span>Start with {tier.name}</span>
+                  <span>Sign up</span>
                   <span className="yk-btn-arrow">→</span>
                 </a>
 
                 <div className="pr-tier-section">
                   <div className="pr-tier-section-h">INCLUDED</div>
                   <ul className="pr-tier-list pr-list-included">
-                    {tier.features.map((f) => (
-                      <li key={f}>{f}</li>
+                    {plan.includes.map((feature) => (
+                      <li key={feature}>{feature}</li>
                     ))}
                   </ul>
                 </div>
@@ -149,115 +112,144 @@ export default function PricingPage() {
             ))}
           </div>
 
-          {/* Launch Custom */}
+          <div className="pr-custom-note pr-pass">
+            {PASS_THROUGH_NOTE}
+          </div>
+        </div>
+      </section>
+
+      <section className="yk-section pr-operate">
+        <div className="yk-section-inner">
+          <div className="yk-section-tag">
+            <span className="yk-num">02</span>
+            <span>Fully built kits</span>
+          </div>
+          <h2 className="yk-section-h2">
+            We build it with you.
+            <br />
+            <span className="yk-gold">You own it.</span>
+          </h2>
+          <p className="pr-operate-lead">
+            Setup once, then a monthly retainer. Every kit includes Composer and Sentinel.
+            A person approves every release.
+          </p>
+
+          <div className="pr-tiers-grid">
+            {KIT_TIERS.map((tier) => (
+              <div key={tier.id} className="pr-tier">
+                <div className="pr-tier-name">{tier.name}</div>
+                <div className="pr-tier-tagline">{tier.forWho}</div>
+
+                <div className="pr-tier-price-block">
+                  <div className="pr-typical-label">{tier.from ? 'Setup from' : 'Setup'}</div>
+                  <div className="pr-tier-monthly">
+                    <span className="pr-price-num pr-price-num-lg">{formatUsd(tier.setup)}</span>
+                  </div>
+                  <div className="pr-setup-block">
+                    <div className="pr-setup-row">
+                      <span className="pr-setup-label">{tier.from ? 'Monthly from' : 'Monthly'}</span>
+                      <span className="pr-setup-value">{formatUsd(tier.monthly)}/mo</span>
+                    </div>
+                  </div>
+                  {tier.minimumMonths ? (
+                    <div className="pr-price-note" style={{ marginTop: 12, marginBottom: 0 }}>
+                      {tier.minimumMonths}-month minimum
+                    </div>
+                  ) : null}
+                </div>
+
+                <a href={`/apply?tier=${tier.id}`} className="pr-tier-cta">
+                  <span>Apply for {tier.name}</span>
+                  <span className="yk-btn-arrow">→</span>
+                </a>
+              </div>
+            ))}
+          </div>
+
+          <div className="pr-tier-section">
+            <div className="pr-tier-section-h">EVERY KIT INCLUDES</div>
+            <ul className="pr-tier-list pr-list-included">
+              {KIT_INCLUDES.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="pr-summary">
+            <div className="pr-table-wrapper pr-table-wide">
+              <table className="pr-table">
+                <thead>
+                  <tr>
+                    <th>Offer</th>
+                    <th>Setup</th>
+                    <th>Monthly</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {SELF_SERVE_PLANS.map((plan) => (
+                    <tr key={plan.id}>
+                      <td className="pr-feature-cell">{plan.name}</td>
+                      <td><span className="pr-cell-text pr-cell-price">{selfServeSetupLabel(plan)}</span></td>
+                      <td><span className="pr-cell-text pr-cell-price">{selfServeMonthlyLabel(plan)}</span></td>
+                    </tr>
+                  ))}
+                  {KIT_TIERS.map((tier) => (
+                    <tr key={tier.id}>
+                      <td className="pr-feature-cell">
+                        {tier.name}
+                        {tier.minimumMonths ? ' · 6-month minimum' : ''}
+                      </td>
+                      <td><span className="pr-cell-text pr-cell-price">{kitSetupLabel(tier)}</span></td>
+                      <td><span className="pr-cell-text pr-cell-price">{kitMonthlyLabel(tier)}</span></td>
+                    </tr>
+                  ))}
+                  <tr>
+                    <td className="pr-feature-cell">{CUSTOM_OFFER.name}</td>
+                    <td><span className="pr-cell-text">Quoted</span></td>
+                    <td><span className="pr-cell-text">Quoted</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="pr-table-footnote">{PASS_THROUGH_NOTE}</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="yk-section pr-rules">
+        <div className="yk-section-inner">
           <div className="pr-custom-card">
             <div className="pr-custom-meta">
               <span className="pr-custom-dot" />
-              <span>LAUNCH CUSTOM</span>
+              <span>CUSTOM KIT</span>
             </div>
             <h3 className="pr-custom-h">
-              When spreadsheets are <span className="yk-italic">running the business.</span>
+              Built for the job in front of you.
+              <br />
+              <span className="yk-italic">Quoted separately.</span>
             </h3>
             <p className="pr-custom-body">
-              Discovery first — always paid, two weeks. Half credits into Phase 1 if you continue.
-              If you don&apos;t: you keep the <strong>roadmap</strong>.
+              Custom kit builds do not have a public price. Tell us what you run and we will quote the work.
+              Nonprofit and mission work is quoted the same way: case by case, with no published rate.
             </p>
-
-            <div className="pr-custom-grid">
-              <div className="pr-custom-phase">
-                <div className="pr-custom-phase-label">Discovery</div>
-                <div className="pr-custom-phase-price">Typical $7,000</div>
-                <div className="pr-custom-phase-range">$6,000–$8,000</div>
-                <p>Half credits into Phase 1. Keep the roadmap either way.</p>
-              </div>
-              <div className="pr-custom-phase">
-                <div className="pr-custom-phase-label">Phase 1</div>
-                <div className="pr-custom-phase-price">Typical $50,000</div>
-                <div className="pr-custom-phase-range">$40,000–$60,000</div>
-                <p>Replace the spreadsheet core.</p>
-              </div>
-              <div className="pr-custom-phase">
-                <div className="pr-custom-phase-label">Phase 2</div>
-                <div className="pr-custom-phase-price">Typical $25,000</div>
-                <div className="pr-custom-phase-range">$20,000–$35,000</div>
-                <p>Integrations, reporting, handoff.</p>
-              </div>
-              <div className="pr-custom-phase">
-                <div className="pr-custom-phase-label">Care</div>
-                <div className="pr-custom-phase-price">$2,500–$4,000</div>
-                <div className="pr-custom-phase-range">per month</div>
-                <p>Hosting, iteration, support.</p>
-              </div>
-            </div>
-
-            <div className="pr-custom-note">
-              Year-one cash for a mid-market ops install: <strong>~$75,000–$120,000</strong> against
-              $90,000–$200,000 in DIY/agency cost. We take the job when the savings worksheet clears
-              more than the fee in year one.
-            </div>
-
-            <a href="/apply" className="pr-tier-cta pr-cta-featured" style={{ alignSelf: 'flex-start' }}>
-              <span>Start with Discovery</span>
+            <a href="/apply?tier=custom" className="pr-tier-cta pr-cta-featured" style={{ alignSelf: 'flex-start' }}>
+              <span>Apply for a quote</span>
               <span className="yk-btn-arrow">→</span>
             </a>
           </div>
         </div>
       </section>
 
-      {/* ───── OPERATE ───── */}
-      <section className="yk-section pr-operate">
-        <div className="yk-section-inner">
-          <div className="yk-section-tag">
-            <span className="yk-num">02</span>
-            <span>Operate — monthly</span>
-          </div>
-          <h2 className="yk-section-h2">
-            Required on hosted work.
-            <br />
-            <span className="yk-gold">We don&apos;t launch and leave.</span>
-          </h2>
-          <p className="pr-operate-lead">
-            Software you don&apos;t operate is software that rots. Monthly covers hosting, monitoring,
-            care, weekly rhythm, and iteration — not tickets.
-          </p>
-
-          <div className="pr-table-wrapper">
-            <table className="pr-table">
-              <thead>
-                <tr>
-                  <th>Shape</th>
-                  <th>Monthly</th>
-                </tr>
-              </thead>
-              <tbody>
-                {OPERATE_ROWS.map((row) => (
-                  <tr key={row.shape}>
-                    <td className="pr-feature-cell">{row.shape}</td>
-                    <td>
-                      <span className="pr-cell-text pr-cell-price">{row.monthly}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="pr-table-footnote">
-            Set at launch from complexity (data, users, integrations, compliance).
-          </p>
-        </div>
-      </section>
-
-      {/* ───── RULES ───── */}
-      <section className="yk-section pr-rules">
+      <section className="yk-section pr-invite">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
             <span className="yk-num">03</span>
             <span>The rules</span>
           </div>
           <h2 className="yk-section-h2">
-            How engagements
+            How the price
             <br />
-            <span className="yk-gold">stay clean.</span>
+            <span className="yk-gold">stays clean.</span>
           </h2>
           <ol className="pr-rules-list">
             {RULES.map((rule, i) => (
@@ -270,49 +262,6 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* ───── BY INVITATION ───── */}
-      <section className="yk-section pr-invite">
-        <div className="yk-section-inner">
-          <div className="pr-invite-card">
-            <div className="pr-invite-meta">
-              <span className="pr-invite-dot" />
-              <span>BY INVITATION</span>
-            </div>
-            <h3 className="pr-invite-h">
-              Readiness Assessment
-            </h3>
-            <p className="pr-invite-body">
-              Priced per engagement. Available by invitation until product canon is frozen.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ───── MISSION-ALIGNED (brief) ───── */}
-      <section className="yk-section pr-nonprofits">
-        <div className="yk-section-inner">
-          <div className="pr-nonprofits-card pr-nonprofits-card-brief">
-            <div className="pr-nonprofits-meta">
-              <span className="pr-nonprofits-dot" />
-              <span>MISSION-ALIGNED</span>
-            </div>
-            <h3 className="pr-nonprofits-h">
-              Nonprofits and mission-driven organizations.
-            </h3>
-            <p className="pr-nonprofits-body">
-              For 501(c)(3) organizations and community-serving nonprofits, pricing is structured
-              around your mission and operational reality — not standard commercial rates. The
-              architecture standards do not change.
-            </p>
-            <a href="/apply" className="pr-tier-cta pr-cta-featured" style={{ alignSelf: 'flex-start' }}>
-              <span>Start the conversation</span>
-              <span className="yk-btn-arrow">→</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* ───── FAQ ───── */}
       <section className="yk-section pr-faq">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
@@ -328,98 +277,85 @@ export default function PricingPage() {
           <div className="pr-faq-list">
             <details className="pr-faq-item">
               <summary className="pr-faq-q">
-                What&apos;s the difference between Launch Kit and Launch Operate?
+                What is the difference between Operate and Operate Plus?
                 <span className="pr-faq-icon">+</span>
               </summary>
               <div className="pr-faq-a">
-                Launch Kit is fixed-scope product delivery: portal, intake, timeline, alerts —
-                live in 2–4 weeks. Launch Operate includes everything in Kit, plus a weekly
-                operating rhythm with your team and a client dashboard. Monthly on Operate is
-                higher because we run with you, not just host the software.
+                Operate is {selfServePriceLabel(operate)}. It is the client portal, help desk,
+                voice notes, drafted replies that wait for your OK, opt-in text alerts, a booking
+                page you confirm, and incoming texts in the customer&apos;s thread. Operate Plus is{' '}
+                {selfServePriceLabel(operatePlus)} and adds card payments, missed-call text-back
+                for your approval, review requests, campaigns to opted-in customers, and a monthly
+                owner report. The setup fee is one time. A Yakini operator sets either plan up.
               </div>
             </details>
 
             <details className="pr-faq-item">
               <summary className="pr-faq-q">
-                Why is discovery paid on Custom?
+                What is the difference between a self-serve plan and a kit?
                 <span className="pr-faq-icon">+</span>
               </summary>
               <div className="pr-faq-a">
-                Discovery qualifies the work and produces a roadmap you keep whether or not you
-                continue. Half of the discovery fee credits into Phase 1 if you proceed. Unpaid
-                discovery invites scope theater; paid discovery keeps both sides honest.
+                A self-serve plan starts at {selfServePriceLabel(operate)}. You sign up at the
+                portal. A kit is a system Yakini builds with you: setup plus a monthly retainer,
+                from {kitSetupLabel(KIT_TIERS[0])} and {kitMonthlyLabel(KIT_TIERS[0])}. Every kit
+                includes Composer and Sentinel, a person approves every release, and you own the
+                system. Crew and above have a six-month minimum.
               </div>
             </details>
 
             <details className="pr-faq-item">
               <summary className="pr-faq-q">
-                What does the monthly fee cover?
+                Do you take a share of revenue?
                 <span className="pr-faq-icon">+</span>
               </summary>
               <div className="pr-faq-a">
-                Hosting, monitoring, and care. On Launch Operate and Custom care, it also covers
-                weekly operating rhythm and iteration — not a ticket queue. Software you
-                don&apos;t operate is software that rots. We don&apos;t launch and leave.
+                No. {FLAT_PRICING_NOTE} The price on this page is the price.
               </div>
             </details>
 
             <details className="pr-faq-item">
               <summary className="pr-faq-q">
-                Can I buy a one-time build with no monthly?
+                Who pays for Supabase, Vercel, Twilio, Stripe, the domain, and email?
                 <span className="pr-faq-icon">+</span>
               </summary>
               <div className="pr-faq-a">
-                Only for throwaway marketing sites, which we mostly decline. Hosted product work
-                requires monthly. Scope growth is a new quote — not a favor.
+                You do. {PASS_THROUGH_NOTE}
               </div>
             </details>
 
             <details className="pr-faq-item">
               <summary className="pr-faq-q">
-                How do you pick a number inside the range?
+                How do I get a custom price?
                 <span className="pr-faq-icon">+</span>
               </summary>
               <div className="pr-faq-a">
-                Midpoints are typical anchors. The band moves with complexity: data, users,
-                integrations, and compliance. A change in complexity is a new band — not a
-                renegotiation of the promise.
-              </div>
-            </details>
-
-            <details className="pr-faq-item">
-              <summary className="pr-faq-q">
-                When do you take a Custom job?
-                <span className="pr-faq-icon">+</span>
-              </summary>
-              <div className="pr-faq-a">
-                When the savings worksheet clears more than the fee in year one. If Phase 1
-                alone doesn&apos;t clear that bar on paper, we shrink scope or decline.
+                Apply. Custom kit builds are quoted per project. There is no public number for that work.
               </div>
             </details>
           </div>
         </div>
       </section>
 
-      {/* ───── FINAL CTA ───── */}
       <section className="yk-section pr-final">
         <div className="yk-section-inner">
           <div className="pr-final-content">
             <h2 className="pr-final-h2">
               Start with a
               <br />
-              <span className="yk-gold yk-italic">conversation.</span>
+              <span className="yk-gold yk-italic">plan, a kit, or a quote.</span>
             </h2>
             <p className="pr-final-sub">
-              Tell us what you&apos;re operating — we&apos;ll tell you honestly whether it&apos;s a
-              Kit, Operate, Custom, or not a fit.
+              Sign up for Operate or Operate Plus, apply for a kit, or ask for a custom quote.
+              The Drag Audit is free.
             </p>
             <div className="pr-final-ctas">
-              <a href="/apply" className="pr-tier-cta pr-cta-featured">
-                <span>Apply</span>
+              <a href={PORTAL_SIGNUP_URL} className="pr-tier-cta pr-cta-featured" target="_blank" rel="noopener noreferrer">
+                <span>Sign up</span>
                 <span className="yk-btn-arrow">→</span>
               </a>
-              <a href="/process" className="pr-tier-cta">
-                <span>See how we build</span>
+              <a href="/apply" className="pr-tier-cta">
+                <span>Apply</span>
                 <span className="yk-btn-arrow">→</span>
               </a>
             </div>
@@ -630,7 +566,7 @@ const PAGE_CSS = `
     font-weight: 700;
   }
 
-  /* ═══ LAUNCH CUSTOM ═══ */
+  /* ═══ CUSTOM KIT ═══ */
   .pr-custom-card {
     padding: 48px;
     background: linear-gradient(135deg, rgba(200, 168, 75, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
@@ -987,4 +923,8 @@ const PAGE_CSS = `
   .pr-final-ctas {
     display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
   }
+
+  .pr-table-wide { max-width: 880px; }
+  .pr-pass { margin-top: 28px; max-width: 760px; }
+  .pr-summary { margin-top: 48px; }
 `

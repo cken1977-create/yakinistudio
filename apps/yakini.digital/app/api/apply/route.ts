@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { clientIp, isTestRecipient, rest } from '@/lib/esign/server'
+import { offerLabel } from '@/lib/pricing'
 import { esc, rateLimited, tooMany } from '@/lib/server/guard'
 
 // ═════════════════════════════════════════════════════════════════════════
@@ -114,15 +115,16 @@ export async function POST(req: NextRequest) {
       success: true,
       application_id: app.id,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Apply error:', error)
+    const message = error instanceof Error ? error.message : 'Application submission failed'
     return NextResponse.json({
-      error: error.message || 'Application submission failed'
+      error: message
     }, { status: 500 })
   }
 }
 
-function buildApplicantEmail(data: any) {
+function buildApplicantEmail(data: Record<string, string>) {
   return `
     <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #050E1F; color: #F4F1EB; padding: 0;">
 
@@ -192,14 +194,8 @@ function buildApplicantEmail(data: any) {
   `
 }
 
-function buildAdminEmail(data: any, applicationId: string) {
-  const tierLabels: Record<string, string> = {
-    foundation: 'Foundation · $1,500/mo',
-    authority: 'Authority · $3,000/mo',
-    intelligence: 'Intelligence · $7,500/mo',
-    enterprise: 'Enterprise · $15,000+/mo',
-    unsure: 'Unsure — wants help deciding',
-  }
+function buildAdminEmail(data: Record<string, string>, applicationId: string) {
+  const planOrKit = offerLabel(data.tier_interest)
 
   return `
     <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; background: #fff; color: #1a1a1a;">
@@ -226,8 +222,8 @@ function buildAdminEmail(data: any, applicationId: string) {
             <div style="font-size: 14px; color: #050E1F; font-weight: 600; margin-top: 4px;">${data.revenue_range || 'Not provided'}</div>
           </div>
           <div>
-            <div style="font-size: 10px; letter-spacing: 0.2em; color: #888; font-weight: 700; text-transform: uppercase;">TIER INTEREST</div>
-            <div style="font-size: 14px; color: #050E1F; font-weight: 600; margin-top: 4px;">${tierLabels[data.tier_interest] || data.tier_interest || 'Not specified'}</div>
+            <div style="font-size: 10px; letter-spacing: 0.2em; color: #888; font-weight: 700; text-transform: uppercase;">PLAN OR KIT</div>
+            <div style="font-size: 14px; color: #050E1F; font-weight: 600; margin-top: 4px;">${planOrKit}</div>
           </div>
           <div>
             <div style="font-size: 10px; letter-spacing: 0.2em; color: #888; font-weight: 700; text-transform: uppercase;">TIMELINE</div>
