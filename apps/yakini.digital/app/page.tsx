@@ -7,6 +7,7 @@ import {
   FLAT_PRICING_NOTE,
   KIT_TIERS,
   SELF_SERVE_PLANS,
+  PORTAL_START_URL,
   kitPriceLabel,
   selfServePriceLabel,
 } from '@/lib/pricing'
@@ -59,8 +60,8 @@ export default function HomePage() {
             <a href="/about">About</a>
           </div>
 
-          <a href="/apply" className="yk-nav-cta">
-            <span>Apply</span>
+          <a href={PORTAL_START_URL} className="yk-nav-cta" target="_blank" rel="noopener noreferrer">
+            <span>Start now</span>
             <span className="yk-nav-cta-arrow">→</span>
           </a>
 
@@ -81,7 +82,7 @@ export default function HomePage() {
           <a href="/process" onClick={() => setMenuOpen(false)}>Process</a>
           <a href="/pricing" onClick={() => setMenuOpen(false)}>Pricing</a>
           <a href="/about" onClick={() => setMenuOpen(false)}>About</a>
-          <a href="/apply" className="yk-mobile-cta" onClick={() => setMenuOpen(false)}>Apply →</a>
+          <a href={PORTAL_START_URL} className="yk-mobile-cta" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Start now →</a>
         </div>
       )}
 
@@ -111,12 +112,12 @@ export default function HomePage() {
           </p>
 
           <div className="yk-hero-ctas">
-            <a href="/apply" className="yk-btn-primary">
-              <span>Start the Operational Drag Audit</span>
+            <a href={PORTAL_START_URL} className="yk-btn-primary" target="_blank" rel="noopener noreferrer">
+              <span>Start now</span>
               <span className="yk-btn-arrow">→</span>
             </a>
-            <a href="/platforms" className="yk-btn-ghost">
-              <span>See our platforms</span>
+            <a href="/apply" className="yk-btn-ghost">
+              <span>Talk to us about a kit</span>
             </a>
           </div>
 
@@ -678,6 +679,7 @@ export default function HomePage() {
 
             <div className="yk-footer-col">
               <h6>Company</h6>
+              <a href={PORTAL_START_URL} target="_blank" rel="noopener noreferrer">Start now</a>
               <a href="/about">About</a>
               <a href="/apply">Apply</a>
               <a href="https://brsafoundation.org" target="_blank" rel="noopener">BRSA Foundation</a>

@@ -2,7 +2,20 @@
 // Every page that shows a plan, a kit, or an apply-form choice reads this file.
 // Do not hardcode these amounts anywhere else.
 
-export const PORTAL_SIGNUP_URL = 'https://portal.yakini.digital'
+export const PORTAL_HOME_URL = 'https://portal.yakini.digital'
+export const PORTAL_START_URL = `${PORTAL_HOME_URL}/start`
+export const PORTAL_LOGIN_URL = `${PORTAL_HOME_URL}/enter`
+
+/** Self-serve sign-up with no plan preselected. */
+export const PORTAL_SIGNUP_URL = PORTAL_START_URL
+
+/**
+ * Portal /start reads `kit` and checks that plan.
+ * `operate` and `operate-plus` are the values on the form. `plan` is ignored.
+ */
+export function selfServeStartUrl(planId: 'operate' | 'operate-plus'): string {
+  return `${PORTAL_START_URL}?kit=${planId}`
+}
 
 export const PASS_THROUGH_NOTE =
   'Supabase, Vercel, Twilio, Stripe, your domain, and your email are accounts in your name. You pay those bills directly. They are not part of Yakini’s price.'
