@@ -4,7 +4,9 @@
 // Uses the service-role key from the environment; nothing here reaches the browser.
 
 export const CONTRACTS_PROJECT_REF = 'mxshsmknfqxwltucgezl'
-const BASE = `https://${CONTRACTS_PROJECT_REF}.supabase.co/rest/v1`
+const LIVE_BASE = `https://${CONTRACTS_PROJECT_REF}.supabase.co/rest/v1`
+// Local tests only: never honoured on Vercel (VERCEL is set on every Vercel build and runtime).
+const BASE = !process.env.VERCEL && process.env.YAKINI_REST_URL_LOCAL_TEST ? process.env.YAKINI_REST_URL_LOCAL_TEST : LIVE_BASE
 
 export class EsignConfigError extends Error {}
 

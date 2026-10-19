@@ -1,8 +1,9 @@
 import { NextResponse, type NextRequest } from 'next/server'
+import { ADMIN_COOKIE, CLIENT_COOKIE, readSession } from '@/lib/auth/session'
 
 const SIGN_HOST = 'sign.yakini.digital'
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
   const host = (request.headers.get('host') || '').toLowerCase().split(':')[0]
 
@@ -23,14 +24,21 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect('https://yakini.digital/', 308)
   }
 
-  const clientCookie = request.cookies.get('yakini_client')
-  if (
-    !clientCookie &&
-    path.startsWith('/client') &&
-    !path.startsWith('/client/login') &&
-    !path.startsWith('/client/verify')
-  ) {
-    return NextResponse.redirect(new URL('/client/login', request.url))
+  // Admin dashboard and its API: a signed admin session is required.
+  if (path === '/dashboard' || path.startsWith('/dashboard/') || path.startsWith('/api/dashboard/')) {
+    if (path === '/dashboard/login') return NextResponse.next()
+    const admin = await readSession(request.cookies.get(ADMIN_COOKIE)?.value, 'admin')
+    if (!admin) {
+      if (path.startsWith('/api/')) return NextResponse.json({ error: 'Sign in required' }, { status: 401 })
+      return NextResponse.redirect(new URL('/dashboard/login', request.url))
+    }
+    return NextResponse.next()
+  }
+
+  // Client area: a signed client session is required (the old plain-email cookie no longer counts).
+  if (path.startsWith('/client') && !path.startsWith('/client/login') && !path.startsWith('/client/verify')) {
+    const client = await readSession(request.cookies.get(CLIENT_COOKIE)?.value, 'client')
+    if (!client) return NextResponse.redirect(new URL('/client/login', request.url))
   }
 
   return NextResponse.next()

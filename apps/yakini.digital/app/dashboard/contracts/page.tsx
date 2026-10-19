@@ -1,11 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { SIGN_BASE_URL, contractTitle } from '@/lib/dashboard/contracts'
 
-const SUPABASE_URL = 'https://mxshsmknfqxwltucgezl.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14c2hzbWtuZnF4d2x0dWNnZXpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1MDM1NjIsImV4cCI6MjA5MzA3OTU2Mn0.cdx3T5CVFKq2sis-FOHau2V0Lx3CrsyoZmaAfM689v0'
-// sign.yakini.digital also serves these links once its DNS record exists; this path works today.
-const SIGN_BASE_URL = 'https://yakini.digital/sign'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type Contract = {
@@ -87,23 +84,6 @@ const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────
-function generateToken(): string {
-  const arr = new Uint8Array(32)
-  crypto.getRandomValues(arr)
-  return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('')
-}
-
-function contractTitle(type: string, business: string): string {
-  const titles: Record<string, string> = {
-    msa_sow: `Master Services Agreement & Statement of Work — ${business}`,
-    msa:     `Master Services Agreement — ${business}`,
-    sow:     `Statement of Work — ${business}`,
-    nda:     `Non-Disclosure Agreement — ${business}`,
-    custom:  `Service Agreement — ${business}`,
-  }
-  return titles[type] || `Service Agreement — ${business}`
-}
-
 // ── Main Component ─────────────────────────────────────────────────────────
 export default function ContractsPage() {
   const [view, setView] = useState<View>('list')
@@ -127,11 +107,10 @@ export default function ContractsPage() {
   const loadContracts = async () => {
     setLoading(true)
     try {
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/contracts?order=created_at.desc`,
-        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
-      )
-      setContracts(await res.json())
+      const res = await fetch('/api/dashboard/contracts', { cache: 'no-store' })
+      if (res.status === 401) { window.location.href = '/dashboard/login'; return }
+      if (!res.ok) throw new Error(`load failed (${res.status})`)
+      setContracts((await res.json()).contracts ?? [])
     } catch (e) { console.error(e) }
     setLoading(false)
   }
@@ -158,122 +137,17 @@ export default function ContractsPage() {
     if (!validate()) return
     setSending(true)
 
-    const token = generateToken()
-    const title = contractTitle(form.contract_type, form.client_business)
-    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-    const now = new Date().toISOString()
-
-    // Build services list
-    const servicesList = form.services.length
-      ? form.services.map(s => `• ${s}`).join('\n')
-      : 'To be specified in project kickoff'
-
     try {
-      // 1 — Create contract in Supabase
-      const contractRes = await fetch(`${SUPABASE_URL}/rest/v1/contracts`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Prefer': 'return=representation'
-        },
-        body: JSON.stringify({
-          client_name:     form.client_name.trim(),
-          client_email:    form.client_email.trim(),
-          client_business: form.client_business.trim(),
-          client_phone:    form.client_phone.trim(),
-          contract_type:   form.contract_type,
-          contract_title:  title,
-          status:          'sent',
-          signing_token:   token,
-          token_expires_at: expiresAt,
-          sent_at:         now,
-          notes:           form.notes.trim(),
-        })
-      })
-      const [newContract] = await contractRes.json()
-
-      // 2 — Insert contract fields
-      const fields = [
-        { field_name: 'setup_fee',       field_value: form.setup_fee,       prefilled: true },
-        { field_name: 'monthly_retainer',field_value: form.monthly_retainer, prefilled: true },
-        { field_name: 'min_term',        field_value: form.min_term,         prefilled: true },
-        { field_name: 'services',        field_value: servicesList,          prefilled: true },
-        { field_name: 'special_terms',   field_value: form.special_terms,    prefilled: true },
-      ].map(f => ({ ...f, contract_id: newContract.id }))
-
-      await fetch(`${SUPABASE_URL}/rest/v1/contract_fields`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify(fields)
-      })
-
-      // 3 — Insert audit log
-      await fetch(`${SUPABASE_URL}/rest/v1/contract_audit`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({
-          contract_id: newContract.id,
-          event: 'created',
-          actor: 'yakini',
-          notes: `Contract created and sent to ${form.client_email}`
-        })
-      })
-
-      // 4 — Send email to client
-      const signingLink = `${SIGN_BASE_URL}/${token}`
-      const clientEmail = buildClientEmail({
-        name: form.client_name,
-        business: form.client_business,
-        title,
-        signingLink,
-        setupFee: form.setup_fee,
-        monthly: form.monthly_retainer,
-        services: form.services,
-        expiresAt,
-      })
-
-      await fetch('/api/send-email', {
+      const res = await fetch('/api/dashboard/contracts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          from: 'Yakini Contracts <admin@yakini.digital>',
-          to: [form.client_email.trim()],
-          subject: `Your Yakini contract is ready to sign — ${form.client_business}`,
-          html: clientEmail,
-        })
+        body: JSON.stringify(form),
       })
+      if (res.status === 401) { window.location.href = '/dashboard/login'; return }
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || `create failed (${res.status})`)
 
-      // 5 — Notify Clarence
-      await fetch('/api/send-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          from: 'Yakini Contracts <admin@yakini.digital>',
-          to: ['admin@yakini.digital'],
-          subject: `Contract Sent — ${form.client_business}`,
-          html: `<div style="font-family:Arial;padding:24px;background:#0A0A0A;color:#F8F5EF;max-width:500px;">
-            <div style="color:#C8A84B;font-weight:700;font-size:18px;margin-bottom:16px;">Contract Sent ✓</div>
-            <p style="color:#888;font-size:14px;margin-bottom:8px;"><b style="color:#F8F5EF;">${form.client_name}</b> — ${form.client_business}</p>
-            <p style="color:#888;font-size:13px;margin-bottom:8px;">${form.client_email}</p>
-            <p style="color:#888;font-size:13px;margin-bottom:16px;">Document: ${title}</p>
-            <a href="${signingLink}" style="color:#C8A84B;font-size:13px;">View signing link →</a>
-          </div>`,
-        })
-      })
-
-      showToast(`✓ Contract sent to ${form.client_email}`)
+      showToast(data.emailed ? `✓ Contract sent to ${form.client_email}` : `Contract created; no email sent (${data.email_note || 'test address'})`)
       setForm(EMPTY_CONTRACT)
       setView('list')
       await loadContracts()
@@ -288,16 +162,8 @@ export default function ContractsPage() {
   // ── Void contract ────────────────────────────────────────────────────────
   const voidContract = async (id: string) => {
     if (!confirm('Void this contract? The signing link will be deactivated.')) return
-    await fetch(`${SUPABASE_URL}/rest/v1/contracts?id=eq.${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({ status: 'voided', voided_reason: 'Voided by Yakini' })
-    })
+    const res = await fetch(`/api/dashboard/contracts/${id}/void`, { method: 'POST' })
+    if (!res.ok) { showToast('Could not void the contract. Try again.'); return }
     showToast('Contract voided')
     await loadContracts()
     setView('list')
@@ -307,17 +173,10 @@ export default function ContractsPage() {
   // ── Resend contract ──────────────────────────────────────────────────────
   const resendContract = async (c: Contract) => {
     if (!c.signing_token) return
-    const signingLink = `${SIGN_BASE_URL}/${c.signing_token}`
-    await fetch('/api/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: 'Yakini Contracts <admin@yakini.digital>',
-        to: [c.client_email],
-        subject: `Reminder: Your Yakini contract is ready to sign — ${c.client_business}`,
-        html: buildReminderEmail({ name: c.client_name, business: c.client_business, title: c.contract_title, signingLink }),
-      })
-    })
+    const res = await fetch(`/api/dashboard/contracts/${c.id}/remind`, { method: 'POST' })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok) { showToast(data.error || 'Could not send the reminder.'); return }
+    if (!data.emailed) { showToast(`No email sent (${data.email_note || 'test address'})`); return }
     showToast(`Reminder sent to ${c.client_email}`)
   }
 
@@ -352,7 +211,11 @@ export default function ContractsPage() {
             <div className="yc-nav-item"><span>○</span> Analytics</div>
             <div className="yc-nav-item"><span>◻</span> Settings</div>
           </nav>
-          <div className="yc-sidebar-footer">sign.yakini.digital</div>
+          <div className="yc-sidebar-footer">
+            <form action="/api/auth/signout?to=dashboard" method="post">
+              <button type="submit" style={{ background: 'none', border: 0, color: 'inherit', font: 'inherit', cursor: 'pointer', padding: 0 }}>Sign out</button>
+            </form>
+          </div>
         </aside>
 
         {/* Main */}
@@ -748,72 +611,6 @@ export default function ContractsPage() {
       <div className={`yc-toast ${toastVisible ? 'yc-toast-show' : ''}`}>{toast}</div>
     </>
   )
-}
-
-// ── Email Templates ────────────────────────────────────────────────────────
-function buildClientEmail({ name, business, title, signingLink, setupFee, monthly, services, expiresAt }: {
-  name: string, business: string, title: string, signingLink: string,
-  setupFee: string, monthly: string, services: string[], expiresAt: string
-}) {
-  const svcList = services.map(s => `<li style="padding:4px 0;font-size:13px;color:#555;">${s}</li>`).join('')
-  return `
-    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#F6F3EE;">
-      <div style="background:#1A3A5C;padding:28px 32px;">
-        <div style="font-weight:700;font-size:20px;color:white;letter-spacing:2px;">YAKINI</div>
-        <div style="font-size:9px;color:#C8A84B;letter-spacing:3px;margin-top:3px;">DIGITAL INFRASTRUCTURE</div>
-      </div>
-      <div style="background:#C8A84B;height:3px;"></div>
-      <div style="padding:36px 32px;">
-        <h2 style="font-size:22px;color:#1A3A5C;margin:0 0 8px;">Your contract is ready to sign.</h2>
-        <p style="font-size:15px;color:#555;margin:0 0 24px;">Hi ${name} — your Yakini service agreement for <strong>${business}</strong> is ready for your review and signature.</p>
-
-        <div style="background:white;border:1px solid #E0DBD0;border-radius:4px;padding:24px;margin-bottom:24px;">
-          <div style="font-size:9px;font-weight:700;color:#C8A84B;letter-spacing:2px;margin-bottom:12px;">DOCUMENT</div>
-          <div style="font-size:14px;font-weight:600;color:#1A3A5C;margin-bottom:16px;">${title}</div>
-          ${setupFee ? `<div style="font-size:13px;color:#555;margin-bottom:6px;">Setup Fee: <strong>$${setupFee}</strong></div>` : ''}
-          ${monthly ? `<div style="font-size:13px;color:#555;margin-bottom:6px;">Monthly Retainer: <strong>$${monthly}/month</strong></div>` : ''}
-          ${svcList ? `<div style="font-size:9px;font-weight:700;color:#888;letter-spacing:1.5px;margin:16px 0 8px;">SERVICES INCLUDED</div><ul style="margin:0;padding-left:18px;">${svcList}</ul>` : ''}
-        </div>
-
-        <a href="${signingLink}" style="display:block;background:#1A3A5C;color:white;text-align:center;padding:18px 28px;border-radius:3px;font-weight:700;font-size:14px;text-decoration:none;letter-spacing:1px;margin-bottom:16px;">
-          Review &amp; Sign Your Contract →
-        </a>
-
-        <p style="font-size:12px;color:#999;text-align:center;margin:0 0 8px;">
-          This link expires on ${new Date(expiresAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.
-        </p>
-        <p style="font-size:12px;color:#999;text-align:center;margin:0;">
-          Questions? Reply to this email or call Yakini at hello@yakini.digital
-        </p>
-      </div>
-      <div style="background:#1A3A5C;padding:16px 32px;text-align:center;">
-        <p style="font-size:11px;color:#888;margin:0;">Yakini Digital Infrastructure · yakini.digital · ESIGN Act compliant</p>
-      </div>
-    </div>
-  `
-                    }
-function buildReminderEmail({ name, business, title, signingLink }: {
-  name: string, business: string, title: string, signingLink: string
-}) {
-  return `
-    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#F6F3EE;">
-      <div style="background:#1A3A5C;padding:28px 32px;">
-        <div style="font-weight:700;font-size:20px;color:white;letter-spacing:2px;">YAKINI</div>
-        <div style="font-size:9px;color:#C8A84B;letter-spacing:3px;margin-top:3px;">DIGITAL INFRASTRUCTURE</div>
-      </div>
-      <div style="background:#C8A84B;height:3px;"></div>
-      <div style="padding:36px 32px;">
-        <h2 style="font-size:20px;color:#1A3A5C;margin:0 0 8px;">Friendly reminder — your contract is waiting.</h2>
-        <p style="font-size:14px;color:#555;margin:0 0 24px;">Hi ${name} — just a reminder that your Yakini agreement for <strong>${business}</strong> is still waiting for your signature.</p>
-        <a href="${signingLink}" style="display:block;background:#1A3A5C;color:white;text-align:center;padding:18px 28px;border-radius:3px;font-weight:700;font-size:14px;text-decoration:none;letter-spacing:1px;">
-          Sign Your Contract →
-        </a>
-      </div>
-      <div style="background:#1A3A5C;padding:16px 32px;text-align:center;">
-        <p style="font-size:11px;color:#888;margin:0;">Yakini Digital Infrastructure · yakini.digital</p>
-      </div>
-    </div>
-  `
 }
 
 // ── CSS ────────────────────────────────────────────────────────────────────

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { adminSession, clientSession, rateLimited, tooMany, unauthorized } from '@/lib/server/guard'
 
 const PROMPTS: Record<string, (input: string) => string> = {
   menu: (input) => `You are an elite culinary consultant. Based on this description, create a complete restaurant menu.
@@ -48,14 +49,22 @@ Be specific and practical. Focus on what actually moves the needle for a small o
 }
 
 export async function POST(req: NextRequest) {
+  // Signed-in clients (and admins) only, with a per-person limit, so nobody can run up the AI bill.
+  const who = (await clientSession()) ?? (await adminSession())
+  if (!who) return unauthorized()
+  if (rateLimited(`ai:${who.e}`, 10, 10 * 60_000) || rateLimited(`ai-day:${who.e}`, 60, 24 * 60 * 60_000)) return tooMany()
   try {
     const { tool, input } = await req.json()
 
-    if (!tool || !input) {
+    if (typeof tool !== 'string' || typeof input !== 'string' || !input.trim()) {
       return NextResponse.json({ error: 'Missing tool or input' }, { status: 400 })
     }
 
-    const promptFn = PROMPTS[tool]
+    if (input.length > 4000) {
+      return NextResponse.json({ error: 'Input is too long (4,000 characters at most)' }, { status: 400 })
+    }
+
+    const promptFn = Object.prototype.hasOwnProperty.call(PROMPTS, tool) ? PROMPTS[tool] : undefined
     if (!promptFn) {
       return NextResponse.json({ error: 'Invalid tool' }, { status: 400 })
     }
@@ -75,7 +84,11 @@ export async function POST(req: NextRequest) {
     })
 
     const data = await response.json()
-    const result = data.content[0].text
+    if (!response.ok) {
+      console.error('AI API error status', response.status)
+      return NextResponse.json({ error: 'AI service error' }, { status: 502 })
+    }
+    const result = data.content?.[0]?.text ?? ''
 
     return NextResponse.json({ result }, { status: 200 })
 
