@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Yakini — Digital infrastructure for serious founders',
-  description: 'We don\'t make websites. We build the platforms your business runs on — with intelligence baked into the foundation.',
+  title: 'Yakini — We build what you build on.',
+  description: 'Operators, not vendors. Yakini diagnoses your business, fixes the one problem costing you the most, installs it in a system you own, and stays on to run it with you. Any industry, nationwide.',
   keywords: 'digital infrastructure, AI platforms, founder tools, custom software, Yakini',
   openGraph: {
     title: 'Yakini Digital Infrastructure',
-    description: 'Digital infrastructure for serious founders. We build the platforms your business runs on.',
+    description: 'We build what you build on. Operators, not vendors. Any industry, nationwide.',
     url: 'https://yakini.digital',
     siteName: 'Yakini',
     type: 'website',

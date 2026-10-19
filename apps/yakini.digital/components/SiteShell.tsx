@@ -1,5 +1,6 @@
 'use client'
 
+import { getStartedHref, LOGIN_HREF } from '@/lib/portal'
 import { useState, useEffect, ReactNode } from 'react'
 
 // ═════════════════════════════════════════════════════════════════════════
@@ -51,8 +52,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <a href="/about">About</a>
           </div>
 
-          <a href="/apply" className="yk-nav-cta">
-            <span>Apply</span>
+          <a href={LOGIN_HREF} className="yk-nav-login">Log in</a>
+          <a href={getStartedHref()} className="yk-nav-cta">
+            <span>Get started</span>
             <span className="yk-nav-cta-arrow">→</span>
           </a>
 
@@ -73,7 +75,8 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <a href="/process" onClick={() => setMenuOpen(false)}>Process</a>
           <a href="/pricing" onClick={() => setMenuOpen(false)}>Pricing</a>
           <a href="/about" onClick={() => setMenuOpen(false)}>About</a>
-          <a href="/apply" className="yk-mobile-cta" onClick={() => setMenuOpen(false)}>Apply →</a>
+          <a href={LOGIN_HREF} onClick={() => setMenuOpen(false)}>Log in</a>
+          <a href={getStartedHref()} className="yk-mobile-cta" onClick={() => setMenuOpen(false)}>Get started →</a>
         </div>
       )}
 
@@ -136,6 +139,10 @@ export function SiteShell({ children }: { children: ReactNode }) {
 // ═════════════════════════════════════════════════════════════════════════
 
 const GLOBAL_CSS = `
+  .yk-nav-login { color: inherit; opacity: 0.85; text-decoration: none; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; margin-right: 22px; white-space: nowrap; }
+  .yk-nav-login:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+  @media (max-width: 900px) { .yk-nav-login { display: none; } }
+
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
   :root {
