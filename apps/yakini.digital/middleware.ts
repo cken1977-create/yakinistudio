@@ -11,7 +11,10 @@ export function middleware(request: NextRequest) {
     if (path.startsWith('/api/sign/') || path.startsWith('/sign/') || path.startsWith('/_next/') || path === '/favicon.ico') {
       return NextResponse.next()
     }
-    const m = path.match(/^\/([a-f0-9]{64})\/?$/)
+    // Any single path segment that could be a link token goes to the signing page, which
+    // answers with its own "invalid link" state for bad ones. Files (with a dot), the bare
+    // host and deeper paths go to the main site.
+    const m = path.match(/^\/([A-Za-z0-9_-]{1,128})\/?$/)
     if (m) {
       const url = request.nextUrl.clone()
       url.pathname = `/sign/${m[1]}`

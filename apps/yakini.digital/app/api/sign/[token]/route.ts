@@ -130,8 +130,8 @@ export async function POST(req: NextRequest, ctx: Ctx) {
       ...(storedOnRow ? {} : { signature_data: sigData }),
     }))
 
-    await notify(contract, name, now, hash)
-    return json({ state: 'complete', signed_at: now, document_hash: hash, signer_name: name, title: contract.contract_title, client_email: contract.client_email })
+    const emailed = await notify(contract, name, now, hash)
+    return json({ state: 'complete', emailed, signed_at: now, document_hash: hash, signer_name: name, title: contract.contract_title, client_email: contract.client_email })
   } catch (e) { return handleError(e) }
 }
 
@@ -139,9 +139,10 @@ function esc(s: string | null | undefined) {
   return (s ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]!))
 }
 
-async function notify(c: ContractRow, name: string, at: string, hash: string) {
+// Returns true only when the signer's own copy was accepted by Resend.
+async function notify(c: ContractRow, name: string, at: string, hash: string): Promise<boolean> {
   const key = process.env.RESEND_API_KEY
-  if (!key) { console.warn('[esign] RESEND_API_KEY missing; skipping signed notifications'); return }
+  if (!key) { console.warn('[esign] RESEND_API_KEY missing; skipping signed notifications'); return false }
   const html = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;background:#F6F3EE">
 <h2 style="color:#1A3A5C">Contract signed</h2>
 <p><strong>${esc(name)}</strong> signed <strong>${esc(c.contract_title)}</strong>.</p>
@@ -150,7 +151,8 @@ Signed: ${esc(new Date(at).toUTCString())}<br>Document SHA-256: <code>${hash}</c
 <p style="font-size:12px;color:#666">Signed electronically under the U.S. ESIGN Act. Ask admin@yakini.digital for a copy of the signed agreement at any time.</p></div>`
   const to = [c.client_email, 'admin@yakini.digital'].filter(e => !isTestRecipient(e))
   // Test contracts (reserved test-domain client email) send nothing, including the admin copy.
-  if (isTestRecipient(c.client_email)) { console.info('[esign] test contract; notifications suppressed'); return }
+  if (isTestRecipient(c.client_email)) { console.info('[esign] test contract; notifications suppressed'); return false }
+  let clientEmailed = false
   for (const addr of to) {
     try {
       const r = await fetch('https://api.resend.com/emails', {
@@ -159,6 +161,8 @@ Signed: ${esc(new Date(at).toUTCString())}<br>Document SHA-256: <code>${hash}</c
         body: JSON.stringify({ from: 'Yakini Contracts <admin@yakini.digital>', to: [addr], subject: `Signed: ${c.contract_title}`, html }),
       })
       if (!r.ok) console.error('[esign] resend failed', r.status)
+      else if (addr === c.client_email) clientEmailed = true
     } catch (e) { console.error('[esign] resend error', e) }
   }
+  return clientEmailed
 }

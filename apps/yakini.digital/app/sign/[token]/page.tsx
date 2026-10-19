@@ -33,6 +33,7 @@ export default function SignPage() {
   const [submitting, setSubmitting] = useState(false)
   const [progress, setProgress] = useState(0)
   const [signedAt, setSignedAt] = useState('')
+  const [emailed, setEmailed] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [drawing, setDrawing] = useState(false)
@@ -166,7 +167,7 @@ export default function SignPage() {
         }),
       })
       const data = await res.json()
-      if (data.state === 'complete') { setSignedAt(data.signed_at); setStep('complete') }
+      if (data.state === 'complete') { setSignedAt(data.signed_at); setEmailed(data.emailed === true); setStep('complete') }
       else if (data.state === 'already_signed') setStep('already_signed')
       else if (data.state === 'expired' || data.state === 'voided' || data.state === 'invalid') setStep(data.state)
       else setSubmitError(data.error || 'Could not record your signature. Please try again.')
@@ -460,7 +461,7 @@ export default function SignPage() {
             <h2 className="ys-status-title">Contract Executed</h2>
             <p className="ys-status-body">
               <strong>{contract.contract_title}</strong> has been signed by <strong>{signerName}</strong>.
-              A confirmation has been sent to <strong>{contract.client_email}</strong>.
+              {emailed && <> A confirmation has been sent to <strong>{contract.client_email}</strong>.</>}
             </p>
             <p className="ys-status-body" style={{ fontSize: 12, wordBreak: 'break-all' }}>
               Signed {signedAt ? new Date(signedAt).toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' }) : ''}
