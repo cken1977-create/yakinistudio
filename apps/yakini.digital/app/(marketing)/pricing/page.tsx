@@ -8,14 +8,20 @@ import {
   KIT_TIERS,
   PASS_THROUGH_NOTE,
   PORTAL_SIGNUP_URL,
+  SELF_SERVE_MODULES,
   SELF_SERVE_PLANS,
   SELF_SERVE_SETUP_NOTE,
+  clientPaidAccounts,
   formatUsd,
   kitMonthlyLabel,
   kitSetupLabel,
   selfServeMonthlyLabel,
+  selfServeNotIncluded,
   selfServePriceLabel,
+  selfServeSetupCovers,
   selfServeSetupLabel,
+  supportBeyond,
+  supportScope,
 } from '@/lib/pricing'
 
 const RULES = [
@@ -52,7 +58,7 @@ export default function PricingPage() {
         </div>
       </header>
 
-      <section className="yk-section pr-tiers">
+      <section id="self-serve" className="yk-section pr-tiers">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
             <span className="yk-num">01</span>
@@ -70,7 +76,7 @@ export default function PricingPage() {
 
           <div className="pr-tiers-grid pr-tiers-grid-2">
             {SELF_SERVE_PLANS.map((plan) => (
-              <div key={plan.id} className="pr-tier">
+              <div key={plan.id} id={plan.id} className="pr-tier">
                 <div className="pr-tier-name">{plan.name}</div>
                 <div className="pr-tier-tagline">{plan.summary}</div>
 
@@ -108,17 +114,90 @@ export default function PricingPage() {
                     ))}
                   </ul>
                 </div>
+
+                <div className="pr-tier-section">
+                  <div className="pr-tier-section-h">MONTHLY OPERATOR SUPPORT</div>
+                  <p className="pr-know-copy">{supportScope}</p>
+                  <p className="pr-know-note">{supportBeyond}</p>
+                </div>
               </div>
             ))}
           </div>
 
-          <div className="pr-custom-note pr-pass">
-            {PASS_THROUGH_NOTE}
+          <h3 className="pr-subhead">Side by side</h3>
+          <p className="pr-compare-hint">Swipe sideways to compare both plans.</p>
+          <div className="pr-compare-wrap">
+            <table className="pr-compare">
+              <thead>
+                <tr>
+                  <th scope="col">What you get</th>
+                  {SELF_SERVE_PLANS.map((plan) => (
+                    <th key={plan.id} scope="col">
+                      {plan.name}
+                      <span className="pr-compare-price">{selfServePriceLabel(plan)}</span>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {SELF_SERVE_MODULES.map((module) => (
+                  <tr key={module.plain}>
+                    <th scope="row">{module.plain}</th>
+                    {SELF_SERVE_PLANS.map((plan) => {
+                      const included = plan.id === 'operate' ? module.operate : module.plus
+                      return (
+                        <td key={plan.id}>{included ? <Mark yes /> : <Mark />}</td>
+                      )
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="pr-know">
+            <article className="pr-know-card">
+              <h3>What the setup fee covers</h3>
+              <p>{selfServeSetupCovers}</p>
+              <p className="pr-know-note">
+                Operate setup is {selfServeSetupLabel(operate)}. Operate Plus setup is {selfServeSetupLabel(operatePlus)}. The work is the same. The fee is the number on the plan.
+              </p>
+            </article>
+
+            <article className="pr-know-card">
+              <h3>Monthly operator support</h3>
+              <p>{supportScope}</p>
+              <p className="pr-know-note">{supportBeyond}</p>
+            </article>
+
+            <article className="pr-know-card">
+              <h3>Not included</h3>
+              <ul className="pr-gap-list">
+                {selfServeNotIncluded.map((row) => (
+                  <li key={row.where}>
+                    <p>{row.missing}</p>
+                    <a href={row.href}>{row.where} →</a>
+                  </li>
+                ))}
+              </ul>
+            </article>
+
+            <article className="pr-know-card">
+              <h3>Accounts you pay directly</h3>
+              <ul className="pr-account-list">
+                {clientPaidAccounts.map((account) => (
+                  <li key={account}>{account}</li>
+                ))}
+              </ul>
+              <p className="pr-know-note">
+                These accounts are in your name. You pay those bills directly. They are not part of Yakini&apos;s price, and this page does not estimate them.
+              </p>
+            </article>
           </div>
         </div>
       </section>
 
-      <section className="yk-section pr-operate">
+      <section id="kits" className="yk-section pr-operate">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
             <span className="yk-num">02</span>
@@ -287,6 +366,7 @@ export default function PricingPage() {
                 {selfServePriceLabel(operatePlus)} and adds card payments, missed-call text-back
                 for your approval, review requests, campaigns to opted-in customers, and a monthly
                 owner report. The setup fee is one time. A Yakini operator sets either plan up.
+                Monthly support on both plans: {supportScope} {supportBeyond}
               </div>
             </details>
 
@@ -363,6 +443,14 @@ export default function PricingPage() {
         </div>
       </section>
     </SiteShell>
+  )
+}
+
+function Mark({ yes = false }: { yes?: boolean }) {
+  return (
+    <span className={yes ? 'pr-mark pr-mark-yes' : 'pr-mark pr-mark-no'}>
+      {yes ? 'Included' : 'Not included'}
+    </span>
   )
 }
 
@@ -927,4 +1015,142 @@ const PAGE_CSS = `
   .pr-table-wide { max-width: 880px; }
   .pr-pass { margin-top: 28px; max-width: 760px; }
   .pr-summary { margin-top: 48px; }
+
+  .pr-subhead {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 500;
+    color: var(--cream);
+    margin: 56px 0 12px;
+  }
+  .pr-compare-hint {
+    display: none;
+    margin: 0 0 10px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .pr-compare-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.02);
+  }
+  .pr-compare {
+    width: 100%;
+    min-width: 640px;
+    border-collapse: collapse;
+  }
+  .pr-compare th, .pr-compare td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .pr-compare thead th {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--cream);
+    background: rgba(255,255,255,0.03);
+  }
+  .pr-compare tbody th {
+    color: var(--cream);
+    font-weight: 500;
+    width: 56%;
+  }
+  .pr-compare td { text-align: center; }
+  .pr-compare-price {
+    display: block;
+    margin-top: 4px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--gold);
+  }
+  .pr-mark {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .pr-mark-yes { color: var(--gold); }
+  .pr-mark-yes::before { content: '✓ '; }
+  .pr-mark-no { color: var(--muted); }
+  .pr-know {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 36px;
+  }
+  .pr-know-card {
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.02);
+    padding: 28px 24px;
+  }
+  .pr-know-card h3 {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .pr-know-card p, .pr-know-copy {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--cream);
+  }
+  .pr-know-note {
+    margin-top: 12px;
+    color: var(--muted) !important;
+    font-size: 14px !important;
+  }
+  .pr-gap-list, .pr-account-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .pr-gap-list li {
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+  }
+  .pr-gap-list p {
+    margin-bottom: 6px;
+  }
+  .pr-gap-list a {
+    color: var(--gold);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .pr-gap-list a:hover { color: var(--cream); }
+  .pr-account-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .pr-account-list li {
+    border: 1px solid var(--line);
+    padding: 8px 12px;
+    color: var(--cream);
+    font-size: 14px;
+  }
+  @media (max-width: 800px) {
+    .pr-know { grid-template-columns: 1fr; }
+    .pr-compare-hint { display: block; }
+    .pr-compare tbody th {
+      position: sticky;
+      left: 0;
+      background: #0A0908;
+      z-index: 1;
+      min-width: 180px;
+    }
+  }
 `

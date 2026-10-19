@@ -13,6 +13,67 @@ export const FLAT_PRICING_NOTE =
 export const SELF_SERVE_SETUP_NOTE =
   'One-time operator setup. A Yakini operator sets the system up. Sign up at the portal.'
 
+/** What the one-time self-serve setup fee covers. Same work on both plans. */
+export const selfServeSetupCovers =
+  'A Yakini operator connects your own accounts, in your name, turns on your modules, and walks you through the system.'
+
+/** Ongoing monthly operator support for both self-serve plans. */
+export const supportScope =
+  'Help from your Yakini operator in your room, with a reply within 1 business day.'
+
+export const supportBeyond =
+  'Work beyond that is billed separately.'
+
+export type SelfServeModule = {
+  plain: string
+  operate: boolean
+  plus: boolean
+}
+
+/** Guide module list. Operate Plus includes every Operate module. */
+export const SELF_SERVE_MODULES: readonly SelfServeModule[] = [
+  { plain: 'Your own client portal', operate: true, plus: true },
+  { plain: 'Help desk where customers send requests and follow their status', operate: true, plus: true },
+  { plain: 'Voice notes from customers and staff', operate: true, plus: true },
+  { plain: 'Drafted replies and transcripts that wait for your OK before anything goes out', operate: true, plus: true },
+  { plain: 'Text alerts with opt-in, and STOP/HELP handled', operate: true, plus: true },
+  { plain: 'A booking page where customers ask for a time and you confirm each one', operate: true, plus: true },
+  { plain: 'Incoming texts land in the customer’s thread. Nothing replies on its own.', operate: true, plus: true },
+  { plain: 'Card payments on invoices, with Stripe in your name', operate: false, plus: true },
+  { plain: 'Missed-call handling: it rings you, logs the missed call, and drafts a text-back for your OK. Opted-in callers only.', operate: false, plus: true },
+  { plain: 'Review requests, each one approved by you', operate: false, plus: true },
+  { plain: 'Campaigns to customers who opted in. Every message is approved, with quiet hours and send limits.', operate: false, plus: true },
+  { plain: 'A monthly owner report, on screen, in print, or as a CSV', operate: false, plus: true },
+]
+
+export const selfServeNotIncluded = [
+  {
+    missing: 'On Operate: card payments, missed-call text-back, review requests, campaigns, and the monthly owner report.',
+    where: 'Operate Plus',
+    href: '#operate-plus',
+  },
+  {
+    missing: 'On both plans: Composer, Sentinel, and a system Yakini builds with you. A person approves every release.',
+    where: 'A fully built kit',
+    href: '#kits',
+  },
+  {
+    missing: 'On both plans: a build that does not fit a plan or a kit.',
+    where: 'Custom, quoted separately',
+    href: '/apply?tier=custom',
+  },
+] as const
+
+/** Bills the client pays directly. No amounts — those bills are not Yakini’s price. */
+export const clientPaidAccounts = [
+  'Supabase',
+  'Vercel',
+  'Twilio',
+  'Stripe',
+  'Your domain',
+  'Your email',
+] as const
+
 export type SelfServePlan = {
   id: 'operate' | 'operate-plus'
   name: string
@@ -30,15 +91,7 @@ export const SELF_SERVE_PLANS: readonly SelfServePlan[] = [
     setup: 499,
     priceMonthly: 249,
     summary: 'Your client portal. A Yakini operator sets it up.',
-    includes: [
-      'Your own client portal',
-      'Help desk where customers send requests and follow their status',
-      'Voice notes from customers and staff',
-      'Drafted replies and transcripts that wait for your OK before anything goes out',
-      'Text alerts with opt-in, and STOP/HELP handled',
-      'A booking page where customers ask for a time and you confirm each one',
-      'Incoming texts land in the customer’s thread. Nothing replies on its own.',
-    ],
+    includes: SELF_SERVE_MODULES.filter((module) => module.operate).map((module) => module.plain),
   },
   {
     id: 'operate-plus',
@@ -46,14 +99,7 @@ export const SELF_SERVE_PLANS: readonly SelfServePlan[] = [
     setup: 799,
     priceMonthly: 449,
     summary: 'Everything in Operate, plus payments, follow-up, and an owner report.',
-    includes: [
-      'Everything in Operate',
-      'Card payments on invoices, with Stripe in your name',
-      'Missed-call text-back: we log the miss and draft a text for your OK. Opted-in callers only.',
-      'Review requests, each one approved by you',
-      'Campaigns to customers who opted in. Every message is approved, with quiet hours and send limits.',
-      'A monthly owner report, on screen, in print, or as a CSV',
-    ],
+    includes: SELF_SERVE_MODULES.filter((module) => module.plus).map((module) => module.plain),
   },
 ]
 
