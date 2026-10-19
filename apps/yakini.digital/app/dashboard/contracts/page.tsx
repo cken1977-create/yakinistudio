@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 
 const SUPABASE_URL = 'https://mxshsmknfqxwltucgezl.supabase.co'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14c2hzbWtuZnF4d2x0dWNnZXpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1MDM1NjIsImV4cCI6MjA5MzA3OTU2Mn0.cdx3T5CVFKq2sis-FOHau2V0Lx3CrsyoZmaAfM689v0'
-const SIGN_BASE_URL = 'https://sign.yakini.digital'
+// sign.yakini.digital also serves these links once its DNS record exists; this path works today.
+const SIGN_BASE_URL = 'https://yakini.digital/sign'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type Contract = {

@@ -1,78 +1,91 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+// Public signing page. All data access goes through /api/sign/[token] (server,
+// service role). No database or email keys live in this file.
 
-const SUPABASE_URL = 'https://mxshsmknfqxwltucgezl.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14c2hzbWtuZnF4d2x0dWNnZXpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1MDM1NjIsImV4cCI6MjA5MzA3OTU2Mn0.cdx3T5CVFKq2sis-FOHau2V0Lx3CrsyoZmaAfM689v0'
-const RESEND_API_KEY = 're_DdtMrt3n_F6B4vJQiepzrYpHwK6gkB93N'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { useParams } from 'next/navigation'
+import type { ContractDocument } from '@/lib/esign/document'
 
 type Contract = {
-  id: string
+  contract_title: string
   client_name: string
   client_email: string
-  client_business: string
-  contract_type: string
-  contract_title: string
-  status: string
-  document_url: string | null
-  signing_token: string
-  token_expires_at: string
-  sent_at: string
+  client_business: string | null
+  sent_at: string | null
 }
 
-type SigningStep = 'loading' | 'invalid' | 'expired' | 'already_signed' | 'review' | 'sign' | 'complete'
+type SigningStep = 'loading' | 'invalid' | 'expired' | 'voided' | 'error' | 'already_signed' | 'review' | 'sign' | 'complete'
 
-export default function SignPage({ params }: { params: { token: string } }) {
-  const [step, setStep] = useState<SigningStep>('loading')
+export default function SignPage() {
+  const params = useParams<{ token: string }>()
+  const token = typeof params?.token === 'string' ? params.token : ''
+  const [step, setStep] = useState<SigningStep>(() => (/^[a-f0-9]{64}$/.test(token) ? 'loading' : 'invalid'))
   const [contract, setContract] = useState<Contract | null>(null)
+  const [doc, setDoc] = useState<ContractDocument | null>(null)
+  const [docHash, setDocHash] = useState('')
+  const [consentText, setConsentText] = useState('')
   const [hasScrolled, setHasScrolled] = useState(false)
   const [hasChecked, setHasChecked] = useState(false)
   const [signerName, setSignerName] = useState('')
   const [nameError, setNameError] = useState('')
+  const [submitError, setSubmitError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [signedAt, setSignedAt] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [drawing, setDrawing] = useState(false)
   const [hasSig, setHasSig] = useState(false)
   const [sigMode, setSigMode] = useState<'type' | 'draw'>('type')
 
-  const token = params?.token
-
-  // ── Load contract ──────────────────────────────────────────
-  useEffect(() => {
-    if (!token) { setStep('invalid'); return }
-    loadContract()
-  }, [token])
-
-  const loadContract = async () => {
-    try {
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/contracts?signing_token=eq.${token}&select=*`,
-        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
-      )
-      const data = await res.json()
-      if (!data?.length) { setStep('invalid'); return }
-      const c = data[0]
-      if (c.status === 'signed') { setStep('already_signed'); setContract(c); return }
-      if (new Date(c.token_expires_at) < new Date()) { setStep('expired'); return }
-      setContract(c)
-      // Mark as viewed
-      await fetch(`${SUPABASE_URL}/rest/v1/contracts?id=eq.${c.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({ status: 'viewed', viewed_at: new Date().toISOString() })
+  // ── Load contract (server marks it viewed) ─────────────────
+  const applyLoad = useCallback((data: {
+    state: string
+    title?: string
+    contract?: { title: string; client_name: string; client_email: string; client_business: string | null; sent_at: string | null }
+    document?: ContractDocument
+    document_hash?: string
+    consent_text?: string
+  }) => {
+    if (data.state === 'review' && data.contract && data.document) {
+      setContract({
+        contract_title: data.contract.title,
+        client_name: data.contract.client_name,
+        client_email: data.contract.client_email,
+        client_business: data.contract.client_business,
+        sent_at: data.contract.sent_at,
       })
+      setDoc(data.document)
+      setDocHash(data.document_hash ?? '')
+      setConsentText(data.consent_text ?? '')
       setStep('review')
-    } catch {
-      setStep('invalid')
+    } else if (data.state === 'already_signed') {
+      setContract({ contract_title: data.title ?? '', client_name: '', client_email: '', client_business: null, sent_at: null })
+      setStep('already_signed')
+    } else if (data.state === 'expired' || data.state === 'voided' || data.state === 'invalid') {
+      setStep(data.state)
+    } else {
+      setStep('error')
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    if (!/^[a-f0-9]{64}$/.test(token)) return
+    let live = true
+    fetch(`/api/sign/${encodeURIComponent(token)}`, { cache: 'no-store' })
+      .then(r => r.json())
+      .then(d => { if (live) applyLoad(d) })
+      .catch(() => { if (live) setStep('error') })
+    return () => { live = false }
+  }, [token, applyLoad])
+
+  // A short document may not scroll at all; treat it as fully read.
+  useEffect(() => {
+    if (step !== 'review') return
+    const el = scrollRef.current
+    if (el && el.scrollHeight <= el.clientHeight + 4) { setProgress(100); setHasScrolled(true) }
+  }, [step, doc])
 
   // ── Scroll tracking ────────────────────────────────────────
   const handleScroll = useCallback(() => {
@@ -127,112 +140,38 @@ export default function SignPage({ params }: { params: { token: string } }) {
     setHasSig(false)
   }
 
-  // ── Submit signature ───────────────────────────────────────
+  // ── Submit signature (server records time, IP, UA, hash) ───
   const submitSignature = async () => {
-    if (!signerName.trim()) { setNameError('Please enter your full legal name'); return }
-    if (signerName.trim().split(' ').length < 2) { setNameError('Please enter your full name (first and last)'); return }
-    if (!hasChecked) return
-    if (!contract) return
-
+    const name = signerName.trim().replace(/\s+/g, ' ')
+    if (!name) { setNameError('Please enter your full legal name'); return }
+    if (name.split(' ').length < 2) { setNameError('Please enter your full name (first and last)'); return }
+    if (!hasChecked || !contract) return
+    let signatureData: string | null = null
+    if (sigMode === 'draw') {
+      if (!hasSig || !canvasRef.current) { setSubmitError('Draw your signature, or switch to Type.'); return }
+      signatureData = canvasRef.current.toDataURL('image/png')
+    }
     setSubmitting(true)
-    const now = new Date().toISOString()
-
+    setSubmitError('')
     try {
-      // Update contract as signed
-      await fetch(`${SUPABASE_URL}/rest/v1/contracts?id=eq.${contract.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({
-          status: 'signed',
-          signed_at: now,
-          signer_name: signerName.trim(),
-          signer_consent: true,
-        })
-      })
-
-      // Insert audit log
-      await fetch(`${SUPABASE_URL}/rest/v1/contract_audit`, {
+      const res = await fetch(`/api/sign/${encodeURIComponent(token)}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Prefer': 'return=minimal'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contract_id: contract.id,
-          event: 'signed',
-          actor: contract.client_email,
-          notes: `Signed by ${signerName.trim()} at ${now}`
-        })
+          signer_name: name,
+          consent: true,
+          signature_type: sigMode === 'draw' ? 'drawn' : 'typed',
+          signature_data: signatureData,
+          document_hash: docHash,
+        }),
       })
-
-      // Send confirmation emails
-      const emailHtml = `
-        <div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;background:#F6F3EE;padding:0;border-radius:6px;overflow:hidden;">
-          <div style="background:#1A3A5C;padding:28px 32px;">
-            <div style="font-family:Arial,sans-serif;font-weight:700;font-size:20px;color:white;letter-spacing:2px;">YAKINI</div>
-            <div style="font-family:Arial,sans-serif;font-size:9px;color:#C8A84B;letter-spacing:3px;margin-top:3px;">DIGITAL INFRASTRUCTURE</div>
-          </div>
-          <div style="background:#C8A84B;height:3px;"></div>
-          <div style="padding:32px;">
-            <h2 style="font-family:Arial,sans-serif;font-size:18px;color:#1A3A5C;margin:0 0 16px;">Contract Executed Successfully</h2>
-            <p style="font-size:14px;color:#444;line-height:1.7;margin:0 0 12px;">
-              <strong>${signerName.trim()}</strong> — your contract has been signed and is now legally binding.
-            </p>
-            <div style="background:white;border:1px solid #E0DBD0;border-radius:4px;padding:20px;margin:20px 0;">
-              <div style="font-family:Arial,sans-serif;font-size:10px;font-weight:700;color:#C8A84B;letter-spacing:2px;margin-bottom:12px;">CONTRACT DETAILS</div>
-              <table style="width:100%;border-collapse:collapse;">
-                <tr><td style="padding:6px 0;color:#888;font-size:13px;width:120px;">Document</td><td style="padding:6px 0;font-size:13px;color:#333;">${contract.contract_title}</td></tr>
-                <tr><td style="padding:6px 0;color:#888;font-size:13px;">Client</td><td style="padding:6px 0;font-size:13px;color:#333;">${contract.client_name}</td></tr>
-                <tr><td style="padding:6px 0;color:#888;font-size:13px;">Business</td><td style="padding:6px 0;font-size:13px;color:#333;">${contract.client_business || '—'}</td></tr>
-                <tr><td style="padding:6px 0;color:#888;font-size:13px;">Signed By</td><td style="padding:6px 0;font-size:13px;color:#333;">${signerName.trim()}</td></tr>
-                <tr><td style="padding:6px 0;color:#888;font-size:13px;">Date & Time</td><td style="padding:6px 0;font-size:13px;color:#333;">${new Date(now).toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</td></tr>
-              </table>
-            </div>
-            <p style="font-size:13px;color:#666;line-height:1.6;">
-              This signature is legally binding under the U.S. Electronic Signatures in Global and National Commerce Act (ESIGN). 
-              A copy of this agreement has been sent to both parties for your records.
-            </p>
-          </div>
-          <div style="background:#1A3A5C;padding:16px 32px;text-align:center;">
-            <p style="font-family:Arial,sans-serif;font-size:11px;color:#888;margin:0;">Yakini Digital Infrastructure · yakini.digital · admin@yakini.digital</p>
-          </div>
-        </div>
-      `
-
-      // Notify client
-      await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${RESEND_API_KEY}` },
-        body: JSON.stringify({
-          from: 'Yakini Contracts <admin@yakini.digital>',
-          to: [contract.client_email],
-          subject: `✓ Signed — ${contract.contract_title}`,
-          html: emailHtml
-        })
-      })
-
-      // Notify Yakini
-      await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${RESEND_API_KEY}` },
-        body: JSON.stringify({
-          from: 'Yakini Contracts <admin@yakini.digital>',
-          to: ['admin@yakini.digital'],
-          subject: `✓ Contract Signed — ${contract.client_business || contract.client_name}`,
-          html: emailHtml
-        })
-      })
-
-      setStep('complete')
-    } catch (e) {
-      console.error(e)
+      const data = await res.json()
+      if (data.state === 'complete') { setSignedAt(data.signed_at); setStep('complete') }
+      else if (data.state === 'already_signed') setStep('already_signed')
+      else if (data.state === 'expired' || data.state === 'voided' || data.state === 'invalid') setStep(data.state)
+      else setSubmitError(data.error || 'Could not record your signature. Please try again.')
+    } catch {
+      setSubmitError('Network error. Your signature was not recorded. Please try again.')
     }
     setSubmitting(false)
   }
@@ -259,6 +198,24 @@ export default function SignPage({ params }: { params: { token: string } }) {
         </div>
       )}
 
+      {/* Voided */}
+      {step === 'voided' && (
+        <div className="ys-center">
+          <div className="ys-status-icon ys-icon-error">✕</div>
+          <h2 className="ys-status-title">Contract Withdrawn</h2>
+          <p className="ys-status-body">This contract was voided and can no longer be signed. Contact <a href="mailto:admin@yakini.digital">admin@yakini.digital</a> if you think this is a mistake.</p>
+        </div>
+      )}
+
+      {/* Error */}
+      {step === 'error' && (
+        <div className="ys-center">
+          <div className="ys-status-icon ys-icon-warn">!</div>
+          <h2 className="ys-status-title">Something Went Wrong</h2>
+          <p className="ys-status-body">We could not load this contract right now. Please refresh in a minute, or contact <a href="mailto:admin@yakini.digital">admin@yakini.digital</a>.</p>
+        </div>
+      )}
+
       {/* Expired */}
       {step === 'expired' && (
         <div className="ys-center">
@@ -281,7 +238,7 @@ export default function SignPage({ params }: { params: { token: string } }) {
       )}
 
       {/* Review */}
-      {step === 'review' && contract && (
+      {step === 'review' && contract && doc && (
         <div className="ys-page">
 
           {/* Header */}
@@ -335,7 +292,7 @@ export default function SignPage({ params }: { params: { token: string } }) {
 
               {/* Scrollable contract body */}
               <div className="ys-doc-body" ref={scrollRef} onScroll={handleScroll}>
-                <ContractBody contract={contract} />
+                <ContractBody doc={doc} />
               </div>
 
               {/* Scroll nudge */}
@@ -461,7 +418,7 @@ export default function SignPage({ params }: { params: { token: string } }) {
                     {hasChecked && <span>✓</span>}
                   </div>
                   <span>
-                    I have read and understood the full document. I agree that typing my name or drawing my signature above constitutes my legal electronic signature, binding under the U.S. ESIGN Act (15 U.S.C. § 7001 et seq.) and applicable law.
+                    {consentText}
                   </span>
                 </label>
               </div>
@@ -482,10 +439,12 @@ export default function SignPage({ params }: { params: { token: string } }) {
                 )}
               </button>
 
+              {submitError && <div className="ys-error-msg" role="alert">{submitError}</div>}
+
               <p className="ys-legal-note">
-                By clicking "Sign & Execute Contract" you are entering into a legally binding agreement.
+                By clicking &ldquo;Sign &amp; Execute Contract&rdquo; you are entering into a legally binding agreement.
                 A signed copy will be delivered to {contract.client_email} and admin@yakini.digital.
-                This action is recorded with a timestamp and audit trail.
+                This action is recorded with the time, your IP address, your browser, and a SHA-256 fingerprint of the document.
               </p>
 
             </div>
@@ -501,7 +460,11 @@ export default function SignPage({ params }: { params: { token: string } }) {
             <h2 className="ys-status-title">Contract Executed</h2>
             <p className="ys-status-body">
               <strong>{contract.contract_title}</strong> has been signed by <strong>{signerName}</strong>.
-              A copy has been sent to <strong>{contract.client_email}</strong>.
+              A confirmation has been sent to <strong>{contract.client_email}</strong>.
+            </p>
+            <p className="ys-status-body" style={{ fontSize: 12, wordBreak: 'break-all' }}>
+              Signed {signedAt ? new Date(signedAt).toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' }) : ''}
+              <br />Document fingerprint (SHA-256): <code>{docHash}</code>
             </p>
             <div className="ys-complete-details">
               <div className="ys-complete-label">WHAT HAPPENS NEXT</div>
@@ -527,56 +490,19 @@ export default function SignPage({ params }: { params: { token: string } }) {
 }
 
 // ── Contract Body Component ────────────────────────────────────────────────
-function ContractBody({ contract }: { contract: Contract }) {
+// Renders the server-built document; the server hashes this same content.
+function ContractBody({ doc }: { doc: ContractDocument }) {
   return (
     <div className="ys-contract-content">
-      <h1 className="ys-contract-title">{contract.contract_title}</h1>
-      <p className="ys-contract-intro">
-        This agreement is between <strong>Yakini Digital Infrastructure LLC</strong>,
-        a Delaware Limited Liability Company (&ldquo;Yakini&rdquo;) and{' '}
-        <strong>{contract.client_name}</strong>
-        {contract.client_business ? ` of ${contract.client_business}` : ''} (&ldquo;Client&rdquo;).
-      </p>
+      <h1 className="ys-contract-title">{doc.title}</h1>
+      <p className="ys-contract-intro">{doc.intro}</p>
 
-      {[
-        {
-          num: '1', title: 'Services',
-          body: 'Yakini agrees to provide digital infrastructure services as specified in the Statement of Work attached hereto, including website design and development, brand identity, marketing systems, AI-powered tools, and ongoing platform management.'
-        },
-        {
-          num: '2', title: 'Intellectual Property',
-          body: 'All Yakini infrastructure, templates, AI tools, and platform architecture remain the exclusive property of Yakini Digital Infrastructure LLC and BRSA Holdings, Inc. Client receives a non-exclusive, non-transferable license to use the Client Deliverables upon receipt of full payment. This license is revocable upon breach or non-payment.'
-        },
-        {
-          num: '3', title: 'Payment Terms',
-          body: 'Client agrees to pay the Setup Fee prior to commencement of work. Monthly Retainer payments are due on the first of each calendar month. Invoices unpaid after 10 business days accrue a 1.5% monthly late fee. Yakini may suspend services for accounts more than 30 days past due.'
-        },
-        {
-          num: '4', title: 'Term and Termination',
-          body: 'This agreement commences on the Effective Date and continues until terminated. Either party may terminate with 30 days written notice. Yakini may terminate immediately upon material breach or non-payment. Upon termination, all licenses are revoked and outstanding fees become immediately due.'
-        },
-        {
-          num: '5', title: 'Confidentiality',
-          body: 'Both parties agree to hold in strict confidence all Confidential Information disclosed during this engagement, including business plans, pricing, client data, and proprietary methodologies. This obligation survives termination for three years.'
-        },
-        {
-          num: '6', title: 'Limitation of Liability',
-          body: "Yakini's total liability under this agreement shall not exceed the total fees paid in the three months preceding the claim. In no event shall Yakini be liable for indirect, incidental, special, or consequential damages."
-        },
-        {
-          num: '7', title: 'Governing Law',
-          body: 'This agreement is governed by the laws of the State of Delaware. Disputes shall be resolved through good faith negotiation, and if unresolved, through binding arbitration under the rules of the American Arbitration Association.'
-        },
-        {
-          num: '8', title: 'Electronic Signature',
-          body: "The parties agree that electronic signatures are legally binding and fully enforceable under the U.S. Electronic Signatures in Global and National Commerce Act (ESIGN Act, 15 U.S.C. § 7001) and applicable state law. The electronic record of this agreement, including the signer's name, timestamp, IP address, and consent confirmation, constitutes a complete and binding execution of this agreement."
-        },
-      ].map(section => (
+      {doc.sections.map(section => (
         <div key={section.num} className="ys-contract-section">
           <div className="ys-contract-sec-num">{section.num}</div>
           <div>
             <div className="ys-contract-sec-title">{section.title}</div>
-            <p className="ys-contract-sec-body">{section.body}</p>
+            <p className="ys-contract-sec-body" style={{ whiteSpace: 'pre-line' }}>{section.body}</p>
           </div>
         </div>
       ))}
@@ -589,8 +515,8 @@ function ContractBody({ contract }: { contract: Contract }) {
         </div>
         <div className="ys-contract-sig-block">
           <div className="ys-sig-block-label">CLIENT</div>
-          <div className="ys-sig-block-name">{contract.client_name}</div>
-          <div className="ys-sig-block-title">{contract.client_business || 'Client'}</div>
+          <div className="ys-sig-block-name">{doc.parties.client}</div>
+          <div className="ys-sig-block-title">{doc.parties.clientBusiness || 'Client'}</div>
         </div>
       </div>
     </div>
