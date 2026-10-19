@@ -1,6 +1,7 @@
 'use client'
 
 import { SiteShell } from '@/components/SiteShell'
+import { getStartedHref, LOGIN_HREF } from '@/lib/portal'
 
 // ═════════════════════════════════════════════════════════════════════════
 // YAKINI PRICING PAGE — Launch / Operate (October 5, 2026)
@@ -85,6 +86,24 @@ export default function PricingPage() {
           </p>
         </div>
       </header>
+
+      {/* ───── SELF-SERVE START ───── */}
+      <section className="pr-selfserve" aria-label="Start on your own">
+        <div className="pr-selfserve-inner">
+          <div>
+            <p className="pr-selfserve-h">Ready now? Start on your own.</p>
+            <p className="pr-selfserve-p">
+              Create your account in about five minutes, pick a plan, and you&apos;re in your own private room
+              right away. Start now, pay later: nothing is charged until we&apos;ve agreed the plan with you.
+              Monthly plan prices are shown when you sign up.
+            </p>
+          </div>
+          <div className="pr-selfserve-ctas">
+            <a href={getStartedHref()} className="pr-tier-cta pr-cta-featured"><span>Get started</span><span className="yk-btn-arrow">→</span></a>
+            <a href={LOGIN_HREF} className="pr-tier-cta"><span>Log in</span></a>
+          </div>
+        </div>
+      </section>
 
       {/* ───── LAUNCH PRODUCTS ───── */}
       <section className="yk-section pr-tiers">
@@ -431,6 +450,12 @@ export default function PricingPage() {
 }
 
 const PAGE_CSS = `
+  .pr-selfserve { padding: 0 24px; margin: 8px 0 40px; }
+  .pr-selfserve-inner { max-width: 1100px; margin: 0 auto; border: 1px solid rgba(200,168,75,0.5); border-radius: 6px; padding: 28px; display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between; }
+  .pr-selfserve-h { font-size: 24px; font-weight: 700; margin: 0 0 8px; }
+  .pr-selfserve-p { max-width: 640px; margin: 0; line-height: 1.6; opacity: 0.85; }
+  .pr-selfserve-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+
   /* ═══ HEADER ═══ */
   .pr-header {
     background: linear-gradient(180deg, rgba(10, 9, 8, 0.20) 0%, rgba(10, 9, 8, 0.40) 100%), url('/yakini-pricing-bg.jpg') center center / cover no-repeat;

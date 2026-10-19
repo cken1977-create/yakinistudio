@@ -1,5 +1,6 @@
 'use client'
 
+import { getStartedHref, LOGIN_HREF, OPEN_INDUSTRIES } from '@/lib/portal'
 import { useState, useEffect } from 'react'
 import { INDUSTRY_KITS } from '@/lib/industry-kits'
 
@@ -51,8 +52,9 @@ export default function HomePage() {
             <a href="/about">About</a>
           </div>
 
-          <a href="/apply" className="yk-nav-cta">
-            <span>Apply</span>
+          <a href={LOGIN_HREF} className="yk-nav-login">Log in</a>
+          <a href={getStartedHref()} className="yk-nav-cta">
+            <span>Get started</span>
             <span className="yk-nav-cta-arrow">→</span>
           </a>
 
@@ -73,7 +75,8 @@ export default function HomePage() {
           <a href="/process" onClick={() => setMenuOpen(false)}>Process</a>
           <a href="/pricing" onClick={() => setMenuOpen(false)}>Pricing</a>
           <a href="/about" onClick={() => setMenuOpen(false)}>About</a>
-          <a href="/apply" className="yk-mobile-cta" onClick={() => setMenuOpen(false)}>Apply →</a>
+          <a href={LOGIN_HREF} onClick={() => setMenuOpen(false)}>Log in</a>
+          <a href={getStartedHref()} className="yk-mobile-cta" onClick={() => setMenuOpen(false)}>Get started →</a>
         </div>
       )}
 
@@ -91,26 +94,27 @@ export default function HomePage() {
           </div>
 
           <h1 className="yk-hero-h1">
-            <span className="yk-hero-line">Digital infrastructure</span>
-            <span className="yk-hero-line yk-hero-italic">for serious</span>
-            <span className="yk-hero-line yk-hero-gold">founders.</span>
+            <span className="yk-hero-line">We build</span>
+            <span className="yk-hero-line yk-hero-italic">what you</span>
+            <span className="yk-hero-line yk-hero-gold">build on.</span>
           </h1>
 
           <p className="yk-hero-sub">
-            We don&apos;t make websites. We build operator systems — the floor your business
-            runs on, with intelligence baked into the foundation. Industry kits for agencies
-            and practices. Larger builds for established operators. Owned by you from day one.
+            Yakini works as your operators, not a vendor. We diagnose your business, fix the one
+            economic problem costing you the most, install the fix in a system you own, and stay on
+            to run it with you. Any industry, anywhere in the country.
           </p>
 
           <div className="yk-hero-ctas">
-            <a href="/apply" className="yk-btn-primary">
-              <span>Start the Operational Drag Audit</span>
+            <a href={getStartedHref()} className="yk-btn-primary">
+              <span>Get started</span>
               <span className="yk-btn-arrow">→</span>
             </a>
-            <a href="/platforms" className="yk-btn-ghost">
-              <span>See our platforms</span>
+            <a href="/apply" className="yk-btn-ghost">
+              <span>Talk to us first: Operational Drag Audit</span>
             </a>
           </div>
+          <p className="yk-hero-login">Already a client? <a href={LOGIN_HREF}>Log in</a></p>
 
           <div className="yk-hero-marquee">
             <div className="yk-marquee-track">
@@ -131,6 +135,44 @@ export default function HomePage() {
         <div className="yk-hero-scroll">
           <div className="yk-scroll-line" />
           <span>Scroll</span>
+        </div>
+      </section>
+
+
+      {/* ───── WHY YAKINI IS DIFFERENT ───── */}
+      <section className="yk-section yk-diff" id="why-yakini">
+        <div className="yk-section-inner">
+          <div className="yk-section-head">
+            <div className="yk-section-tag">
+              <span className="yk-num">00</span>
+              <span>Why Yakini</span>
+            </div>
+            <h2 className="yk-section-h2">
+              Operators, <span className="yk-italic">not</span> <span className="yk-gold">vendors.</span>
+            </h2>
+          </div>
+          <ol className="yk-diff-steps">
+            <li><span className="yk-diff-n">1</span><strong>Diagnose.</strong> We learn how your business actually runs and find the one problem costing you the most money.</li>
+            <li><span className="yk-diff-n">2</span><strong>Fix one economic problem.</strong> Missed calls, slow payments, no-shows, paperwork: we fix the one that pays first.</li>
+            <li><span className="yk-diff-n">3</span><strong>Install it in a system you own.</strong> Every account is in your business&apos;s name. You own it all from day one.</li>
+            <li><span className="yk-diff-n">4</span><strong>Stay on as your operator.</strong> We run it with you. Nothing goes to your customers without your OK on each message.</li>
+          </ol>
+          <div className="yk-diff-industries">
+            <p className="yk-diff-ind-head">Open to every industry, nationwide</p>
+            <div className="yk-diff-chips">
+              {OPEN_INDUSTRIES.map((i) => (
+                <span key={i} className="yk-diff-chip">{i}</span>
+              ))}
+            </div>
+          </div>
+          <div className="yk-diff-ctas">
+            <a href={getStartedHref()} className="yk-btn-primary">
+              <span>Get started: create your account</span>
+              <span className="yk-btn-arrow">→</span>
+            </a>
+            <a href={LOGIN_HREF} className="yk-btn-ghost"><span>Log in</span></a>
+          </div>
+          <p className="yk-diff-credit">Founded and architected by Clarence Kennedy.</p>
         </div>
       </section>
 
@@ -285,11 +327,11 @@ export default function HomePage() {
 
           <div className="yk-verticals-cta-row">
             <p className="yk-verticals-straddler">
-              <strong>Not sure which kit fits?</strong> Start with the Operational Drag Audit.
+              <strong>Not sure which kit fits?</strong> Create your account and tell us what you do.
               We&apos;ll match you to the right operator system — industry kit or a larger custom build.
             </p>
-            <a href="/apply" className="yk-btn-primary">
-              <span>Start the Audit</span>
+            <a href={getStartedHref()} className="yk-btn-primary">
+              <span>Get started</span>
               <span className="yk-btn-arrow">→</span>
             </a>
           </div>
@@ -617,20 +659,20 @@ export default function HomePage() {
           <div className="yk-final-content">
             <div className="yk-eyebrow yk-final-eyebrow">
               <span className="yk-eyebrow-dot" />
-              <span>SELECTIVE PARTNERSHIPS</span>
+              <span>GET STARTED</span>
             </div>
             <h2 className="yk-final-h2">
-              We work with <span className="yk-italic">a handful</span> of
+              We build <span className="yk-italic">what you</span>
               <br />
-              <span className="yk-gold">serious founders</span> at a time.
+              <span className="yk-gold">build on.</span>
             </h2>
             <p className="yk-final-sub">
-              If your business is ready to be built on infrastructure that scales with you —
-              not against you — start with the Operational Drag Audit.
+              Create your account in about five minutes and you&apos;re in your own private room
+              right away. Start now, pay later. A Yakini operator takes it from there.
             </p>
             <div className="yk-final-ctas">
-              <a href="/apply" className="yk-btn-primary">
-                <span>Start the Audit</span>
+              <a href={getStartedHref()} className="yk-btn-primary">
+                <span>Get started</span>
                 <span className="yk-btn-arrow">→</span>
               </a>
               <a href="/pricing" className="yk-btn-ghost">
@@ -754,6 +796,23 @@ const PROCESS_STEPS = [
 // ─── CSS ───────────────────────────────────────────────
 
 const CSS = `
+  .yk-hero-login { margin-top: 18px; font-size: 15px; opacity: 0.8; }
+  .yk-hero-login a { color: inherit; text-decoration: underline; text-underline-offset: 4px; }
+  .yk-diff-steps { list-style: none; padding: 0; margin: 40px 0 0; display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  .yk-diff-steps li { border: 1px solid rgba(200,168,75,0.35); border-radius: 6px; padding: 24px; font-size: 17px; line-height: 1.55; }
+  .yk-diff-steps strong { display: block; font-size: 20px; margin-bottom: 8px; }
+  .yk-diff-n { display: inline-flex; width: 30px; height: 30px; border-radius: 50%; align-items: center; justify-content: center; background: #C8A84B; color: #0b1f3a; font-weight: 700; margin-bottom: 12px; }
+  .yk-diff-industries { margin-top: 40px; }
+  .yk-diff-ind-head { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.75; margin-bottom: 14px; }
+  .yk-diff-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .yk-diff-chip { border: 1px solid rgba(200,168,75,0.45); border-radius: 999px; padding: 8px 16px; font-size: 15px; }
+  .yk-diff-ctas { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 16px; }
+  .yk-diff-credit { margin-top: 28px; font-size: 14px; opacity: 0.7; letter-spacing: 0.04em; }
+
+  .yk-nav-login { color: inherit; opacity: 0.85; text-decoration: none; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; margin-right: 22px; white-space: nowrap; }
+  .yk-nav-login:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+  @media (max-width: 900px) { .yk-nav-login { display: none; } }
+
   /* ═══ FOUNDATION ═══ */
   :root {
     --ink: #0A0908;

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { SiteShell } from '@/components/SiteShell'
+import { getStartedHref } from '@/lib/portal'
 import { INDUSTRY_KITS } from '@/lib/industry-kits'
 import { createClient } from '@supabase/supabase-js'
 
@@ -46,6 +47,13 @@ const INDUSTRIES = [
   'Construction / Trades',
   'Nonprofit / Community services',
   'Workforce / Reentry / Corrections',
+  'Landscaping / Lawn & tree care',
+  'Home & field services',
+  'Beauty / Salon / Spa',
+  'Auto repair / Dealerships',
+  'Cleaning / Janitorial',
+  'Retail / Shops',
+  'Education / Training',
   'Other',
 ]
 
@@ -194,9 +202,11 @@ export default function ApplyPage() {
             <span className="yk-gold">partnership.</span>
           </h1>
           <p className="yk-page-sub">
-            Yakini is selective. We work with a handful of serious founders at a time.
-            This application takes 5-7 minutes and gives us what we need to know if we're a fit
-            before either of us invests further time. Real conversations come after real applications.
+            Prefer to talk before you sign up? This application takes 5-7 minutes and tells us how your
+            business runs today, so our first conversation is a useful one.
+          </p>
+          <p className="yk-page-sub">
+            Ready to start right away? <a href={getStartedHref()} style={{ textDecoration: 'underline', textUnderlineOffset: 4 }}>Create your account instead</a>: you&apos;re in your own room in about five minutes.
           </p>
         </div>
       </header>
