@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Events · Eventos — Momma Sally's 
 export default function EventsPage() {
   return (
     <>
-      <PageHero eyebrow="Events · Eventos" title="Spreads worth celebrating." bg="/photos/peach-cobbler.webp"
+      <PageHero eyebrow="Events · Eventos" title="Where every bite is a celebration." bg="/photos/peach-cobbler.webp"
         lead="Birthdays, showers, weddings and get-togethers — BBQ, buffets and homemade desserts."
         es="Cumpleaños, baby showers, bodas y reuniones — barbacoa, bufés y postres caseros." />
       <section className="ms-wrap" style={{ padding: '48px 20px' }}>

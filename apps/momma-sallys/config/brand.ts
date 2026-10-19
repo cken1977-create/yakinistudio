@@ -62,7 +62,7 @@ export const config: BrandConfig = {
   },
 
   menu: {
-    headline: "Mama Sally's Food Truck",
+    headline: "Momma Sally's Food Truck",
     subheadline: 'West Texas · Locally Owned',
     bilingual: true,
     paymentNote: 'Prices subject to change.',
