@@ -1,246 +1,159 @@
-// Yakini's one public price list.
-// Every page that shows a plan, a kit, or an apply-form choice reads this file.
-// Do not hardcode these amounts anywhere else.
+// Yakini's one public price list (locked Oct 21 2026, Clarence Kennedy).
+// Every page that shows a plan, the Founding offer, or an apply-form choice reads this file.
+// The portal's sign-up (portal.yakini.digital/start) charges from the same numbers (portal.settings.json kit.offers).
+// Customer-facing copy names services (hosting, database, texting line, payments), never the companies behind them.
 
-export const PORTAL_SIGNUP_URL = 'https://portal.yakini.digital'
+/** The portal. Previews point this at the portal Preview with NEXT_PUBLIC_PORTAL_URL. */
+export const PORTAL_URL = (process.env.NEXT_PUBLIC_PORTAL_URL || 'https://portal.yakini.digital').replace(/\/$/, '')
+export const START_URL = `${PORTAL_URL}/start`
+export const FOUNDING_API = `${PORTAL_URL}/api/kit/founding`
 
-export const PASS_THROUGH_NOTE =
-  'Supabase, Vercel, Twilio, Stripe, your domain, and your email are accounts in your name. You pay those bills directly. They are not part of Yakini’s price.'
-
-export const FLAT_PRICING_NOTE =
-  'Pricing is flat. Yakini does not take a share of revenue.'
-
-export const SELF_SERVE_SETUP_NOTE =
-  'One-time operator setup. A Yakini operator sets the system up. Sign up at the portal.'
-
-/** What the one-time self-serve setup fee covers. Same work on both plans. */
-export const selfServeSetupCovers =
-  'A Yakini operator connects your own accounts, in your name, turns on your modules, and walks you through the system.'
-
-/** Ongoing monthly operator support for both self-serve plans. */
-export const supportScope =
-  'Help from your Yakini operator in your room, with a reply within 1 business day.'
-
-export const supportBeyond =
-  'Work beyond that is billed separately.'
-
-export type SelfServeModule = {
-  plain: string
-  operate: boolean
-  plus: boolean
+export function startUrl(planId?: string): string {
+  return planId ? `${START_URL}?kit=${planId}#form` : START_URL
 }
 
-/** Guide module list. Operate Plus includes every Operate module. */
-export const SELF_SERVE_MODULES: readonly SelfServeModule[] = [
-  { plain: 'Your own client portal', operate: true, plus: true },
-  { plain: 'Help desk where customers send requests and follow their status', operate: true, plus: true },
-  { plain: 'Voice notes from customers and staff', operate: true, plus: true },
-  { plain: 'Drafted replies and transcripts that wait for your OK before anything goes out', operate: true, plus: true },
-  { plain: 'Text alerts with opt-in, and STOP/HELP handled', operate: true, plus: true },
-  { plain: 'A booking page where customers ask for a time and you confirm each one', operate: true, plus: true },
-  { plain: 'Incoming texts land in the customer’s thread. Nothing replies on its own.', operate: true, plus: true },
-  { plain: 'Card payments on invoices, with Stripe in your name', operate: false, plus: true },
-  { plain: 'Missed-call handling: it rings you, logs the missed call, and drafts a text-back for your OK. Opted-in callers only.', operate: false, plus: true },
-  { plain: 'Review requests, each one approved by you', operate: false, plus: true },
-  { plain: 'Campaigns to customers who opted in. Every message is approved, with quiet hours and send limits.', operate: false, plus: true },
-  { plain: 'A monthly owner report, on screen, in print, or as a CSV', operate: false, plus: true },
+export const PITCH_HEAD = 'A real person sets it up with you. And stays.'
+export const PITCH =
+  'Other platforms hand you the software and leave you to set it up alone, and most owners get stuck. Yakini prices differently because a real Yakini person sets everything up with you, then stays with you after go-live, with a help desk you can reach any time.'
+
+export const REFUND_RULE =
+  'The setup fee is refundable in full until your kickoff call. After the kickoff call it is non-refundable.'
+
+export const BILLING_NOTE =
+  'You pay the one-time guided-setup fee when you sign up. Your monthly plan starts after setup.'
+
+export const EXTRA_HELP_NOTE =
+  'Need more help than your plan includes? Extra hours are $150/hour, or move up a plan.'
+
+export const FLAT_PRICING_NOTE = 'Flat pricing. Yakini never takes a share of your revenue.'
+
+export const PASS_THROUGH_NOTE =
+  'Your hosting, database, email, texting line and payment processing are set up in your business’s name, so everything stays yours. Those services bill you directly at their own cost; they are not part of Yakini’s price.'
+
+export const GUIDED_STEPS = [
+  { title: 'Sign up and pay the setup fee', detail: 'Pick a plan and pay the one-time guided-setup fee by card. Your monthly plan starts after setup.' },
+  { title: 'Kickoff call with your Yakini person', detail: 'About 30 minutes. We learn how your business runs today and agree the first thing to fix.' },
+  { title: 'We set it up with you', detail: 'Your website, customer portal and the tools on your plan, in your business’s name. You approve each step.' },
+  { title: 'Go live, and we stay', detail: 'Your monthly plan starts. Your Yakini person stays on, and the help desk is always open.' },
+] as const
+
+export type PlanModule = { plain: string; operate: boolean; grow: boolean }
+
+/** What each plan includes. Founding includes exactly what Operate includes. */
+export const PLAN_MODULES: readonly PlanModule[] = [
+  { plain: 'Your website and customer portal, set up with you', operate: true, grow: true },
+  { plain: 'Help desk with a real Yakini person', operate: true, grow: true },
+  { plain: 'Voice notes', operate: true, grow: true },
+  { plain: 'Drafted replies, up to a monthly limit, checked before anything goes out', operate: true, grow: true },
+  { plain: 'Business texting line for opted-in customers', operate: true, grow: true },
+  { plain: 'Online booking you confirm', operate: true, grow: true },
+  { plain: 'Incoming texts in one place', operate: true, grow: true },
+  { plain: 'Card payments on your invoices', operate: false, grow: true },
+  { plain: 'Missed-call text-back, sent with your OK', operate: false, grow: true },
+  { plain: 'Review requests', operate: false, grow: true },
+  { plain: 'Follow-up campaigns to opted-in customers', operate: false, grow: true },
+  { plain: 'Monthly owner report', operate: false, grow: true },
 ]
 
-export const selfServeNotIncluded = [
-  {
-    missing: 'On Operate: card payments, missed-call text-back, review requests, campaigns, and the monthly owner report.',
-    where: 'Operate Plus',
-    href: '#operate-plus',
-  },
-  {
-    missing: 'On both plans: Composer, Sentinel, and a system Yakini builds with you. A person approves every release.',
-    where: 'A fully built kit',
-    href: '#kits',
-  },
-  {
-    missing: 'On both plans: a build that does not fit a plan or a kit.',
-    where: 'Custom, quoted separately',
-    href: '/apply?tier=custom',
-  },
-] as const
-
-/** Bills the client pays directly. No amounts — those bills are not Yakini’s price. */
-export const clientPaidAccounts = [
-  'Supabase',
-  'Vercel',
-  'Twilio',
-  'Stripe',
-  'Your domain',
-  'Your email',
-] as const
-
-export type SelfServePlan = {
-  id: 'operate' | 'operate-plus'
+export type Plan = {
+  id: 'operate' | 'grow' | 'founding'
   name: string
-  /** One-time fee for a Yakini operator to set the system up. */
+  tag: string
+  /** One-time guided setup, whole dollars. */
   setup: number
-  priceMonthly: number
+  monthly: number
+  helpHours: number
   summary: string
+  lockedMonths?: number
+  spots?: { total: number; takenElsewhere: number }
   includes: readonly string[]
 }
 
-export const SELF_SERVE_PLANS: readonly SelfServePlan[] = [
+const operateIncludes = PLAN_MODULES.filter((m) => m.operate).map((m) => m.plain)
+const growIncludes = PLAN_MODULES.filter((m) => m.grow).map((m) => m.plain)
+
+export const PLANS: readonly Plan[] = [
   {
     id: 'operate',
     name: 'Operate',
+    tag: 'For the solo owner',
     setup: 499,
-    priceMonthly: 249,
-    summary: 'Your client portal. A Yakini operator sets it up.',
-    includes: SELF_SERVE_MODULES.filter((module) => module.operate).map((module) => module.plain),
+    monthly: 249,
+    helpHours: 1,
+    summary: 'Your website and customer portal, set up with you by a real Yakini person.',
+    includes: operateIncludes,
   },
   {
-    id: 'operate-plus',
-    name: 'Operate Plus',
+    id: 'grow',
+    name: 'Grow',
+    tag: 'For small teams',
     setup: 799,
-    priceMonthly: 449,
-    summary: 'Everything in Operate, plus payments, follow-up, and an owner report.',
-    includes: SELF_SERVE_MODULES.filter((module) => module.plus).map((module) => module.plain),
+    monthly: 449,
+    helpHours: 3,
+    summary: 'Everything in Operate, plus payments, follow-up tools and automation.',
+    includes: growIncludes,
+  },
+  {
+    id: 'founding',
+    name: 'Founding',
+    tag: 'First 10 customers only',
+    setup: 499,
+    monthly: 179,
+    helpHours: 1,
+    lockedMonths: 12,
+    spots: { total: 10, takenElsewhere: 1 },
+    summary: 'Everything in Operate at a price locked for 12 months. Closes after the 10th customer.',
+    includes: operateIncludes,
   },
 ]
 
-export type KitTier = {
-  id: 'pilot' | 'bench' | 'crew' | 'staff' | 'house'
-  name: string
-  forWho: string
-  setup: number
-  monthly: number
-  /** House is quoted from these amounts. */
-  from: boolean
-  minimumMonths: number | null
+export const FOUNDING = PLANS.find((p) => p.id === 'founding')!
+
+export const PARTNER = {
+  id: 'partner' as const,
+  name: 'Partner',
+  line: 'Custom builds, let’s talk.',
+  detail: 'For a business that needs something built around it: priced on the work, in writing, before anything starts.',
+  cta: 'Book a call',
+  href: '/apply?tier=partner',
 }
 
-export const KIT_TIERS: readonly KitTier[] = [
-  {
-    id: 'pilot',
-    name: 'Pilot',
-    forWho: 'First five organizations',
-    setup: 2500,
-    monthly: 500,
-    from: false,
-    minimumMonths: null,
-  },
-  {
-    id: 'bench',
-    name: 'Bench',
-    forWho: 'Solo operator',
-    setup: 3500,
-    monthly: 750,
-    from: false,
-    minimumMonths: null,
-  },
-  {
-    id: 'crew',
-    name: 'Crew',
-    forWho: 'Team of 2–3',
-    setup: 6500,
-    monthly: 1500,
-    from: false,
-    minimumMonths: 6,
-  },
-  {
-    id: 'staff',
-    name: 'Staff',
-    forWho: 'Growing team',
-    setup: 12000,
-    monthly: 2500,
-    from: false,
-    minimumMonths: 6,
-  },
-  {
-    id: 'house',
-    name: 'House',
-    forWho: 'Groups and multi-site operators',
-    setup: 25000,
-    monthly: 5000,
-    from: true,
-    minimumMonths: 6,
-  },
-]
-
-export const KIT_INCLUDES = [
-  'Composer, the way Yakini builds the system',
-  'Sentinel, the way the system is monitored',
-  'A person approves every release',
-  'You own the system',
-] as const
-
-export const CUSTOM_OFFER = {
-  id: 'custom' as const,
-  name: 'Custom kit',
-  summary: 'Quoted separately. No public price.',
-}
-
-export type OfferGroup = 'self-serve' | 'kit' | 'custom'
-
-export type OfferChoice = {
-  val: string
-  group: OfferGroup
-  label: string
-}
+export type Seats = { total: number; left: number; open: boolean }
+/** Shown until the live count arrives from the portal: 9 of 10 (Momma Sally’s is Founding #1). */
+export const FOUNDING_DEFAULT_SEATS: Seats = { total: 10, left: 9, open: true }
 
 export function formatUsd(amount: number): string {
   return `$${amount.toLocaleString('en-US')}`
 }
 
-export function selfServeMonthlyLabel(plan: Pick<SelfServePlan, 'priceMonthly'>): string {
-  return `${formatUsd(plan.priceMonthly)}/mo`
+export function monthlyLabel(plan: Pick<Plan, 'monthly'>): string {
+  return `${formatUsd(plan.monthly)}/mo`
 }
 
-export function selfServeSetupLabel(plan: Pick<SelfServePlan, 'setup'>): string {
+export function setupLabel(plan: Pick<Plan, 'setup'>): string {
   return formatUsd(plan.setup)
 }
 
-export function selfServePriceLabel(plan: Pick<SelfServePlan, 'setup' | 'priceMonthly'>): string {
-  return `${selfServeSetupLabel(plan)} setup + ${selfServeMonthlyLabel(plan)}`
+export function priceLabel(plan: Pick<Plan, 'setup' | 'monthly'>): string {
+  return `${setupLabel(plan)} setup + ${monthlyLabel(plan)}`
 }
 
-export function kitSetupLabel(tier: Pick<KitTier, 'setup' | 'from'>): string {
-  const amount = formatUsd(tier.setup)
-  return tier.from ? `From ${amount}` : amount
+export function helpLabel(plan: Pick<Plan, 'helpHours'>): string {
+  return `${plan.helpHours} ${plan.helpHours === 1 ? 'hour' : 'hours'} a month of help`
 }
 
-export function kitMonthlyLabel(tier: Pick<KitTier, 'monthly' | 'from'>): string {
-  const amount = `${formatUsd(tier.monthly)}/mo`
-  return tier.from ? `From ${amount}` : amount
-}
-
-export function kitPriceLabel(tier: KitTier): string {
-  const minimum = tier.minimumMonths ? ' · 6-month minimum' : ''
-  return `${kitSetupLabel(tier)} setup + ${kitMonthlyLabel(tier)}${minimum}`
-}
+export type OfferGroup = 'plan' | 'partner'
+export type OfferChoice = { val: string; group: OfferGroup; label: string }
 
 export const OFFER_GROUPS: readonly { id: OfferGroup; label: string }[] = [
-  { id: 'self-serve', label: 'Self-serve plan' },
-  { id: 'kit', label: 'Fully built kit' },
-  { id: 'custom', label: 'Custom' },
+  { id: 'plan', label: 'Guided-setup plan' },
+  { id: 'partner', label: 'Partner (custom)' },
 ]
 
 export const OFFER_CHOICES: readonly OfferChoice[] = [
-  ...SELF_SERVE_PLANS.map((plan) => ({
-    val: plan.id,
-    group: 'self-serve' as const,
-    label: `${plan.name} · ${selfServePriceLabel(plan)}`,
-  })),
-  ...KIT_TIERS.map((tier) => ({
-    val: tier.id,
-    group: 'kit' as const,
-    label: `${tier.name} · ${kitPriceLabel(tier)}`,
-  })),
-  {
-    val: CUSTOM_OFFER.id,
-    group: 'custom' as const,
-    label: 'Custom kit · quoted separately',
-  },
-  {
-    val: 'unsure',
-    group: 'custom' as const,
-    label: 'Not sure yet — help me decide',
-  },
+  ...PLANS.map((plan) => ({ val: plan.id, group: 'plan' as const, label: `${plan.name} · ${priceLabel(plan)}${plan.lockedMonths ? ` (locked ${plan.lockedMonths} months)` : ''}` })),
+  { val: PARTNER.id, group: 'partner' as const, label: 'Partner · custom build, let’s talk' },
+  { val: 'unsure', group: 'partner' as const, label: 'Not sure yet — help me decide' },
 ]
 
 export function offerLabel(val: string | null | undefined): string {

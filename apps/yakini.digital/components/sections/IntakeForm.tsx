@@ -61,7 +61,7 @@ export function IntakeForm() {
             </h2>
             <p className="text-[#F5EFE3]/50 text-base leading-relaxed mb-12">
               The first conversation is a free 30-minute Drag Audit.
-              Tell us whether you want a self-serve plan, a kit, or a custom quote.
+              Tell us which plan fits, or ask for a Partner custom build.
             </p>
 
             {/* Info */}

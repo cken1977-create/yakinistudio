@@ -19,7 +19,7 @@ const services = [
       'Not just a contact form. A full lead capture system — bookings, inquiries, quotes, and client data stored and organized automatically.',
     items: [
       'Lead capture with the site',
-      'Supabase database backend',
+      'Secure database backend',
       'Booking & inquiry system',
       'Lead dashboard',
       'Email notifications',

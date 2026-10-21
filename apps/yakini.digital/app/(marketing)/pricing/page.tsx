@@ -1,340 +1,167 @@
-'use client'
+"use client"
 
 import { SiteShell } from '@/components/SiteShell'
+import { SEAT_CSS, SeatMeter, useFoundingSeats } from '@/components/FoundingSeats'
 import {
-  CUSTOM_OFFER,
+  BILLING_NOTE,
+  EXTRA_HELP_NOTE,
   FLAT_PRICING_NOTE,
-  KIT_INCLUDES,
-  KIT_TIERS,
+  GUIDED_STEPS,
+  PARTNER,
   PASS_THROUGH_NOTE,
-  PORTAL_SIGNUP_URL,
-  SELF_SERVE_MODULES,
-  SELF_SERVE_PLANS,
-  SELF_SERVE_SETUP_NOTE,
-  clientPaidAccounts,
-  formatUsd,
-  kitMonthlyLabel,
-  kitSetupLabel,
-  selfServeMonthlyLabel,
-  selfServeNotIncluded,
-  selfServePriceLabel,
-  selfServeSetupCovers,
-  selfServeSetupLabel,
-  supportBeyond,
-  supportScope,
+  PITCH,
+  PLANS,
+  PLAN_MODULES,
+  REFUND_RULE,
+  helpLabel,
+  monthlyLabel,
+  priceLabel,
+  setupLabel,
+  startUrl,
 } from '@/lib/pricing'
 
-const RULES = [
-  FLAT_PRICING_NOTE,
-  PASS_THROUGH_NOTE,
-  'Crew, Staff, and House have a six-month minimum.',
-  'Custom kit builds are quoted separately.',
-  'The first conversation is a free 30-minute Drag Audit.',
-]
-
 export default function PricingPage() {
-  const operate = SELF_SERVE_PLANS[0]
-  const operatePlus = SELF_SERVE_PLANS[1]
+  const seats = useFoundingSeats()
+  const [operate, grow, founding] = PLANS
 
   return (
     <SiteShell>
-      <style>{PAGE_CSS}</style>
+      <style>{PAGE_CSS + SEAT_CSS + NEW_CSS}</style>
 
       <header className="yk-page-header pr-header">
         <div className="yk-page-header-inner">
           <div className="yk-eyebrow">
             <span className="yk-eyebrow-dot" />
-            <span>PRICING</span>
+            <span>PRICING · GUIDED SETUP</span>
           </div>
           <h1 className="yk-page-h1">
-            One price list.
+            A real person sets it up with you.
             <br />
-            <span className="yk-gold">Flat.</span>
+            <span className="yk-gold">And stays.</span>
           </h1>
-          <p className="yk-page-sub">
-            A self-serve plan, a fully built kit, or a custom build.
-            Yakini does not take a share of revenue.
-          </p>
+          <p className="yk-page-sub">{PITCH}</p>
+          <div className="pn-hero-ctas">
+            <a href="#plans" className="pr-tier-cta pr-cta-featured"><span>See the plans</span><span className="yk-btn-arrow">→</span></a>
+            <a href={startUrl(founding.id)} className="pr-tier-cta"><span>{seats.open ? `Founding: ${seats.left} of ${seats.total} spots left` : 'Founding is closed'}</span><span className="yk-btn-arrow">→</span></a>
+          </div>
         </div>
       </header>
 
-      <section id="self-serve" className="yk-section pr-tiers">
+      <section id="plans" className="yk-section pr-tiers">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
             <span className="yk-num">01</span>
-            <span>Self-serve plans</span>
+            <span>The plans</span>
           </div>
           <h2 className="yk-section-h2">
-            Sign up and start.
+            Done with you,
             <br />
-            <span className="yk-gold">A Yakini operator sets it up.</span>
+            <span className="yk-gold">not left to you.</span>
           </h2>
-          <p className="pr-operate-lead">
-            Businesses sign up at the portal and get their own client portal on the plan they choose.
-            {` ${SELF_SERVE_SETUP_NOTE}`}
-          </p>
+          <p className="pr-operate-lead">{BILLING_NOTE} {EXTRA_HELP_NOTE}</p>
 
-          <div className="pr-tiers-grid pr-tiers-grid-2">
-            {SELF_SERVE_PLANS.map((plan) => (
-              <div key={plan.id} id={plan.id} className="pr-tier">
-                <div className="pr-tier-name">{plan.name}</div>
-                <div className="pr-tier-tagline">{plan.summary}</div>
-
-                <div className="pr-tier-price-block">
-                  <div className="pr-typical-label">Setup</div>
-                  <div className="pr-tier-monthly">
-                    <span className="pr-price-num pr-price-num-lg">{selfServeSetupLabel(plan)}</span>
+          <div className="pn-grid">
+            {PLANS.map((plan) => {
+              const isFounding = plan.id === 'founding'
+              const closed = isFounding && !seats.open
+              return (
+                <div key={plan.id} id={plan.id} className={`pr-tier pn-tier ${isFounding ? 'pn-founding' : ''} ${closed ? 'pn-closed' : ''}`}>
+                  <div className="pn-tag">{plan.tag}</div>
+                  <div className="pr-tier-name">{plan.name}</div>
+                  <div className="pr-tier-tagline">{plan.summary}</div>
+                  <div className="pn-price">
+                    <span className="pn-price-num">{monthlyLabel(plan).replace('/mo', '')}</span>
+                    <span className="pn-price-per">/month</span>
                   </div>
-                  <div className="pr-setup-block">
-                    <div className="pr-setup-row">
-                      <span className="pr-setup-label">Then monthly</span>
-                      <span className="pr-setup-value">{selfServeMonthlyLabel(plan)}</span>
-                    </div>
-                  </div>
-                  <div className="pr-price-note" style={{ marginTop: 12, marginBottom: 0 }}>
-                    One-time operator setup
-                  </div>
-                </div>
-
-                <a
-                  href={PORTAL_SIGNUP_URL}
-                  className="pr-tier-cta pr-cta-featured"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span>Sign up</span>
-                  <span className="yk-btn-arrow">→</span>
-                </a>
-
-                <div className="pr-tier-section">
-                  <div className="pr-tier-section-h">INCLUDED</div>
-                  <ul className="pr-tier-list pr-list-included">
+                  <div className="pn-setup">+ {setupLabel(plan)} one-time guided setup{plan.lockedMonths ? ` · locked ${plan.lockedMonths} months` : ''}</div>
+                  {isFounding ? <SeatMeter seats={seats} /> : null}
+                  <ul className="pr-tier-list pr-list-included pn-list">
+                    <li>{helpLabel(plan)} from your Yakini person</li>
                     {plan.includes.map((feature) => (
                       <li key={feature}>{feature}</li>
                     ))}
                   </ul>
+                  {closed ? (
+                    <span className="pr-tier-cta pn-cta-off"><span>Closed</span></span>
+                  ) : (
+                    <a href={startUrl(plan.id)} className={`pr-tier-cta ${isFounding || plan.id === 'grow' ? 'pr-cta-featured' : ''}`}>
+                      <span>Start with {plan.name}</span>
+                      <span className="yk-btn-arrow">→</span>
+                    </a>
+                  )}
                 </div>
-
-                <div className="pr-tier-section">
-                  <div className="pr-tier-section-h">MONTHLY OPERATOR SUPPORT</div>
-                  <p className="pr-know-copy">{supportScope}</p>
-                  <p className="pr-know-note">{supportBeyond}</p>
-                </div>
-              </div>
-            ))}
+              )
+            })}
+            <div id="partner" className="pr-tier pn-tier pn-partner">
+              <div className="pn-tag">Quoted per project</div>
+              <div className="pr-tier-name">{PARTNER.name}</div>
+              <div className="pn-partner-line">{PARTNER.line}</div>
+              <div className="pr-tier-tagline">{PARTNER.detail}</div>
+              <a href={PARTNER.href} className="pr-tier-cta pn-cta-push">
+                <span>{PARTNER.cta}</span>
+                <span className="yk-btn-arrow">→</span>
+              </a>
+            </div>
           </div>
 
+          <p className="pn-refund"><strong>Refunds:</strong> {REFUND_RULE} Cancel the monthly plan any time.</p>
+
           <h3 className="pr-subhead">Side by side</h3>
-          <p className="pr-compare-hint">Swipe sideways to compare both plans.</p>
+          <p className="pr-compare-hint">Swipe sideways to compare the plans.</p>
           <div className="pr-compare-wrap">
             <table className="pr-compare">
               <thead>
                 <tr>
                   <th scope="col">What you get</th>
-                  {SELF_SERVE_PLANS.map((plan) => (
+                  {PLANS.map((plan) => (
                     <th key={plan.id} scope="col">
                       {plan.name}
-                      <span className="pr-compare-price">{selfServePriceLabel(plan)}</span>
+                      <span className="pr-compare-price">{priceLabel(plan)}</span>
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {SELF_SERVE_MODULES.map((module) => (
+                <tr>
+                  <th scope="row">Help each month from your Yakini person</th>
+                  {PLANS.map((plan) => <td key={plan.id}>{plan.helpHours} hr</td>)}
+                </tr>
+                <tr>
+                  <th scope="row">Monthly price locked</th>
+                  {PLANS.map((plan) => <td key={plan.id}>{plan.lockedMonths ? `${plan.lockedMonths} months` : '—'}</td>)}
+                </tr>
+                {PLAN_MODULES.map((module) => (
                   <tr key={module.plain}>
                     <th scope="row">{module.plain}</th>
-                    {SELF_SERVE_PLANS.map((plan) => {
-                      const included = plan.id === 'operate' ? module.operate : module.plus
-                      return (
-                        <td key={plan.id}>{included ? <Mark yes /> : <Mark />}</td>
-                      )
+                    {PLANS.map((plan) => {
+                      const included = plan.id === 'grow' ? module.grow : module.operate
+                      return <td key={plan.id}>{included ? <Mark yes /> : <Mark />}</td>
                     })}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-
-          <div className="pr-know">
-            <article className="pr-know-card">
-              <h3>What the setup fee covers</h3>
-              <p>{selfServeSetupCovers}</p>
-              <p className="pr-know-note">
-                Operate setup is {selfServeSetupLabel(operate)}. Operate Plus setup is {selfServeSetupLabel(operatePlus)}. The work is the same. The fee is the number on the plan.
-              </p>
-            </article>
-
-            <article className="pr-know-card">
-              <h3>Monthly operator support</h3>
-              <p>{supportScope}</p>
-              <p className="pr-know-note">{supportBeyond}</p>
-            </article>
-
-            <article className="pr-know-card">
-              <h3>Not included</h3>
-              <ul className="pr-gap-list">
-                {selfServeNotIncluded.map((row) => (
-                  <li key={row.where}>
-                    <p>{row.missing}</p>
-                    <a href={row.href}>{row.where} →</a>
-                  </li>
-                ))}
-              </ul>
-            </article>
-
-            <article className="pr-know-card">
-              <h3>Accounts you pay directly</h3>
-              <ul className="pr-account-list">
-                {clientPaidAccounts.map((account) => (
-                  <li key={account}>{account}</li>
-                ))}
-              </ul>
-              <p className="pr-know-note">
-                These accounts are in your name. You pay those bills directly. They are not part of Yakini&apos;s price, and this page does not estimate them.
-              </p>
-            </article>
-          </div>
         </div>
       </section>
 
-      <section id="kits" className="yk-section pr-operate">
+      <section className="yk-section pr-operate">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
             <span className="yk-num">02</span>
-            <span>Fully built kits</span>
+            <span>How guided setup works</span>
           </div>
           <h2 className="yk-section-h2">
-            We build it with you.
+            Four steps.
             <br />
-            <span className="yk-gold">You own it.</span>
+            <span className="yk-gold">One real person.</span>
           </h2>
-          <p className="pr-operate-lead">
-            Setup once, then a monthly retainer. Every kit includes Composer and Sentinel.
-            A person approves every release.
-          </p>
-
-          <div className="pr-tiers-grid">
-            {KIT_TIERS.map((tier) => (
-              <div key={tier.id} className="pr-tier">
-                <div className="pr-tier-name">{tier.name}</div>
-                <div className="pr-tier-tagline">{tier.forWho}</div>
-
-                <div className="pr-tier-price-block">
-                  <div className="pr-typical-label">{tier.from ? 'Setup from' : 'Setup'}</div>
-                  <div className="pr-tier-monthly">
-                    <span className="pr-price-num pr-price-num-lg">{formatUsd(tier.setup)}</span>
-                  </div>
-                  <div className="pr-setup-block">
-                    <div className="pr-setup-row">
-                      <span className="pr-setup-label">{tier.from ? 'Monthly from' : 'Monthly'}</span>
-                      <span className="pr-setup-value">{formatUsd(tier.monthly)}/mo</span>
-                    </div>
-                  </div>
-                  {tier.minimumMonths ? (
-                    <div className="pr-price-note" style={{ marginTop: 12, marginBottom: 0 }}>
-                      {tier.minimumMonths}-month minimum
-                    </div>
-                  ) : null}
-                </div>
-
-                <a href={`/apply?tier=${tier.id}`} className="pr-tier-cta">
-                  <span>Apply for {tier.name}</span>
-                  <span className="yk-btn-arrow">→</span>
-                </a>
-              </div>
-            ))}
-          </div>
-
-          <div className="pr-tier-section">
-            <div className="pr-tier-section-h">EVERY KIT INCLUDES</div>
-            <ul className="pr-tier-list pr-list-included">
-              {KIT_INCLUDES.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="pr-summary">
-            <div className="pr-table-wrapper pr-table-wide">
-              <table className="pr-table">
-                <thead>
-                  <tr>
-                    <th>Offer</th>
-                    <th>Setup</th>
-                    <th>Monthly</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {SELF_SERVE_PLANS.map((plan) => (
-                    <tr key={plan.id}>
-                      <td className="pr-feature-cell">{plan.name}</td>
-                      <td><span className="pr-cell-text pr-cell-price">{selfServeSetupLabel(plan)}</span></td>
-                      <td><span className="pr-cell-text pr-cell-price">{selfServeMonthlyLabel(plan)}</span></td>
-                    </tr>
-                  ))}
-                  {KIT_TIERS.map((tier) => (
-                    <tr key={tier.id}>
-                      <td className="pr-feature-cell">
-                        {tier.name}
-                        {tier.minimumMonths ? ' · 6-month minimum' : ''}
-                      </td>
-                      <td><span className="pr-cell-text pr-cell-price">{kitSetupLabel(tier)}</span></td>
-                      <td><span className="pr-cell-text pr-cell-price">{kitMonthlyLabel(tier)}</span></td>
-                    </tr>
-                  ))}
-                  <tr>
-                    <td className="pr-feature-cell">{CUSTOM_OFFER.name}</td>
-                    <td><span className="pr-cell-text">Quoted</span></td>
-                    <td><span className="pr-cell-text">Quoted</span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <p className="pr-table-footnote">{PASS_THROUGH_NOTE}</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="yk-section pr-rules">
-        <div className="yk-section-inner">
-          <div className="pr-custom-card">
-            <div className="pr-custom-meta">
-              <span className="pr-custom-dot" />
-              <span>CUSTOM KIT</span>
-            </div>
-            <h3 className="pr-custom-h">
-              Built for the job in front of you.
-              <br />
-              <span className="yk-italic">Quoted separately.</span>
-            </h3>
-            <p className="pr-custom-body">
-              Custom kit builds do not have a public price. Tell us what you run and we will quote the work.
-              Nonprofit and mission work is quoted the same way: case by case, with no published rate.
-            </p>
-            <a href="/apply?tier=custom" className="pr-tier-cta pr-cta-featured" style={{ alignSelf: 'flex-start' }}>
-              <span>Apply for a quote</span>
-              <span className="yk-btn-arrow">→</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <section className="yk-section pr-invite">
-        <div className="yk-section-inner">
-          <div className="yk-section-tag">
-            <span className="yk-num">03</span>
-            <span>The rules</span>
-          </div>
-          <h2 className="yk-section-h2">
-            How the price
-            <br />
-            <span className="yk-gold">stays clean.</span>
-          </h2>
-          <ol className="pr-rules-list">
-            {RULES.map((rule, i) => (
-              <li key={rule}>
-                <span className="pr-rules-num">{String(i + 1).padStart(2, '0')}</span>
-                <span>{rule}</span>
+          <ol className="pn-steps">
+            {GUIDED_STEPS.map((step, i) => (
+              <li key={step.title}>
+                <span className="pn-step-num">{String(i + 1).padStart(2, '0')}</span>
+                <span className="pn-step-title">{step.title}</span>
+                <span className="pn-step-detail">{step.detail}</span>
               </li>
             ))}
           </ol>
@@ -344,7 +171,7 @@ export default function PricingPage() {
       <section className="yk-section pr-faq">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
-            <span className="yk-num">04</span>
+            <span className="yk-num">03</span>
             <span>Questions</span>
           </div>
           <h2 className="yk-section-h2">
@@ -355,63 +182,41 @@ export default function PricingPage() {
 
           <div className="pr-faq-list">
             <details className="pr-faq-item">
-              <summary className="pr-faq-q">
-                What is the difference between Operate and Operate Plus?
-                <span className="pr-faq-icon">+</span>
-              </summary>
+              <summary className="pr-faq-q">What is the difference between Operate and Grow?<span className="pr-faq-icon">+</span></summary>
               <div className="pr-faq-a">
-                Operate is {selfServePriceLabel(operate)}. It is the client portal, help desk,
-                voice notes, drafted replies that wait for your OK, opt-in text alerts, a booking
-                page you confirm, and incoming texts in the customer&apos;s thread. Operate Plus is{' '}
-                {selfServePriceLabel(operatePlus)} and adds card payments, missed-call text-back
-                for your approval, review requests, campaigns to opted-in customers, and a monthly
-                owner report. The setup fee is one time. A Yakini operator sets either plan up.
-                Monthly support on both plans: {supportScope} {supportBeyond}
+                Operate is {priceLabel(operate)} with {helpLabel(operate)}. It is your website and customer portal, help desk, voice notes,
+                drafted replies that wait for your OK, a business texting line, booking you confirm, and incoming texts in one place.
+                Grow is {priceLabel(grow)} with {helpLabel(grow)}, and adds card payments, missed-call text-back, review requests,
+                follow-up campaigns and a monthly owner report.
               </div>
             </details>
-
             <details className="pr-faq-item">
-              <summary className="pr-faq-q">
-                What is the difference between a self-serve plan and a kit?
-                <span className="pr-faq-icon">+</span>
-              </summary>
+              <summary className="pr-faq-q">What is the Founding plan?<span className="pr-faq-icon">+</span></summary>
               <div className="pr-faq-a">
-                A self-serve plan starts at {selfServePriceLabel(operate)}. You sign up at the
-                portal. A kit is a system Yakini builds with you: setup plus a monthly retainer,
-                from {kitSetupLabel(KIT_TIERS[0])} and {kitMonthlyLabel(KIT_TIERS[0])}. Every kit
-                includes Composer and Sentinel, a person approves every release, and you own the
-                system. Crew and above have a six-month minimum.
+                Founding is everything in Operate for {monthlyLabel(founding)}, with the monthly price locked for {founding.lockedMonths} months, plus
+                the {setupLabel(founding)} guided setup. It is for our first {founding.spots?.total} customers only and closes on its own after the last spot.
+                {seats.open ? ` Right now ${seats.left} of ${seats.total} spots are left.` : ' All spots are taken.'}
               </div>
             </details>
-
             <details className="pr-faq-item">
-              <summary className="pr-faq-q">
-                Do you take a share of revenue?
-                <span className="pr-faq-icon">+</span>
-              </summary>
-              <div className="pr-faq-a">
-                No. {FLAT_PRICING_NOTE} The price on this page is the price.
-              </div>
+              <summary className="pr-faq-q">When am I charged?<span className="pr-faq-icon">+</span></summary>
+              <div className="pr-faq-a">{BILLING_NOTE} The first monthly charge is 30 days after you sign up, then monthly. {REFUND_RULE}</div>
             </details>
-
             <details className="pr-faq-item">
-              <summary className="pr-faq-q">
-                Who pays for Supabase, Vercel, Twilio, Stripe, the domain, and email?
-                <span className="pr-faq-icon">+</span>
-              </summary>
-              <div className="pr-faq-a">
-                You do. {PASS_THROUGH_NOTE}
-              </div>
+              <summary className="pr-faq-q">What if I need more help than my plan includes?<span className="pr-faq-icon">+</span></summary>
+              <div className="pr-faq-a">{EXTRA_HELP_NOTE}</div>
             </details>
-
             <details className="pr-faq-item">
-              <summary className="pr-faq-q">
-                How do I get a custom price?
-                <span className="pr-faq-icon">+</span>
-              </summary>
-              <div className="pr-faq-a">
-                Apply. Custom kit builds are quoted per project. There is no public number for that work.
-              </div>
+              <summary className="pr-faq-q">Is this do-it-yourself?<span className="pr-faq-icon">+</span></summary>
+              <div className="pr-faq-a">No. A real Yakini person sets everything up with you and stays with you after go-live, with a help desk you can reach any time. That is why we price the way we do.</div>
+            </details>
+            <details className="pr-faq-item">
+              <summary className="pr-faq-q">Who pays for hosting, the texting line and payment processing?<span className="pr-faq-icon">+</span></summary>
+              <div className="pr-faq-a">{PASS_THROUGH_NOTE} {FLAT_PRICING_NOTE}</div>
+            </details>
+            <details className="pr-faq-item">
+              <summary className="pr-faq-q">I need something custom.<span className="pr-faq-icon">+</span></summary>
+              <div className="pr-faq-a">That is Partner: custom builds, priced on the work and agreed in writing before anything starts. <a href={PARTNER.href} className="yk-gold">Book a call →</a></div>
             </details>
           </div>
         </div>
@@ -421,21 +226,18 @@ export default function PricingPage() {
         <div className="yk-section-inner">
           <div className="pr-final-content">
             <h2 className="pr-final-h2">
-              Start with a
+              Ready when
               <br />
-              <span className="yk-gold yk-italic">plan, a kit, or a quote.</span>
+              <span className="yk-gold yk-italic">you are.</span>
             </h2>
-            <p className="pr-final-sub">
-              Sign up for Operate or Operate Plus, apply for a kit, or ask for a custom quote.
-              The Drag Audit is free.
-            </p>
+            <p className="pr-final-sub">Pick a plan and a real Yakini person takes it from there, with you.</p>
             <div className="pr-final-ctas">
-              <a href={PORTAL_SIGNUP_URL} className="pr-tier-cta pr-cta-featured" target="_blank" rel="noopener noreferrer">
-                <span>Sign up</span>
+              <a href={startUrl()} className="pr-tier-cta pr-cta-featured">
+                <span>Get started</span>
                 <span className="yk-btn-arrow">→</span>
               </a>
-              <a href="/apply" className="pr-tier-cta">
-                <span>Apply</span>
+              <a href={PARTNER.href} className="pr-tier-cta">
+                <span>Talk to a person first</span>
                 <span className="yk-btn-arrow">→</span>
               </a>
             </div>
@@ -1153,4 +955,33 @@ const PAGE_CSS = `
       min-width: 180px;
     }
   }
+`
+
+const NEW_CSS = `
+  .pn-hero-ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
+  .pn-hero-ctas .pr-tier-cta { margin-top: 0; }
+  .pn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; align-items: stretch; }
+  @media (max-width: 1200px) { .pn-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 700px) { .pn-grid { grid-template-columns: 1fr; } }
+  .pn-tier { padding: 34px 28px; border-radius: 4px; transition: transform .25s ease, border-color .25s ease; }
+  .pn-tier:hover { transform: translateY(-4px); border-color: rgba(201,168,76,0.5); }
+  .pn-founding { border: 2px solid var(--gold); background: linear-gradient(160deg, rgba(201,168,76,0.14) 0%, rgba(255,255,255,0.02) 60%); box-shadow: 0 30px 80px -40px rgba(201,168,76,0.55); }
+  .pn-closed { opacity: .55; }
+  .pn-partner { border-style: dashed; }
+  .pn-tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+  .pn-price { display: flex; align-items: baseline; gap: 8px; margin-top: 18px; }
+  .pn-price-num { font-family: var(--font-display); font-size: 56px; line-height: 1; color: var(--cream); letter-spacing: -0.02em; }
+  .pn-price-per { color: rgba(245,239,227,0.6); font-size: 16px; }
+  .pn-setup { margin-top: 8px; color: rgba(245,239,227,0.7); font-size: 14px; }
+  .pn-list { margin: 22px 0 8px; flex: 1; }
+  .pn-partner-line { font-family: var(--font-display); font-size: 26px; color: var(--cream); margin: 6px 0 12px; }
+  .pn-cta-push { margin-top: auto; }
+  .pn-cta-off { opacity: .6; cursor: not-allowed; }
+  .pn-refund { border-left: 3px solid var(--gold); background: rgba(201,168,76,0.08); padding: 16px 20px; color: var(--cream); margin: 8px 0 48px; font-size: 16px; }
+  .pn-steps { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 40px; }
+  @media (max-width: 900px) { .pn-steps { grid-template-columns: 1fr; } }
+  .pn-steps li { border: 1px solid var(--line); padding: 26px; display: flex; flex-direction: column; gap: 10px; }
+  .pn-step-num { font-family: var(--font-display); font-size: 36px; color: var(--gold); }
+  .pn-step-title { font-size: 19px; color: var(--cream); font-weight: 600; }
+  .pn-step-detail { color: rgba(245,239,227,0.65); font-size: 15px; line-height: 1.6; }
 `

@@ -3,16 +3,16 @@
 import { useState } from 'react'
 import { SiteShell } from '@/components/SiteShell'
 import {
+  EXTRA_HELP_NOTE,
   FLAT_PRICING_NOTE,
-  KIT_INCLUDES,
-  KIT_TIERS,
+  FOUNDING,
   PASS_THROUGH_NOTE,
-  SELF_SERVE_PLANS,
-  kitMonthlyLabel,
-  kitSetupLabel,
-  selfServeMonthlyLabel,
-  selfServePriceLabel,
-  selfServeSetupLabel,
+  PLANS,
+  REFUND_RULE,
+  monthlyLabel,
+  priceLabel,
+  setupLabel,
+  startUrl,
 } from '@/lib/pricing'
 
 // ═════════════════════════════════════════════════════════════════════════
@@ -376,13 +376,12 @@ export default function IntelligencePage() {
               <div className="int-roi-comparison">
                 <div className="int-comp-h">Flat pricing</div>
                 <div className="int-comp-pricing">
-                  <span className="int-comp-price">{selfServeSetupLabel(SELF_SERVE_PLANS[0])}</span>
+                  <span className="int-comp-price">{setupLabel(PLANS[0])}</span>
                   <span className="int-comp-period">setup</span>
                 </div>
                 <div className="int-comp-roi">
-                  Operate is {selfServePriceLabel(SELF_SERVE_PLANS[0])}. Operate Plus is{' '}
-                  {selfServePriceLabel(SELF_SERVE_PLANS[1])}. Kits start at{' '}
-                  <span className="yk-gold">{kitSetupLabel(KIT_TIERS[0])}</span> setup.
+                  Operate is {priceLabel(PLANS[0])}. Grow is{' '}
+                  <span className="yk-gold">{priceLabel(PLANS[1])}</span>.
                   There is no separate intelligence rate.
                 </div>
               </div>
@@ -556,29 +555,29 @@ export default function IntelligencePage() {
             <div className="int-tier-included">
               <h3>Yakini Intelligence follows the plan or kit you buy:</h3>
               <ul>
-                <li>Self-serve Operate is {selfServePriceLabel(SELF_SERVE_PLANS[0])}. Operate Plus is {selfServePriceLabel(SELF_SERVE_PLANS[1])}. The setup fee is one time. A Yakini operator sets it up.</li>
-                <li>Fully built kits start at {kitSetupLabel(KIT_TIERS[0])} setup and {kitMonthlyLabel(KIT_TIERS[0])}.</li>
-                {KIT_INCLUDES.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
+                <li>Operate is {priceLabel(PLANS[0])}. Grow is {priceLabel(PLANS[1])}. The setup fee is one time, and a real Yakini person sets it up with you and stays.</li>
+                <li>Founding is {priceLabel(FOUNDING)}, locked for {FOUNDING.lockedMonths} months, for our first {FOUNDING.spots?.total} customers only.</li>
+                <li>Drafted replies have a monthly limit on every plan, and nothing goes out without your OK.</li>
+                <li>{EXTRA_HELP_NOTE}</li>
+                <li>{REFUND_RULE}</li>
                 <li>{PASS_THROUGH_NOTE}</li>
                 <li>{FLAT_PRICING_NOTE}</li>
-                <li>Custom kit builds are quoted separately.</li>
+                <li>Partner custom builds are quoted on the work.</li>
               </ul>
             </div>
 
             <div className="int-tier-cta">
-              <div className="int-tier-h">{SELF_SERVE_PLANS[0].name}</div>
+              <div className="int-tier-h">{PLANS[0].name}</div>
               <div className="int-tier-price">
-                <span className="int-tier-num">{selfServeSetupLabel(SELF_SERVE_PLANS[0])}</span>
+                <span className="int-tier-num">{setupLabel(PLANS[0])}</span>
                 <span className="int-tier-period">setup</span>
               </div>
               <div className="int-tier-setup">
-                Then {selfServeMonthlyLabel(SELF_SERVE_PLANS[0])}. {SELF_SERVE_PLANS[1].name} is {selfServePriceLabel(SELF_SERVE_PLANS[1])}. Kit prices are on the price list. Custom work is quoted separately.
+                Then {monthlyLabel(PLANS[0])}. {PLANS[1].name} is {priceLabel(PLANS[1])}. Partner custom builds are quoted on the work.
               </div>
 
               <p className="int-tier-note">
-                We work with a handful of serious founders at a time. Application required for a kit or a custom quote.
+                We work with a handful of serious founders at a time. A real Yakini person sets you up and stays with you.
               </p>
 
               <a href="/pricing" className="yk-btn-primary int-tier-btn">
@@ -586,8 +585,8 @@ export default function IntelligencePage() {
                 <span className="yk-btn-arrow">→</span>
               </a>
 
-              <a href="/apply" className="int-tier-link">
-                Apply for a kit or a quote →
+              <a href={startUrl()} className="int-tier-link">
+                Get started →
               </a>
             </div>
           </div>
