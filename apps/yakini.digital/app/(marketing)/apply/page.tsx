@@ -920,6 +920,9 @@ const PAGE_CSS = `
 
   @media (max-width: 1000px) {
     .ap-form-wrapper { grid-template-columns: 1fr; }
+    .ap-form-wrapper > * { min-width: 0; }
+    /* span 2 in a one-column grid adds a phantom column and pushes the page wider than the phone */
+    .ap-progress { grid-column: auto; }
     .ap-sidebar { position: static; }
   }
   @media (max-width: 700px) {
