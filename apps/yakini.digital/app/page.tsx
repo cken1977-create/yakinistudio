@@ -8,6 +8,7 @@ import {
   FOUNDING,
   PITCH,
   PLANS,
+  REFUND_RULE,
   priceLabel,
   startUrl,
 } from '@/lib/pricing'
@@ -608,7 +609,7 @@ export default function HomePage() {
               first {FOUNDING.spots?.total} customers only. Partner custom builds are quoted on the work.
             </p>
             <div className="yk-partners-active">
-              <strong>One price list.</strong> The setup fee is refundable in full until your kickoff call. After that it is non-refundable.
+              <strong>One price list.</strong> {REFUND_RULE}
             </div>
             <a href="/pricing" className="yk-btn-primary yk-partners-cta">
               <span>See plans and pricing</span>

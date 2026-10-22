@@ -5,6 +5,8 @@ import { SEAT_CSS, SeatMeter, useFoundingSeats } from '@/components/FoundingSeat
 import {
   BILLING_NOTE,
   EXTRA_HELP_NOTE,
+  HELP_HOURS_NOTE,
+  AI_LIMIT_NOTE,
   FLAT_PRICING_NOTE,
   GUIDED_STEPS,
   PARTNER,
@@ -58,7 +60,7 @@ export default function PricingPage() {
             <br />
             <span className="yk-gold">not left to you.</span>
           </h2>
-          <p className="pr-operate-lead">{BILLING_NOTE} {EXTRA_HELP_NOTE}</p>
+          <p className="pr-operate-lead">{BILLING_NOTE} {EXTRA_HELP_NOTE} {HELP_HOURS_NOTE}</p>
 
           <div className="pn-grid">
             {PLANS.map((plan) => {
@@ -76,7 +78,7 @@ export default function PricingPage() {
                   <div className="pn-setup">+ {setupLabel(plan)} one-time guided setup{plan.lockedMonths ? ` · locked ${plan.lockedMonths} months` : ''}</div>
                   {isFounding ? <SeatMeter seats={seats} /> : null}
                   <ul className="pr-tier-list pr-list-included pn-list">
-                    <li>{helpLabel(plan)} from your Yakini person</li>
+                    <li>{helpLabel(plan)} from your Yakini person (unused hours don’t roll over)</li>
                     {plan.includes.map((feature) => (
                       <li key={feature}>{feature}</li>
                     ))}
@@ -123,7 +125,7 @@ export default function PricingPage() {
               </thead>
               <tbody>
                 <tr>
-                  <th scope="row">Help each month from your Yakini person</th>
+                  <th scope="row">Help each month from your Yakini person (expires at month end)</th>
                   {PLANS.map((plan) => <td key={plan.id}>{plan.helpHours} hr</td>)}
                 </tr>
                 <tr>
@@ -187,7 +189,7 @@ export default function PricingPage() {
                 Operate is {priceLabel(operate)} with {helpLabel(operate)}. It is your website and customer portal, help desk, voice notes,
                 drafted replies that wait for your OK, a business texting line, booking you confirm, and incoming texts in one place.
                 Grow is {priceLabel(grow)} with {helpLabel(grow)}, and adds card payments, missed-call text-back, review requests,
-                follow-up campaigns and a monthly owner report.
+                follow-up campaigns and a monthly owner report. {HELP_HOURS_NOTE} {AI_LIMIT_NOTE}
               </div>
             </details>
             <details className="pr-faq-item">
@@ -204,7 +206,7 @@ export default function PricingPage() {
             </details>
             <details className="pr-faq-item">
               <summary className="pr-faq-q">What if I need more help than my plan includes?<span className="pr-faq-icon">+</span></summary>
-              <div className="pr-faq-a">{EXTRA_HELP_NOTE}</div>
+              <div className="pr-faq-a">{HELP_HOURS_NOTE} {EXTRA_HELP_NOTE}</div>
             </details>
             <details className="pr-faq-item">
               <summary className="pr-faq-q">Is this do-it-yourself?<span className="pr-faq-icon">+</span></summary>

@@ -16,14 +16,23 @@ export const PITCH_HEAD = 'A real person sets it up with you. And stays.'
 export const PITCH =
   'Other platforms hand you the software and leave you to set it up alone, and most owners get stuck. Yakini prices differently because a real Yakini person sets everything up with you, then stays with you after go-live, with a help desk you can reach any time.'
 
+// Refund deadline (Oct 22 2026): kickoff call or 14 days after sign-up, whichever comes first. Same words as the portal.
 export const REFUND_RULE =
-  'The setup fee is refundable in full until your kickoff call. After the kickoff call it is non-refundable.'
+  'The setup fee is refundable in full until your kickoff call or 14 days after you sign up, whichever comes first. After that it is non-refundable.'
 
 export const BILLING_NOTE =
   'You pay the one-time guided-setup fee when you sign up. Your monthly plan starts after setup.'
 
 export const EXTRA_HELP_NOTE =
   'Need more help than your plan includes? Extra hours are $150/hour, or move up a plan.'
+
+/** Included help hours don't roll over (Oct 22 2026). */
+export const HELP_HOURS_NOTE =
+  'Included help hours are for that month only: unused hours don’t roll over and expire at the end of each month.'
+
+/** Drafted replies and transcripts stop at a fixed monthly limit; the customer is warned at 80%. */
+export const AI_LIMIT_NOTE =
+  'Drafted replies and voice transcripts have a fixed monthly limit on every plan. We’ll warn you at 80%, and nothing goes out without your OK.'
 
 export const FLAT_PRICING_NOTE = 'Flat pricing. Yakini never takes a share of your revenue.'
 
@@ -44,7 +53,7 @@ export const PLAN_MODULES: readonly PlanModule[] = [
   { plain: 'Your website and customer portal, set up with you', operate: true, grow: true },
   { plain: 'Help desk with a real Yakini person', operate: true, grow: true },
   { plain: 'Voice notes', operate: true, grow: true },
-  { plain: 'Drafted replies, up to a monthly limit, checked before anything goes out', operate: true, grow: true },
+  { plain: 'Drafted replies, up to a monthly limit (we’ll warn you at 80%), checked before anything goes out', operate: true, grow: true },
   { plain: 'Business texting line for opted-in customers', operate: true, grow: true },
   { plain: 'Online booking you confirm', operate: true, grow: true },
   { plain: 'Incoming texts in one place', operate: true, grow: true },

@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { SiteShell } from '@/components/SiteShell'
 import {
   EXTRA_HELP_NOTE,
+  HELP_HOURS_NOTE,
+  AI_LIMIT_NOTE,
   FLAT_PRICING_NOTE,
   FOUNDING,
   PASS_THROUGH_NOTE,
@@ -557,8 +559,8 @@ export default function IntelligencePage() {
               <ul>
                 <li>Operate is {priceLabel(PLANS[0])}. Grow is {priceLabel(PLANS[1])}. The setup fee is one time, and a real Yakini person sets it up with you and stays.</li>
                 <li>Founding is {priceLabel(FOUNDING)}, locked for {FOUNDING.lockedMonths} months, for our first {FOUNDING.spots?.total} customers only.</li>
-                <li>Drafted replies have a monthly limit on every plan, and nothing goes out without your OK.</li>
-                <li>{EXTRA_HELP_NOTE}</li>
+                <li>{AI_LIMIT_NOTE}</li>
+                <li>{HELP_HOURS_NOTE} {EXTRA_HELP_NOTE}</li>
                 <li>{REFUND_RULE}</li>
                 <li>{PASS_THROUGH_NOTE}</li>
                 <li>{FLAT_PRICING_NOTE}</li>
