@@ -1,5 +1,6 @@
 "use client"
 
+import Link from 'next/link'
 import { SiteShell } from '@/components/SiteShell'
 import { SEAT_CSS, SeatMeter, useFoundingSeats } from '@/components/FoundingSeats'
 import {
@@ -48,6 +49,19 @@ export default function PricingPage() {
           </div>
         </div>
       </header>
+
+      <section className="pn-portal" aria-label="What you get: the Yakini portal">
+        <div className="yk-section-inner pn-portal-inner">
+          <p className="pn-portal-lead">Every plan is the <strong>Yakini portal</strong>, your business workspace, set up with you:</p>
+          <ul className="pn-portal-list">
+            <li><strong>Client rooms</strong><span>One private room per client</span></li>
+            <li><strong>Texting line</strong><span>For customers who opted in</span></li>
+            <li><strong>Help desk</strong><span>With a real Yakini person</span></li>
+            <li><strong>Drafted replies</strong><span>Nothing goes out without your OK</span></li>
+          </ul>
+          <Link href="/#portal" className="pn-portal-link">Take the portal tour →</Link>
+        </div>
+      </section>
 
       <section id="plans" className="yk-section pr-tiers">
         <div className="yk-section-inner">
@@ -218,7 +232,7 @@ export default function PricingPage() {
             </details>
             <details className="pr-faq-item">
               <summary className="pr-faq-q">I need something custom.<span className="pr-faq-icon">+</span></summary>
-              <div className="pr-faq-a">That is Partner: custom builds, priced on the work and agreed in writing before anything starts. <a href={PARTNER.href} className="yk-gold">Book a call →</a></div>
+              <div className="pr-faq-a">That is Partner: custom builds such as lead engines and payment systems, priced on the work and agreed in writing before anything starts. <a href="/custom-builds" className="yk-gold">See custom builds</a> or <a href={PARTNER.href} className="yk-gold">book a call →</a></div>
             </details>
           </div>
         </div>
@@ -235,7 +249,7 @@ export default function PricingPage() {
             <p className="pr-final-sub">Pick a plan and a real Yakini person takes it from there, with you.</p>
             <div className="pr-final-ctas">
               <a href={startUrl()} className="pr-tier-cta pr-cta-featured">
-                <span>Get started</span>
+                <span>Start your setup</span>
                 <span className="yk-btn-arrow">→</span>
               </a>
               <a href={PARTNER.href} className="pr-tier-cta">
@@ -458,7 +472,7 @@ const PAGE_CSS = `
     font-weight: 700;
   }
 
-  /* ═══ CUSTOM KIT ═══ */
+  /* ═══ PARTNER ═══ */
   .pr-custom-card {
     padding: 48px;
     background: linear-gradient(135deg, rgba(200, 168, 75, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
@@ -960,6 +974,16 @@ const PAGE_CSS = `
 `
 
 const NEW_CSS = `
+  .pn-portal { padding: 40px 24px; background: var(--black-soft); border-bottom: 1px solid var(--line); }
+  .pn-portal-inner { display: grid; gap: 20px; }
+  .pn-portal-lead { font-size: 17px; color: rgba(244,241,235,0.8); }
+  .pn-portal-lead strong { color: var(--gold); font-weight: 600; }
+  .pn-portal-list { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .pn-portal-list li { background: var(--black-soft); padding: 18px 16px; display: flex; flex-direction: column; gap: 4px; }
+  .pn-portal-list strong { font-family: var(--font-display); font-weight: 500; font-size: 22px; color: var(--cream); }
+  .pn-portal-list span { font-size: 13px; color: var(--muted); }
+  .pn-portal-link { color: var(--gold); font-size: 15px; }
+  @media (min-width: 900px) { .pn-portal-list { grid-template-columns: repeat(4, 1fr); } .pn-portal { padding: 48px 32px; } }
   .pn-hero-ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
   .pn-hero-ctas .pr-tier-cta { margin-top: 0; }
   .pn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; align-items: stretch; }
