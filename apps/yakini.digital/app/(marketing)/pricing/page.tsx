@@ -275,7 +275,7 @@ function Mark({ yes = false }: { yes?: boolean }) {
 const PAGE_CSS = `
   /* ═══ HEADER ═══ */
   .pr-header {
-    background: linear-gradient(180deg, rgba(10, 9, 8, 0.20) 0%, rgba(10, 9, 8, 0.40) 100%), url('/yakini-pricing-bg.jpg') center center / cover no-repeat;
+    background: linear-gradient(180deg, rgba(10, 9, 8, 0.62) 0%, rgba(10, 9, 8, 0.90) 100%), url('/yakini-pricing-bg.jpg') center center / cover no-repeat;
     min-height: 520px;
     position: relative;
   }
