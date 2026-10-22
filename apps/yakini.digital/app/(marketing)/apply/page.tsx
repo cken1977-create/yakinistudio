@@ -137,7 +137,7 @@ function ApplyForm() {
       if (!form.location.trim()) return setErr('Location required')
     }
     if (s === 3) {
-      if (!form.tier_interest) return setErr('Please select a self-serve plan, a kit, or custom')
+      if (!form.tier_interest) return setErr('Please choose a plan, Partner, or not sure')
       if (!form.timeline) return setErr('Please select timeline')
       if (!form.current_pain.trim() || form.current_pain.length < 30) return setErr('Please describe what\'s broken (at least 30 chars)')
       if (!form.biggest_outcome.trim() || form.biggest_outcome.length < 30) return setErr('Please describe your desired outcome (at least 30 chars)')
@@ -315,7 +315,7 @@ function ApplyForm() {
                     <div className="ap-field">
                       <label>Plan, kit, or custom *</label>
                       <select value={form.tier_interest} onChange={e => update('tier_interest', e.target.value)}>
-                        <option value="">Select a self-serve plan, a kit, or custom...</option>
+                        <option value="">Choose a plan, Partner, or not sure...</option>
                         {OFFER_GROUPS.map(group => (
                           <optgroup key={group.id} label={group.label}>
                             {OFFER_CHOICES.filter(choice => choice.group === group.id).map(choice => (
@@ -920,6 +920,9 @@ const PAGE_CSS = `
 
   @media (max-width: 1000px) {
     .ap-form-wrapper { grid-template-columns: 1fr; }
+    .ap-form-wrapper > * { min-width: 0; }
+    /* span 2 in a one-column grid adds a phantom column and pushes the page wider than the phone */
+    .ap-progress { grid-column: auto; }
     .ap-sidebar { position: static; }
   }
   @media (max-width: 700px) {

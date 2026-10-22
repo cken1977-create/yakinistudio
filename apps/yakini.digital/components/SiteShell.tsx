@@ -2,6 +2,7 @@
 
 import { useState, useEffect, ReactNode } from 'react'
 import Link from 'next/link'
+import { PORTAL_LOGIN_URL } from '@/lib/pricing'
 
 // ═════════════════════════════════════════════════════════════════════════
 // YAKINI SITE SHELL
@@ -50,6 +51,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <a href="/process">Process</a>
             <a href="/pricing">Pricing</a>
             <a href="/about">About</a>
+            <a href={PORTAL_LOGIN_URL} className="yk-nav-portal">Customer portal</a>
           </div>
 
           <a href="/apply" className="yk-nav-cta">
@@ -74,6 +76,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <a href="/process" onClick={() => setMenuOpen(false)}>Process</a>
           <a href="/pricing" onClick={() => setMenuOpen(false)}>Pricing</a>
           <a href="/about" onClick={() => setMenuOpen(false)}>About</a>
+          <a href={PORTAL_LOGIN_URL} onClick={() => setMenuOpen(false)}>Customer portal</a>
           <a href="/apply" className="yk-mobile-cta" onClick={() => setMenuOpen(false)}>Apply →</a>
         </div>
       )}
@@ -258,6 +261,7 @@ const GLOBAL_CSS = `
     transition: transform 0.3s;
   }
   .yk-nav-center a:hover { color: var(--cream); }
+  .yk-nav-center a.yk-nav-portal { color: var(--gold); }
   .yk-nav-center a:hover::after { transform: scaleX(1); }
 
   .yk-nav-cta {
