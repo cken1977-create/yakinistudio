@@ -8,6 +8,7 @@ import {
   FOUNDING,
   PITCH,
   PLANS,
+  PORTAL_LOGIN_URL,
   REFUND_RULE,
   priceLabel,
   startUrl,
@@ -59,6 +60,7 @@ export default function HomePage() {
             <a href="/process">Process</a>
             <a href="/pricing">Pricing</a>
             <a href="/about">About</a>
+            <a href={PORTAL_LOGIN_URL} className="yk-nav-portal">Customer portal</a>
           </div>
 
           <a href="/apply" className="yk-nav-cta">
@@ -83,6 +85,7 @@ export default function HomePage() {
           <a href="/process" onClick={() => setMenuOpen(false)}>Process</a>
           <a href="/pricing" onClick={() => setMenuOpen(false)}>Pricing</a>
           <a href="/about" onClick={() => setMenuOpen(false)}>About</a>
+          <a href={PORTAL_LOGIN_URL} onClick={() => setMenuOpen(false)}>Customer portal</a>
           <a href="/apply" className="yk-mobile-cta" onClick={() => setMenuOpen(false)}>Apply →</a>
         </div>
       )}
@@ -871,6 +874,7 @@ const CSS = `
     transition: transform 0.3s;
   }
   .yk-nav-center a:hover { color: var(--bone); }
+  .yk-nav-center a.yk-nav-portal { color: var(--gold); }
   .yk-nav-center a:hover::after { transform: scaleX(1); }
 
   .yk-nav-cta {

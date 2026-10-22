@@ -7,6 +7,8 @@
 export const PORTAL_URL = (process.env.NEXT_PUBLIC_PORTAL_URL || 'https://portal.yakini.digital').replace(/\/$/, '')
 export const START_URL = `${PORTAL_URL}/start`
 export const FOUNDING_API = `${PORTAL_URL}/api/kit/founding`
+/** Customer portal sign-in, linked from the site header on every page. */
+export const PORTAL_LOGIN_URL = `${PORTAL_URL}/enter`
 
 export function startUrl(planId?: string): string {
   return planId ? `${START_URL}?kit=${planId}#form` : START_URL
