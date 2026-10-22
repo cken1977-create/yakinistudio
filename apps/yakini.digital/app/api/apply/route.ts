@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
           body: JSON.stringify({
             from: 'Yakini <hello@yakini.digital>',
             to: data.email,
-            subject: 'Your Yakini partnership application — received.',
+            subject: 'Thanks, we have your details. Yakini',
             html: buildApplicantEmail(view),
           })
         })
@@ -132,23 +132,23 @@ function buildApplicantEmail(data: Record<string, string>) {
       <div style="background: linear-gradient(135deg, #050E1F 0%, #0A1F3D 100%); padding: 40px 32px; text-align: center; border-bottom: 2px solid #C8A84B;">
         <div style="display: inline-block; width: 48px; height: 48px; border: 2px solid #C8A84B; line-height: 44px; font-size: 28px; font-style: italic; color: #C8A84B; margin-bottom: 16px;">Y</div>
         <h1 style="font-family: Georgia, serif; font-style: italic; font-size: 28px; font-weight: 400; color: #F4F1EB; margin: 0; letter-spacing: 0.02em;">Yakini</h1>
-        <div style="font-size: 10px; letter-spacing: 0.3em; color: #C8A84B; margin-top: 8px; font-family: Arial, sans-serif;">DIGITAL INFRASTRUCTURE</div>
+        <div style="font-size: 10px; letter-spacing: 0.3em; color: #C8A84B; margin-top: 8px; font-family: Arial, sans-serif;">SET UP WITH YOU · HERE TO STAY</div>
       </div>
 
       <!-- Body -->
       <div style="padding: 48px 32px;">
-        <div style="font-size: 11px; letter-spacing: 0.3em; color: #C8A84B; margin-bottom: 16px; font-family: Arial, sans-serif; text-transform: uppercase; font-weight: 700;">APPLICATION RECEIVED</div>
+        <div style="font-size: 11px; letter-spacing: 0.3em; color: #C8A84B; margin-bottom: 16px; font-family: Arial, sans-serif; text-transform: uppercase; font-weight: 700;">WE HAVE YOUR DETAILS</div>
 
         <h2 style="font-family: Georgia, serif; font-size: 36px; font-weight: 400; color: #F4F1EB; margin: 0 0 24px; line-height: 1.1;">
           Thank you, <span style="font-style: italic; color: #C8A84B;">${data.full_name.split(' ')[0]}.</span>
         </h2>
 
         <p style="font-size: 16px; line-height: 1.7; color: #F4F1EB; margin-bottom: 24px;">
-          Your partnership application for <strong style="color: #C8A84B;">${data.business_name}</strong> has been received and is in front of us.
+          Thanks for telling us about <strong style="color: #C8A84B;">${data.business_name}</strong>. Your details are with us.
         </p>
 
         <p style="font-size: 16px; line-height: 1.7; color: rgba(244, 241, 235, 0.7); margin-bottom: 32px;">
-          Yakini is selective. We don't run auto-replies, mass intake calls, or boilerplate sales sequences. Every application gets read carefully by the team that would build your platform.
+          A real person at Yakini reads every message. No sales sequence, no pressure.
         </p>
 
         <!-- Next steps box -->
@@ -156,23 +156,23 @@ function buildApplicantEmail(data: Record<string, string>) {
           <div style="font-size: 11px; letter-spacing: 0.25em; color: #C8A84B; margin-bottom: 16px; font-family: Arial, sans-serif; text-transform: uppercase; font-weight: 700;">WHAT HAPPENS NEXT</div>
 
           <div style="margin-bottom: 16px; font-size: 15px; line-height: 1.7; color: #F4F1EB;">
-            <strong style="color: #C8A84B;">1.</strong> Within 48 hours, we review your application carefully.
+            <strong style="color: #C8A84B;">1.</strong> We read what you sent.
           </div>
           <div style="margin-bottom: 16px; font-size: 15px; line-height: 1.7; color: #F4F1EB;">
-            <strong style="color: #C8A84B;">2.</strong> If it's a fit, we email you to schedule a 30-minute strategic intake call.
+            <strong style="color: #C8A84B;">2.</strong> We reach out to set up a call at a time that suits you.
           </div>
           <div style="font-size: 15px; line-height: 1.7; color: #F4F1EB;">
-            <strong style="color: #C8A84B;">3.</strong> If it's not a fit yet, we tell you why honestly and recommend next steps.
+            <strong style="color: #C8A84B;">3.</strong> You get a written scope and quote before anything starts.
           </div>
         </div>
 
         <p style="font-size: 14px; line-height: 1.7; color: rgba(244, 241, 235, 0.7); margin-bottom: 32px; font-style: italic; font-family: Georgia, serif;">
-          Either way, you'll hear from us. Keep an eye on this inbox.
+          Keep an eye on this inbox.
         </p>
 
         <div style="text-align: center; margin: 40px 0;">
-          <a href="https://yakini.digital/platforms" style="display: inline-block; background: #C8A84B; color: #050E1F; padding: 16px 32px; text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: 0.05em; font-family: Arial, sans-serif;">
-            See our platforms →
+          <a href="https://yakini.digital/custom-builds" style="display: inline-block; background: #C8A84B; color: #050E1F; padding: 16px 32px; text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: 0.05em; font-family: Arial, sans-serif;">
+            See custom builds →
           </a>
         </div>
 
@@ -184,7 +184,7 @@ function buildApplicantEmail(data: Record<string, string>) {
       <!-- Footer -->
       <div style="background: #000000; padding: 24px 32px; text-align: center; border-top: 1px solid rgba(255,255,255,0.08);">
         <div style="font-family: Georgia, serif; font-style: italic; font-size: 14px; color: rgba(244, 241, 235, 0.55); margin-bottom: 8px;">
-          The infrastructure layer your business runs on.
+          Set up with you. And we stay.
         </div>
         <div style="font-size: 11px; color: rgba(244, 241, 235, 0.4); letter-spacing: 0.05em;">
           Yakini · Part of the BRSA Holdings ecosystem
@@ -222,7 +222,7 @@ function buildAdminEmail(data: Record<string, string>, applicationId: string) {
             <div style="font-size: 14px; color: #050E1F; font-weight: 600; margin-top: 4px;">${data.revenue_range || 'Not provided'}</div>
           </div>
           <div>
-            <div style="font-size: 10px; letter-spacing: 0.2em; color: #888; font-weight: 700; text-transform: uppercase;">PLAN OR KIT</div>
+            <div style="font-size: 10px; letter-spacing: 0.2em; color: #888; font-weight: 700; text-transform: uppercase;">PLAN OR PARTNER</div>
             <div style="font-size: 14px; color: #050E1F; font-weight: 600; margin-top: 4px;">${planOrKit}</div>
           </div>
           <div>

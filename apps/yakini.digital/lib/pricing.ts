@@ -16,7 +16,7 @@ export function startUrl(planId?: string): string {
 
 export const PITCH_HEAD = 'A real person sets it up with you. And stays.'
 export const PITCH =
-  'Other platforms hand you the software and leave you to set it up alone, and most owners get stuck. Yakini prices differently because a real Yakini person sets everything up with you, then stays with you after go-live, with a help desk you can reach any time.'
+  'Other platforms hand you the software and leave you to set it up alone. Yakini prices differently because a real Yakini person sets everything up with you, then stays with you after go-live, with a help desk you can reach any time.'
 
 // Refund deadline (Oct 22 2026): kickoff call or 14 days after sign-up, whichever comes first. Same words as the portal.
 export const REFUND_RULE =

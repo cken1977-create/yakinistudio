@@ -2,21 +2,37 @@
 
 import { useState, useEffect, ReactNode } from 'react'
 import Link from 'next/link'
-import { PORTAL_LOGIN_URL } from '@/lib/pricing'
+import { PORTAL_LOGIN_URL, START_URL } from '@/lib/pricing'
 
 // ═════════════════════════════════════════════════════════════════════════
-// YAKINI SITE SHELL
-// File: apps/yakini.digital/components/SiteShell.tsx
-//
-// Wraps every page with the premium nav, footer, and brand foundation.
-// Import into any page:
-//
-//   import { SiteShell } from '@/components/SiteShell'
-//
-//   export default function MyPage() {
-//     return <SiteShell>{/* your content */}</SiteShell>
-//   }
+// YAKINI SITE SHELL: header, mobile menu and footer for every page.
+// The site's one job is to lead people into the portal (START_URL);
+// custom builds are the second lane (/custom-builds, Book a call = /apply).
 // ═════════════════════════════════════════════════════════════════════════
+
+export const NAV_LINKS = [
+  { href: '/#portal', label: 'The portal' },
+  { href: '/pricing', label: 'Plans' },
+  { href: '/how-it-works', label: 'How it works' },
+  { href: '/custom-builds', label: 'Custom builds' },
+  { href: '/about', label: 'About' },
+] as const
+
+export const TAGLINE = 'SET UP WITH YOU · HERE TO STAY'
+
+export function BrandMark() {
+  return (
+    <Link href="/" className="yk-brand" aria-label="Yakini home">
+      <div className="yk-brand-mark">
+        <span className="yk-brand-y">Y</span>
+      </div>
+      <div className="yk-brand-text">
+        <span className="yk-brand-name">YAKINI</span>
+        <span className="yk-brand-sub">{TAGLINE}</span>
+      </div>
+    </Link>
+  )
+}
 
 export function SiteShell({ children }: { children: ReactNode }) {
   const [scrolled, setScrolled] = useState(false)
@@ -24,110 +40,94 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 30)
+    handler()
     window.addEventListener('scroll', handler)
     return () => window.removeEventListener('scroll', handler)
   }, [])
+
+  const close = () => setMenuOpen(false)
 
   return (
     <>
       <style>{GLOBAL_CSS}</style>
 
-      {/* ───── NAV ───── */}
-      <nav className={`yk-nav ${scrolled ? 'scrolled' : ''}`}>
+      <nav className={`yk-nav ${scrolled || menuOpen ? 'scrolled' : ''}`}>
         <div className="yk-nav-inner">
-          <Link href="/" className="yk-brand">
-            <div className="yk-brand-mark">
-              <span className="yk-brand-y">Y</span>
-            </div>
-            <div className="yk-brand-text">
-              <span className="yk-brand-name">YAKINI</span>
-              <span className="yk-brand-sub">DIGITAL INFRASTRUCTURE</span>
-            </div>
-          </Link>
-
+          <BrandMark />
           <div className="yk-nav-center">
-            <a href="/platforms">Platforms</a>
-            <a href="/intelligence">Intelligence</a>
-            <a href="/process">Process</a>
-            <a href="/pricing">Pricing</a>
-            <a href="/about">About</a>
-            <a href={PORTAL_LOGIN_URL} className="yk-nav-portal">Customer portal</a>
+            {NAV_LINKS.map((l) => (
+              <a key={l.href} href={l.href}>{l.label}</a>
+            ))}
           </div>
-
-          <a href="/apply" className="yk-nav-cta">
-            <span>Apply</span>
-            <span className="yk-nav-cta-arrow">→</span>
-          </a>
-
-          <button
-            className={`yk-burger ${menuOpen ? 'open' : ''}`}
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Menu"
-          >
-            <span /><span /><span />
-          </button>
+          <div className="yk-nav-right">
+            <a href={PORTAL_LOGIN_URL} className="yk-nav-signin">Sign in</a>
+            <a href={START_URL} className="yk-nav-cta">
+              <span>Start</span>
+              <span className="yk-nav-cta-arrow">→</span>
+            </a>
+            <button
+              className={`yk-burger ${menuOpen ? 'open' : ''}`}
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
+            >
+              <span /><span /><span />
+            </button>
+          </div>
         </div>
       </nav>
 
       {menuOpen && (
         <div className="yk-mobile-menu">
-          <a href="/platforms" onClick={() => setMenuOpen(false)}>Platforms</a>
-          <a href="/intelligence" onClick={() => setMenuOpen(false)}>Intelligence</a>
-          <a href="/process" onClick={() => setMenuOpen(false)}>Process</a>
-          <a href="/pricing" onClick={() => setMenuOpen(false)}>Pricing</a>
-          <a href="/about" onClick={() => setMenuOpen(false)}>About</a>
-          <a href={PORTAL_LOGIN_URL} onClick={() => setMenuOpen(false)}>Customer portal</a>
-          <a href="/apply" className="yk-mobile-cta" onClick={() => setMenuOpen(false)}>Apply →</a>
+          <div className="yk-mobile-actions">
+            <a href={START_URL} className="yk-mobile-start" onClick={close}>Start your setup →</a>
+            <a href={PORTAL_LOGIN_URL} className="yk-mobile-signin" onClick={close}>Sign in to your portal</a>
+          </div>
+          {NAV_LINKS.map((l) => (
+            <a key={l.href} href={l.href} onClick={close}>{l.label}</a>
+          ))}
+          <a href="/apply" onClick={close}>Book a call</a>
         </div>
       )}
 
-      {/* PAGE CONTENT */}
       <main>{children}</main>
 
-      {/* ───── FOOTER ───── */}
       <footer className="yk-footer">
         <div className="yk-section-inner">
           <div className="yk-footer-grid">
             <div className="yk-footer-brand">
-              <div className="yk-brand">
-                <div className="yk-brand-mark">
-                  <span className="yk-brand-y">Y</span>
-                </div>
-                <div className="yk-brand-text">
-                  <span className="yk-brand-name">YAKINI</span>
-                  <span className="yk-brand-sub">DIGITAL INFRASTRUCTURE</span>
-                </div>
-              </div>
-              <p className="yk-footer-tag">
-                The infrastructure layer your business runs on.
-              </p>
+              <BrandMark />
+              <p className="yk-footer-tag">Your business portal, set up with you. And we stay.</p>
+              <a href={START_URL} className="yk-footer-start">Start your setup →</a>
             </div>
-
             <div className="yk-footer-col">
-              <h6>Build</h6>
-              <a href="/platforms">Platforms</a>
-              <a href="/intelligence">Intelligence</a>
-              <a href="/process">Process</a>
-              <a href="/pricing">Pricing</a>
+              <h6>Portal</h6>
+              <a href={START_URL}>Start your setup</a>
+              <a href={PORTAL_LOGIN_URL}>Sign in</a>
+              <a href="/pricing">Plans</a>
+              <a href="/how-it-works">How it works</a>
             </div>
-
             <div className="yk-footer-col">
-              <h6>Company</h6>
+              <h6>Custom builds</h6>
+              <a href="/custom-builds">What we build</a>
+              <a href="/apply?tier=partner">Book a call</a>
+              <h6 className="yk-footer-h6-gap">Company</h6>
               <a href="/about">About</a>
-              <a href="/apply">Apply</a>
-              <a href="https://brsafoundation.org">BRSA Foundation</a>
+              <a href="https://brsafoundation.org" target="_blank" rel="noopener">BRSA Foundation</a>
+              <a href="https://brsaholdings.org" target="_blank" rel="noopener">BRSA Holdings</a>
             </div>
-
             <div className="yk-footer-col">
               <h6>Contact</h6>
+              <a href="tel:+13466232199">Office · 1 (346) 623-2199</a>
+              <a href="tel:+13466264948">Executive · 1 (346) 626-4948</a>
               <a href="mailto:hello@yakini.digital">hello@yakini.digital</a>
               <a href="mailto:admin@yakini.digital">admin@yakini.digital</a>
+              <a href="https://contracts.yakini.digital">contracts.yakini.digital</a>
             </div>
           </div>
-
           <div className="yk-footer-bottom">
             <span>© 2026 BRSA Holdings, Inc. All rights reserved.</span>
-            <span>YAKINI is part of the BRSA ecosystem.</span>
+            <span>YAKINI is part of the BRSA ecosystem · Houston, Texas</span>
           </div>
         </div>
       </footer>
@@ -234,10 +234,10 @@ const GLOBAL_CSS = `
   .yk-brand-sub {
     font-family: var(--font-body);
     font-weight: 500;
-    font-size: 9px;
-    letter-spacing: 0.25em;
+    font-size: 8.5px;
+    letter-spacing: 0.2em;
     color: var(--gold);
-    margin-top: 3px;
+    margin-top: 4px;
   }
 
   .yk-nav-center {
@@ -261,13 +261,19 @@ const GLOBAL_CSS = `
     transition: transform 0.3s;
   }
   .yk-nav-center a:hover { color: var(--cream); }
-  .yk-nav-center a.yk-nav-portal { color: var(--gold); }
+  .yk-nav-right { display: flex; align-items: center; gap: 18px; flex-shrink: 0; }
+  .yk-nav-signin {
+    font-size: 13px; font-weight: 500; letter-spacing: 0.02em;
+    color: rgba(244, 241, 235, 0.85);
+    padding: 10px 4px;
+  }
+  .yk-nav-signin:hover { color: var(--gold); }
   .yk-nav-center a:hover::after { transform: scaleX(1); }
 
   .yk-nav-cta {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 11px 22px;
-    background: var(--cream);
+    background: var(--gold);
     color: var(--navy-deep);
     font-size: 13px;
     font-weight: 600;
@@ -276,7 +282,7 @@ const GLOBAL_CSS = `
     flex-shrink: 0;
   }
   .yk-nav-cta:hover {
-    background: var(--gold);
+    background: var(--cream);
     color: var(--navy-deep);
     transform: translateY(-1px);
     box-shadow: 0 12px 30px rgba(200, 168, 75, 0.25);
@@ -311,10 +317,29 @@ const GLOBAL_CSS = `
   }
   .yk-mobile-cta { color: var(--gold) !important; }
 
+  .yk-mobile-actions { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  .yk-mobile-menu a.yk-mobile-start {
+    font-family: var(--font-body); font-size: 16px; font-weight: 600; letter-spacing: 0.04em;
+    background: var(--gold); color: var(--navy-deep); text-align: center; padding: 16px; border: none;
+  }
+  .yk-mobile-menu a.yk-mobile-signin {
+    font-family: var(--font-body); font-size: 15px; font-weight: 500;
+    border: 1px solid var(--line-strong); text-align: center; padding: 14px; color: var(--cream);
+  }
+  @media (max-width: 1100px) {
+    .yk-nav-center { gap: 24px; }
+  }
   @media (max-width: 1024px) {
     .yk-nav-center { display: none; }
-    .yk-nav-cta { display: none; }
+    .yk-nav-signin { display: none; }
     .yk-burger { display: block; }
+    .yk-nav-right { gap: 8px; }
+    .yk-nav-cta { padding: 9px 16px; font-size: 12px; }
+  }
+  @media (max-width: 420px) {
+    .yk-nav { padding: 14px 18px; }
+    .yk-nav.scrolled { padding: 10px 18px; }
+    .yk-brand-sub { display: none; }
   }
 
   /* ═══ SHARED SECTION FOUNDATIONS ═══ */
@@ -490,6 +515,13 @@ const GLOBAL_CSS = `
     transition: color 0.2s;
   }
   .yk-footer-col a:hover { color: var(--cream); }
+  .yk-footer-h6-gap { margin-top: 28px; }
+  .yk-footer-start {
+    display: inline-block; margin-top: 22px; padding: 12px 20px;
+    border: 1px solid var(--gold); color: var(--gold);
+    font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
+  }
+  .yk-footer-start:hover { background: var(--gold); color: var(--navy-deep); }
   .yk-footer-bottom {
     border-top: 1px solid var(--line);
     padding-top: 24px;
@@ -501,6 +533,7 @@ const GLOBAL_CSS = `
 
   @media (max-width: 800px) {
     .yk-footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .yk-footer-brand { grid-column: 1 / -1; }
   }
   @media (max-width: 500px) {
     .yk-footer-grid { grid-template-columns: 1fr; }

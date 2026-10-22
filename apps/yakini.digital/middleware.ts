@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { ADMIN_COOKIE, CLIENT_COOKIE, readSession } from '@/lib/auth/session'
+import { ADMIN_COOKIE, readSession } from '@/lib/auth/session'
 
 const SIGN_HOST = 'sign.yakini.digital'
 
@@ -33,12 +33,6 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/dashboard/login', request.url))
     }
     return NextResponse.next()
-  }
-
-  // Client area: a signed client session is required (the old plain-email cookie no longer counts).
-  if (path.startsWith('/client') && !path.startsWith('/client/login') && !path.startsWith('/client/verify')) {
-    const client = await readSession(request.cookies.get(CLIENT_COOKIE)?.value, 'client')
-    if (!client) return NextResponse.redirect(new URL('/client/login', request.url))
   }
 
   return NextResponse.next()
