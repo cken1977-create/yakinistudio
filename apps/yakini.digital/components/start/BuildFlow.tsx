@@ -158,6 +158,7 @@ export function BuildFlow({
           <p className="st-lead">
             A Yakini person will reach out to schedule the kickoff call. No card was charged.
           </p>
+          <p className="st-operator">Built by a real operator.</p>
           <dl className="st-recap">
             <div><dt>Business</dt><dd>{draft.contact.businessName}</dd></div>
             <div><dt>Kind</dt><dd>{template?.label}</dd></div>
@@ -315,8 +316,8 @@ export function BuildFlow({
         {step === 3 ? (
           <section>
             <div className="st-kicker"><span className="yk-eyebrow-dot" /> The honest timeline</div>
-            <h1 className="st-h" tabIndex={-1} ref={headingRef}>Here&apos;s what happens, and how long it really takes.</h1>
-            <p className="st-lead">We build your system with you, so it&apos;s built right. That takes a little while, and we&apos;d rather tell you now than surprise you later.</p>
+            <h1 className="st-h" tabIndex={-1} ref={headingRef}>Built by a real operator.</h1>
+            <p className="st-lead">Here&apos;s what happens, and how long it really takes. We build your system with you, so it&apos;s built right. That takes a little while, and we&apos;d rather tell you now than surprise you later.</p>
             <div className="st-time">
               {timelineBlocks(address).map((block) => (
                 <article key={block.title}>

@@ -239,6 +239,16 @@ export const FLOW_CSS = `
   .st-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
   .st-done { padding-bottom: 24px; }
   .st-done h1 { max-width: 12ch; }
+  .st-operator {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(36px, 8vw, 56px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    color: var(--gold);
+    margin: 4px 0 8px;
+    max-width: 12ch;
+  }
   .st-recap {
     margin-top: 22px; padding: 0;
   }
