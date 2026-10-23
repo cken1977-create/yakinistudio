@@ -110,25 +110,51 @@ export default function HomePage() {
 
 const HOME_CSS = `
   .hh {
-    position: relative; min-height: 100vh; min-height: 100svh;
+    position: relative; isolation: isolate; min-height: 100vh; min-height: 100svh;
     display: flex; align-items: center;
     padding: 120px 20px 72px;
-    background:
-      linear-gradient(90deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0.72) 55%, rgba(10,9,8,0.55) 100%),
-      linear-gradient(180deg, rgba(10,9,8,0.35) 0%, rgba(10,9,8,0.95) 100%),
-      url('/yakini-apply-bg.jpg') center / cover no-repeat;
+    background-color: #0A0908;
     overflow: hidden;
   }
+  /* Door photo. Opacity stays 1. Was a background on .hh, under the scrims in ::after. */
+  .hh::before {
+    content: '';
+    position: absolute; inset: 0; z-index: 0;
+    background: url('/yakini-apply-bg.jpg') center / cover no-repeat;
+    /* Pull the near-white yellow edge highlights down a little. The radials in ::after do the rest. */
+    filter: saturate(0.84) contrast(0.96);
+  }
   .hh::after {
-    content: ''; position: absolute; left: 50%; bottom: -30%; transform: translateX(-50%);
-    width: 1200px; height: 700px; pointer-events: none;
-    background: radial-gradient(ellipse at center, rgba(200,168,75,0.14) 0%, transparent 60%);
+    content: '';
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    /* Phone. Lighter through the middle so the door reads, darker at the top for the nav.
+       Radials sit on the yellow edge highlights (left edge, lower half of this crop). */
+    background:
+      linear-gradient(180deg, rgba(10,9,8,0.58) 0%, rgba(10,9,8,0.28) 18%, rgba(10,9,8,0.14) 36%, rgba(10,9,8,0.16) 62%, rgba(10,9,8,0.28) 100%),
+      radial-gradient(ellipse 20% 16% at 4% 84%, rgba(18,11,6,0.78) 0%, rgba(18,11,6,0.40) 50%, rgba(18,11,6,0) 85%),
+      radial-gradient(ellipse 40% 20% at 30% 62%, rgba(18,11,6,0.28) 0%, rgba(18,11,6,0.10) 60%, rgba(18,11,6,0) 100%);
   }
   .hh-inner {
     position: relative; z-index: 1; width: 100%; max-width: 1400px; margin: 0 auto;
     display: grid; grid-template-columns: 1fr; gap: 56px; align-items: center;
   }
-  .hh-copy { animation: hh-up 0.9s cubic-bezier(0.16,1,0.3,1) both; }
+  .hh-copy { position: relative; z-index: 1; animation: hh-up 0.9s cubic-bezier(0.16,1,0.3,1) both; }
+  /* Soft field behind the words only. Lighter behind the large headline, darker behind the small lines. */
+  .hh-copy::before {
+    content: '';
+    position: absolute; z-index: -1; pointer-events: none;
+    inset: -28px -20px -32px -18px;
+    background: linear-gradient(180deg,
+      rgba(10,9,8,0.70) 0%,
+      rgba(10,9,8,0.58) 10%,
+      rgba(10,9,8,0.44) 18%,
+      rgba(10,9,8,0.44) 34%,
+      rgba(10,9,8,0.62) 46%,
+      rgba(10,9,8,0.76) 58%,
+      rgba(10,9,8,0.84) 100%);
+    filter: blur(14px);
+    border-radius: 28px;
+  }
   .hh-visual { display: flex; justify-content: center; animation: hh-up 1.1s 0.15s cubic-bezier(0.16,1,0.3,1) both; }
   @keyframes hh-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
   .hh-h1 {
@@ -146,7 +172,27 @@ const HOME_CSS = `
   .hh-signin a:hover { color: var(--gold); border-color: var(--gold); }
   @media (min-width: 1100px) {
     .hh { padding: 140px 32px 96px; }
+    .hh::after {
+      /* Desktop. Was 90deg 0.92 / 0.72 at 55% / 0.55, and 180deg 0.35 to 0.95.
+         The radial damps the yellow edge highlights under the lower headline. */
+      background:
+        linear-gradient(90deg, rgba(10,9,8,0.64) 0%, rgba(10,9,8,0.38) 42%, rgba(10,9,8,0.20) 100%),
+        linear-gradient(180deg, rgba(10,9,8,0.46) 0%, rgba(10,9,8,0.16) 36%, rgba(10,9,8,0.24) 100%),
+        radial-gradient(ellipse 26% 18% at 42% 80%, rgba(18,11,6,0.68) 0%, rgba(18,11,6,0.32) 50%, rgba(18,11,6,0) 80%);
+    }
     .hh-inner { grid-template-columns: 1.15fr 1fr; gap: 64px; }
+    .hh-copy::before {
+      inset: -36px -48px -40px -28px;
+      background: linear-gradient(180deg,
+        rgba(10,9,8,0.62) 0%,
+        rgba(10,9,8,0.55) 8%,
+        rgba(10,9,8,0.34) 18%,
+        rgba(10,9,8,0.36) 34%,
+        rgba(10,9,8,0.38) 46%,
+        rgba(10,9,8,0.70) 56%,
+        rgba(10,9,8,0.78) 68%,
+        rgba(10,9,8,0.82) 100%);
+    }
   }
 
   /* FAQ */
