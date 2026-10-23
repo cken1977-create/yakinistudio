@@ -49,6 +49,23 @@ export const FLOW_CSS = `
     font-size: 14px; line-height: 1.5;
   }
   .st-test strong { color: var(--gold); font-weight: 600; letter-spacing: 0.04em; }
+  .st-welcome {
+    margin: 0 0 22px; padding: 16px;
+    border: 1px solid var(--gold);
+    background: rgba(200, 168, 75, 0.1);
+  }
+  .st-welcome p { margin: 0 0 14px; color: var(--cream); font-size: 16px; line-height: 1.45; }
+  .st-welcome-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .st-honest { margin-top: 12px; }
+  .st-email-build { margin-top: 18px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .st-email-build p { margin: 0; font-size: 14px; line-height: 1.5; color: rgba(244,241,235,0.72); max-width: 40em; }
+  .st-link {
+    background: none; border: none; padding: 0; cursor: pointer;
+    color: var(--gold); font-size: 15px;
+    border-bottom: 1px solid rgba(200,168,75,0.45);
+  }
+  .st-check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.45; color: var(--cream); }
+  .st-check input { margin-top: 3px; accent-color: var(--gold); }
   .st-list { display: flex; flex-direction: column; gap: 12px; }
   .st-choice {
     position: relative;

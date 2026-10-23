@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { SiteShell } from '@/components/SiteShell'
 import { BuildFlow } from '@/components/start/BuildFlow'
 import { FLOW_CSS } from '@/components/start/flow-css'
+import { safeBuildToken } from '@/lib/orders/saved-build'
 import { intakeTestMode, loadCatalog, loadSeats } from '@/lib/orders/submit'
 
 export const dynamic = 'force-dynamic'
@@ -20,17 +21,18 @@ function first(value: string | string[] | undefined): string {
 export default async function StartPage({
   searchParams,
 }: {
-  searchParams: Promise<{ plan?: string | string[]; kit?: string | string[] }>
+  searchParams: Promise<{ plan?: string | string[]; kit?: string | string[]; build?: string | string[] }>
 }) {
   const query = await searchParams
   const [catalog, seats] = await Promise.all([loadCatalog(), loadSeats()])
   const initialPlanId = first(query.plan) || first(query.kit)
+  const buildToken = safeBuildToken(first(query.build)) ?? ''
 
   return (
     <SiteShell>
       <style>{FLOW_CSS}</style>
       {catalog ? (
-        <BuildFlow catalog={catalog} seats={seats} initialPlanId={initialPlanId} testMode={intakeTestMode()} />
+        <BuildFlow catalog={catalog} seats={seats} initialPlanId={initialPlanId} testMode={intakeTestMode()} buildToken={buildToken} />
       ) : (
         <div className="st">
           <div className="st-wrap">

@@ -1,6 +1,7 @@
 // Server-only. Imported by the start page and the /api/start route, never by the browser.
 import { FOUNDING_API, PORTAL_URL } from '@/lib/pricing'
 import { parseCatalog, parseSeats, type Catalog, type FoundingSeats, type OrderIntake } from '@/lib/orders/logic'
+import { parseSavedBuild, safeBuildToken, type BuildEmailPayload, type SavedBuild } from '@/lib/orders/saved-build'
 
 /**
  * ORDER_INTAKE_SECRET
@@ -94,5 +95,66 @@ export async function submitIntake(intake: OrderIntake): Promise<SubmitResult> {
   } catch (error) {
     console.error('[start] portal order request failed', error instanceof Error ? error.name : 'error')
     return { ok: false, status: 502 }
+  }
+}
+
+export type DraftSaveResult = { ok: true; testMode: boolean; sent: boolean }
+
+/**
+ * Ask the portal to email a link back to this build.
+ * Preview and local stay in test mode and do not call the portal, same as order submit.
+ * A missing or failing endpoint does not throw. The caller keeps the flow moving.
+ */
+export async function saveBuildDraft(payload: BuildEmailPayload): Promise<DraftSaveResult> {
+  if (intakeTestMode()) {
+    console.info('[start] test mode; build draft was not sent', { env: process.env.VERCEL_ENV ?? 'local' })
+    return { ok: true, testMode: true, sent: false }
+  }
+  const secret = process.env.ORDER_INTAKE_SECRET?.trim()
+  if (!secret) return { ok: true, testMode: true, sent: false }
+  try {
+    const response = await fetch(`${PORTAL_URL}/api/orders/drafts`, {
+      method: 'POST',
+      cache: 'no-store',
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${secret}`,
+        'x-order-intake-secret': secret,
+      },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(12_000),
+    })
+    if (!response.ok) {
+      console.error('[start] build draft was not accepted', response.status)
+      return { ok: true, testMode: false, sent: false }
+    }
+    return { ok: true, testMode: false, sent: true }
+  } catch (error) {
+    console.error('[start] build draft request failed', error instanceof Error ? error.name : 'error')
+    return { ok: true, testMode: false, sent: false }
+  }
+}
+
+/** Restore a build from the portal. A 404, or any other miss, returns null. */
+export async function loadBuildDraft(token: string): Promise<SavedBuild | null> {
+  const safe = safeBuildToken(token)
+  if (!safe) return null
+  try {
+    const headers: Record<string, string> = { accept: 'application/json' }
+    const secret = process.env.ORDER_INTAKE_SECRET?.trim()
+    if (secret && !intakeTestMode()) {
+      headers.authorization = `Bearer ${secret}`
+      headers['x-order-intake-secret'] = secret
+    }
+    const response = await fetch(`${PORTAL_URL}/api/orders/drafts/${encodeURIComponent(safe)}`, {
+      cache: 'no-store',
+      headers,
+      signal: AbortSignal.timeout(12_000),
+    })
+    if (!response.ok) return null
+    return parseSavedBuild(await response.json())
+  } catch (error) {
+    console.info('[start] build draft was not loaded', error instanceof Error ? error.name : 'error')
+    return null
   }
 }

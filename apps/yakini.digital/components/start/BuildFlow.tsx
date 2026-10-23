@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { businessLabel, filterBusinesses, resolveTemplate } from '@/lib/orders/businesses'
 import {
   domainFromDraft,
@@ -22,7 +22,20 @@ import {
   type FoundingSeats,
 } from '@/lib/orders/logic'
 import { ADDON_SECTION, SHOWCASE, addonGroupLabel, addonPriceText, addonSummaryHeading, itemStatus, rowStatusLabel, showcaseItems, type FeatureStatus, type ShowcaseItem } from '@/lib/orders/showcase'
-import { ADDON_PLAN_LINE, INCLUDED_NOT_ADDONS, PLAN_HIGHLIGHTS, PRICE_PROMISE, REFUND_RULE, SEE_BEFORE_YOU_PAY, SETUP_INCLUDES } from '@/lib/pricing'
+import {
+  buildHasProgress,
+  clearStoredBuild,
+  draftFromSaved,
+  emailBuildPayload,
+  parseSavedBuild,
+  readStoredBuild,
+  savedFromDraft,
+  writeStoredBuild,
+  type SavedBuild,
+} from '@/lib/orders/saved-build'
+import { ADDON_PLAN_LINE, HONEST_PRICE_LINE, INCLUDED_NOT_ADDONS, PLAN_HIGHLIGHTS, PRICE_PROMISE, REFUND_RULE, SEE_BEFORE_YOU_PAY, SETUP_INCLUDES } from '@/lib/pricing'
+
+const EMAIL_CONSENT = 'We\'ll email you a link back to your build. One reminder at most, unsubscribe anytime.'
 
 const STEPS = ['Business', 'Features', 'Domain', 'Timeline', 'Total'] as const
 
@@ -33,11 +46,13 @@ export function BuildFlow({
   seats,
   initialPlanId,
   testMode,
+  buildToken = '',
 }: {
   catalog: Catalog
   seats: FoundingSeats | null
   initialPlanId: string
   testMode: boolean
+  buildToken?: string
 }) {
   const plans = useMemo(() => publicPlans(catalog, seats), [catalog, seats])
   const queryPlan = plans.some((plan) => plan.id === initialPlanId)
@@ -49,13 +64,108 @@ export function BuildFlow({
   const [done, setDone] = useState<Done | null>(null)
   const [bizQuery, setBizQuery] = useState('')
   const [openCats, setOpenCats] = useState<string[]>(['ai', ADDON_SECTION.id])
+  const [welcome, setWelcome] = useState(false)
+  const [ready, setReady] = useState(false)
+  const [emailOpen, setEmailOpen] = useState(false)
+  const [emailConsent, setEmailConsent] = useState(false)
+  const [emailBusy, setEmailBusy] = useState(false)
+  const [emailNote, setEmailNote] = useState('')
   const headingRef = useRef<HTMLHeadingElement>(null)
   const moved = useRef(false)
+
+  const applySaved = useCallback((saved: SavedBuild) => {
+    const next = draftFromSaved(saved, startingPlan)
+    if (next.planId && !plans.some((item) => item.id === next.planId)) {
+      next.planId = suggestPlanId(catalog, next.featureIds, seats) ?? startingPlan
+      next.planTouched = false
+    }
+    setDraft(next)
+    setStep(saved.step)
+  }, [catalog, plans, seats, startingPlan])
+
+  useEffect(() => {
+    let cancel = false
+    async function boot() {
+      if (buildToken) {
+        try {
+          const response = await fetch(`/api/start/draft?token=${encodeURIComponent(buildToken)}`)
+          const body = await response.json().catch(() => null) as { build?: unknown } | null
+          const saved = body ? parseSavedBuild(body.build ?? body) : null
+          if (!cancel && saved && buildHasProgress(saved)) {
+            applySaved(saved)
+            setReady(true)
+            return
+          }
+        } catch {
+          // A missing draft link leaves the page as a fresh build.
+        }
+      }
+      if (cancel) return
+      const stored = readStoredBuild(window.localStorage)
+      if (stored && buildHasProgress(stored)) {
+        applySaved(stored)
+        setWelcome(true)
+      }
+      setReady(true)
+    }
+    void boot()
+    return () => { cancel = true }
+  }, [applySaved, buildToken])
+
+  useEffect(() => {
+    if (!ready) return
+    if (done) {
+      clearStoredBuild(window.localStorage)
+      return
+    }
+    writeStoredBuild(window.localStorage, savedFromDraft(draft, step))
+  }, [ready, done, draft, step])
 
   useEffect(() => {
     if (!moved.current) return
     headingRef.current?.focus()
   }, [step, done])
+
+  function startOver() {
+    clearStoredBuild(window.localStorage)
+    setDraft({ ...emptyDraft(startingPlan), planTouched: queryPlan })
+    setStep(0)
+    setWelcome(false)
+    setBizQuery('')
+    setError('')
+    setEmailOpen(false)
+    setEmailConsent(false)
+    setEmailNote('')
+  }
+
+  async function emailBuild() {
+    if (!emailConsent) {
+      setEmailNote('Tick the box to email the link.')
+      return
+    }
+    const payload = emailBuildPayload(savedFromDraft(draft, step), draft.contact.name, draft.contact.email, true)
+    if (!payload) {
+      setEmailNote('Add your name and email above first.')
+      return
+    }
+    setEmailBusy(true)
+    setEmailNote('')
+    try {
+      const response = await fetch('/api/start/draft', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const body = await response.json().catch(() => null) as { testMode?: boolean; sent?: boolean } | null
+      if (!response.ok || !body) return
+      if (body.testMode) setEmailNote('Saved on this device. A preview does not email the link.')
+      else if (body.sent) setEmailNote('We’ll email you a link back to your build.')
+    } catch {
+      // The draft endpoint can be down. The build stays on this device.
+    } finally {
+      setEmailBusy(false)
+    }
+  }
 
   const businesses = useMemo(() => filterBusinesses(bizQuery), [bizQuery])
   const growOnly = useMemo(() => growOnlyIds(catalog), [catalog])
@@ -203,6 +313,15 @@ export function BuildFlow({
           <div className="st-test">
             <strong>Test preview. </strong>
             Reserving here does not create an order, and no card is charged.
+          </div>
+        ) : null}
+        {welcome ? (
+          <div className="st-welcome" role="status">
+            <p>Welcome back. Your build was saved, and nothing was charged.</p>
+            <div className="st-welcome-actions">
+              <button type="button" className="st-btn st-btn-gold" onClick={() => setWelcome(false)}>Continue</button>
+              <button type="button" className="st-btn" onClick={startOver}>Start over</button>
+            </div>
           </div>
         ) : null}
         <div className="st-progress">
@@ -416,6 +535,7 @@ export function BuildFlow({
             <aside className="st-promise">
               <h2>{PRICE_PROMISE.title}</h2>
               <p>{PRICE_PROMISE.body}</p>
+              <p className="st-honest">{HONEST_PRICE_LINE}</p>
             </aside>
             {pickedGrow.length ? (
               <p className="st-note">Grow is selected because of what you picked. Turn those features off on the previous step to choose Founding or Operate.</p>
@@ -508,6 +628,23 @@ export function BuildFlow({
                 <Field id="business" label="Business name" autoComplete="organization" value={draft.contact.businessName} onChange={(businessName) => setDraft((current) => ({ ...current, contact: { ...current.contact, businessName } }))} />
                 <Field id="email" label="Email" type="email" autoComplete="email" value={draft.contact.email} onChange={(email) => setDraft((current) => ({ ...current, contact: { ...current.contact, email } }))} />
                 <Field id="phone" label="Phone" type="tel" autoComplete="tel" value={draft.contact.phone} onChange={(phone) => setDraft((current) => ({ ...current, contact: { ...current.contact, phone } }))} />
+              </div>
+              <div className="st-email-build">
+                {emailOpen ? (
+                  <>
+                    <p>{EMAIL_CONSENT}</p>
+                    <label className="st-check">
+                      <input type="checkbox" checked={emailConsent} onChange={(event) => setEmailConsent(event.target.checked)} />
+                      <span>Email me a link back to this build.</span>
+                    </label>
+                    <button type="button" className="st-btn" disabled={emailBusy} onClick={() => void emailBuild()}>
+                      {emailBusy ? 'Sending…' : 'Email me my build'}
+                    </button>
+                    {emailNote ? <p role="status">{emailNote}</p> : null}
+                  </>
+                ) : (
+                  <button type="button" className="st-link" onClick={() => setEmailOpen(true)}>Email me my build</button>
+                )}
               </div>
             </div>
             {error ? <p className="st-error" role="alert">{error}</p> : null}

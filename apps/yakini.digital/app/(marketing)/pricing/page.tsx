@@ -16,6 +16,7 @@ import {
   PLANS,
   PLAN_HIGHLIGHTS,
   PLAN_MODULES,
+  HONEST_PRICE_LINE,
   PRICE_PROMISE,
   ADDON_PLAN_LINE,
   INTEGRATIONS_COPY,
@@ -129,6 +130,7 @@ export default function PricingPage() {
           <aside className="pn-promise">
             <h3>{PRICE_PROMISE.title}</h3>
             <p>{PRICE_PROMISE.body}</p>
+            <p className="pn-honest">{HONEST_PRICE_LINE}</p>
           </aside>
           <aside className="pn-setup-list">
             <h3>What your $499 setup includes</h3>
@@ -1020,6 +1022,7 @@ const NEW_CSS = `
     font-family: var(--font-display); font-weight: 500; font-size: clamp(28px, 4vw, 40px); margin: 0 0 10px; line-height: 1.05;
   }
   .pn-promise p, .pn-integrations p, .pn-setup-list p { margin: 0; color: rgba(244,241,235,0.82); font-size: 16px; line-height: 1.5; }
+  .pn-promise .pn-honest { margin-top: 14px; }
   .pn-setup-list p { margin-top: 12px; color: rgba(244,241,235,0.62); font-size: 14px; }
   .pn-setup-list ul, .pn-addons ul { margin: 0; padding: 0; }
   .pn-setup-list li, .pn-addons li { position: relative; list-style: none; padding: 8px 0 8px 26px; font-size: 16px; }

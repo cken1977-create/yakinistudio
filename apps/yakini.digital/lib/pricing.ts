@@ -136,6 +136,10 @@ export const PRICE_PROMISE = {
   body: 'One price for your plan. No surprise usage bills, no wallet that refills itself, and no premium add-on folded into that price. Help hours are included with your plan. Drafted replies and transcripts stay inside the plan’s cap, and we warn you at 80%. Anything past that is quoted before it starts: $150 an hour, or a move up to the next plan.',
 } as const
 
+/** Sits next to the price promise. No card is taken on this page, and nothing is added later without a quote. */
+export const HONEST_PRICE_LINE =
+  'No free-trial card trap, and no usage fees added later. What you see is what you pay.'
+
 /** Live on every published plan, or part of delivery. Not a list of extras. */
 export const INCLUDED_NOT_ADDONS = [
   'Your own branded portal, on your own domain',
@@ -157,15 +161,15 @@ export const INCLUDED_NOT_ADDONS = [
  * Branding is the "brand" input on the approved plan's setup path.
  */
 export const SETUP_INCLUDES = [
-  'Your own system, created with the plan features you picked',
-  'Branded with your name, logo, and colors',
-  'Connected to your own domain. We walk through the one record with you. If you need a domain, we register it in your business’s name.',
-  'A kickoff call with your Yakini operator',
-  'Your booking page, services, and hours, set up with you',
-  'Your business texting line requested, and the carrier registration filed. It goes live after approval, usually 1 to 4 weeks.',
-  'Your login, so you can sign in',
-  'A walkthrough with your operator, so you can run it',
-  'A go-live check on your domain',
+  'Your system set up and branded for you, included. The plan features you picked, with your name, logo, and colors.',
+  'Your kickoff call with a real Yakini operator, included',
+  'Help desk with a real person, included',
+  'Connected to your own domain, included. We walk through the one record with you. If you need a domain, we register it in your business’s name.',
+  'Your booking page, services, and hours, set up with you, included',
+  'Your business texting line requested, and the carrier registration filed, included. It goes live after approval, usually 1 to 4 weeks.',
+  'Your login, so you can sign in, included',
+  'A walkthrough with your operator, so you can run it, included',
+  'A go-live check on your domain, included',
 ] as const
 
 export const SEE_BEFORE_YOU_PAY = 'See everything before you pay.'

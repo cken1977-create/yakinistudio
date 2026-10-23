@@ -3,7 +3,7 @@ import test from 'node:test'
 import { parseCatalog, type Catalog } from './logic.ts'
 import { BUSINESSES, filterBusinesses, resolveTemplate } from './businesses.ts'
 import { ADDON_SECTION, addonPriceText, addonRowLabel, addonSummaryHeading, itemStatus, rowStatusLabel, showcaseItems, type ShowcaseItem } from './showcase.ts'
-import { ADDON_PLAN_LINE, INCLUDED_NOT_ADDONS, INTEGRATIONS_COPY, PLAN_HIGHLIGHTS, PLANS, PRICE_PROMISE, SEE_BEFORE_YOU_PAY, SETUP_INCLUDES } from '../pricing.ts'
+import { ADDON_PLAN_LINE, HONEST_PRICE_LINE, INCLUDED_NOT_ADDONS, INTEGRATIONS_COPY, PLAN_HIGHLIGHTS, PLANS, PRICE_PROMISE, SEE_BEFORE_YOU_PAY, SETUP_INCLUDES } from '../pricing.ts'
 
 const catalog = parseCatalog({
   templates: [
@@ -110,6 +110,7 @@ test('customer copy does not name vendors or claim unlimited seats', () => {
     ...BUSINESSES.map((item) => item.label),
     PRICE_PROMISE.title,
     PRICE_PROMISE.body,
+    HONEST_PRICE_LINE,
     ADDON_PLAN_LINE,
     ADDON_SECTION.title,
     ADDON_SECTION.lede,
@@ -139,8 +140,15 @@ test('customer copy does not name vendors or claim unlimited seats', () => {
   assert.equal(PLAN_HIGHLIGHTS.operate.bullets.some((line) => /unlimited/i.test(line)), false)
   assert.equal(PLANS.find((plan) => plan.id === 'grow')?.setup, 499)
   assert.equal(SEE_BEFORE_YOU_PAY, 'See everything before you pay.')
-  const setup = SETUP_INCLUDES.join(' ').toLowerCase()
-  assert.equal(setup.includes('import'), false)
-  assert.equal(setup.includes('team'), false)
+  assert.equal(HONEST_PRICE_LINE, 'No free-trial card trap, and no usage fees added later. What you see is what you pay.')
+  const setup = SETUP_INCLUDES.join(' ')
+  const setupLower = setup.toLowerCase()
+  assert.equal(setupLower.includes('import'), false)
+  assert.equal(setupLower.includes('team'), false)
   assert.match(setup, /1 to 4 weeks/)
+  assert.equal(/\$\d/.test(setup), false)
+  for (const line of SETUP_INCLUDES) assert.match(line, /included/i)
+  assert.match(setup, /Your kickoff call with a real Yakini operator, included/)
+  assert.match(setup, /Your system set up and branded for you, included/)
+  assert.match(setup, /Help desk with a real person, included/)
 })
