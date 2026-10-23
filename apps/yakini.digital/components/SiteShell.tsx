@@ -23,21 +23,13 @@ export const TAGLINE = 'SET UP WITH YOU · HERE TO STAY'
 export function BrandMark() {
   return (
     <Link href="/" className="yk-brand" aria-label="Yakini home">
-      {/* The Yakini logo: the gold Y mark from the locked lockup (/yakini-lockup.jpg),
-          cropped to the mark as /yakini-mark.jpg so it reads at header size. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/yakini-mark.jpg"
-        alt=""
-        aria-hidden="true"
-        width={44}
-        height={44}
-        className="yk-brand-mark"
-      />
-      <div className="yk-brand-text">
-        <span className="yk-brand-name">YAKINI</span>
-        <span className="yk-brand-sub">{TAGLINE}</span>
-      </div>
+      {/* The Yakini logo: the full locked lockup (/yakini-lockup.jpg, gold Y over the
+          YAKINI lettering), framed to the artwork so the lettering reads at header size. */}
+      <span className="yk-brand-logo">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/yakini-lockup.jpg" alt="Yakini" width={784} height={1168} />
+      </span>
+      <span className="yk-brand-sub">{TAGLINE}</span>
     </Link>
   )
 }
@@ -191,12 +183,12 @@ const GLOBAL_CSS = `
   /* ═══ NAV ═══ */
   .yk-nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    padding: 18px 32px;
+    padding: 14px 32px;
     background: transparent;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .yk-nav.scrolled {
-    padding: 12px 32px;
+    padding: 10px 32px;
     background: rgba(5, 14, 31, 0.85);
     backdrop-filter: blur(24px) saturate(180%);
     border-bottom: 1px solid var(--line);
@@ -209,34 +201,33 @@ const GLOBAL_CSS = `
   .yk-brand {
     display: flex; align-items: center; gap: 12px;
   }
-  .yk-brand-mark {
-    display: block;
-    width: 44px; height: 44px;
-    object-fit: cover;
-    border: 1px solid rgba(200, 168, 75, 0.35);
-    flex-shrink: 0;
+  /* Logo frame: shows the lockup artwork (source box 70,245 → 720,985 of 784×1168),
+     trimming only the empty background around it. --logo-h sets the size. */
+  .yk-brand-logo {
+    --logo-h: 72px;
+    position: relative; display: block; overflow: hidden; flex-shrink: 0;
+    height: var(--logo-h);
+    width: calc(var(--logo-h) * 650 / 740);
+    border: 1px solid rgba(200, 168, 75, 0.3);
+    background: #222327;
     transition: border-color 0.3s;
   }
-  .yk-brand:hover .yk-brand-mark {
-    border-color: var(--gold);
+  .yk-brand-logo img {
+    position: absolute; max-width: none;
+    height: calc(var(--logo-h) * 1168 / 740);
+    width: auto;
+    left: calc(var(--logo-h) * -70 / 740);
+    top: calc(var(--logo-h) * -245 / 740);
   }
-  .yk-brand-text {
-    display: flex; flex-direction: column; line-height: 1;
-  }
-  .yk-brand-name {
-    font-family: var(--font-body);
-    font-weight: 700;
-    font-size: 15px;
-    letter-spacing: 0.18em;
-    color: var(--cream);
-  }
+  .yk-brand:hover .yk-brand-logo { border-color: var(--gold); }
   .yk-brand-sub {
     font-family: var(--font-body);
     font-weight: 500;
     font-size: 8.5px;
     letter-spacing: 0.2em;
     color: var(--gold);
-    margin-top: 4px;
+    line-height: 1.5;
+    max-width: 120px;
   }
 
   .yk-nav-center {
@@ -334,13 +325,15 @@ const GLOBAL_CSS = `
     .yk-burger { display: block; }
     .yk-nav-right { gap: 8px; }
     .yk-nav-cta { padding: 9px 16px; font-size: 12px; }
+    .yk-brand-logo { --logo-h: 64px; }
+    .yk-mobile-menu { top: 88px; }
   }
   @media (max-width: 420px) {
     .yk-nav { padding: 14px 18px; }
     .yk-nav.scrolled { padding: 10px 18px; }
     .yk-brand-sub { display: none; }
-    .yk-brand { gap: 10px; }
-    .yk-brand-mark { width: 36px; height: 36px; }
+    .yk-brand-logo { --logo-h: 60px; }
+    .yk-mobile-menu { top: 80px; }
   }
 
   /* ═══ SHARED SECTION FOUNDATIONS ═══ */
