@@ -133,13 +133,13 @@ export const PLAN_HIGHLIGHTS = {
 
 export const PRICE_PROMISE = {
   title: 'What you see is what you pay',
-  body: 'One price. No surprise usage bills, no wallet that refills itself, no hidden add-ons. Help hours are included with your plan. Drafted replies and transcripts stay inside the plan’s cap, and we warn you at 80%. Anything past that is quoted before it starts: $150 an hour, or a move up to the next plan.',
+  body: 'One price for your plan. No surprise usage bills, no wallet that refills itself, and no premium add-on folded into that price. Help hours are included with your plan. Drafted replies and transcripts stay inside the plan’s cap, and we warn you at 80%. Anything past that is quoted before it starts: $150 an hour, or a move up to the next plan.',
 } as const
 
 /** Live on every published plan, or part of delivery. Not a list of extras. */
 export const INCLUDED_NOT_ADDONS = [
   'Your own branded portal, on your own domain',
-  'AI help inside your plan’s cap',
+  'Drafted replies inside your plan’s cap',
   'A real Yakini operator, plus your plan’s help hours',
   'Domain connection on the kickoff call',
   'Online booking you confirm',
@@ -157,7 +157,7 @@ export const INCLUDED_NOT_ADDONS = [
  * Branding is the "brand" input on the approved plan's setup path.
  */
 export const SETUP_INCLUDES = [
-  'Your own system, created with the features you picked',
+  'Your own system, created with the plan features you picked',
   'Branded with your name, logo, and colors',
   'Connected to your own domain. We walk through the one record with you. If you need a domain, we register it in your business’s name.',
   'A kickoff call with your Yakini operator',
@@ -170,13 +170,13 @@ export const SETUP_INCLUDES = [
 
 export const SEE_BEFORE_YOU_PAY = 'See everything before you pay.'
 
-/** One line on the plan cards and /pricing. Add-ons are not inside the plan price. */
+/** One line on the plan cards and /pricing. Premium add-ons are not inside the plan price. */
 export const ADDON_PLAN_LINE =
-  'Need more? Add-ons like an AI that answers for you are available at extra cost.'
+  'Need more? Premium add-ons, like an AI that answers for you, are priced separately from your plan.'
 
 export const INTEGRATIONS_COPY = {
-  title: 'Integrations: we connect to what you already use',
-  body: 'Already have tools you like? Keep them. We connect your system to the payment processor, calendar, accounting, and customer list you already run, and to your website, phone line, email, and most tools that offer a connection. Your Yakini operator sets it up with you. Those connections are not in the system today, so each one is an add-on, priced with you, at an additional cost.',
+  title: 'Premium add-ons: connections to what you already use',
+  body: 'Already have tools you like? Keep them. Connecting the payment processor, calendar, accounting, or customer list you already run is a premium add-on, built custom for your business and priced separately from your plan. The same is true for your website, phone line, email, and most tools that offer a connection.',
 } as const
 
 export const PLANS: readonly Plan[] = [

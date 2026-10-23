@@ -21,7 +21,7 @@ import {
   type Draft,
   type FoundingSeats,
 } from '@/lib/orders/logic'
-import { ADDON_SECTION, SHOWCASE, addonPriceText, addonSummaryHeading, categoryForItem, itemStatus, rowStatusLabel, showcaseItems, type FeatureStatus, type ShowcaseItem } from '@/lib/orders/showcase'
+import { ADDON_SECTION, SHOWCASE, addonGroupLabel, addonPriceText, addonSummaryHeading, itemStatus, rowStatusLabel, showcaseItems, type FeatureStatus, type ShowcaseItem } from '@/lib/orders/showcase'
 import { ADDON_PLAN_LINE, INCLUDED_NOT_ADDONS, PLAN_HIGHLIGHTS, PRICE_PROMISE, REFUND_RULE, SEE_BEFORE_YOU_PAY, SETUP_INCLUDES } from '@/lib/pricing'
 
 const STEPS = ['Business', 'Features', 'Domain', 'Timeline', 'Total'] as const
@@ -182,7 +182,7 @@ export function BuildFlow({
             <div><dt>Plan</dt><dd>{plan ? `${plan.name} · ${monthlyLabel(plan)}` : ''}</dd></div>
             {chosenAddons.length ? (
               <div>
-                <dt>Add-ons</dt>
+                <dt>Premium add-ons</dt>
                 <dd>
                   {chosenAddons.map((entry) => `${entry.name} (${addonPriceText(entry)})`).join(', ')}. Priced with you on your kickoff call. Not part of the plan total.
                 </dd>
@@ -257,10 +257,10 @@ export function BuildFlow({
           <section>
             <div className="st-kicker"><span className="yk-eyebrow-dot" /> Your system</div>
             <h1 className="st-h" tabIndex={-1} ref={headingRef}>What should it do?</h1>
-            <p className="st-lead">Tick what is included today. Coming soon is on the roadmap, with no date. Add-ons are extra, and each one is priced with you.</p>
+            <p className="st-lead">Tick what is included today. Coming soon is on the roadmap, with no date. Premium add-ons are built custom and priced separately from your plan.</p>
             <p className="st-count">
               <strong>{draft.featureIds.length}</strong> included in your setup
-              {draft.addonIds.length ? <> · <strong>{chosenAddons.length}</strong> add-ons, priced with you</> : null}
+              {draft.addonIds.length ? <> · <strong>{chosenAddons.length}</strong> premium add-ons, priced with you</> : null}
             </p>
             {SHOWCASE.map((category) => {
               const rows = category.items.filter((entry) => itemStatus(entry, catalog) !== 'addon')
@@ -560,7 +560,7 @@ function AddonSection({
         <CatIcon id={ADDON_SECTION.id} />
         <span>
           <h2>{ADDON_SECTION.title}</h2>
-          <small>{rows.length} extra, priced with you</small>
+          <small>{rows.length} priced separately</small>
         </span>
       </button>
       {open ? (
@@ -568,8 +568,8 @@ function AddonSection({
           <p className="st-lede">{ADDON_SECTION.lede}</p>
           <div className="st-list">
             {rows.map((entry, index) => {
-              const group = categoryForItem(entry.id)?.title ?? ''
-              const previous = index > 0 ? (categoryForItem(rows[index - 1].id)?.title ?? '') : ''
+              const group = addonGroupLabel(entry.id)
+              const previous = index > 0 ? addonGroupLabel(rows[index - 1].id) : ''
               const showGroup = group !== previous
               return (
                 <div key={entry.id}>

@@ -25,6 +25,8 @@ export type ShowcaseItem = {
 export type ShowcaseCategory = {
   id: string
   title: string
+  /** Group label inside Premium add-ons, when the included title would overclaim. */
+  addonLabel?: string
   lede?: string
   items: readonly ShowcaseItem[]
 }
@@ -40,12 +42,13 @@ const item = (
   setupCents: number | null = null,
 ): ShowcaseItem => ({ id, name, detail, points, moduleId, fixed, monthlyCents, setupCents })
 
-const ADDON_DETAIL = 'Not in the system today. We offer this too, at an additional cost, priced with you.'
+const ADDON_DETAIL = 'Not included in any plan. Built custom for your business, and priced with you.'
 
 export const SHOWCASE: readonly ShowcaseCategory[] = [
   {
     id: 'ai',
-    title: 'AI that answers and follows up',
+    title: 'Drafted replies',
+    addonLabel: 'An assistant that answers on its own',
     items: [
       item('aiDrafts', 'Drafted replies', 'First drafts of replies and transcripts. Nothing goes out until it is checked.', [
         'Included up to your plan’s monthly cap',
@@ -69,7 +72,7 @@ export const SHOWCASE: readonly ShowcaseCategory[] = [
         'This needs your business texting line',
         'Part of Grow',
       ], 'missedCall'),
-      item('calling-desk', 'A desk for placing and receiving calls', 'Missed-call text-back is the live piece. A full calling desk is an add-on, at an additional cost, priced with you.', [
+      item('calling-desk', 'A desk for placing and receiving calls', 'Missed-call text-back is the live piece. A desk for placing and receiving calls is a premium add-on, built custom and priced with you.', [
         'Priced with you',
       ], null, 'addon'),
       item('whatsapp', 'WhatsApp', ADDON_DETAIL, [], 'whatsapp'),
@@ -77,7 +80,8 @@ export const SHOWCASE: readonly ShowcaseCategory[] = [
   },
   {
     id: 'booking',
-    title: 'Booking and calendars',
+    title: 'Booking',
+    addonLabel: 'Calendars',
     items: [
       item('booking', 'Online booking you confirm', 'Customers request a time, and you confirm each one.', [], 'booking'),
       item('intakeForm', 'Request form', 'A public form where new customers ask for help.', [], 'intakeForm'),
@@ -86,7 +90,8 @@ export const SHOWCASE: readonly ShowcaseCategory[] = [
   },
   {
     id: 'inbox',
-    title: 'Customer inbox and CRM',
+    title: 'Customer inbox',
+    addonLabel: 'Customers and deals',
     items: [
       item('inboundTexts', 'Incoming texts in one place', 'Customer texts land in one thread, instead of your personal phone.', [
         'This needs your business texting line',
@@ -150,14 +155,14 @@ export const SHOWCASE: readonly ShowcaseCategory[] = [
   {
     id: 'integrations',
     title: 'Integrations: we connect to what you already use',
-    lede: 'Already have tools you like? Keep them. We connect your system to the payment processor, calendar, accounting, and customer list you already run. Your Yakini operator sets it up with you. If that connection is not in the system today, it is an add-on, at an additional cost, priced with you.',
+    lede: 'Already have tools you like? Keep them. Connecting the payment processor, calendar, accounting, or customer list you already run is a premium add-on. It is built custom for your business and priced separately from your plan.',
     items: [
-      item('pay-processor', 'The payment processor you already use', 'Not the same as card payments on Yakini invoices, which are not on yet. Connecting the processor you already run is an add-on, at an additional cost, priced with you.', [], null, 'addon'),
+      item('pay-processor', 'The payment processor you already use', 'Not the same as card payments on Yakini invoices, which are not on yet. Connecting the processor you already run is a premium add-on, built custom and priced with you.', [], null, 'addon'),
       item('accounting', 'Your accounting software', ADDON_DETAIL, [], null, 'addon'),
-      item('calendar', 'Your calendar', 'Online booking you confirm is live. Syncing the calendar you already use is an add-on, at an additional cost, priced with you.', [], null, 'addon'),
-      item('import-list', 'Your existing customer list', 'Bring in the list you already keep. That import is an add-on, at an additional cost, priced with you.', [], null, 'addon'),
-      item('site-links', 'Your website or booking links', 'Your Yakini booking page is live. Connecting links you already publish is an add-on, at an additional cost, priced with you.', [], null, 'addon'),
-      item('phone-line', 'Your phone line', 'Missed-call text-back is the live piece. A connection to the phone line you already use is an add-on, at an additional cost, priced with you.', [], null, 'addon'),
+      item('calendar', 'Your calendar', 'Online booking you confirm is part of the plan. Syncing the calendar you already use is a premium add-on, built custom and priced with you.', [], null, 'addon'),
+      item('import-list', 'Your existing customer list', 'Bring in the list you already keep. That import is a premium add-on, built custom and priced with you.', [], null, 'addon'),
+      item('site-links', 'Your website or booking links', 'Your Yakini booking page is part of the plan. Connecting links you already publish is a premium add-on, built custom and priced with you.', [], null, 'addon'),
+      item('phone-line', 'Your phone line', 'Missed-call text-back is the live piece. A connection to the phone line you already use is a premium add-on, built custom and priced with you.', [], null, 'addon'),
       item('email-box', 'Your email', ADDON_DETAIL, [], null, 'addon'),
       item('publicApi', 'Most tools with a connection', ADDON_DETAIL, [], 'publicApi'),
     ],
@@ -176,11 +181,11 @@ export const SHOWCASE: readonly ShowcaseCategory[] = [
   },
 ]
 
-/** Step 2 groups every add-on here, apart from what the plan includes. */
+/** Step 2 groups every premium add-on here, apart from what the plan includes. */
 export const ADDON_SECTION = {
   id: 'addons',
-  title: 'Add-ons, extra cost',
-  lede: 'We offer these too, at an additional cost. They sit on top of any plan. Tick any you want. Your plan total does not change, and each one is priced with you.',
+  title: 'Premium add-ons',
+  lede: 'Built custom for your business. These take real build work, so they\'re priced separately from your plan. Tick any you want. Your plan total does not change.',
 } as const
 
 export function itemStatus(entry: ShowcaseItem, catalog: Catalog): FeatureStatus {
@@ -196,7 +201,7 @@ export const STATUS_LABEL: Record<FeatureStatus, string> = {
   included: 'Included',
   setup: 'Set up with you',
   soon: 'Coming soon',
-  addon: 'Add-on, priced with you',
+  addon: 'Premium add-on, priced with you',
 }
 
 function money(cents: number): string {
@@ -219,7 +224,7 @@ export function addonPriceText(entry: Pick<ShowcaseItem, 'monthlyCents' | 'setup
 
 export function addonRowLabel(entry: Pick<ShowcaseItem, 'monthlyCents' | 'setupCents'>): string {
   const price = addonPriceText(entry)
-  return price === 'priced with you' ? 'Add-on, priced with you' : `Add-on, ${price}`
+  return price === 'priced with you' ? 'Premium add-on, priced with you' : `Premium add-on, ${price}`
 }
 
 export function rowStatusLabel(entry: ShowcaseItem, status: FeatureStatus): string {
@@ -229,7 +234,7 @@ export function rowStatusLabel(entry: ShowcaseItem, status: FeatureStatus): stri
 
 export function addonSummaryHeading(entries: readonly Pick<ShowcaseItem, 'monthlyCents' | 'setupCents'>[]): string {
   const open = entries.every((entry) => addonPriceText(entry) === 'priced with you')
-  return open ? 'Add-ons you picked, priced with you on your kickoff call' : 'Add-ons you picked'
+  return open ? 'Premium add-ons you picked, priced with you on your kickoff call' : 'Premium add-ons you picked'
 }
 
 export function showcaseItems(): ShowcaseItem[] {
@@ -238,4 +243,9 @@ export function showcaseItems(): ShowcaseItem[] {
 
 export function categoryForItem(id: string): ShowcaseCategory | undefined {
   return SHOWCASE.find((category) => category.items.some((entry) => entry.id === id))
+}
+
+export function addonGroupLabel(id: string): string {
+  const category = categoryForItem(id)
+  return category?.addonLabel ?? category?.title ?? ''
 }
