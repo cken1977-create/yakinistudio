@@ -23,9 +23,17 @@ export const TAGLINE = 'SET UP WITH YOU · HERE TO STAY'
 export function BrandMark() {
   return (
     <Link href="/" className="yk-brand" aria-label="Yakini home">
-      <div className="yk-brand-mark">
-        <span className="yk-brand-y">Y</span>
-      </div>
+      {/* The Yakini logo: the gold Y mark from the locked lockup (/yakini-lockup.jpg),
+          cropped to the mark as /yakini-mark.jpg so it reads at header size. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/yakini-mark.jpg"
+        alt=""
+        aria-hidden="true"
+        width={44}
+        height={44}
+        className="yk-brand-mark"
+      />
       <div className="yk-brand-text">
         <span className="yk-brand-name">YAKINI</span>
         <span className="yk-brand-sub">{TAGLINE}</span>
@@ -202,24 +210,15 @@ const GLOBAL_CSS = `
     display: flex; align-items: center; gap: 12px;
   }
   .yk-brand-mark {
-    width: 36px; height: 36px;
-    border: 1.5px solid var(--gold);
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(200, 168, 75, 0.05);
-    transition: all 0.3s;
+    display: block;
+    width: 44px; height: 44px;
+    object-fit: cover;
+    border: 1px solid rgba(200, 168, 75, 0.35);
     flex-shrink: 0;
+    transition: border-color 0.3s;
   }
-  .yk-brand-mark:hover {
-    background: rgba(200, 168, 75, 0.15);
-    transform: rotate(-5deg);
-  }
-  .yk-brand-y {
-    font-family: var(--font-display);
-    font-size: 22px;
-    font-style: italic;
-    font-weight: 500;
-    color: var(--gold);
-    line-height: 1;
+  .yk-brand:hover .yk-brand-mark {
+    border-color: var(--gold);
   }
   .yk-brand-text {
     display: flex; flex-direction: column; line-height: 1;
@@ -340,6 +339,8 @@ const GLOBAL_CSS = `
     .yk-nav { padding: 14px 18px; }
     .yk-nav.scrolled { padding: 10px 18px; }
     .yk-brand-sub { display: none; }
+    .yk-brand { gap: 10px; }
+    .yk-brand-mark { width: 36px; height: 36px; }
   }
 
   /* ═══ SHARED SECTION FOUNDATIONS ═══ */
