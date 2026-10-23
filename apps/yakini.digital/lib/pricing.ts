@@ -170,9 +170,13 @@ export const SETUP_INCLUDES = [
 
 export const SEE_BEFORE_YOU_PAY = 'See everything before you pay.'
 
+/** One line on the plan cards and /pricing. Add-ons are not inside the plan price. */
+export const ADDON_PLAN_LINE =
+  'Need more? Add-ons like an AI that answers for you are available at extra cost.'
+
 export const INTEGRATIONS_COPY = {
   title: 'Integrations: we connect to what you already use',
-  body: 'Already have tools you like? Keep them. We connect your system to the payment processor, calendar, accounting, and customer list you already run, and to your website, phone line, email, and most tools that offer a connection. Your Yakini operator sets it up with you. Those connections are not in the system today, so each one is quoted before any work starts.',
+  body: 'Already have tools you like? Keep them. We connect your system to the payment processor, calendar, accounting, and customer list you already run, and to your website, phone line, email, and most tools that offer a connection. Your Yakini operator sets it up with you. Those connections are not in the system today, so each one is an add-on, priced with you, at an additional cost.',
 } as const
 
 export const PLANS: readonly Plan[] = [

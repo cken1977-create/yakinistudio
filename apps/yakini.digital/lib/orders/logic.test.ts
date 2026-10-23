@@ -42,6 +42,7 @@ function draft(over: Partial<Draft> = {}): Draft {
     businessId: 'trades',
     businessOther: '',
     featureIds: ['booking'],
+    addonIds: [],
     planId: 'founding',
     planTouched: true,
     domainKind: 'existing',
@@ -96,6 +97,10 @@ test('the intake body uses catalog ids and refuses a coming-soon feature or part
   assert.equal(intakeFromDraft(draft({ featureIds: ['payments'], planId: 'grow' }), catalog, null), null)
   assert.equal(intakeFromDraft(draft({ planId: 'partner' }), catalog, null), null)
   assert.equal(intakeFromDraft(draft({ planId: 'operate', featureIds: ['missedCall'] }), catalog, null), null)
+  const withAddons = intakeFromDraft(draft({ addonIds: ['pipeline', 'calling-desk', 'pay-processor'] }), catalog, { total: 10, left: 9, open: true })
+  assert.deepEqual(withAddons, body)
+  assert.equal(JSON.stringify(withAddons).includes('addon'), false)
+  assert.equal(intakeFromDraft(draft({ featureIds: ['pipeline'] }), catalog, null), null)
 })
 
 test('registering a domain collects preferred names', () => {

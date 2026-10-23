@@ -2,8 +2,8 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { parseCatalog, type Catalog } from './logic.ts'
 import { BUSINESSES, filterBusinesses, resolveTemplate } from './businesses.ts'
-import { itemStatus, showcaseItems } from './showcase.ts'
-import { INCLUDED_NOT_ADDONS, PLAN_HIGHLIGHTS, PLANS, PRICE_PROMISE, SEE_BEFORE_YOU_PAY, SETUP_INCLUDES } from '../pricing.ts'
+import { ADDON_SECTION, addonPriceText, addonRowLabel, addonSummaryHeading, itemStatus, rowStatusLabel, showcaseItems, type ShowcaseItem } from './showcase.ts'
+import { ADDON_PLAN_LINE, INCLUDED_NOT_ADDONS, INTEGRATIONS_COPY, PLAN_HIGHLIGHTS, PLANS, PRICE_PROMISE, SEE_BEFORE_YOU_PAY, SETUP_INCLUDES } from '../pricing.ts'
 
 const catalog = parseCatalog({
   templates: [
@@ -68,14 +68,39 @@ test('only live catalog features are Included', () => {
       assert.equal(status, 'soon', entry.id)
     }
     if (entry.moduleId === 'aiAnswer' || entry.moduleId === 'pipeline') {
-      assert.equal(status, 'custom', entry.id)
+      assert.equal(status, 'addon', entry.id)
     }
   }
   assert.equal(itemStatus(showcaseItems().find((item) => item.id === 'domain')!, catalog), 'setup')
-  assert.equal(itemStatus(showcaseItems().find((item) => item.id === 'calling-desk')!, catalog), 'custom')
-  for (const id of ['pay-processor', 'accounting', 'calendar', 'import-list', 'site-links', 'phone-line', 'email-box', 'publicApi']) {
-    assert.equal(itemStatus(showcaseItems().find((item) => item.id === id)!, catalog), 'custom', id)
+  assert.equal(itemStatus(showcaseItems().find((item) => item.id === 'calling-desk')!, catalog), 'addon')
+  for (const id of ['pay-processor', 'accounting', 'calendar', 'import-list', 'site-links', 'phone-line', 'email-box', 'publicApi', 'software-connection', 'whatsapp', 'staff-calendars']) {
+    assert.equal(itemStatus(showcaseItems().find((item) => item.id === id)!, catalog), 'addon', id)
   }
+})
+
+test('add-ons keep null prices and say priced with you', () => {
+  const addons = showcaseItems().filter((entry) => itemStatus(entry, catalog) === 'addon')
+  assert.ok(addons.length > 0)
+  for (const named of ['aiAnswer', 'calling-desk', 'whatsapp', 'staff-calendars', 'pipeline', 'pay-processor']) {
+    assert.equal(addons.some((entry) => entry.id === named), true, named)
+  }
+  for (const entry of addons) {
+    assert.equal(entry.monthlyCents, null, entry.id)
+    assert.equal(entry.setupCents, null, entry.id)
+    assert.equal(addonPriceText(entry), 'priced with you', entry.id)
+    assert.equal(addonRowLabel(entry), 'Add-on, priced with you', entry.id)
+    assert.equal(rowStatusLabel(entry, 'addon'), 'Add-on, priced with you', entry.id)
+  }
+  const priced = { monthlyCents: 4000, setupCents: 15000 } as Pick<ShowcaseItem, 'monthlyCents' | 'setupCents'>
+  assert.equal(addonPriceText(priced), '$40 a month · $150 setup')
+  assert.equal(addonRowLabel(priced), 'Add-on, $40 a month · $150 setup')
+  assert.equal(addonPriceText({ monthlyCents: null, setupCents: null }), 'priced with you')
+  assert.equal(addonSummaryHeading(addons), 'Add-ons you picked, priced with you on your kickoff call')
+  assert.equal(addonSummaryHeading([priced]), 'Add-ons you picked')
+  assert.equal(ADDON_SECTION.title, 'Add-ons, extra cost')
+  assert.match(ADDON_SECTION.lede, /additional cost/)
+  const extra = addons.reduce((sum, entry) => sum + (entry.monthlyCents ?? 0) + (entry.setupCents ?? 0), 0)
+  assert.equal(extra, 0)
 })
 
 test('customer copy does not name vendors or claim unlimited seats', () => {
@@ -84,13 +109,20 @@ test('customer copy does not name vendors or claim unlimited seats', () => {
     ...BUSINESSES.map((item) => item.label),
     PRICE_PROMISE.title,
     PRICE_PROMISE.body,
+    ADDON_PLAN_LINE,
+    ADDON_SECTION.title,
+    ADDON_SECTION.lede,
+    INTEGRATIONS_COPY.title,
+    INTEGRATIONS_COPY.body,
     ...INCLUDED_NOT_ADDONS,
     ...Object.values(PLAN_HIGHLIGHTS).flatMap((plan) => [plan.tagline, ...plan.bullets]),
   ].join(' ').toLowerCase()
   for (const banned of ['supabase', 'vercel', 'twilio', 'stripe', 'gohighlevel', 'highlevel', 'unlimited contact', 'unlimited user', 'unlimited room']) {
     assert.equal(text.includes(banned), false, banned)
   }
-  assert.match(text, /custom build: quoted|quoted before any work/)
+  assert.match(text, /add-on, priced with you|priced with you/)
+  assert.equal(text.includes('custom build: quoted'), false)
+  assert.equal(ADDON_PLAN_LINE, 'Need more? Add-ons like an AI that answers for you are available at extra cost.')
   assert.match(PRICE_PROMISE.body, /80%/)
   assert.match(PRICE_PROMISE.body, /\$150 an hour/)
   assert.equal(PLAN_HIGHLIGHTS.founding.bullets.some((line) => line.includes('$10')), true)

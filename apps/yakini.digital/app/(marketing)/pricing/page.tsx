@@ -17,6 +17,7 @@ import {
   PLAN_HIGHLIGHTS,
   PLAN_MODULES,
   PRICE_PROMISE,
+  ADDON_PLAN_LINE,
   INTEGRATIONS_COPY,
   INCLUDED_NOT_ADDONS,
   REFUND_RULE,
@@ -101,6 +102,7 @@ export default function PricingPage() {
                       <li key={line}>{line}</li>
                     ))}
                   </ul>
+                  <p className="pn-more">{ADDON_PLAN_LINE}</p>
                   {closed ? (
                     <span className="pr-tier-cta pn-cta-off"><span>Closed</span></span>
                   ) : (
@@ -1038,6 +1040,7 @@ const NEW_CSS = `
   .pn-price-per { color: rgba(245,239,227,0.6); font-size: 16px; }
   .pn-setup { margin-top: 8px; color: rgba(245,239,227,0.7); font-size: 14px; }
   .pn-list { margin: 22px 0 8px; flex: 1; }
+  .pn-more { margin: 0 0 16px; font-size: 13.5px; line-height: 1.45; color: rgba(244,241,235,0.62); }
   .pn-partner-line { font-family: var(--font-display); font-size: 26px; color: var(--cream); margin: 6px 0 12px; }
   .pn-cta-push { margin-top: auto; }
   .pn-cta-off { opacity: .6; cursor: not-allowed; }

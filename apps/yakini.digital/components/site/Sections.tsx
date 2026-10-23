@@ -15,6 +15,7 @@ import {
   HELP_HOURS_NOTE,
   PARTNER,
   PLAN_HIGHLIGHTS,
+  ADDON_PLAN_LINE,
   INTEGRATIONS_COPY,
   PLANS,
   REFUND_RULE,
@@ -140,6 +141,7 @@ export function PlanGrid({ num = '02' }: { num?: string }) {
                 <ul className="hm-plan-list">
                   {PLAN_HIGHLIGHTS[plan.id].bullets.map((line) => <li key={line}>{line}</li>)}
                 </ul>
+                <p className="hm-plan-more">{ADDON_PLAN_LINE}</p>
                 {closed ? (
                   <span className="hm-btn hm-btn-off">Founding is closed</span>
                 ) : (

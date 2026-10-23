@@ -293,12 +293,17 @@ export const FLOW_CSS = `
   .st-feat input { position: absolute; opacity: 0; width: 1px; height: 1px; }
   .st-feat h3 { font-family: var(--font-display); font-size: 24px; font-weight: 500; margin: 8px 0 4px; }
   .st-feat p { margin: 0; color: rgba(244,241,235,0.7); font-size: 14.5px; line-height: 1.45; }
-  .st-feat-soon, .st-feat-custom, .st-feat-setup { opacity: 0.92; }
+  .st-feat-soon, .st-feat-setup { opacity: 0.92; }
+  .st-feat-addon { cursor: pointer; }
+  .st-feat-addon.on { border-color: var(--gold); box-shadow: inset 3px 0 0 var(--gold); }
+  .st-cat-addons { border-color: rgba(200,168,75,0.55); }
+  .st-addon-group { margin: 10px 4px 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(244,241,235,0.5); }
+  .st-feat p.st-price-note { margin: 6px 0 0; color: var(--gold); font-size: 13px; letter-spacing: 0.02em; }
   .st-pill { display: inline-block; margin: 0 6px 0 0; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 4px 7px; border: 1px solid rgba(255,255,255,0.2); color: rgba(244,241,235,0.75); }
   .st-pill-included { color: #0A0908; background: var(--gold); border-color: var(--gold); }
   .st-pill-setup { color: var(--gold); border-color: var(--gold); }
   .st-pill-soon { border-style: dashed; }
-  .st-pill-custom { color: var(--cream); border-color: rgba(200,168,75,0.7); }
+  .st-pill-addon { color: var(--cream); border-color: rgba(200,168,75,0.7); }
   .st-pill-grow { color: var(--gold); }
   .st-points { margin: 8px 0 0; padding: 0; }
   .st-points li { position: relative; padding: 4px 0 4px 14px; color: rgba(244,241,235,0.62); font-size: 13.5px; }
@@ -308,6 +313,23 @@ export const FLOW_CSS = `
   .st-bullets { margin: 10px 0 0; padding: 0; }
   .st-bullets li { padding: 5px 0 5px 16px; position: relative; font-weight: 650; font-size: 15px; }
   .st-bullets li::before { content: ''; position: absolute; left: 0; top: 12px; width: 7px; height: 7px; background: var(--gold); }
+  .st-more { margin: 10px 0 0; font-size: 13.5px; line-height: 1.45; color: rgba(244,241,235,0.62); }
+  .st-picked {
+    margin: 0 0 18px;
+    padding: 18px 16px;
+    border: 1px dashed rgba(200,168,75,0.7);
+    background: transparent;
+  }
+  .st-picked h2 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 500;
+    margin: 0 0 8px;
+    line-height: 1.1;
+  }
+  .st-picked ul { margin: 0; padding: 0; }
+  .st-picked li { list-style: none; padding: 6px 0; color: rgba(244,241,235,0.88); font-size: 15.5px; }
+  .st-picked p { margin: 10px 0 0; color: rgba(244,241,235,0.62); font-size: 14px; }
   .st-promise, .st-addons, .st-setup-list {
     margin: 0 0 18px;
     padding: 18px 16px;

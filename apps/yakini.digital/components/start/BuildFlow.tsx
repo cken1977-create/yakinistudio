@@ -21,8 +21,8 @@ import {
   type Draft,
   type FoundingSeats,
 } from '@/lib/orders/logic'
-import { SHOWCASE, STATUS_LABEL, itemStatus, type FeatureStatus, type ShowcaseItem } from '@/lib/orders/showcase'
-import { INCLUDED_NOT_ADDONS, PLAN_HIGHLIGHTS, PRICE_PROMISE, REFUND_RULE, SEE_BEFORE_YOU_PAY, SETUP_INCLUDES } from '@/lib/pricing'
+import { ADDON_SECTION, SHOWCASE, addonPriceText, addonSummaryHeading, categoryForItem, itemStatus, rowStatusLabel, showcaseItems, type FeatureStatus, type ShowcaseItem } from '@/lib/orders/showcase'
+import { ADDON_PLAN_LINE, INCLUDED_NOT_ADDONS, PLAN_HIGHLIGHTS, PRICE_PROMISE, REFUND_RULE, SEE_BEFORE_YOU_PAY, SETUP_INCLUDES } from '@/lib/pricing'
 
 const STEPS = ['Business', 'Features', 'Domain', 'Timeline', 'Total'] as const
 
@@ -48,7 +48,7 @@ export function BuildFlow({
   const [error, setError] = useState('')
   const [done, setDone] = useState<Done | null>(null)
   const [bizQuery, setBizQuery] = useState('')
-  const [openCats, setOpenCats] = useState<string[]>(['ai', 'integrations'])
+  const [openCats, setOpenCats] = useState<string[]>(['ai', ADDON_SECTION.id])
   const headingRef = useRef<HTMLHeadingElement>(null)
   const moved = useRef(false)
 
@@ -66,6 +66,10 @@ export function BuildFlow({
   const address = domain?.kind === 'existing' ? domain.hostname : domain?.kind === 'register' ? 'the domain we register for you' : ''
   const suggested = suggestPlanId(catalog, draft.featureIds, seats)
   const startDate = monthlyStartLabel()
+  const chosenAddons = useMemo(
+    () => showcaseItems().filter((entry) => draft.addonIds.includes(entry.id) && itemStatus(entry, catalog) === 'addon'),
+    [catalog, draft.addonIds],
+  )
 
   function go(next: number) {
     setError('')
@@ -83,6 +87,15 @@ export function BuildFlow({
       if (needsGrow && grow) planId = grow.id
       return { ...current, featureIds, planId }
     })
+  }
+
+  function onToggleAddon(id: string) {
+    setDraft((current) => ({
+      ...current,
+      addonIds: current.addonIds.includes(id)
+        ? current.addonIds.filter((item) => item !== id)
+        : [...current.addonIds, id],
+    }))
   }
 
   function choosePlan(id: string) {
@@ -167,6 +180,14 @@ export function BuildFlow({
             <div><dt>Business</dt><dd>{draft.contact.businessName}</dd></div>
             <div><dt>Kind</dt><dd>{businessLabel(draft.businessId, draft.businessOther) || template?.label}</dd></div>
             <div><dt>Plan</dt><dd>{plan ? `${plan.name} · ${monthlyLabel(plan)}` : ''}</dd></div>
+            {chosenAddons.length ? (
+              <div>
+                <dt>Add-ons</dt>
+                <dd>
+                  {chosenAddons.map((entry) => `${entry.name} (${addonPriceText(entry)})`).join(', ')}. Priced with you on your kickoff call. Not part of the plan total.
+                </dd>
+              </div>
+            ) : null}
             <div><dt>Address</dt><dd>{address}</dd></div>
             {done.reference ? <div><dt>Reservation</dt><dd>{done.reference}</dd></div> : null}
           </dl>
@@ -236,9 +257,14 @@ export function BuildFlow({
           <section>
             <div className="st-kicker"><span className="yk-eyebrow-dot" /> Your system</div>
             <h1 className="st-h" tabIndex={-1} ref={headingRef}>What should it do?</h1>
-            <p className="st-lead">Tick what is included today. Coming soon is on the roadmap, with no date. Custom build is quoted before any work starts.</p>
-            <p className="st-count"><strong>{draft.featureIds.length}</strong> included in your setup</p>
+            <p className="st-lead">Tick what is included today. Coming soon is on the roadmap, with no date. Add-ons are extra, and each one is priced with you.</p>
+            <p className="st-count">
+              <strong>{draft.featureIds.length}</strong> included in your setup
+              {draft.addonIds.length ? <> · <strong>{chosenAddons.length}</strong> add-ons, priced with you</> : null}
+            </p>
             {SHOWCASE.map((category) => {
+              const rows = category.items.filter((entry) => itemStatus(entry, catalog) !== 'addon')
+              if (!rows.length) return null
               const open = openCats.includes(category.id)
               return (
                 <article key={category.id} className="st-cat">
@@ -251,14 +277,14 @@ export function BuildFlow({
                     <CatIcon id={category.id} />
                     <span>
                       <h2>{category.title}</h2>
-                      <small>{category.items.filter((entry) => itemStatus(entry, catalog) === 'included').length} live today</small>
+                      <small>{rows.filter((entry) => itemStatus(entry, catalog) === 'included').length} live today</small>
                     </span>
                   </button>
                   {open ? (
                     <>
                       {category.lede ? <p className="st-lede">{category.lede}</p> : null}
                       <div className="st-list">
-                        {category.items.map((entry) => (
+                        {rows.map((entry) => (
                           <FeatureRow
                             key={entry.id}
                             entry={entry}
@@ -274,6 +300,13 @@ export function BuildFlow({
                 </article>
               )
             })}
+            <AddonSection
+              catalog={catalog}
+              open={openCats.includes(ADDON_SECTION.id)}
+              selected={draft.addonIds}
+              onOpen={() => setOpenCats((current) => current.includes(ADDON_SECTION.id) ? current.filter((id) => id !== ADDON_SECTION.id) : [...current, ADDON_SECTION.id])}
+              onToggle={onToggleAddon}
+            />
             {pickedGrow.length ? (
               <p className="st-note">
                 {pickedGrow.map((id) => catalog.features.find((feature) => feature.id === id)?.label).filter(Boolean).join(' and ')} {pickedGrow.length === 1 ? 'is' : 'are'} part of Grow, so that plan is selected for you. You can turn {pickedGrow.length === 1 ? 'it' : 'them'} off if you want Founding or Operate.
@@ -415,6 +448,7 @@ export function BuildFlow({
                           {PLAN_HIGHLIGHTS[item.id as keyof typeof PLAN_HIGHLIGHTS].bullets.map((line) => <li key={line}>{line}</li>)}
                         </ul>
                       ) : null}
+                      {item.id in PLAN_HIGHLIGHTS ? <p className="st-more">{ADDON_PLAN_LINE}</p> : null}
                     </span>
                   </label>
                 )
@@ -439,6 +473,17 @@ export function BuildFlow({
                   </aside>
                 </div>
               </div>
+            ) : null}
+            {chosenAddons.length ? (
+              <aside className="st-picked">
+                <h2>{addonSummaryHeading(chosenAddons)}</h2>
+                <ul>
+                  {chosenAddons.map((entry) => (
+                    <li key={entry.id}>{entry.name} · {addonPriceText(entry)}</li>
+                  ))}
+                </ul>
+                <p>Not part of your Yakini total. The plan price above stays the same.</p>
+              </aside>
             ) : null}
             <aside className="st-addons">
               <h2>Included, not an add-on</h2>
@@ -498,6 +543,54 @@ function stepHint(step: number, draft: Draft, domainOk: boolean): string | null 
   return null
 }
 
+function AddonSection({
+  catalog, open, selected, onOpen, onToggle,
+}: {
+  catalog: Catalog
+  open: boolean
+  selected: string[]
+  onOpen: () => void
+  onToggle: (id: string) => void
+}) {
+  const rows = showcaseItems().filter((entry) => itemStatus(entry, catalog) === 'addon')
+  if (!rows.length) return null
+  return (
+    <article className="st-cat st-cat-addons">
+      <button type="button" className="st-cat-h" aria-expanded={open} onClick={onOpen}>
+        <CatIcon id={ADDON_SECTION.id} />
+        <span>
+          <h2>{ADDON_SECTION.title}</h2>
+          <small>{rows.length} extra, priced with you</small>
+        </span>
+      </button>
+      {open ? (
+        <>
+          <p className="st-lede">{ADDON_SECTION.lede}</p>
+          <div className="st-list">
+            {rows.map((entry, index) => {
+              const group = categoryForItem(entry.id)?.title ?? ''
+              const previous = index > 0 ? (categoryForItem(rows[index - 1].id)?.title ?? '') : ''
+              const showGroup = group !== previous
+              return (
+                <div key={entry.id}>
+                  {showGroup ? <p className="st-addon-group">{group}</p> : null}
+                  <FeatureRow
+                    entry={entry}
+                    status="addon"
+                    checked={selected.includes(entry.id)}
+                    grow={false}
+                    onToggle={onToggle}
+                  />
+                </div>
+              )
+            })}
+          </div>
+        </>
+      ) : null}
+    </article>
+  )
+}
+
 function FeatureRow({
   entry, status, checked, grow, onToggle,
 }: {
@@ -509,13 +602,22 @@ function FeatureRow({
 }) {
   const body = (
     <span>
-      <span className={`st-pill st-pill-${status}`}>{STATUS_LABEL[status]}</span>
+      <span className={`st-pill st-pill-${status}`}>{rowStatusLabel(entry, status)}</span>
       {grow && status === 'included' ? <span className="st-pill st-pill-grow">Part of Grow</span> : null}
       <h3>{entry.name}</h3>
       <p>{entry.detail}</p>
+      {status === 'addon' ? <p className="st-price-note">{addonPriceText(entry)}</p> : null}
       {entry.points.length ? <ul className="st-points">{entry.points.map((point) => <li key={point}>{point}</li>)}</ul> : null}
     </span>
   )
+  if (status === 'addon') {
+    return (
+      <label className={`st-feat st-feat-addon ${checked ? 'on' : ''}`}>
+        <input type="checkbox" checked={checked} onChange={() => onToggle(entry.id)} />
+        {body}
+      </label>
+    )
+  }
   if (status !== 'included' || !entry.moduleId) {
     return <div className={`st-feat st-feat-${status}`} aria-disabled="true">{body}</div>
   }
@@ -540,6 +642,7 @@ function CatIcon({ id }: { id: string }) {
     reports: 'M6 18V10M12 18V6M18 18v-5',
     integrations: 'M8 8h3v3H8zM13 13h3v3h-3zM11 9.5h2M14.5 11v2',
     desk: 'M5 16V8h14v8M8 16v2M16 16v2M9 11h6',
+    addons: 'M12 5v14M5 12h14',
   }
   return (
     <svg className="st-ico" viewBox="0 0 24 24" aria-hidden="true">

@@ -55,7 +55,11 @@ export type ContactDetails = {
   businessName: string
 }
 
-/** Body sent to the portal order intake. Field names follow the catalog. */
+/**
+ * Body sent to the portal order intake. Field names follow the catalog.
+ * Add-ons are not on this body. featureIds accepts selectable catalog modules only.
+ * A portal change would store ticked add-ons; until then they stay on the confirmation.
+ */
 export type OrderIntake = {
   templateId: string
   featureIds: string[]
@@ -70,6 +74,8 @@ export type Draft = {
   businessId: string
   businessOther: string
   featureIds: string[]
+  /** Showcase ids for add-ons. Not sent on the order. Does not change the plan price. */
+  addonIds: string[]
   planId: string
   planTouched: boolean
   domainKind: 'existing' | 'register'
@@ -299,6 +305,7 @@ export function emptyDraft(planId = ''): Draft {
     businessId: '',
     businessOther: '',
     featureIds: [],
+    addonIds: [],
     planId,
     planTouched: Boolean(planId),
     domainKind: 'existing',

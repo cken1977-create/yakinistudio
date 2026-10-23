@@ -20,6 +20,8 @@ function asDraft(raw: unknown): Draft | null {
     businessId: '',
     businessOther: '',
     featureIds: Array.isArray(body.featureIds) ? body.featureIds.map(String).slice(0, 40) : [],
+    // Add-ons are shown on the confirmation. The portal order body has no field for them yet.
+    addonIds: [],
     planId: String(body.planId ?? ''),
     planTouched: true,
     domainKind: body.domainKind === 'register' ? 'register' : 'existing',

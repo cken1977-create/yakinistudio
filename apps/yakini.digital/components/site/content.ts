@@ -139,7 +139,8 @@ export const SECTIONS_CSS = SEAT_CSS + `
   .hm-plan-num { font-family: var(--font-display); font-size: 56px; line-height: 1; color: var(--cream); }
   .hm-plan-per { font-size: 15px; color: var(--muted); }
   .hm-plan-setup { margin-top: 8px; font-size: 14px; color: rgba(244,241,235,0.75); }
-  .hm-plan-list { margin: 22px 0 28px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .hm-plan-list { margin: 22px 0 12px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .hm-plan-more { margin: 0 0 18px; font-size: 13.5px; line-height: 1.45; color: rgba(244,241,235,0.62); }
   .hm-plan-list li { position: relative; padding-left: 22px; font-size: 14.5px; line-height: 1.5; color: rgba(244,241,235,0.82); }
   .hm-plan-list li::before { content: ''; position: absolute; left: 0; top: 8px; width: 10px; height: 1.5px; background: var(--gold); }
   .hm-plan .hm-btn { margin-top: auto; width: 100%; }
