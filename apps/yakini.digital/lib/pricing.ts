@@ -5,13 +5,14 @@
 
 /** The portal. Previews point this at the portal Preview with NEXT_PUBLIC_PORTAL_URL. */
 export const PORTAL_URL = (process.env.NEXT_PUBLIC_PORTAL_URL || 'https://portal.yakini.digital').replace(/\/$/, '')
-export const START_URL = `${PORTAL_URL}/start`
+/** On-site click-to-build. Every "Start" / "Start your setup" link opens this. */
+export const START_URL = '/start'
 export const FOUNDING_API = `${PORTAL_URL}/api/kit/founding`
 /** Customer portal sign-in, linked from the site header on every page. */
 export const PORTAL_LOGIN_URL = `${PORTAL_URL}/enter`
 
 export function startUrl(planId?: string): string {
-  return planId ? `${START_URL}?kit=${planId}#form` : START_URL
+  return planId ? `${START_URL}?plan=${encodeURIComponent(planId)}` : START_URL
 }
 
 export const PITCH_HEAD = 'A real person sets it up with you. And stays.'
