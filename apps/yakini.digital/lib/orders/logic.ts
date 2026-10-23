@@ -66,6 +66,9 @@ export type OrderIntake = {
 
 export type Draft = {
   templateId: string
+  /** Customer-facing business choice. Mapped to templateId. Not sent to the portal. */
+  businessId: string
+  businessOther: string
   featureIds: string[]
   planId: string
   planTouched: boolean
@@ -293,6 +296,8 @@ export function validPhone(value: string): boolean {
 export function emptyDraft(planId = ''): Draft {
   return {
     templateId: '',
+    businessId: '',
+    businessOther: '',
     featureIds: [],
     planId,
     planTouched: Boolean(planId),

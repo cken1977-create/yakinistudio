@@ -29,7 +29,7 @@ const catalog = parseCatalog({
   ],
   plans: [
     { id: 'operate', name: 'Operate', priceCents: 24900, setupCents: 49900, interval: 'month', modules: ['texting', 'booking', 'inboundTexts'], lockedMonths: null, open: true },
-    { id: 'grow', name: 'Grow', priceCents: 44900, setupCents: 79900, interval: 'month', modules: ['texting', 'booking', 'inboundTexts', 'payments', 'missedCall'], lockedMonths: null, open: true },
+    { id: 'grow', name: 'Grow', priceCents: 44900, setupCents: 49900, interval: 'month', modules: ['texting', 'booking', 'inboundTexts', 'payments', 'missedCall'], lockedMonths: null, open: true },
     { id: 'founding', name: 'Founding', priceCents: 17900, setupCents: 49900, interval: 'month', modules: ['texting', 'booking', 'inboundTexts'], lockedMonths: 12, open: true },
     { id: 'partner', name: 'Partner', priceCents: 0, setupCents: 0, interval: 'month', modules: [], lockedMonths: null, open: true },
   ],
@@ -39,6 +39,8 @@ const catalog = parseCatalog({
 function draft(over: Partial<Draft> = {}): Draft {
   return {
     templateId: 'home-services',
+    businessId: 'trades',
+    businessOther: '',
     featureIds: ['booking'],
     planId: 'founding',
     planTouched: true,

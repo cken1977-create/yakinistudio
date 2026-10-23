@@ -14,8 +14,13 @@ import {
   PASS_THROUGH_NOTE,
   PITCH,
   PLANS,
+  PLAN_HIGHLIGHTS,
   PLAN_MODULES,
+  PRICE_PROMISE,
+  INTEGRATIONS_COPY,
+  INCLUDED_NOT_ADDONS,
   REFUND_RULE,
+  SETUP_INCLUDES,
   helpLabel,
   monthlyLabel,
   priceLabel,
@@ -92,9 +97,8 @@ export default function PricingPage() {
                   <div className="pn-setup">+ {setupLabel(plan)} one-time guided setup{plan.lockedMonths ? ` · locked ${plan.lockedMonths} months` : ''}</div>
                   {isFounding ? <SeatMeter seats={seats} /> : null}
                   <ul className="pr-tier-list pr-list-included pn-list">
-                    <li>{helpLabel(plan)} from your Yakini person (unused hours don’t roll over)</li>
-                    {plan.includes.map((feature) => (
-                      <li key={feature}>{feature}</li>
+                    {PLAN_HIGHLIGHTS[plan.id].bullets.map((line) => (
+                      <li key={line}>{line}</li>
                     ))}
                   </ul>
                   {closed ? (
@@ -120,6 +124,27 @@ export default function PricingPage() {
             </div>
           </div>
 
+          <aside className="pn-promise">
+            <h3>{PRICE_PROMISE.title}</h3>
+            <p>{PRICE_PROMISE.body}</p>
+          </aside>
+          <aside className="pn-setup-list">
+            <h3>What your $499 setup includes</h3>
+            <ul>
+              {SETUP_INCLUDES.map((line) => <li key={line}>{line}</li>)}
+            </ul>
+            <p>{REFUND_RULE}</p>
+          </aside>
+          <aside className="pn-addons">
+            <h3>Included, not an add-on</h3>
+            <ul>
+              {INCLUDED_NOT_ADDONS.map((line) => <li key={line}>{line}</li>)}
+            </ul>
+          </aside>
+          <aside className="pn-integrations">
+            <h3>{INTEGRATIONS_COPY.title}</h3>
+            <p>{INTEGRATIONS_COPY.body}</p>
+          </aside>
           <p className="pn-refund"><strong>Refunds:</strong> {REFUND_RULE} Cancel the monthly plan any time.</p>
 
           <h3 className="pr-subhead">Side by side</h3>
@@ -151,6 +176,7 @@ export default function PricingPage() {
                     <th scope="row">{module.plain}</th>
                     {PLANS.map((plan) => {
                       const included = plan.id === 'grow' ? module.grow : module.operate
+                      if (included && module.live === false) return <td key={plan.id}>Coming soon</td>
                       return <td key={plan.id}>{included ? <Mark yes /> : <Mark />}</td>
                     })}
                   </tr>
@@ -202,8 +228,9 @@ export default function PricingPage() {
               <div className="pr-faq-a">
                 Operate is {priceLabel(operate)} with {helpLabel(operate)}. It is your website and customer portal, help desk, voice notes,
                 drafted replies that wait for your OK, a business texting line, booking you confirm, and incoming texts in one place.
-                Grow is {priceLabel(grow)} with {helpLabel(grow)}, and adds card payments, missed-call text-back, review requests,
-                follow-up campaigns and a monthly owner report. {HELP_HOURS_NOTE} {AI_LIMIT_NOTE}
+                Grow is {priceLabel(grow)} with {helpLabel(grow)}, and adds missed-call text-back and a monthly owner report.
+                Card payments, review requests and follow-up campaigns are on the roadmap. They are not live, and no date is promised.
+                {HELP_HOURS_NOTE} {AI_LIMIT_NOTE}
               </div>
             </details>
             <details className="pr-faq-item">
@@ -984,6 +1011,17 @@ const NEW_CSS = `
   .pn-portal-list span { font-size: 13px; color: var(--muted); }
   .pn-portal-link { color: var(--gold); font-size: 15px; }
   @media (min-width: 900px) { .pn-portal-list { grid-template-columns: repeat(4, 1fr); } .pn-portal { padding: 48px 32px; } }
+  .pn-promise, .pn-setup-list, .pn-addons, .pn-integrations {
+    margin: 0 0 18px; padding: 22px 18px; border: 1px solid var(--gold); background: rgba(200,168,75,0.06);
+  }
+  .pn-promise h3, .pn-setup-list h3, .pn-addons h3, .pn-integrations h3 {
+    font-family: var(--font-display); font-weight: 500; font-size: clamp(28px, 4vw, 40px); margin: 0 0 10px; line-height: 1.05;
+  }
+  .pn-promise p, .pn-integrations p, .pn-setup-list p { margin: 0; color: rgba(244,241,235,0.82); font-size: 16px; line-height: 1.5; }
+  .pn-setup-list p { margin-top: 12px; color: rgba(244,241,235,0.62); font-size: 14px; }
+  .pn-setup-list ul, .pn-addons ul { margin: 0; padding: 0; }
+  .pn-setup-list li, .pn-addons li { position: relative; list-style: none; padding: 8px 0 8px 26px; font-size: 16px; }
+  .pn-setup-list li::before, .pn-addons li::before { content: '✓'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
   .pn-hero-ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
   .pn-hero-ctas .pr-tier-cta { margin-top: 0; }
   .pn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; align-items: stretch; }

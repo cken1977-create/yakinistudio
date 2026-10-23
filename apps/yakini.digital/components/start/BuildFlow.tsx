@@ -1,16 +1,14 @@
 'use client'
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { businessLabel, filterBusinesses, resolveTemplate } from '@/lib/orders/businesses'
 import {
   domainFromDraft,
   emptyDraft,
   formatCents,
-  groupedFeatures,
   growOnlyIds,
   includedLabels,
   intakeFromDraft,
-  isComingSoon,
-  isSelectable,
   monthlyLabel,
   monthlyStartLabel,
   publicPlans,
@@ -20,19 +18,13 @@ import {
   tldSentence,
   toggleFeature,
   type Catalog,
-  type CatalogFeature,
   type Draft,
   type FoundingSeats,
 } from '@/lib/orders/logic'
+import { SHOWCASE, STATUS_LABEL, itemStatus, type FeatureStatus, type ShowcaseItem } from '@/lib/orders/showcase'
+import { INCLUDED_NOT_ADDONS, PLAN_HIGHLIGHTS, PRICE_PROMISE, REFUND_RULE, SEE_BEFORE_YOU_PAY, SETUP_INCLUDES } from '@/lib/pricing'
 
 const STEPS = ['Business', 'Features', 'Domain', 'Timeline', 'Total'] as const
-
-const HINTS: Record<string, string> = {
-  'home-services': 'Trades, cleaning, lawn care, repairs',
-  construction: 'Builders, crews, and job sites',
-  hospitality: 'Kitchens, catering, stays, and service',
-  builtin: 'We shape the setup around your business',
-}
 
 type Done = { testMode: boolean; reference: string | null }
 
@@ -55,6 +47,8 @@ export function BuildFlow({
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState<Done | null>(null)
+  const [bizQuery, setBizQuery] = useState('')
+  const [openCats, setOpenCats] = useState<string[]>(['ai', 'integrations'])
   const headingRef = useRef<HTMLHeadingElement>(null)
   const moved = useRef(false)
 
@@ -63,8 +57,9 @@ export function BuildFlow({
     headingRef.current?.focus()
   }, [step, done])
 
-  const groups = useMemo(() => groupedFeatures(catalog), [catalog])
+  const businesses = useMemo(() => filterBusinesses(bizQuery), [bizQuery])
   const growOnly = useMemo(() => growOnlyIds(catalog), [catalog])
+  const businessOk = Boolean(draft.businessId && draft.templateId) && (draft.businessId !== 'other' || draft.businessOther.trim().length >= 2)
   const pickedGrow = draft.featureIds.filter((id) => growOnly.has(id))
   const plan = plans.find((item) => item.id === draft.planId) ?? null
   const domain = domainFromDraft(draft, catalog.domain.defaultKind)
@@ -95,8 +90,17 @@ export function BuildFlow({
     setDraft((current) => ({ ...current, planId: id, planTouched: true }))
   }
 
+  function pickBusiness(id: string) {
+    setDraft((current) => ({
+      ...current,
+      businessId: id,
+      templateId: resolveTemplate(id, catalog),
+      businessOther: id === 'other' ? current.businessOther : '',
+    }))
+  }
+
   const stepReady = [
-    Boolean(draft.templateId),
+    businessOk,
     true,
     Boolean(domain),
     true,
@@ -161,7 +165,7 @@ export function BuildFlow({
           <p className="st-operator">Built by a real operator.</p>
           <dl className="st-recap">
             <div><dt>Business</dt><dd>{draft.contact.businessName}</dd></div>
-            <div><dt>Kind</dt><dd>{template?.label}</dd></div>
+            <div><dt>Kind</dt><dd>{businessLabel(draft.businessId, draft.businessOther) || template?.label}</dd></div>
             <div><dt>Plan</dt><dd>{plan ? `${plan.name} · ${monthlyLabel(plan)}` : ''}</dd></div>
             <div><dt>Address</dt><dd>{address}</dd></div>
             {done.reference ? <div><dt>Reservation</dt><dd>{done.reference}</dd></div> : null}
@@ -189,24 +193,42 @@ export function BuildFlow({
           <section>
             <div className="st-kicker"><span className="yk-eyebrow-dot" /> Build it with you</div>
             <h1 className="st-h" tabIndex={-1} ref={headingRef}>What kind of business are you?</h1>
-            <p className="st-lead">Pick the closest fit. A real Yakini person builds the system with you, on your own domain.</p>
-            <div className="st-list st-templates">
-              {catalog.templates.map((template) => (
-                <label key={template.id} className="st-choice">
-                  <input
-                    type="radio"
-                    name="template"
-                    checked={draft.templateId === template.id}
-                    onChange={() => setDraft((current) => ({ ...current, templateId: template.id }))}
-                  />
-                  <span className="st-mark" aria-hidden />
-                  <span>
-                    <h2>{template.label}</h2>
-                    {HINTS[template.id] ? <p>{HINTS[template.id]}</p> : null}
-                  </span>
-                </label>
+            <p className="st-reassurance">{SEE_BEFORE_YOU_PAY}</p>
+            <p className="st-lead">Search or tap the closest fit. A real Yakini person builds the system with you, on your own domain.</p>
+            <div className="st-field">
+              <label htmlFor="biz-search">Search business types</label>
+              <input
+                id="biz-search"
+                type="search"
+                placeholder="Try plumber, salon, dental…"
+                value={bizQuery}
+                onChange={(event) => setBizQuery(event.target.value)}
+              />
+            </div>
+            <div className="st-biz-grid">
+              {businesses.map((business) => (
+                <button
+                  key={business.id}
+                  type="button"
+                  className={`st-biz ${draft.businessId === business.id ? 'on' : ''}`}
+                  aria-pressed={draft.businessId === business.id}
+                  onClick={() => pickBusiness(business.id)}
+                >
+                  {business.label}
+                </button>
               ))}
             </div>
+            {draft.businessId === 'other' ? (
+              <div className="st-field">
+                <label htmlFor="biz-other">What do you do?</label>
+                <input
+                  id="biz-other"
+                  value={draft.businessOther}
+                  placeholder="Tell us in a few words"
+                  onChange={(event) => setDraft((current) => ({ ...current, businessOther: event.target.value }))}
+                />
+              </div>
+            ) : null}
           </section>
         ) : null}
 
@@ -214,20 +236,44 @@ export function BuildFlow({
           <section>
             <div className="st-kicker"><span className="yk-eyebrow-dot" /> Your system</div>
             <h1 className="st-h" tabIndex={-1} ref={headingRef}>What should it do?</h1>
-            <p className="st-lead">Tick what you want now. Anything marked coming soon stays off until it is ready. We build the rest with you.</p>
-            {groups.map((group) => (
-              <div key={group.group} className="st-group">
-                <h2>{group.group}</h2>
-                <div className="st-list">
-                  {group.features.map((feature) => (
-                    isSelectable(feature)
-                      ? <FeatureChoice key={feature.id} feature={feature} checked={draft.featureIds.includes(feature.id)} onToggle={onToggle} />
-                      : <SoonCard key={feature.id} feature={feature} />
-                  ))}
-                </div>
-              </div>
-            ))}
-            <p className="st-ask">Anything else is coming soon. Ask your Yakini person, and we will tell you straight whether it belongs in this setup.</p>
+            <p className="st-lead">Tick what is included today. Coming soon is on the roadmap, with no date. Custom build is quoted before any work starts.</p>
+            <p className="st-count"><strong>{draft.featureIds.length}</strong> included in your setup</p>
+            {SHOWCASE.map((category) => {
+              const open = openCats.includes(category.id)
+              return (
+                <article key={category.id} className="st-cat">
+                  <button
+                    type="button"
+                    className="st-cat-h"
+                    aria-expanded={open}
+                    onClick={() => setOpenCats((current) => current.includes(category.id) ? current.filter((id) => id !== category.id) : [...current, category.id])}
+                  >
+                    <CatIcon id={category.id} />
+                    <span>
+                      <h2>{category.title}</h2>
+                      <small>{category.items.filter((entry) => itemStatus(entry, catalog) === 'included').length} live today</small>
+                    </span>
+                  </button>
+                  {open ? (
+                    <>
+                      {category.lede ? <p className="st-lede">{category.lede}</p> : null}
+                      <div className="st-list">
+                        {category.items.map((entry) => (
+                          <FeatureRow
+                            key={entry.id}
+                            entry={entry}
+                            status={itemStatus(entry, catalog)}
+                            checked={Boolean(entry.moduleId && draft.featureIds.includes(entry.moduleId))}
+                            grow={Boolean(entry.moduleId && growOnly.has(entry.moduleId))}
+                            onToggle={onToggle}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  ) : null}
+                </article>
+              )
+            })}
             {pickedGrow.length ? (
               <p className="st-note">
                 {pickedGrow.map((id) => catalog.features.find((feature) => feature.id === id)?.label).filter(Boolean).join(' and ')} {pickedGrow.length === 1 ? 'is' : 'are'} part of Grow, so that plan is selected for you. You can turn {pickedGrow.length === 1 ? 'it' : 'them'} off if you want Founding or Operate.
@@ -334,6 +380,10 @@ export function BuildFlow({
             <div className="st-kicker"><span className="yk-eyebrow-dot" /> One total</div>
             <h1 className="st-h" tabIndex={-1} ref={headingRef}>Your true total.</h1>
             <p className="st-lead">One Yakini price, from the published plans. No card on this page. Nothing else is added here.</p>
+            <aside className="st-promise">
+              <h2>{PRICE_PROMISE.title}</h2>
+              <p>{PRICE_PROMISE.body}</p>
+            </aside>
             {pickedGrow.length ? (
               <p className="st-note">Grow is selected because of what you picked. Turn those features off on the previous step to choose Founding or Operate.</p>
             ) : null}
@@ -353,25 +403,49 @@ export function BuildFlow({
                     <span>
                       {item.id === suggested ? <span className="st-fit">Fits what you picked</span> : null}
                       <h3>{item.name}</h3>
-                      <p>
+                      {item.id in PLAN_HIGHLIGHTS ? <p className="st-who">{PLAN_HIGHLIGHTS[item.id as keyof typeof PLAN_HIGHLIGHTS].tagline}</p> : null}
+                      <div className="st-price">{formatCents(item.priceCents)} <small>{item.interval === 'month' ? '/ month' : `/ ${item.interval}`}</small></div>
+                      <p className="st-setup-line">
                         {formatCents(item.setupCents)} setup, once
-                        {item.lockedMonths ? ` · price locked ${item.lockedMonths} months` : ''}
+                        {item.lockedMonths ? ` · locked ${item.lockedMonths} months` : ''}
                         {item.id === 'founding' && seats?.open ? ` · ${seats.left} of ${seats.total} spots left` : ''}
                       </p>
-                      <div className="st-price">{formatCents(item.priceCents)} <small>{item.interval === 'month' ? '/ month' : `/ ${item.interval}`}</small></div>
+                      {item.id in PLAN_HIGHLIGHTS ? (
+                        <ul className="st-bullets">
+                          {PLAN_HIGHLIGHTS[item.id as keyof typeof PLAN_HIGHLIGHTS].bullets.map((line) => <li key={line}>{line}</li>)}
+                        </ul>
+                      ) : null}
                     </span>
                   </label>
                 )
               })}
             </div>
             {plan ? (
-              <div className="st-total">
-                <p className="st-due">Your Yakini total</p>
-                <p className="st-big">{formatCents(plan.priceCents)} <span>a month</span></p>
-                <p className="st-setup">+ {formatCents(plan.setupCents)} setup, once, collected on your kickoff call.</p>
-                <p className="st-zero"><strong>Due today: $0.</strong> No card is charged. From {startDate}: {formatCents(plan.priceCents)} a month.</p>
+              <div className="st-pay">
+                <p className="st-reassurance">{SEE_BEFORE_YOU_PAY}</p>
+                <div className="st-pay-grid">
+                  <div className="st-total">
+                    <p className="st-due">Your Yakini total</p>
+                    <p className="st-big">{formatCents(plan.priceCents)} <span>a month</span></p>
+                    <p className="st-setup">+ {formatCents(plan.setupCents)} setup, once, collected on your kickoff call.</p>
+                    <p className="st-zero"><strong>Due today: $0.</strong> No card is charged. From {startDate}: {formatCents(plan.priceCents)} a month.</p>
+                  </div>
+                  <aside className="st-setup-list">
+                    <h2>What your $499 setup includes</h2>
+                    <ul>
+                      {SETUP_INCLUDES.map((line) => <li key={line}>{line}</li>)}
+                    </ul>
+                    <p>{REFUND_RULE}</p>
+                  </aside>
+                </div>
               </div>
             ) : null}
+            <aside className="st-addons">
+              <h2>Included, not an add-on</h2>
+              <ul>
+                {INCLUDED_NOT_ADDONS.map((line) => <li key={line}>{line}</li>)}
+              </ul>
+            </aside>
             {plan ? (
               <>
                 <p className="st-kicker">What&apos;s included</p>
@@ -415,6 +489,7 @@ export function BuildFlow({
 
 function stepHint(step: number, draft: Draft, domainOk: boolean): string | null {
   if (step === 0 && !draft.templateId) return 'Choose the closest fit to continue.'
+  if (step === 0 && draft.businessId === 'other' && draft.businessOther.trim().length < 2) return 'Tell us what you do to continue.'
   if (step === 2 && !domainOk) {
     return draft.domainKind === 'existing'
       ? 'Add the domain, and the address you want.'
@@ -423,27 +498,53 @@ function stepHint(step: number, draft: Draft, domainOk: boolean): string | null 
   return null
 }
 
-function FeatureChoice({ feature, checked, onToggle }: { feature: CatalogFeature; checked: boolean; onToggle: (id: string) => void }) {
+function FeatureRow({
+  entry, status, checked, grow, onToggle,
+}: {
+  entry: ShowcaseItem
+  status: FeatureStatus
+  checked: boolean
+  grow: boolean
+  onToggle: (id: string) => void
+}) {
+  const body = (
+    <span>
+      <span className={`st-pill st-pill-${status}`}>{STATUS_LABEL[status]}</span>
+      {grow && status === 'included' ? <span className="st-pill st-pill-grow">Part of Grow</span> : null}
+      <h3>{entry.name}</h3>
+      <p>{entry.detail}</p>
+      {entry.points.length ? <ul className="st-points">{entry.points.map((point) => <li key={point}>{point}</li>)}</ul> : null}
+    </span>
+  )
+  if (status !== 'included' || !entry.moduleId) {
+    return <div className={`st-feat st-feat-${status}`} aria-disabled="true">{body}</div>
+  }
   return (
-    <label className="st-choice">
-      <input type="checkbox" checked={checked} onChange={() => onToggle(feature.id)} />
-      <span className="st-mark" aria-hidden />
-      <span>
-        <h3>{feature.label}</h3>
-        <p>{feature.detail}{feature.needs.length ? ' This needs your business texting line, and we include it when you tick this.' : ''}</p>
-      </span>
+    <label className={`st-feat st-feat-included ${checked ? 'on' : ''}`}>
+      <input type="checkbox" checked={checked} onChange={() => onToggle(entry.moduleId!)} />
+      {body}
     </label>
   )
 }
 
-function SoonCard({ feature }: { feature: CatalogFeature }) {
-  if (!isComingSoon(feature) && feature.state === 'ask') return null
+function CatIcon({ id }: { id: string }) {
+  const paths: Record<string, string> = {
+    ai: 'M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3z',
+    calls: 'M8 5h3l1 3-2 1a8 8 0 004 4l1-2 3 1v3a2 2 0 01-2 2A12 12 0 016 7a2 2 0 012-2z',
+    booking: 'M6 5h12v14H6zM9 3v4M15 3v4M6 9h12',
+    inbox: 'M4 7h16v10H4zM4 7l8 6 8-6',
+    reviews: 'M12 4l2 4 4 .5-3 3 .8 4.5L12 14l-3.8 2 .8-4.5-3-3L10 8z',
+    payments: 'M4 8h16v8H4zM4 11h16',
+    marketing: 'M5 12l7-7 7 3v8l-7 3-7-7z',
+    web: 'M4 6h16v12H4zM4 10h16M8 6v4',
+    reports: 'M6 18V10M12 18V6M18 18v-5',
+    integrations: 'M8 8h3v3H8zM13 13h3v3h-3zM11 9.5h2M14.5 11v2',
+    desk: 'M5 16V8h14v8M8 16v2M16 16v2M9 11h6',
+  }
   return (
-    <div className="st-soon" aria-disabled="true">
-      <span className="st-pill">Coming soon</span>
-      <h3>{feature.label}</h3>
-      <p>{feature.detail}</p>
-    </div>
+    <svg className="st-ico" viewBox="0 0 24 24" aria-hidden="true">
+      <path d={paths[id] || paths.desk} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+    </svg>
   )
 }
 

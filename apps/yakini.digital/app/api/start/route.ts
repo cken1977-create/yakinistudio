@@ -17,6 +17,8 @@ function asDraft(raw: unknown): Draft | null {
   if (!contact || typeof contact !== 'object') return null
   return {
     templateId: String(body.templateId ?? ''),
+    businessId: '',
+    businessOther: '',
     featureIds: Array.isArray(body.featureIds) ? body.featureIds.map(String).slice(0, 40) : [],
     planId: String(body.planId ?? ''),
     planTouched: true,

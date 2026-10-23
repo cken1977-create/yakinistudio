@@ -18,6 +18,7 @@ import {
   PASS_THROUGH_NOTE,
   PORTAL_LOGIN_URL,
   REFUND_RULE,
+  SEE_BEFORE_YOU_PAY,
   START_URL,
 } from '@/lib/pricing'
 
@@ -67,6 +68,7 @@ export default function HomePage() {
                 <span>See plans</span>
               </a>
             </div>
+            <p className="hh-reassure">{SEE_BEFORE_YOU_PAY}</p>
             <p className="hh-signin">
               Already a customer? <a href={PORTAL_LOGIN_URL}>Sign in to your portal</a>
             </p>
@@ -138,6 +140,7 @@ const HOME_CSS = `
   .hh-sub { font-size: clamp(17px, 1.5vw, 21px); line-height: 1.6; color: rgba(244,241,235,0.8); max-width: 560px; }
   .hh-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
   .hh-primary { padding: 19px 34px; font-size: 15px; }
+  .hh-reassure { margin: 16px 0 0; font-family: var(--font-display); font-size: clamp(26px, 5vw, 34px); line-height: 1.05; color: var(--gold); }
   .hh-signin { margin-top: 18px; font-size: 14px; color: var(--muted); }
   .hh-signin a { color: var(--cream); border-bottom: 1px solid rgba(244,241,235,0.35); }
   .hh-signin a:hover { color: var(--gold); border-color: var(--gold); }
