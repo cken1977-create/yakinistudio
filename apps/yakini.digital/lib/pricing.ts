@@ -1,4 +1,4 @@
-// Yakini's one public price list (locked Oct 21 2026, Clarence Kennedy).
+// Yakini's one public price list (locked Oct 21 2026, Clarence Kennedy; Grow setup cut to $499 Oct 23 2026, so every plan has a $499 setup).
 // Every page that shows a plan, the Founding offer, or an apply-form choice reads this file.
 // The portal's sign-up (portal.yakini.digital/start) charges from the same numbers (portal.settings.json kit.offers).
 // Customer-facing copy names services (hosting, database, texting line, payments), never the companies behind them.
@@ -98,7 +98,7 @@ export const PLANS: readonly Plan[] = [
     id: 'grow',
     name: 'Grow',
     tag: 'For small teams',
-    setup: 799,
+    setup: 499,
     monthly: 449,
     helpHours: 3,
     summary: 'Everything in Operate, plus payments, follow-up tools and automation.',
