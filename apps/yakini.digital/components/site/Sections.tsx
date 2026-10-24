@@ -14,10 +14,12 @@ import {
   GUIDED_STEPS,
   HELP_HOURS_NOTE,
   PARTNER,
+  PLAN_HIGHLIGHTS,
+  ADDON_PLAN_LINE,
+  INTEGRATIONS_COPY,
   PLANS,
   REFUND_RULE,
   START_URL,
-  helpLabel,
   monthlyLabel,
   priceLabel,
   setupLabel,
@@ -137,22 +139,9 @@ export function PlanGrid({ num = '02' }: { num?: string }) {
                 <div className="hm-plan-setup">+ {setupLabel(plan)} one-time guided setup{plan.lockedMonths ? ` · locked ${plan.lockedMonths} months` : ''}</div>
                 {isFounding ? <SeatMeter seats={seats} /> : null}
                 <ul className="hm-plan-list">
-                  <li>{helpLabel(plan)} from your Yakini person</li>
-                  {plan.id === 'grow' ? (
-                    <>
-                      <li>Everything in Operate</li>
-                      <li>Card payments on your invoices</li>
-                      <li>Missed-call text-back, review requests and follow-up campaigns</li>
-                      <li>Monthly owner report</li>
-                    </>
-                  ) : (
-                    <>
-                      <li>Your website and customer portal</li>
-                      <li>Help desk, texting line and booking you confirm</li>
-                      <li>Drafted replies, checked by you before anything goes out</li>
-                    </>
-                  )}
+                  {PLAN_HIGHLIGHTS[plan.id].bullets.map((line) => <li key={line}>{line}</li>)}
                 </ul>
+                <p className="hm-plan-more">{ADDON_PLAN_LINE}</p>
                 {closed ? (
                   <span className="hm-btn hm-btn-off">Founding is closed</span>
                 ) : (
@@ -172,6 +161,7 @@ export function PlanGrid({ num = '02' }: { num?: string }) {
           </article>
         </div>
 
+        <p className="hm-lead"><strong>{INTEGRATIONS_COPY.title}.</strong> {INTEGRATIONS_COPY.body}</p>
         <ul className="hm-policy">
           <li><strong>Refunds.</strong> {REFUND_RULE}</li>
           <li><strong>Help hours.</strong> {HELP_HOURS_NOTE} {EXTRA_HELP_NOTE}</li>
