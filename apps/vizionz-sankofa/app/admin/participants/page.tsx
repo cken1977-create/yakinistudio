@@ -35,8 +35,26 @@ export default async function ParticipantsPage() {
         'consent_signed_at, intake_notes, ' +
         'legacyline_subject_id, legacyline_pushed_at, legacyline_consent_signed, ' +
         'created_at, updated_at'
-  const listParticipants = (cols: string) =>
-    supabase.from('participants').select(cols).order('intake_date', { ascending: false })
+  // The API returns at most 1,000 rows per request, so page through with
+  // .range() until a short page comes back. The list's search and status
+  // tabs then cover every client, not just the newest 1,000.
+  const PAGE = 1000
+  const listParticipants = async (cols: string) => {
+    const rows: unknown[] = []
+    for (let from = 0; from < 50_000; from += PAGE) {
+      const { data, error } = await supabase
+        .from('participants')
+        .select(cols)
+        .order('intake_date', { ascending: false })
+        .order('id', { ascending: true })
+        .range(from, from + PAGE - 1)
+      if (error) return { data: null, error }
+      const batch = (data ?? []) as unknown[]
+      rows.push(...batch)
+      if (batch.length < PAGE) break
+    }
+    return { data: rows, error: null }
+  }
   // service_county arrives with migration 0900; read without it until then.
   let { data: participantsData, error: participantsError } = await listParticipants(PARTICIPANT_COLS + ', service_county')
   if (participantsError && /service_county/.test(participantsError.message)) {

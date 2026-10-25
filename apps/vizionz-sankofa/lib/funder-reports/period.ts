@@ -1,10 +1,14 @@
 // Report periods, as Mountain-time calendar dates (VS is in Albuquerque).
 
-export type PeriodPreset = 'this_month' | 'last_month' | 'this_quarter' | 'last_quarter' | 'ytd' | 'last_year' | 'custom'
+export type PeriodPreset = 'all_time' | 'this_month' | 'last_month' | 'this_quarter' | 'last_quarter' | 'ytd' | 'last_year' | 'custom'
 
 export type Period = { preset: PeriodPreset; start: string; end: string; label: string }
 
+/** Earliest date in VS records (the 2021 emergency rental files). The default report range starts here. */
+export const ALL_TIME_START = '2021-01-01'
+
 export const PERIOD_PRESETS: { key: PeriodPreset; label: string }[] = [
+  { key: 'all_time', label: 'All time' },
   { key: 'this_month', label: 'This month' },
   { key: 'last_month', label: 'Last month' },
   { key: 'this_quarter', label: 'This quarter' },
@@ -39,10 +43,18 @@ export function resolvePeriod(
 ): Period {
   const [y, m] = today.split('-').map(Number)
   const q = Math.floor((m - 1) / 3)
-  const preset = (PERIOD_PRESETS.some((p) => p.key === params.period) ? params.period : 'this_month') as PeriodPreset
+  const preset = (PERIOD_PRESETS.some((p) => p.key === params.period) ? params.period : 'all_time') as PeriodPreset
   let start: string
   let end: string
   switch (preset) {
+    case 'all_time':
+      start = ALL_TIME_START
+      end = today
+      break
+    case 'this_month':
+      start = iso(y, m, 1)
+      end = iso(y, m + 1, 0)
+      break
     case 'last_month':
       start = iso(y, m - 1, 1)
       end = iso(y, m, 0)

@@ -44,7 +44,7 @@ const DEFAULT_SUPPORT: CTABand = {
   headline: 'The work needs partners.',
   body: 'Every dollar funds direct services for families in crisis. Every volunteer hour expands our reach. Every partnership compounds what we can do alone.',
   cta: 'Become a Partner',
-  href: '/donate',
+  href: '/contact',
 }
 
 export function CTABands({
