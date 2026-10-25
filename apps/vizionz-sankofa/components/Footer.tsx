@@ -220,7 +220,7 @@ export function Footer({ config }: { config: BrandConfig }) {
               <h5>Engage</h5>
               <ul>
                 <li><a href="/get-help">Get Help</a></li>
-                <li><a href="/donate">Donate</a></li>
+                <li><a href="/contact">Donate</a></li>
                 <li><a href="/volunteer">Volunteer</a></li>
                 <li><a href="/contact">Contact</a></li>
               </ul>

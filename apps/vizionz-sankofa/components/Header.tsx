@@ -260,7 +260,7 @@ export function Header({ config }: { config: BrandConfig }) {
           </nav>
 
           <div className="vs-cta-group">
-            <a href="/donate" className="vs-cta vs-cta-donate">Donate</a>
+            <a href="/contact" className="vs-cta vs-cta-donate">Donate</a>
             <a href="/get-help" className="vs-cta vs-cta-help">Get Help</a>
           </div>
 
@@ -287,7 +287,7 @@ export function Header({ config }: { config: BrandConfig }) {
             </a>
           ))}
           <div className="vs-mobile-cta-group">
-            <a href="/donate" className="vs-cta vs-cta-donate" onClick={() => setMobileOpen(false)}>
+            <a href="/contact" className="vs-cta vs-cta-donate" onClick={() => setMobileOpen(false)}>
               Donate
             </a>
             <a href="/get-help" className="vs-cta vs-cta-help" onClick={() => setMobileOpen(false)}>
