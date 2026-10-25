@@ -147,7 +147,7 @@ export const SECTIONS_CSS = SEAT_CSS + `
   .hm-policy li { font-size: 14px; line-height: 1.6; color: rgba(244,241,235,0.65); }
   .hm-policy strong { color: var(--cream); font-weight: 600; }
   @media (min-width: 760px) { .hm-plan-grid { grid-template-columns: 1fr 1fr; } }
-  @media (min-width: 1200px) { .hm-plan-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 1200px) { .hm-plan-grid { grid-template-columns: repeat(3, 1fr); } }
 
   /* Steps */
   .hm-steps { background: linear-gradient(180deg, var(--navy-deep) 0%, var(--black-soft) 100%); border-top: 1px solid var(--line); }
