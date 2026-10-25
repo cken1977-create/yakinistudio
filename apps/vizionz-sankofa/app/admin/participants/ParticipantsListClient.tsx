@@ -20,6 +20,8 @@ import {
   PARTICIPANT_STATUS_LABELS,
   REFERRAL_SOURCE_LABELS,
 } from './types'
+import { todayInMountain } from '@/lib/format/datetime'
+import { useCanEdit } from '@/components/admin/CanEdit'
 
 const STATUS_TABS: { key: 'all' | ParticipantStatus; label: string }[] = [
   { key: 'all', label: 'All' },
@@ -39,6 +41,7 @@ export function ParticipantsListClient({
   initialParticipants: ParticipantRecord[]
   staff: StaffRecord[]
 }) {
+  const canEdit = useCanEdit()
   const [participants, setParticipants] =
     useState<ParticipantRecord[]>(initialParticipants)
   // Search + status tab live in the URL so "open a participant, then back"
@@ -98,7 +101,7 @@ export function ParticipantsListClient({
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `vs-participants-${new Date().toISOString().slice(0,10)}.csv`
+    a.download = `vs-participants-${todayInMountain()}.csv`
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -136,22 +139,24 @@ export function ParticipantsListClient({
             background: '#FFFFFF',
           }}
         />
-        <button
-          onClick={() => setAdding(true)}
-          style={{
-            padding: '10px 18px',
-            border: '1px solid #0A0A0A',
-            background: '#0A0A0A',
-            color: '#FFFFFF',
-            borderRadius: '6px',
-            fontSize: '14px',
-            fontWeight: 600,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          + Add Participant
-        </button>
+        {canEdit && (
+          <button
+            onClick={() => setAdding(true)}
+            style={{
+              padding: '10px 18px',
+              border: '1px solid #0A0A0A',
+              background: '#0A0A0A',
+              color: '#FFFFFF',
+              borderRadius: '6px',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            + Add Participant
+          </button>
+        )}
           <button
             onClick={exportCSV}
             style={{
@@ -389,6 +394,7 @@ function ParticipantRow({
   caseManager: StaffRecord | undefined
   onEdit: () => void
 }) {
+  const canEdit = useCanEdit()
   const [quickNote, setQuickNote] = useState(false)
   const displayName =
     participant.preferred_name && participant.preferred_name.trim().length > 0
@@ -496,38 +502,42 @@ function ParticipantRow({
         >
           Open
         </Link>
-        <button
-          onClick={onEdit}
-          style={{
-            padding: '8px 16px',
-            border: '1px solid #0A0A0A',
-            background: '#FFFFFF',
-            color: '#0A0A0A',
-            borderRadius: '6px',
-            fontSize: '13px',
-            fontWeight: 500,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          Edit
-        </button>
-        <button
-          onClick={() => setQuickNote(true)}
-          style={{
-            padding: '8px 16px',
-            border: '1px solid rgba(10,10,10,0.16)',
-            background: '#FFFFFF',
-            color: '#0A0A0A',
-            borderRadius: '6px',
-            fontSize: '13px',
-            fontWeight: 500,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          + Note
-        </button>
+        {canEdit && (
+          <button
+            onClick={onEdit}
+            style={{
+              padding: '8px 16px',
+              border: '1px solid #0A0A0A',
+              background: '#FFFFFF',
+              color: '#0A0A0A',
+              borderRadius: '6px',
+              fontSize: '13px',
+              fontWeight: 500,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            Edit
+          </button>
+        )}
+        {canEdit && (
+          <button
+            onClick={() => setQuickNote(true)}
+            style={{
+              padding: '8px 16px',
+              border: '1px solid rgba(10,10,10,0.16)',
+              background: '#FFFFFF',
+              color: '#0A0A0A',
+              borderRadius: '6px',
+              fontSize: '13px',
+              fontWeight: 500,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            + Note
+          </button>
+        )}
       </div>
           {quickNote && (
             <QuickNoteModal
@@ -639,7 +649,7 @@ function ParticipantModal({
   onClose: () => void
   onSaved: (record: ParticipantRecord) => void
 }) {
-  const today = new Date().toISOString().slice(0, 10)
+  const today = todayInMountain()
 
   const [draft, setDraft] = useState<ParticipantEditableFields>({
     first_name: participant?.first_name ?? '',

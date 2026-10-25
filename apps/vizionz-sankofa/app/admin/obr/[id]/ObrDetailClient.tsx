@@ -88,8 +88,8 @@ export function ObrDetailClient({
   return (
     <div>
       <PageIntro kicker="OBR · Organizational Behavioral Readiness" title={profile.is_self ? 'Vizionz Sankofa OBR intake' : profile.display_name}>
-        VS&apos;s own OBR intake and evidence. Upload each document to its checklist item; Clarence
-        monitors progress. A certified evaluator reviews it against the BRSA OBR standard and issues
+        VS&apos;s own OBR intake and evidence. Upload each document to its checklist item; the Yakini
+        team can follow progress to support you. A certified evaluator reviews it against the BRSA OBR standard and issues
         the rating; the decision is recorded under Ratings.
       </PageIntro>
 

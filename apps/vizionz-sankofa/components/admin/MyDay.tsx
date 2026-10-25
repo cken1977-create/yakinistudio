@@ -5,6 +5,7 @@
 import Link from 'next/link'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { LogContactForm } from './LogContactForm'
+import { todayInMountain } from '@/lib/format/datetime'
 
 const NO_CONTACT_DAYS = 14
 const STUCK_DAYS = 30
@@ -37,7 +38,7 @@ export async function MyDay({ supabase }: { supabase: SupabaseClient }) {
   for (const n of (nData ?? []) as N[]) if (!latest.has(n.participant_id)) latest.set(n.participant_id, n)
 
   const now = Date.now()
-  const today = new Date().toISOString().slice(0, 10)
+  const today = todayInMountain()
   const days = (iso: string) => Math.floor((now - new Date(iso).getTime()) / 86400000)
 
   const rows = people.map((p) => {

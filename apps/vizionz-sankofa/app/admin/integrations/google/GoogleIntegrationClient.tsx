@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { formatDateValue } from '@/lib/format/datetime'
 
 type Connection = {
   id: string
@@ -108,9 +109,9 @@ export default function GoogleIntegrationClient({
 
         {connection && (
           <div className="text-xs text-gray-400 space-y-0.5">
-            <p>Connected {new Date(connection.created_at).toLocaleDateString()}</p>
+            <p>Connected {formatDateValue(connection.created_at)}</p>
             {connection.last_used_at && (
-              <p>Last used {new Date(connection.last_used_at).toLocaleDateString()}</p>
+              <p>Last used {formatDateValue(connection.last_used_at)}</p>
             )}
           </div>
         )}
@@ -158,7 +159,7 @@ export default function GoogleIntegrationClient({
                     <p className="text-sm font-medium text-gray-900">{m.sheet_name}</p>
                     {m.last_synced_at && (
                       <p className="text-xs text-gray-400">
-                        Last synced {new Date(m.last_synced_at).toLocaleDateString()}
+                        Last synced {formatDateValue(m.last_synced_at)}
                       </p>
                     )}
                   </div>

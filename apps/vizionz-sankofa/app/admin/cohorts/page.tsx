@@ -18,6 +18,9 @@ import type {
   StaffOption,
 } from './types'
 import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
+import { CanEditProvider } from '@/components/admin/CanEdit'
+import { isExecOrOp } from '@/lib/crm/model'
+import { getAccessRole } from '@/lib/supabase/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -125,7 +128,7 @@ export default async function CohortsPage() {
               'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
           }}
         >
-          Substrate · Wave 3
+          Programs
         </div>
         <h1
           style={{
@@ -183,11 +186,13 @@ export default async function CohortsPage() {
       </section>
 
       {/* Client-side list + add modal */}
-      <CohortsListClient
-        initialCohorts={cohorts}
-        programs={programs}
-        staff={staff}
-      />
+      <CanEditProvider value={isExecOrOp(getAccessRole(user))}>
+        <CohortsListClient
+          initialCohorts={cohorts}
+          programs={programs}
+          staff={staff}
+        />
+      </CanEditProvider>
     </div>
   )
 }

@@ -14,19 +14,15 @@ const SUPABASE_PUBLIC_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 function publicUrlFor(storagePath: string): string {
   return `${SUPABASE_PUBLIC_URL}/storage/v1/object/public/media/${storagePath}`
 }
+import { formatDateValue } from '@/lib/format/datetime'
 
 function formatDateForGallery(eventDate: string | null, createdAt: string): string {
   // Prefer event_date (operator-set, more meaningful), fall back to created_at
   const source = eventDate ?? createdAt
-  const date = new Date(source)
-  if (isNaN(date.getTime())) return ''
+  if (isNaN(new Date(source).getTime())) return ''
 
-  // Format as "May 9, 2026"
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+  // Format as "May 9, 2026" (event dates are plain calendar dates)
+  return formatDateValue(source, { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
 type MediaRow = {

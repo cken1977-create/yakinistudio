@@ -21,6 +21,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { createAdminClient } from '@/lib/supabase/admin'
 import type { VsAccessRole } from '@/lib/supabase/auth'
 import { retrieveChunks, type RetrievedChunk } from './retrieve'
+import { formatDateValue } from '@/lib/format/datetime'
 
 // ─── Per-request context (pilot protection) ──────────────────────────────
 
@@ -380,7 +381,7 @@ async function queryIntakes(input: Record<string, unknown>, ctx: ToolContext): P
   // Contact details are deliberately NOT included: the AI never needs them.
   const formatted = rows
     .map((r, i) => {
-      const created = new Date(r.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+      const created = formatDateValue(r.created_at)
       const lines = [`[${i + 1}] ${r.full_name} — Status: ${r.status} — Submitted: ${created}`]
       if (r.request_type) lines.push(`    Request type: ${r.request_type}`)
       if (r.is_returning) lines.push('    Returning client: yes')
@@ -544,7 +545,7 @@ async function queryDonors(input: Record<string, unknown>, _ctx: ToolContext): P
 
   const formatted = rows.map((r, i) => {
     const dollars = (r.total_lifetime_amount_cents / 100).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
-    const lastGift = r.last_gift_date ? new Date(r.last_gift_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'never'
+    const lastGift = r.last_gift_date ? formatDateValue(r.last_gift_date) : 'never'
     const lines = [
       `[${i + 1}] ${r.display_name} — ${r.donor_type} · ${r.status}`,
       `    Lifetime: $${dollars} across ${r.total_gifts_count} gift${r.total_gifts_count === 1 ? '' : 's'}`,

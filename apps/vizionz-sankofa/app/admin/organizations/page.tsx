@@ -19,6 +19,9 @@ import type {
 } from './types'
 import { isFunder } from './types'
 import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
+import { CanEditProvider } from '@/components/admin/CanEdit'
+import { isExecOrOp } from '@/lib/crm/model'
+import { getAccessRole } from '@/lib/supabase/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -150,7 +153,7 @@ export default async function OrganizationsPage() {
               'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
           }}
         >
-          Substrate · Wave 3
+          Relationships
         </div>
         <h1
           style={{
@@ -211,10 +214,12 @@ export default async function OrganizationsPage() {
       </section>
 
       {/* Client list */}
-      <OrganizationsListClient
-        initialOrganizations={organizations}
-        staff={staff}
-      />
+      <CanEditProvider value={isExecOrOp(getAccessRole(user))}>
+        <OrganizationsListClient
+          initialOrganizations={organizations}
+          staff={staff}
+        />
+      </CanEditProvider>
     </div>
   )
 }

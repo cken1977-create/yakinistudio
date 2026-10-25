@@ -2,8 +2,8 @@
 
 // VIZIONZ SANKOFA · admin section nav
 // A slim row of links under the header, present on every /admin screen
-// (including detail pages) so any section is one tap away. Sticky, and it
-// scrolls sideways on phones instead of wrapping.
+// (including detail pages) so any section is one tap away. Sticky; it wraps
+// onto a second row on wide screens and scrolls sideways on phones.
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -41,6 +41,12 @@ export function AdminSectionNav({ accessRole }: { accessRole: VsAccessRole | nul
         .vs-admin-section-nav ul { scrollbar-width: none; }
         .vs-admin-section-nav ul::-webkit-scrollbar { display: none; }
         .vs-admin-section-nav a:focus-visible { outline: 2px solid #0A2548; outline-offset: -2px; }
+        /* Wide screens: wrap onto a second row so every section is visible
+           (no items hidden off the right edge). Phones keep the sideways scroll. */
+        @media (min-width: 900px) {
+          .vs-admin-section-nav ul { flex-wrap: wrap !important; overflow-x: visible !important; justify-content: center; row-gap: 0; }
+          .vs-admin-section-nav a { padding: 0 10px !important; min-height: 40px !important; }
+        }
       `}</style>
       <ul
         ref={listRef}

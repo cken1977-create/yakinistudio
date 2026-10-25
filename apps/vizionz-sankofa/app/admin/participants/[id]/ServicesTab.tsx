@@ -22,6 +22,8 @@ import {
 } from './types'
 import type { StaffRecord } from '../types'
 import { FUNDERS, SERVICE_COUNTY_LABELS, funderByKey, isServiceCounty } from '@/lib/funder-reports/funders'
+import { formatDateTimeValue } from '@/lib/format/datetime'
+import { useCanEdit } from '@/components/admin/CanEdit'
 
 export function ServicesTab({
   participantId,
@@ -36,6 +38,7 @@ export function ServicesTab({
   staff: StaffRecord[]
   defaultDelivererId: string | null
 }) {
+  const canEdit = useCanEdit()
   const [services, setServices] = useState<ServiceWithJoins[]>(initialServices)
   const [adding, setAdding] = useState(false)
 
@@ -118,22 +121,24 @@ export function ServicesTab({
             Every countable unit of work, in reverse-chronological order.
           </div>
         </div>
-        <button
-          onClick={() => setAdding(true)}
-          style={{
-            padding: '10px 18px',
-            border: '1px solid #0A0A0A',
-            background: '#0A0A0A',
-            color: '#FFFFFF',
-            borderRadius: '6px',
-            fontSize: '14px',
-            fontWeight: 600,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          + Log Service
-        </button>
+        {canEdit && (
+          <button
+            onClick={() => setAdding(true)}
+            style={{
+              padding: '10px 18px',
+              border: '1px solid #0A0A0A',
+              background: '#0A0A0A',
+              color: '#FFFFFF',
+              borderRadius: '6px',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            + Log Service
+          </button>
+        )}
       </div>
 
       {/* Timeline */}
@@ -819,18 +824,7 @@ function saveBtn(pending: boolean): React.CSSProperties {
 }
 
 function formatDateTime(iso: string): string {
-  try {
-    const d = new Date(iso)
-    return d.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-    })
-  } catch {
-    return iso
-  }
+  return formatDateTimeValue(iso)
 }
 
 function toLocalDateTimeInputValue(d: Date): string {

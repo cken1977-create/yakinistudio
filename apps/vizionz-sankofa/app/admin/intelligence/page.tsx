@@ -59,7 +59,7 @@ export default async function IntelligencePage() {
               'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
           }}
         >
-          Yakini Intelligence · Wave 3.4
+          Intelligence
         </div>
 
         <h1
@@ -85,12 +85,11 @@ export default async function IntelligencePage() {
         >
           Yakini Intelligence reads your documents and intake records to give
           you grounded answers with source citations. Ask about programs,
-          history, families, finances — anything that lives in your operating
-          substrate.
+          history, families, finances — anything in your own records.
         </p>
       </section>
 
-      {/* Substrate readiness strip — what Yakini can actually read */}
+      {/* Readiness strip — what Intelligence can actually read */}
       <section
         style={{
           display: 'grid',
@@ -101,16 +100,22 @@ export default async function IntelligencePage() {
           border: '1px solid rgba(10, 10, 10, 0.08)',
         }}
       >
-        <SubstrateCell
-          label="Documents Ready"
-          value={readyDocCount ?? 0}
-          accent="#5B2C8F"
-        />
-        <SubstrateCell
-          label="Indexed Chunks"
-          value={chunkCount ?? 0}
-          accent="#0A2548"
-        />
+        {/* Document counters only appear once documents have been processed;
+            a row of zeros reads as broken. "Chunks" is shown as passages. */}
+        {(readyDocCount ?? 0) > 0 && (
+          <SubstrateCell
+            label="Documents Ready"
+            value={readyDocCount ?? 0}
+            accent="#5B2C8F"
+          />
+        )}
+        {(chunkCount ?? 0) > 0 && (
+          <SubstrateCell
+            label="Searchable Passages"
+            value={chunkCount ?? 0}
+            accent="#0A2548"
+          />
+        )}
         <SubstrateCell
           label="Intake Records"
           value={intakeCount ?? 0}

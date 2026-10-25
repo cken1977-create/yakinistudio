@@ -21,6 +21,10 @@ import type {
 } from './types'
 import { COHORT_STATUS_LABELS, COHORT_STATUS_COLORS } from './types'
 import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
+import { formatDateValue } from '@/lib/format/datetime'
+import { CanEditProvider } from '@/components/admin/CanEdit'
+import { canWriteCrm } from '@/lib/crm/model'
+import { getAccessRole } from '@/lib/supabase/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -264,12 +268,14 @@ export default async function CohortDetailPage({
       )}
 
       {/* Enrollments client */}
-      <EnrollmentsClient
-        cohortId={cohort.id}
-        cohortCapacity={cohort.capacity}
-        initialEnrollments={enrollments}
-        allParticipants={allParticipants}
-      />
+      <CanEditProvider value={canWriteCrm(getAccessRole(user))}>
+        <EnrollmentsClient
+          cohortId={cohort.id}
+          cohortCapacity={cohort.capacity}
+          initialEnrollments={enrollments}
+          allParticipants={allParticipants}
+        />
+      </CanEditProvider>
 
       {/* Operator footer */}
       <footer
@@ -364,14 +370,5 @@ function QuickFact({
 
 function formatDate(d: string | null): string {
   if (!d) return '—'
-  try {
-    const date = new Date(d + 'T00:00:00')
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  } catch {
-    return d
-  }
+  return formatDateValue(d)
 }

@@ -215,7 +215,7 @@ function EmptyState() {
         }}
       >
         Add donors one at a time with the form above, or import an existing
-        list as a CSV. Yakini Intelligence will start reading the substrate
+        list as a CSV. Intelligence can answer questions about them
         as soon as records exist.
       </p>
     </div>

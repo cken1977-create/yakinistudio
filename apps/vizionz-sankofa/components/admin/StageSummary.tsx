@@ -6,6 +6,8 @@ const LABEL: Record<string, string> = {
   intake: 'Intake', review: 'Review', consent_signed: 'Consent signed', enrolled: 'Enrolled',
   receiving_services: 'Receiving services', readiness_evaluation: 'Readiness eval.', certified: 'Certified', exited: 'Exited',
 }
+// Stages a client has left or finished: time spent there is not "stalled".
+const FINISHED = new Set(['exited'])
 type Row = { current_stage: string; participants: number; avg_days_in_stage: number | null; stalled_over_30_days: number; returning_clients: number }
 
 export async function StageSummary({ supabase, large = false }: { supabase: SupabaseClient; large?: boolean }) {
@@ -24,7 +26,7 @@ export async function StageSummary({ supabase, large = false }: { supabase: Supa
               <div style={{ fontSize: large ? '32px' : '28px', fontWeight: 600 }}>{r?.participants ?? 0}</div>
               <div style={{ fontSize: '12px', color: 'rgba(10,10,10,0.55)' }}>
                 {r?.avg_days_in_stage != null ? `avg ${r.avg_days_in_stage} days` : '—'}
-                {r && r.stalled_over_30_days > 0 ? ` · ${r.stalled_over_30_days} stalled` : ''}
+                {r && r.stalled_over_30_days > 0 && !FINISHED.has(s) ? ` · ${r.stalled_over_30_days} stalled` : ''}
               </div>
             </div>
           )

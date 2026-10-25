@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { formatDateValue } from '@/lib/format/datetime'
 
 type ExistingMapping = {
   id: string
@@ -95,7 +96,7 @@ export default function SheetsPickerClient({
                 <p className="text-sm font-medium text-gray-900">{m.sheet_name}</p>
                 {m.last_synced_at && (
                   <p className="text-xs text-gray-400">
-                    Last synced {new Date(m.last_synced_at).toLocaleDateString()}
+                    Last synced {formatDateValue(m.last_synced_at)}
                   </p>
                 )}
               </li>

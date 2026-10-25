@@ -14,6 +14,7 @@ import {
   DOCUMENT_CATEGORY_LABELS,
   type DocumentCategory,
 } from './types'
+import { formatDateValue, formatDateTimeValue } from '@/lib/format/datetime'
 
 type DocumentRecord = {
   id: string
@@ -58,21 +59,11 @@ function formatBytes(bytes: number): string {
 
 function formatDate(iso: string | null): string {
   if (!iso) return '—'
-  return new Date(iso).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
+  return formatDateValue(iso)
 }
 
 function formatTimestamp(iso: string): string {
-  return new Date(iso).toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  })
+  return formatDateTimeValue(iso)
 }
 
 export function DocumentRow({

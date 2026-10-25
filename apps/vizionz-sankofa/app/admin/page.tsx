@@ -14,6 +14,7 @@ import { AskBar } from '@/components/admin/AskBar'
 import { MyDay } from '@/components/admin/MyDay'
 import { StageSummary } from '@/components/admin/StageSummary'
 import { NeedsAttention } from '@/components/admin/crm/NeedsAttention'
+import { formatDateValue } from '@/lib/format/datetime'
 
 export default async function AdminLandingPage() {
   // Enforce authentication. Redirects to /admin/login if no session.
@@ -38,6 +39,7 @@ export default async function AdminLandingPage() {
       <div>
         <AskBar large greeting={`Good to see you, ${firstName}. What would you like to know?`} voiceSettings={voiceSettings} />
         <StageSummary supabase={supabase} large />
+        <NeedsAttention supabase={supabase} />
       </div>
     )
   }
@@ -155,7 +157,8 @@ export default async function AdminLandingPage() {
           Your account has no data-access role yet, so client records and Intelligence are hidden. Ask Carly (operator) to set one.
         </p>
       )}
-      {/* Welcome strip */}
+      {/* Welcome strip — only when there is no AskBar greeting above */}
+      {!accessRole && (
       <section style={{ marginBottom: '40px' }}>
         <div
           style={{
@@ -169,7 +172,7 @@ export default async function AdminLandingPage() {
               'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
           }}
         >
-          Operator Surface · Wave 3
+          Operations
         </div>
         <h1
           style={{
@@ -196,12 +199,18 @@ export default async function AdminLandingPage() {
           organization moves forward.
         </p>
       </section>
+      )}
 
-      {/* Stats strip — live from Supabase */}
+      {/* Stats strip — live from Supabase. Fixed 4 columns (2 on phones) so
+          the 8 cells always fill whole rows, with no blank card at the end. */}
+      <style>{`
+        .vs-home-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        @media (max-width: 700px) { .vs-home-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      `}</style>
       <section
+        className="vs-home-stats"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
           gap: '1px',
           background: 'rgba(10, 10, 10, 0.08)',
           marginBottom: '40px',
@@ -291,35 +300,35 @@ export default async function AdminLandingPage() {
           {/* Wave 3 case management surfaces — primary */}
           <SurfaceCard
             href="/admin/participants"
-            kicker="Substrate · Wave 3"
+            kicker="Case management"
             title="Participants"
             description={`Every family and individual VS walks with. ${participantCount ?? 0} total · ${activeParticipantCount ?? 0} active.`}
             status="active"
           />
           <SurfaceCard
             href="/admin/cohorts"
-            kicker="Substrate · Wave 3"
+            kicker="Programs"
             title="Cohorts"
             description={`Specific instances of every program. ${cohortCount ?? 0} total · ${activeCohortCount ?? 0} running now.`}
             status="active"
           />
           <SurfaceCard
             href="/admin/programs"
-            kicker="Substrate · Wave 3"
+            kicker="Programs"
             title="Programs"
             description={`The programs Vizionz Sankofa offers. ${programCount ?? 0} active.`}
             status="active"
           />
           <SurfaceCard
             href="/admin/organizations"
-            kicker="Substrate · Wave 3"
+            kicker="Relationships"
             title="Funders & Partners"
             description={`Institutional relationships. ${funderCount ?? 0} funders + ${(organizationCount ?? 0) - (funderCount ?? 0)} partners. Generate funder portal links here.`}
             status="active"
           />
           <SurfaceCard
             href="/admin/grants"
-            kicker="Substrate · Wave 3"
+            kicker="Funding"
             title="Grants Pipeline"
             description={`Grant applications from draft through close. ${grantCount ?? 0} total · ${activeGrantCount ?? 0} active.`}
             status="active"
@@ -328,37 +337,37 @@ export default async function AdminLandingPage() {
           {/* Existing operational surfaces */}
           <SurfaceCard
             href="/admin/media"
-            kicker="Media · Wave 1.5"
+            kicker="Website"
             title="Photos & Videos"
             description={`Upload event photos and program videos for the public Gallery. ${mediaCount ?? 0} items · ${photoCount ?? 0} photos · ${videoCount ?? 0} videos.`}
             status="active"
           />
           <SurfaceCard
             href="/admin/intakes"
-            kicker="Intakes · Wave 2"
+            kicker="Get Help"
             title="Get Help Requests"
             description={`Review incoming intakes from families seeking support. ${intakeTotalCount ?? 0} total · ${intakeNewCount ?? 0} new.`}
             status="active"
           />
           <SurfaceCard
             href="/admin/documents"
-            kicker="Substrate · Wave 3.2"
+            kicker="Documents"
             title="Document Library"
-            description="Upload organizational documents — policies, financials, programs, board minutes. Each becomes searchable substrate as it's processed."
+            description="Upload organizational documents — policies, financials, programs, board minutes. Each one can be searched and asked about once it has been processed."
             status="active"
           />
           <SurfaceCard
             href="/admin/intelligence"
-            kicker="Substrate · Wave 3.4"
+            kicker="Ask questions"
             title="Yakini Intelligence"
             description="Ask anything about your organization. Yakini Intelligence reads your documents and intake records to deliver grounded answers with source citations."
             status="active"
           />
           <SurfaceCard
             href="/admin/donors"
-            kicker="Substrate · Wave 3.5"
+            kicker="Giving"
             title="Donor Management"
-            description="Donor records, gift history, and CSV import. Yakini Intelligence reads donor patterns to answer questions about giving history, recurring relationships, and lifetime support."
+            description="Donor records, gift history, and CSV import. You can ask questions about giving history, recurring gifts and lifetime support."
             status="active"
           />
 
@@ -412,7 +421,7 @@ function ActivityFeed({ items }: { items: ActivityItem[] }) {
         {items.map((item) => {
           const p = Array.isArray(item.participants) ? item.participants[0] : item.participants
           const name = p ? p.first_name + ' ' + p.last_name : 'Unknown'
-          const date = new Date(item.created_at).toLocaleDateString()
+          const date = formatDateValue(item.created_at)
           const preview = item.content.length > 120 ? item.content.slice(0, 120) + '...' : item.content
           return (
             <li
