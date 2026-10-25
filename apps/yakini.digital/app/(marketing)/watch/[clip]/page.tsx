@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { SiteShell } from '@/components/SiteShell'
 import { FinalCta } from '@/components/site/Sections'
 import { SECTIONS_CSS } from '@/components/site/content'
-import { ALL, CLIPS, videoById } from '@/lib/watch'
+import { ALL, CLIPS, FULL, FULL_CHAPTERS, videoById } from '@/lib/watch'
 import { VideoCard } from '../VideoCard'
 import { WATCH_CSS } from '../watch-css'
 
@@ -48,19 +48,19 @@ export default async function ClipPage({ params }: Props) {
       <style>{SECTIONS_CSS + WATCH_CSS}</style>
       <header className="yk-page-header wv-header">
         <div className="yk-page-header-inner">
-          <div className="yk-eyebrow"><span className="yk-eyebrow-dot" /><span>WATCH{i >= 0 ? ` · PART ${i + 1} OF ${CLIPS.length}` : ''}</span></div>
+          <div className="yk-eyebrow"><span className="yk-eyebrow-dot" /><span>WATCH{i >= 0 ? ` · VIDEO ${i + 1} OF ${CLIPS.length}` : v.id === 'full' ? ' · FULL WALKTHROUGH' : ''}</span></div>
           <h1 className="yk-page-h1">{v.title}</h1>
         </div>
       </header>
       <div className="wv-wrap">
-        <VideoCard v={v} big label={i >= 0 ? `Part ${i + 1} of ${CLIPS.length}` : undefined} />
+        <VideoCard v={v} big label={i >= 0 ? `Video ${i + 1} of ${CLIPS.length}` : v.id === 'full' ? 'The full walkthrough' : undefined} chapters={v.id === 'full' ? FULL_CHAPTERS : undefined} />
         {i >= 0 && (
           <nav className="wv-nav" aria-label="More videos">
             {prev ? <Link href={`/watch/${prev.id}`}>← {prev.title}</Link> : <span />}
             {next ? <Link href={`/watch/${next.id}`}>{next.title} →</Link> : <span />}
           </nav>
         )}
-        <p className="wv-back"><Link className="wv-open" href="/watch">All Yakini videos</Link></p>
+        <p className="wv-back"><Link className="wv-open" href="/watch">All Yakini videos</Link>{FULL && v.id !== 'full' && <> · <Link className="wv-open" href="/watch/full">Watch the full walkthrough</Link></>}</p>
       </div>
       <FinalCta />
     </SiteShell>

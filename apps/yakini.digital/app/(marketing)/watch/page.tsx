@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { SiteShell } from '@/components/SiteShell'
 import { FinalCta } from '@/components/site/Sections'
 import { SECTIONS_CSS } from '@/components/site/content'
-import { CLIPS, FULL, SHOWCASE } from '@/lib/watch'
+import { CLIPS, FULL, FULL_CHAPTERS, SHOWCASE } from '@/lib/watch'
 import { VideoCard } from './VideoCard'
 import { WATCH_CSS } from './watch-css'
 
@@ -37,14 +37,14 @@ export default function WatchPage() {
             <br />
             <span className="yk-gold yk-italic">in action.</span>
           </h1>
-          <p className="yk-page-sub">Short videos, about a minute each, with captions. Press play. Nothing to download and no sign-in.</p>
+          <p className="yk-page-sub">The full five-minute walkthrough, or one short video at a time, with captions. Press play. Nothing to download and no sign-in.</p>
         </div>
       </header>
 
       <div className="wv-wrap">
         {FULL && (
           <section className="wv-section" aria-label="The full walkthrough">
-            <VideoCard v={FULL} big label="The full walkthrough" />
+            <VideoCard v={FULL} big label="The full walkthrough" chapters={FULL_CHAPTERS} />
           </section>
         )}
 
@@ -52,7 +52,7 @@ export default function WatchPage() {
           <h2 id="wv-parts" className="wv-h2">{FULL ? 'Or watch one part' : 'The portal, one minute at a time'}</h2>
           <p className="wv-lead">Each video has its own link. Use &ldquo;Share this video&rdquo; to send one or post it.</p>
           <div className="wv-grid">
-            {CLIPS.map((v, i) => <VideoCard key={v.id} v={v} label={`Part ${i + 1} of ${CLIPS.length}`} />)}
+            {CLIPS.map((v, i) => <VideoCard key={v.id} v={v} label={`Video ${i + 1} of ${CLIPS.length}`} />)}
           </div>
         </section>
 

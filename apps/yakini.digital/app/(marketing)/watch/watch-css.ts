@@ -24,5 +24,11 @@ export const WATCH_CSS = `
   .wv-nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--cream); text-decoration: none; font-size: 14px; }
   .wv-nav a:hover { border-color: var(--gold); color: var(--gold); }
   .wv-back { margin-top: 40px; }
+  .wv-chapters { margin-top: 18px; }
+  .wv-chapters-h { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(244,241,235,0.6); }
+  .wv-chapters ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 8px; }
+  .wv-chapters button { display: flex; gap: 12px; align-items: center; width: 100%; min-height: 44px; padding: 8px 14px; border: 1px solid var(--line-strong); border-radius: 10px; background: transparent; color: var(--cream); font: inherit; font-size: 15px; text-align: left; cursor: pointer; }
+  .wv-chapters button:hover { border-color: var(--gold); color: var(--gold); }
+  .wv-chap-time { font-variant-numeric: tabular-nums; color: var(--gold); min-width: 2.6em; }
   @media (max-width: 640px) { .wv-wrap { padding: 32px 16px 72px; } .wv-title { font-size: 21px; } }
 `

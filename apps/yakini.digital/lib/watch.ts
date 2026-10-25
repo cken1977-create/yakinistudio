@@ -16,8 +16,6 @@ export type Video = {
   poster: string
 }
 
-/** The full play-through. Leave null until it is uploaded; the page adds it on top automatically. */
-export const FULL: (Video & { chapters: { id: string; at: number }[] }) | null = null
 
 const clip = (n: number, title: string, sub: string, device: Video['device'], duration: string, seconds: number): Video => ({
   id: `y${n}`, title, sub, device, duration, seconds,
@@ -33,6 +31,33 @@ export const CLIPS: Video[] = [
   clip(5, 'Help desk with a real person', 'A customer opens a help request and follows its status.', 'On a computer', '0:47', 47),
   clip(6, 'Book a time you confirm', 'A customer picks a time and requests it. You confirm it.', 'On a phone', '0:49', 49),
 ]
+
+/** The full play-through (Kofi's combined cut): shown on top of /watch and at /watch/full. Set to null to hide it. */
+export const FULL: (Video & { chapters: { id: string; at: number }[] }) | null = {
+  id: 'full',
+  title: 'The Yakini portal, start to finish',
+  sub: 'All six short videos in one walkthrough: the portal, a customer room, the help desk, booking, plans and setup.',
+  duration: '5:22',
+  seconds: 322,
+  src: `${BASE}/yakini-demo-full.mp4`,
+  poster: `${BASE}/yakini-demo-full-card.jpg`,
+  // Where each part starts in the full cut (Kofi's order: y1, y4, y5, y6, y2, y3; end card at 5:11.9).
+  chapters: [
+    { id: 'y1', at: 0 },
+    { id: 'y4', at: 60.8 },
+    { id: 'y5', at: 117.4 },
+    { id: 'y6', at: 159.3 },
+    { id: 'y2', at: 203.0 },
+    { id: 'y3', at: 273.4 },
+  ],
+}
+
+/** "Jump to a part" list for the full play-through, with titles filled in. */
+export const FULL_CHAPTERS = (FULL?.chapters ?? []).map((c) => {
+  const v = CLIPS.find((x) => x.id === c.id)
+  const m = Math.floor(c.at / 60), sec = Math.floor(c.at % 60)
+  return { id: c.id, at: c.at, title: v?.title ?? c.id, time: `${m}:${String(sec).padStart(2, '0')}` }
+})
 
 /** "See what we build" reel(s). The section stays hidden while this is empty. */
 export const SHOWCASE: Video[] = []
