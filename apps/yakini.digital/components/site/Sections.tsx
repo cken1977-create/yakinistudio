@@ -13,7 +13,6 @@ import {
   FOUNDING,
   GUIDED_STEPS,
   HELP_HOURS_NOTE,
-  PARTNER,
   PLANS,
   REFUND_RULE,
   START_URL,
@@ -163,13 +162,6 @@ export function PlanGrid({ num = '02' }: { num?: string }) {
               </article>
             )
           })}
-          <article className="hm-plan hm-plan-partner">
-            <div className="hm-plan-tag">Quoted per project</div>
-            <h3 className="hm-plan-name">{PARTNER.name}</h3>
-            <p className="hm-plan-line">{PARTNER.line}</p>
-            <p className="hm-plan-sum">{PARTNER.detail}</p>
-            <a href="/custom-builds" className="hm-btn hm-btn-ghost"><span>See custom builds</span><span className="yk-btn-arrow">→</span></a>
-          </article>
         </div>
 
         <ul className="hm-policy">
