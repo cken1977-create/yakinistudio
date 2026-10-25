@@ -21,6 +21,7 @@ import type {
   FunderCohortSummary,
   FunderServiceRow,
 } from './types'
+import { formatDateValue, formatDateTimeValue } from '@/lib/format/datetime'
 
 const OUTCOME_COLORS: Record<string, { bg: string; fg: string }> = {
   completed: { bg: 'rgba(0, 122, 51, 0.12)', fg: '#007A33' },
@@ -830,29 +831,9 @@ function EmptyPortal({ funderName }: { funderName: string }) {
 
 function formatDate(d: string | null): string {
   if (!d) return ''
-  try {
-    const date = new Date(d.length === 10 ? d + 'T00:00:00' : d)
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  } catch {
-    return d
-  }
+  return formatDateValue(d)
 }
 
 function formatDateTime(iso: string): string {
-  try {
-    const d = new Date(iso)
-    return d.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-    })
-  } catch {
-    return iso
-  }
+  return formatDateTimeValue(iso)
 }

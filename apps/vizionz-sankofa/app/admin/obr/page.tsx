@@ -117,7 +117,7 @@ export default async function ObrPage() {
       {crumbs}
       <PageIntro kicker="OBR · Vizionz Sankofa" title={OBR_FULL_NAME}>
         VS&apos;s own OBR intake under the BRSA standard. Staff complete the intake sections and
-        upload evidence for each checklist item; Clarence monitors progress from his side. A
+        upload evidence for each checklist item; the Yakini team can follow progress to support you. A
         certified evaluator issues the rating. Nothing here is scored automatically.
       </PageIntro>
 

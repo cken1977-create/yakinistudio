@@ -29,6 +29,8 @@ import {
   getRelevantDeadline,
   getDeadlineUrgency,
 } from './types'
+import { formatDateValue } from '@/lib/format/datetime'
+import { useCanEdit } from '@/components/admin/CanEdit'
 
 const STATUS_TABS: { key: 'all' | GrantStatus; label: string }[] = [
   { key: 'all', label: 'All' },
@@ -59,6 +61,7 @@ export function GrantsListClient({
   cohorts: CohortOption[]
   staff: StaffOption[]
 }) {
+  const canEdit = useCanEdit()
   const [grants, setGrants] = useState<GrantWithJoins[]>(initialGrants)
   const [search, setSearch] = useUrlState<string>('q', '')
   const [statusTab, setStatusTab] = useUrlState<'all' | GrantStatus>('status', 'all')
@@ -145,22 +148,24 @@ export function GrantsListClient({
             background: '#FFFFFF',
           }}
         />
-        <button
-          onClick={() => setAdding(true)}
-          style={{
-            padding: '10px 18px',
-            border: '1px solid #0A0A0A',
-            background: '#0A0A0A',
-            color: '#FFFFFF',
-            borderRadius: '6px',
-            fontSize: '14px',
-            fontWeight: 600,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          + Add Grant
-        </button>
+        {canEdit && (
+          <button
+            onClick={() => setAdding(true)}
+            style={{
+              padding: '10px 18px',
+              border: '1px solid #0A0A0A',
+              background: '#0A0A0A',
+              color: '#FFFFFF',
+              borderRadius: '6px',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            + Add Grant
+          </button>
+        )}
       </section>
 
       {/* Status tabs */}
@@ -1066,14 +1071,5 @@ function saveBtn(pending: boolean): React.CSSProperties {
 
 function formatDate(d: string | null): string {
   if (!d) return ''
-  try {
-    const date = new Date(d + 'T00:00:00')
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  } catch {
-    return d
-  }
+  return formatDateValue(d)
 }

@@ -8,19 +8,23 @@
 import { useState } from 'react'
 import { AddDonorModal } from './AddDonorModal'
 import { primaryButtonStyle } from './DonorRow'
+import { useCanEdit } from '@/components/admin/CanEdit'
 
 export function AddDonorButton() {
+  const canEdit = useCanEdit()
   const [open, setOpen] = useState(false)
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        style={primaryButtonStyle}
-      >
-        + Add Donor
-      </button>
+      {canEdit && (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          style={primaryButtonStyle}
+        >
+          + Add Donor
+        </button>
+      )}
       {open && <AddDonorModal onClose={() => setOpen(false)} />}
     </>
   )

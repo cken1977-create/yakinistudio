@@ -18,6 +18,8 @@ import {
   CONTACT_METHOD_ICONS,
 } from './types'
 import type { StaffRecord } from '../types'
+import { formatDateValue, formatDateTimeValue } from '@/lib/format/datetime'
+import { useCanEdit } from '@/components/admin/CanEdit'
 
 export function CaseNotesTab({
   participantId,
@@ -30,6 +32,7 @@ export function CaseNotesTab({
   staff: StaffRecord[]
   defaultAuthorId: string | null
 }) {
+  const canEdit = useCanEdit()
   const [notes, setNotes] = useState<CaseNoteWithStaff[]>(initialNotes)
   const [adding, setAdding] = useState(false)
   const [confidentialVisible, setConfidentialVisible] = useState(false)
@@ -100,22 +103,24 @@ export function CaseNotesTab({
               Show confidential
             </label>
           )}
-          <button
-            onClick={() => setAdding(true)}
-            style={{
-              padding: '10px 18px',
-              border: '1px solid #0A0A0A',
-              background: '#0A0A0A',
-              color: '#FFFFFF',
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
-          >
-            + Add Note
-          </button>
+          {canEdit && (
+            <button
+              onClick={() => setAdding(true)}
+              style={{
+                padding: '10px 18px',
+                border: '1px solid #0A0A0A',
+                background: '#0A0A0A',
+                color: '#FFFFFF',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              + Add Note
+            </button>
+          )}
         </div>
       </div>
 
@@ -795,32 +800,12 @@ function saveBtn(pending: boolean): React.CSSProperties {
 }
 
 function formatDateTime(iso: string): string {
-  try {
-    const d = new Date(iso)
-    return d.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-    })
-  } catch {
-    return iso
-  }
+  return formatDateTimeValue(iso)
 }
 
 function formatDate(d: string | null): string {
   if (!d) return ''
-  try {
-    const date = new Date(d)
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  } catch {
-    return d
-  }
+  return formatDateValue(d)
 }
 
 function toLocalDateTimeInputValue(d: Date): string {

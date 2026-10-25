@@ -12,6 +12,9 @@ import { createClient } from '@/lib/supabase/server'
 import { ParticipantsListClient } from './ParticipantsListClient'
 import type { ParticipantRecord, StaffRecord } from './types'
 import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
+import { CanEditProvider } from '@/components/admin/CanEdit'
+import { canWriteCrm } from '@/lib/crm/model'
+import { getAccessRole } from '@/lib/supabase/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -98,7 +101,7 @@ export default async function ParticipantsPage() {
               'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
           }}
         >
-          Substrate · Wave 3
+          Case management
         </div>
         <h1
           style={{
@@ -122,7 +125,7 @@ export default async function ParticipantsPage() {
         >
           Every family and individual Vizionz Sankofa walks with, {greetingName}.
           Add new intakes, update case status, assign case managers, and track
-          consent. The substrate of the work.
+          consent.
         </p>
       </section>
 
@@ -151,10 +154,12 @@ export default async function ParticipantsPage() {
       </section>
 
       {/* Client-side list with search + filter + edit */}
-      <ParticipantsListClient
-        initialParticipants={participants}
-        staff={staff}
-      />
+      <CanEditProvider value={canWriteCrm(getAccessRole(user))}>
+        <ParticipantsListClient
+          initialParticipants={participants}
+          staff={staff}
+        />
+      </CanEditProvider>
     </div>
   )
 }

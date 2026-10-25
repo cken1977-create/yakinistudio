@@ -21,6 +21,8 @@ import {
   COHORT_STATUS_LABELS,
   COHORT_STATUS_COLORS,
 } from './types'
+import { formatDateValue, todayInMountain } from '@/lib/format/datetime'
+import { useCanEdit } from '@/components/admin/CanEdit'
 
 const STATUS_TABS: { key: 'all' | CohortStatus; label: string }[] = [
   { key: 'all', label: 'All' },
@@ -40,6 +42,7 @@ export function CohortsListClient({
   programs: ProgramOption[]
   staff: StaffOption[]
 }) {
+  const canEdit = useCanEdit()
   const [cohorts, setCohorts] = useState<CohortWithJoins[]>(initialCohorts)
   const [search, setSearch] = useUrlState<string>('q', '')
   const [tab, setTab] = useUrlState<'all' | CohortStatus>('status', 'all')
@@ -89,24 +92,26 @@ export function CohortsListClient({
             background: '#FFFFFF',
           }}
         />
-        <button
-          onClick={() => setAdding(true)}
-          disabled={programs.length === 0}
-          style={{
-            padding: '10px 18px',
-            border: '1px solid #0A0A0A',
-            background: '#0A0A0A',
-            color: '#FFFFFF',
-            borderRadius: '6px',
-            fontSize: '14px',
-            fontWeight: 600,
-            cursor: programs.length === 0 ? 'not-allowed' : 'pointer',
-            fontFamily: 'inherit',
-            opacity: programs.length === 0 ? 0.5 : 1,
-          }}
-        >
-          + Add Cohort
-        </button>
+        {canEdit && (
+          <button
+            onClick={() => setAdding(true)}
+            disabled={programs.length === 0}
+            style={{
+              padding: '10px 18px',
+              border: '1px solid #0A0A0A',
+              background: '#0A0A0A',
+              color: '#FFFFFF',
+              borderRadius: '6px',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor: programs.length === 0 ? 'not-allowed' : 'pointer',
+              fontFamily: 'inherit',
+              opacity: programs.length === 0 ? 0.5 : 1,
+            }}
+          >
+            + Add Cohort
+          </button>
+        )}
       </section>
 
       {/* Status tabs */}
@@ -381,7 +386,7 @@ function CohortModal({
   onClose: () => void
   onSaved: (record: CohortWithJoins) => void
 }) {
-  const today = new Date().toISOString().slice(0, 10)
+  const today = todayInMountain()
 
   const [draft, setDraft] = useState<CohortEditableFields>({
     program_id: programs[0]?.id ?? '',
@@ -750,14 +755,5 @@ function saveBtn(pending: boolean): React.CSSProperties {
 
 function formatDate(d: string | null): string {
   if (!d) return ''
-  try {
-    const date = new Date(d + 'T00:00:00')
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  } catch {
-    return d
-  }
+  return formatDateValue(d)
 }

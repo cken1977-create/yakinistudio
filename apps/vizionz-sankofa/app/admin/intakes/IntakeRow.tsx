@@ -15,6 +15,8 @@ import {
   refreshLegacylineStatus,
 } from '../actions/intakes'
 import { splitFullNameForPromotion } from '@/lib/legacyline/client'
+import { formatDateValue, formatDateTimeValue } from '@/lib/format/datetime'
+import { useCanEdit } from '@/components/admin/CanEdit'
 
 export type IntakeRecord = {
   id: string
@@ -71,14 +73,7 @@ const STATUS_COLORS: Record<IntakeRecord['status'], string> = {
 }
 
 function formatTimestamp(iso: string): string {
-  const date = new Date(iso)
-  return date.toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  })
+  return formatDateTimeValue(iso)
 }
 
 function formatRelative(iso: string): string {
@@ -111,6 +106,7 @@ export function IntakeRow({
   defaultExpanded?: boolean
   viewerRole: IntakeRowViewerRole
 }) {
+  const canEdit = useCanEdit()
   // Wave 2.5: Role-aware rendering. Employees see a restricted surface:
   // no Promote button, no Delete button, restricted status options.
   const isOperator = viewerRole === 'operator'
@@ -359,6 +355,7 @@ export function IntakeRow({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               disabled={isPending}
+              readOnly={!canEdit}
               rows={3}
               placeholder="Internal notes — who's working on this, what's been tried, next steps…"
               style={{
@@ -376,155 +373,118 @@ export function IntakeRow({
                 marginBottom: '8px',
               }}
             />
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <button
-                type="button"
-                onClick={handleSaveNotes}
-                disabled={isPending || notes === (intake.notes ?? '')}
-                style={{
-                  padding: '8px 16px',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  color: '#FFFFFF',
-                  background: '#0A2548',
-                  border: 'none',
-                  borderRadius: '2px',
-                  cursor: isPending ? 'wait' : 'pointer',
-                  opacity:
-                    isPending || notes === (intake.notes ?? '') ? 0.5 : 1,
-                }}
-              >
-                {isPending ? 'Saving…' : 'Save notes'}
-              </button>
-              {notesSaved && (
-                <span
-                  style={{
-                    fontSize: '11px',
-                    fontWeight: 600,
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    color: '#007A33',
-                    fontFamily:
-                      'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
-                  }}
-                >
-                  Saved
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '8px',
-              alignItems: 'center',
-            }}
-          >
-            {!intake.contacted_at && (
-              <button
-                type="button"
-                onClick={handleMarkContacted}
-                disabled={isPending}
-                style={{
-                  padding: '10px 16px',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  color: '#FFFFFF',
-                  background: '#007A33',
-                  border: 'none',
-                  borderRadius: '2px',
-                  cursor: isPending ? 'wait' : 'pointer',
-                }}
-              >
-                Mark contacted
-              </button>
-            )}
-
-            <select
-              value={intake.status}
-              onChange={(e) => handleStatusChange(e.target.value)}
-              disabled={isPending}
-              style={{
-                padding: '10px 12px',
-                fontSize: '12px',
-                fontWeight: 600,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-                color: '#0A0A0A',
-                background: '#FFFFFF',
-                border: '1px solid rgba(10, 10, 10, 0.2)',
-                borderRadius: '2px',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-              }}
-            >
-              <option value="new">New</option>
-              <option value="contacted">Contacted</option>
-              <option value="in_progress">In Progress</option>
-              {isOperator && (
-                <>
-                  <option value="resolved">Resolved</option>
-                  <option value="closed_no_response">Closed — No Response</option>
-                </>
-              )}
-            </select>
-
-            {isOperator && (
-              <PromoteToLegacyline intake={intake} disabled={isPending} />
-            )}
-
-            <div style={{ flex: 1 }} />
-
-            {isOperator && !confirmingDelete ? (
-              <button
-                type="button"
-                onClick={() => setConfirmingDelete(true)}
-                disabled={isPending}
-                style={{
-                  padding: '10px 14px',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  color: '#CE1126',
-                  background: 'transparent',
-                  border: '1px solid rgba(206, 17, 38, 0.3)',
-                  borderRadius: '2px',
-                  cursor: isPending ? 'wait' : 'pointer',
-                }}
-              >
-                Delete
-              </button>
-            ) : isOperator && confirmingDelete ? (
-              <div style={{ display: 'flex', gap: '6px' }}>
+            {canEdit && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <button
                   type="button"
-                  onClick={handleDelete}
-                  disabled={isPending}
+                  onClick={handleSaveNotes}
+                  disabled={isPending || notes === (intake.notes ?? '')}
                   style={{
-                    padding: '10px 14px',
+                    padding: '8px 16px',
                     fontSize: '11px',
                     fontWeight: 600,
                     letterSpacing: '0.08em',
                     textTransform: 'uppercase',
                     color: '#FFFFFF',
-                    background: '#CE1126',
+                    background: '#0A2548',
+                    border: 'none',
+                    borderRadius: '2px',
+                    cursor: isPending ? 'wait' : 'pointer',
+                    opacity:
+                      isPending || notes === (intake.notes ?? '') ? 0.5 : 1,
+                  }}
+                >
+                  {isPending ? 'Saving…' : 'Save notes'}
+                </button>
+                {notesSaved && (
+                  <span
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      color: '#007A33',
+                      fontFamily:
+                        'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
+                    }}
+                  >
+                    Saved
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {canEdit && (
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '8px',
+                alignItems: 'center',
+              }}
+            >
+              {!intake.contacted_at && (
+                <button
+                  type="button"
+                  onClick={handleMarkContacted}
+                  disabled={isPending}
+                  style={{
+                    padding: '10px 16px',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    color: '#FFFFFF',
+                    background: '#007A33',
                     border: 'none',
                     borderRadius: '2px',
                     cursor: isPending ? 'wait' : 'pointer',
                   }}
                 >
-                  {isPending ? 'Deleting…' : 'Yes, delete'}
+                  Mark contacted
                 </button>
+              )}
+  
+              <select
+                value={intake.status}
+                onChange={(e) => handleStatusChange(e.target.value)}
+                disabled={isPending}
+                style={{
+                  padding: '10px 12px',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                  color: '#0A0A0A',
+                  background: '#FFFFFF',
+                  border: '1px solid rgba(10, 10, 10, 0.2)',
+                  borderRadius: '2px',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                <option value="new">New</option>
+                <option value="contacted">Contacted</option>
+                <option value="in_progress">In Progress</option>
+                {isOperator && (
+                  <>
+                    <option value="resolved">Resolved</option>
+                    <option value="closed_no_response">Closed — No Response</option>
+                  </>
+                )}
+              </select>
+  
+              {isOperator && (
+                <PromoteToLegacyline intake={intake} disabled={isPending} />
+              )}
+  
+              <div style={{ flex: 1 }} />
+  
+              {isOperator && !confirmingDelete ? (
                 <button
                   type="button"
-                  onClick={() => setConfirmingDelete(false)}
+                  onClick={() => setConfirmingDelete(true)}
                   disabled={isPending}
                   style={{
                     padding: '10px 14px',
@@ -532,18 +492,59 @@ export function IntakeRow({
                     fontWeight: 600,
                     letterSpacing: '0.08em',
                     textTransform: 'uppercase',
-                    color: '#0A0A0A',
+                    color: '#CE1126',
                     background: 'transparent',
-                    border: '1px solid rgba(10, 10, 10, 0.2)',
+                    border: '1px solid rgba(206, 17, 38, 0.3)',
                     borderRadius: '2px',
-                    cursor: 'pointer',
+                    cursor: isPending ? 'wait' : 'pointer',
                   }}
                 >
-                  Cancel
+                  Delete
                 </button>
-              </div>
-            ) : null}
-          </div>
+              ) : isOperator && confirmingDelete ? (
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    disabled={isPending}
+                    style={{
+                      padding: '10px 14px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      letterSpacing: '0.08em',
+                      textTransform: 'uppercase',
+                      color: '#FFFFFF',
+                      background: '#CE1126',
+                      border: 'none',
+                      borderRadius: '2px',
+                      cursor: isPending ? 'wait' : 'pointer',
+                    }}
+                  >
+                    {isPending ? 'Deleting…' : 'Yes, delete'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmingDelete(false)}
+                    disabled={isPending}
+                    style={{
+                      padding: '10px 14px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      letterSpacing: '0.08em',
+                      textTransform: 'uppercase',
+                      color: '#0A0A0A',
+                      background: 'transparent',
+                      border: '1px solid rgba(10, 10, 10, 0.2)',
+                      borderRadius: '2px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : null}
+            </div>
+          )}
 
           {error && (
             <div
@@ -1108,11 +1109,7 @@ function formatSyncedRelative(iso: string): string {
   if (minutes < 60) return `${minutes}m ago`
   if (hours < 24) return `${hours}h ago`
   if (days < 7) return `${days}d ago`
-  return new Date(iso).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
+  return formatDateValue(iso)
 }
 
 function LegacylinePromotedStrip({
@@ -1293,13 +1290,7 @@ function LegacylinePromotedStrip({
           }}
         >
           promoted{' '}
-          {new Date(intake.legacyline_promoted_at).toLocaleString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit',
-          })}
+          {formatDateTimeValue(intake.legacyline_promoted_at)}
         </div>
       )}
 

@@ -28,6 +28,8 @@ import {
   generateToken,
   isFunder,
 } from './types'
+import { formatDateValue, formatDateTimeValue } from '@/lib/format/datetime'
+import { useCanEdit } from '@/components/admin/CanEdit'
 
 const KIND_TABS: { key: 'all' | RelationshipKind; label: string }[] = [
   { key: 'all', label: 'All' },
@@ -51,6 +53,7 @@ export function OrganizationsListClient({
   initialOrganizations: OrganizationWithTokens[]
   staff: { id: string; full_name: string }[]
 }) {
+  const canEdit = useCanEdit()
   const [orgs, setOrgs] =
     useState<OrganizationWithTokens[]>(initialOrganizations)
   const [search, setSearch] = useUrlState<string>('q', '')
@@ -116,22 +119,24 @@ export function OrganizationsListClient({
             background: '#FFFFFF',
           }}
         />
-        <button
-          onClick={() => setAdding(true)}
-          style={{
-            padding: '10px 18px',
-            border: '1px solid #0A0A0A',
-            background: '#0A0A0A',
-            color: '#FFFFFF',
-            borderRadius: '6px',
-            fontSize: '14px',
-            fontWeight: 600,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          + Add Organization
-        </button>
+        {canEdit && (
+          <button
+            onClick={() => setAdding(true)}
+            style={{
+              padding: '10px 18px',
+              border: '1px solid #0A0A0A',
+              background: '#0A0A0A',
+              color: '#FFFFFF',
+              borderRadius: '6px',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            + Add Organization
+          </button>
+        )}
       </section>
 
       {/* Kind tabs */}
@@ -296,6 +301,7 @@ function OrgRow({
   org: OrganizationWithTokens
   onManageTokens: () => void
 }) {
+  const canEdit = useCanEdit()
   const showsAsFunder = isFunder(org.relationship_kind)
 
   return (
@@ -418,7 +424,7 @@ function OrgRow({
           </div>
         )}
       </div>
-      {showsAsFunder && (
+      {showsAsFunder && canEdit && (
         <button
           onClick={onManageTokens}
           style={{
@@ -1314,31 +1320,11 @@ function miniBtnDanger(disabled: boolean): React.CSSProperties {
 
 function formatDate(d: string | null): string {
   if (!d) return ''
-  try {
-    const date = new Date(d + 'T00:00:00')
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  } catch {
-    return d
-  }
+  return formatDateValue(d)
 }
 
 function formatDateTime(iso: string): string {
-  try {
-    const d = new Date(iso)
-    return d.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-    })
-  } catch {
-    return iso
-  }
+  return formatDateTimeValue(iso)
 }
 
 function formatRelativeTime(iso: string): string {

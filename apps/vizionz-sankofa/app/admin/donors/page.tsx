@@ -13,6 +13,9 @@ import { createClient } from '@/lib/supabase/server'
 import { DonorListClient } from './DonorListClient'
 import { type DonorRecord, formatCurrency } from './types'
 import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
+import { CanEditProvider } from '@/components/admin/CanEdit'
+import { isExecOrOp } from '@/lib/crm/model'
+import { getAccessRole } from '@/lib/supabase/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -61,7 +64,7 @@ export default async function DonorsPage() {
               'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
           }}
         >
-          Substrate · Wave 3.5
+          Giving
         </div>
         <h1
           style={{
@@ -85,8 +88,8 @@ export default async function DonorsPage() {
         >
           The people, families, foundations, and organizations who give to
           your work, {greetingName}. Add new donors, record gifts, and import
-          your existing list. Yakini Intelligence reads this substrate to
-          answer questions about donor patterns and giving history.
+          your existing list. You can also ask Intelligence about
+          donor patterns and giving history.
         </p>
       </section>
 
@@ -107,7 +110,9 @@ export default async function DonorsPage() {
       </section>
 
       {/* Donor list with search/filter */}
-      <DonorListClient donors={donors} />
+      <CanEditProvider value={isExecOrOp(getAccessRole(user))}>
+        <DonorListClient donors={donors} />
+      </CanEditProvider>
     </div>
   )
 }

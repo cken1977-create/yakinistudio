@@ -21,6 +21,8 @@ import {
   ENROLLMENT_STATUS_LABELS,
   ENROLLMENT_STATUS_COLORS,
 } from './types'
+import { formatDateValue, todayInMountain } from '@/lib/format/datetime'
+import { useCanEdit } from '@/components/admin/CanEdit'
 
 const STATUS_TABS: { key: 'all' | EnrollmentStatus; label: string }[] = [
   { key: 'all', label: 'All' },
@@ -42,6 +44,7 @@ export function EnrollmentsClient({
   initialEnrollments: EnrollmentWithParticipant[]
   allParticipants: AvailableParticipant[]
 }) {
+  const canEdit = useCanEdit()
   const [enrollments, setEnrollments] =
     useState<EnrollmentWithParticipant[]>(initialEnrollments)
   const [adding, setAdding] = useState(false)
@@ -112,25 +115,27 @@ export function EnrollmentsClient({
             {cohortCapacity !== null && ` of ${cohortCapacity}`}
           </div>
         </div>
-        <button
-          onClick={() => setAdding(true)}
-          disabled={availableForEnrollment.length === 0}
-          style={{
-            padding: '10px 18px',
-            border: '1px solid #0A0A0A',
-            background: atCapacity ? 'rgba(206, 17, 38, 0.9)' : '#0A0A0A',
-            color: '#FFFFFF',
-            borderRadius: '6px',
-            fontSize: '14px',
-            fontWeight: 600,
-            cursor:
-              availableForEnrollment.length === 0 ? 'not-allowed' : 'pointer',
-            fontFamily: 'inherit',
-            opacity: availableForEnrollment.length === 0 ? 0.5 : 1,
-          }}
-        >
-          {atCapacity ? '+ Enroll (Over Capacity)' : '+ Enroll Participant'}
-        </button>
+        {canEdit && (
+          <button
+            onClick={() => setAdding(true)}
+            disabled={availableForEnrollment.length === 0}
+            style={{
+              padding: '10px 18px',
+              border: '1px solid #0A0A0A',
+              background: atCapacity ? 'rgba(206, 17, 38, 0.9)' : '#0A0A0A',
+              color: '#FFFFFF',
+              borderRadius: '6px',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor:
+                availableForEnrollment.length === 0 ? 'not-allowed' : 'pointer',
+              fontFamily: 'inherit',
+              opacity: availableForEnrollment.length === 0 ? 0.5 : 1,
+            }}
+          >
+            {atCapacity ? '+ Enroll (Over Capacity)' : '+ Enroll Participant'}
+          </button>
+        )}
       </div>
 
       {/* Status tabs */}
@@ -242,6 +247,7 @@ function EnrollmentRow({
   enrollment: EnrollmentWithParticipant
   onEdit: () => void
 }) {
+  const canEdit = useCanEdit()
   const displayName =
     enrollment.participant_preferred_name &&
     enrollment.participant_preferred_name.trim().length > 0
@@ -328,22 +334,24 @@ function EnrollmentRow({
           </div>
         )}
       </div>
-      <button
-        onClick={onEdit}
-        style={{
-          padding: '6px 14px',
-          border: '1px solid rgba(10, 10, 10, 0.18)',
-          background: '#FFFFFF',
-          color: '#0A0A0A',
-          borderRadius: '4px',
-          fontSize: '12px',
-          fontWeight: 600,
-          cursor: 'pointer',
-          fontFamily: 'inherit',
-        }}
-      >
-        Edit
-      </button>
+      {canEdit && (
+        <button
+          onClick={onEdit}
+          style={{
+            padding: '6px 14px',
+            border: '1px solid rgba(10, 10, 10, 0.18)',
+            background: '#FFFFFF',
+            color: '#0A0A0A',
+            borderRadius: '4px',
+            fontSize: '12px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          Edit
+        </button>
+      )}
     </article>
   )
 }
@@ -408,7 +416,7 @@ function EnrollModal({
   onClose: () => void
   onEnrolled: (e: EnrollmentWithParticipant) => void
 }) {
-  const today = new Date().toISOString().slice(0, 10)
+  const today = todayInMountain()
 
   const [search, setSearch] = useState('')
   const [selectedParticipantId, setSelectedParticipantId] = useState<string>('')
@@ -717,7 +725,7 @@ function EditEnrollmentModal({
     setErrorMsg(null)
 
     // Auto-set lifecycle timestamps based on status transitions
-    const today = new Date().toISOString().slice(0, 10)
+    const today = todayInMountain()
     const payload: EnrollmentEditableFields = { ...draft }
 
     if (draft.status === 'completed' && !draft.completed_at) {
@@ -990,14 +998,5 @@ function saveBtn(pending: boolean): React.CSSProperties {
 
 function formatDate(d: string | null): string {
   if (!d) return '—'
-  try {
-    const date = new Date(d + 'T00:00:00')
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  } catch {
-    return d
-  }
+  return formatDateValue(d)
 }

@@ -6,7 +6,8 @@
 // call). Scales from zero intakes (empty state) to thousands (pagination
 // deferred to TODO_FUTURE per locked Wave 2.2 scope).
 
-import { requireOperatorOrEmployee } from '@/lib/supabase/auth'
+import { requireOperatorOrEmployee, getAccessRole } from '@/lib/supabase/auth'
+import { CanEditProvider } from '@/components/admin/CanEdit'
 import { createClient } from '@/lib/supabase/server'
 import { IntakeRow, type IntakeRecord } from './IntakeRow'
 import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
@@ -109,7 +110,11 @@ export default async function IntakesAdminPage({
   // Count for filter pills (independent of current filter)
   const counts = await fetchStatusCounts(supabase)
 
+  // Leadership is read-only: it sees requests but not the action buttons.
+  const canActOnIntakes = getAccessRole(viewer) !== 'leadership_readonly'
+
   return (
+    <CanEditProvider value={canActOnIntakes}>
     <div>
       <AdminCrumbs trail={[{ label: 'Get Help Requests' }]} fallbackHref="/admin" fallbackLabel="Operations" />
       {/* Header */}
@@ -126,7 +131,7 @@ export default async function IntakesAdminPage({
               'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
           }}
         >
-          Intakes · Wave 2
+          Get Help
         </div>
 
         <h1
@@ -228,6 +233,7 @@ export default async function IntakesAdminPage({
         <Pager info={info} prev={pageHref('/admin/intakes', pagerParams, info.page - 1)} next={pageHref('/admin/intakes', pagerParams, info.page + 1)} />
       )}
     </div>
+    </CanEditProvider>
   )
 }
 

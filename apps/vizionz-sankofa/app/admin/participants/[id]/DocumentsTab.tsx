@@ -21,6 +21,8 @@ import {
   formatFileSize,
 } from './types'
 import type { StaffRecord } from '../types'
+import { formatDateTimeValue, formatDateValue } from '@/lib/format/datetime'
+import { useCanEdit } from '@/components/admin/CanEdit'
 
 const SIGNED_URL_TTL_SECONDS = 900 // 15 minutes
 const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024 // 50 MB
@@ -36,6 +38,7 @@ export function DocumentsTab({
   staff: StaffRecord[]
   defaultUploaderId: string | null
 }) {
+  const canEdit = useCanEdit()
   const [documents, setDocuments] =
     useState<ParticipantDocumentWithStaff[]>(initialDocuments)
   const [uploading, setUploading] = useState(false)
@@ -144,18 +147,20 @@ export function DocumentsTab({
               Show confidential
             </label>
           )}
-          <UploadButton
-            participantId={participantId}
-            defaultUploaderId={defaultUploaderId}
-            staff={staff}
-            uploading={uploading}
-            setUploading={setUploading}
-            onUploaded={(newDoc) => {
-              setDocuments((prev) => [newDoc, ...prev])
-              setErrorMsg(null)
-            }}
-            onError={setErrorMsg}
-          />
+          {canEdit && (
+            <UploadButton
+              participantId={participantId}
+              defaultUploaderId={defaultUploaderId}
+              staff={staff}
+              uploading={uploading}
+              setUploading={setUploading}
+              onUploaded={(newDoc) => {
+                setDocuments((prev) => [newDoc, ...prev])
+                setErrorMsg(null)
+              }}
+              onError={setErrorMsg}
+            />
+          )}
         </div>
       </div>
 
@@ -946,30 +951,10 @@ function miniBtnDanger(disabled: boolean): React.CSSProperties {
 }
 
 function formatDateTime(iso: string): string {
-  try {
-    const d = new Date(iso)
-    return d.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-    })
-  } catch {
-    return iso
-  }
+  return formatDateTimeValue(iso)
 }
 
 function formatDate(d: string | null): string {
   if (!d) return ''
-  try {
-    const date = new Date(d)
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  } catch {
-    return d
-  }
+  return formatDateValue(d)
 }
