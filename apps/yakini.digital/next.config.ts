@@ -4,7 +4,17 @@ import type { NextConfig } from "next";
 // /food-trucks is retired with no redirect: it 404s like any unknown path.
 const PORTAL_SIGN_IN = "https://portal.yakini.digital/enter";
 
+// /watch videos stream from the public video store. This header only limits
+// where video and audio may load from on those pages; nothing else changes.
+const WATCH_MEDIA_CSP = "media-src 'self' https://ec22ch0piqcoe7i7.public.blob.vercel-storage.com"
+
 const nextConfig: NextConfig = {
+  async headers() {
+    return [
+      { source: '/watch', headers: [{ key: 'Content-Security-Policy', value: WATCH_MEDIA_CSP }] },
+      { source: '/watch/:path*', headers: [{ key: 'Content-Security-Policy', value: WATCH_MEDIA_CSP }] },
+    ]
+  },
   async redirects() {
     return [
       { source: "/platforms", destination: "/custom-builds", permanent: true },
