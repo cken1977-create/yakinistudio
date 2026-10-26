@@ -2,13 +2,14 @@ import Link from "next/link"
 import { requireOperatorOrEmployee, getOperatorDisplayName } from "@/lib/supabase/auth"
 import { createClient } from "@/lib/supabase/server"
 import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
+import { todayInMountain } from '@/lib/format/datetime'
 
 export default async function DeskPage() {
   const user = await requireOperatorOrEmployee()
   const name = await getOperatorDisplayName(user)
   const supabase = await createClient()
-  const today = new Date().toISOString().slice(0, 10)
-  const soon = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10)
+  const today = todayInMountain()
+  const soon = todayInMountain(new Date(Date.now() + 30 * 86400000))
 
   const { count: waiting } = await supabase
     .from("intake_requests")

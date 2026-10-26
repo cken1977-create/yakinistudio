@@ -5,7 +5,8 @@
 // @yakini/ui-primitives and bespoke components from local components/.
 // Does NOT import from @yakini/template-yakini-editorial.
 //
-// Order: Topbar → Header → main content → Footer
+// Order: Topbar → Header → main content → Footer (public pages only;
+// /admin has its own shell, see components/PublicChrome.tsx)
 // ═════════════════════════════════════════════════════════════════════════
 
 import type { Metadata } from 'next'
@@ -13,6 +14,7 @@ import { BrandProvider } from '@yakini/ui-primitives'
 import { validateBrandConfig } from '@yakini/config'
 import { config } from '@/config/brand'
 import { Topbar, Header, Footer } from '@/components'
+import { PublicOnly } from '@/components/PublicChrome'
 
 // Build-time validation — fails the build if config is invalid
 const validation = validateBrandConfig(config)
@@ -42,12 +44,17 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <BrandProvider config={config}>
-          <Topbar config={config} />
-          <Header config={config} />
+          {/* Public chrome is skipped on staff pages (/admin), which have their own shell */}
+          <PublicOnly>
+            <Topbar config={config} />
+            <Header config={config} />
+          </PublicOnly>
           <main style={{ minHeight: '60vh' }}>
             {children}
           </main>
-          <Footer config={config} />
+          <PublicOnly>
+            <Footer config={config} />
+          </PublicOnly>
         </BrandProvider>
       </body>
     </html>

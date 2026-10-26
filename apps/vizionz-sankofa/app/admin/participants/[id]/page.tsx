@@ -36,6 +36,8 @@ import { loadStaff } from '@/lib/crm/load'
 import { TASK_COLUMNS, canWriteSubject, isExecOrOp, type TaskRow } from '@/lib/crm/model'
 import { getAccessRole } from '@/lib/supabase/auth'
 import { todayMountain } from '@/components/admin/ui'
+import { formatDateValue } from '@/lib/format/datetime'
+import { CanEditProvider } from '@/components/admin/CanEdit'
 
 export const dynamic = 'force-dynamic'
 
@@ -234,6 +236,10 @@ export default async function ParticipantDetailPage({
 
   // Office CRM: tasks about this client (RLS: caseload + who the task is for).
   const accessRole = getAccessRole(user)
+  // Same rule RLS uses for notes/services/documents/assessments: exec/op on
+  // anyone, a case manager on their own caseload, Leadership never.
+  const { data: canWriteRpc } = await supabase.rpc('vs_can_write_participant', { p_participant_id: participant.id })
+  const canWriteThisParticipant = canWriteRpc === true
   const [crmTasks, crmStaff] = await Promise.all([
     supabase.from('vs_tasks').select(TASK_COLUMNS).eq('subject_type', 'participant').eq('subject_id', participant.id)
       .order('due_on', { ascending: true, nullsFirst: false }),
@@ -338,20 +344,22 @@ export default async function ParticipantDetailPage({
       />
 
       {/* Tabs */}
-      <TabsClient
-        participantId={participant.id}
-        caseNotes={caseNotes}
-        services={services}
-        serviceTypes={serviceTypes}
-        documents={documents}
-        assessments={assessments}
-        staff={staff}
-        defaultAuthorId={defaultAuthorId}
-        defaultDelivererId={defaultAuthorId}
-        defaultUploaderId={defaultAuthorId}
-        defaultAdministrator={defaultAuthorId}
-        operatorName={greetingName}
-      />
+      <CanEditProvider value={canWriteThisParticipant}>
+        <TabsClient
+          participantId={participant.id}
+          caseNotes={caseNotes}
+          services={services}
+          serviceTypes={serviceTypes}
+          documents={documents}
+          assessments={assessments}
+          staff={staff}
+          defaultAuthorId={defaultAuthorId}
+          defaultDelivererId={defaultAuthorId}
+          defaultUploaderId={defaultAuthorId}
+          defaultAdministrator={defaultAuthorId}
+          operatorName={greetingName}
+        />
+      </CanEditProvider>
     </div>
   )
 }
@@ -431,14 +439,5 @@ function QuickFact({ label, value }: { label: string; value: string }) {
 
 function formatDate(d: string | null): string {
   if (!d) return '—'
-  try {
-    const date = new Date(d)
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  } catch {
-    return d
-  }
+  return formatDateValue(d)
 }

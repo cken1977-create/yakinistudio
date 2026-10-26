@@ -5,6 +5,7 @@
 // can be used from server and client components.
 
 import type { CSSProperties, ReactNode } from 'react'
+import { formatDateValue, todayInMountain } from '@/lib/format/datetime'
 
 export const MONO = 'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace'
 export const SERIF = '"DM Serif Display", Georgia, serif'
@@ -390,17 +391,12 @@ export function FilterButton({ label, active, onClick }: { label: string; active
 
 export function formatDay(d: string | null | undefined): string {
   if (!d) return '—'
-  const date = new Date(d.length === 10 ? d + 'T00:00:00' : d)
-  if (Number.isNaN(date.getTime())) return d
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  return formatDateValue(d)
 }
 
-/** Today as YYYY-MM-DD in the browser/server's local zone. */
+/** Today as YYYY-MM-DD in Mountain time (Vercel servers run in UTC). */
 export function todayIso(): string {
-  const d = new Date()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${d.getFullYear()}-${m}-${day}`
+  return todayInMountain()
 }
 
 /** Supabase error = the new tables are not in the database yet. */

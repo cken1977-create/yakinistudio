@@ -33,7 +33,11 @@ test('periods are Mountain-time calendar ranges', () => {
   const c = resolvePeriod({ period: 'custom', from: '2026-05-01', to: '2026-03-01' }, '2026-10-17')
   assert.deepEqual([c.start, c.end], ['2026-03-01', '2026-05-01'])
   const bad = resolvePeriod({ period: 'nonsense' }, '2026-10-17')
-  assert.equal(bad.preset, 'this_month')
+  assert.equal(bad.preset, 'all_time')
+  assert.equal(bad.start, '2021-01-01')
+  assert.equal(bad.end, '2026-10-17')
+  const none = resolvePeriod({}, '2026-10-25')
+  assert.equal(none.preset, 'all_time')
   // 11pm Mountain on Oct 31 is Nov 1 in UTC; it still counts in October.
   assert.equal(mountainDate('2026-11-01T05:00:00Z'), '2026-10-31')
 })

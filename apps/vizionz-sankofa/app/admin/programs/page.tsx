@@ -12,6 +12,9 @@ import { createClient } from '@/lib/supabase/server'
 import { ProgramsListClient } from './ProgramsListClient'
 import type { ProgramRecord } from './types'
 import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
+import { CanEditProvider } from '@/components/admin/CanEdit'
+import { isExecOrOp } from '@/lib/crm/model'
+import { getAccessRole } from '@/lib/supabase/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -62,7 +65,7 @@ export default async function ProgramsPage() {
               'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
           }}
         >
-          Substrate · Wave 3
+          Programs
         </div>
         <h1
           style={{
@@ -115,7 +118,9 @@ export default async function ProgramsPage() {
       </section>
 
       {/* Client-side list with search + edit */}
-      <ProgramsListClient initialPrograms={programs} />
+      <CanEditProvider value={isExecOrOp(getAccessRole(user))}>
+        <ProgramsListClient initialPrograms={programs} />
+      </CanEditProvider>
     </div>
   )
 }

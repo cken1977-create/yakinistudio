@@ -45,7 +45,9 @@ export default async function MyDayPage({ searchParams }: { searchParams: Promis
     supabase.from('vs_contacts').select('id, display_name').is('archived_at', null).order('display_name').limit(1000),
     supabase.from('organizations').select('id, name').order('name').limit(1000),
     role === 'case_manager'
-      ? supabase.from('participants').select('id, first_name, last_name, preferred_name').neq('current_stage', 'exited').order('last_name').limit(500)
+      ? // RLS already limits a case manager to their own caseload; include closed/exited
+      // clients too so imported history can be logged against.
+      supabase.from('participants').select('id, first_name, last_name, preferred_name').order('last_name').order('first_name').limit(1000)
       : Promise.resolve({ data: [], error: null }),
     focusTaskId && /^[0-9a-f-]{36}$/i.test(focusTaskId)
       ? supabase.from('vs_tasks').select(TASK_COLUMNS).eq('id', focusTaskId).maybeSingle()

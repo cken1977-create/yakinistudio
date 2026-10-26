@@ -74,7 +74,7 @@ export default async function MediaAdminPage({
               'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
           }}
         >
-          Media · Wave 1.5
+          Website
         </div>
 
         <h1

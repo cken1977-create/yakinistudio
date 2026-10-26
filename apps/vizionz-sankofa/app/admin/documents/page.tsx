@@ -134,7 +134,7 @@ export default async function DocumentsPage({
               'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
           }}
         >
-          Documents · Wave 3
+          Documents
         </div>
 
         <div
@@ -269,7 +269,7 @@ export default async function DocumentsPage({
         >
           <strong>{pendingCount}</strong>{' '}
           {pendingCount === 1 ? 'document is' : 'documents are'} waiting for
-          processing. Yakini Intelligence will read them once Wave 3.3 ships.
+          processing. Intelligence can read them once they have been processed.
         </div>
       )}
 

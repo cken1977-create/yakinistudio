@@ -12,6 +12,9 @@ import { createClient } from '@/lib/supabase/server'
 import { ParticipantsListClient } from './ParticipantsListClient'
 import type { ParticipantRecord, StaffRecord } from './types'
 import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
+import { CanEditProvider } from '@/components/admin/CanEdit'
+import { canWriteCrm } from '@/lib/crm/model'
+import { getAccessRole } from '@/lib/supabase/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,8 +38,26 @@ export default async function ParticipantsPage() {
         'consent_signed_at, intake_notes, ' +
         'legacyline_subject_id, legacyline_pushed_at, legacyline_consent_signed, ' +
         'created_at, updated_at'
-  const listParticipants = (cols: string) =>
-    supabase.from('participants').select(cols).order('intake_date', { ascending: false })
+  // The API returns at most 1,000 rows per request, so page through with
+  // .range() until a short page comes back. The list's search and status
+  // tabs then cover every client, not just the newest 1,000.
+  const PAGE = 1000
+  const listParticipants = async (cols: string) => {
+    const rows: unknown[] = []
+    for (let from = 0; from < 50_000; from += PAGE) {
+      const { data, error } = await supabase
+        .from('participants')
+        .select(cols)
+        .order('intake_date', { ascending: false })
+        .order('id', { ascending: true })
+        .range(from, from + PAGE - 1)
+      if (error) return { data: null, error }
+      const batch = (data ?? []) as unknown[]
+      rows.push(...batch)
+      if (batch.length < PAGE) break
+    }
+    return { data: rows, error: null }
+  }
   // service_county arrives with migration 0900; read without it until then.
   let { data: participantsData, error: participantsError } = await listParticipants(PARTICIPANT_COLS + ', service_county')
   if (participantsError && /service_county/.test(participantsError.message)) {
@@ -80,7 +101,7 @@ export default async function ParticipantsPage() {
               'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
           }}
         >
-          Substrate · Wave 3
+          Case management
         </div>
         <h1
           style={{
@@ -104,7 +125,7 @@ export default async function ParticipantsPage() {
         >
           Every family and individual Vizionz Sankofa walks with, {greetingName}.
           Add new intakes, update case status, assign case managers, and track
-          consent. The substrate of the work.
+          consent.
         </p>
       </section>
 
@@ -133,10 +154,12 @@ export default async function ParticipantsPage() {
       </section>
 
       {/* Client-side list with search + filter + edit */}
-      <ParticipantsListClient
-        initialParticipants={participants}
-        staff={staff}
-      />
+      <CanEditProvider value={canWriteCrm(getAccessRole(user))}>
+        <ParticipantsListClient
+          initialParticipants={participants}
+          staff={staff}
+        />
+      </CanEditProvider>
     </div>
   )
 }

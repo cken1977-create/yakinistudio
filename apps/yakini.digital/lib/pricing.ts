@@ -1,4 +1,4 @@
-// Yakini's one public price list (locked Oct 21 2026, Clarence Kennedy).
+// Yakini's one public price list (locked Oct 21 2026, Clarence Kennedy; Grow setup cut to $499 Oct 23 2026, so every plan has a $499 setup).
 // Every page that shows a plan, the Founding offer, or an apply-form choice reads this file.
 // The portal's sign-up (portal.yakini.digital/start) charges from the same numbers (portal.settings.json kit.offers).
 // Customer-facing copy names services (hosting, database, texting line, payments), never the companies behind them.
@@ -24,7 +24,7 @@ export const REFUND_RULE =
   'The setup fee is refundable in full until your kickoff call or 14 days after you sign up, whichever comes first. After that it is non-refundable.'
 
 export const BILLING_NOTE =
-  'You pay the one-time guided-setup fee when you sign up. Your monthly plan starts after setup.'
+  'When you sign up, we’ll send you an invoice for the one-time guided-setup fee. Your monthly plan starts after setup.'
 
 export const EXTRA_HELP_NOTE =
   'Need more help than your plan includes? Extra hours are $150/hour, or move up a plan.'
@@ -43,7 +43,7 @@ export const PASS_THROUGH_NOTE =
   'Your hosting, database, email, texting line and payment processing are set up in your business’s name, so everything stays yours. Those services bill you directly at their own cost; they are not part of Yakini’s price.'
 
 export const GUIDED_STEPS = [
-  { title: 'Sign up and pay the setup fee', detail: 'Pick a plan and pay the one-time guided-setup fee by card. Your monthly plan starts after setup.' },
+  { title: 'Pick a plan and sign up', detail: 'Tell us about your business and we’ll send you an invoice for the one-time guided-setup fee. Your monthly plan starts after setup.' },
   { title: 'Kickoff call with your Yakini person', detail: 'About 30 minutes. We learn how your business runs today and agree the first thing to fix.' },
   { title: 'We set it up with you', detail: 'Your website, customer portal and the tools on your plan, in your business’s name. You approve each step.' },
   { title: 'Go live, and we stay', detail: 'Your monthly plan starts. Your Yakini person stays on, and the help desk is always open.' },
@@ -220,6 +220,7 @@ export const PLANS: readonly Plan[] = [
 
 export const FOUNDING = PLANS.find((p) => p.id === 'founding')!
 
+/** Partner is quoted privately and never shown publicly. Kept for the call link and the apply form's value ('partner'). */
 export const PARTNER = {
   id: 'partner' as const,
   name: 'Partner',
@@ -258,16 +259,18 @@ export type OfferChoice = { val: string; group: OfferGroup; label: string }
 
 export const OFFER_GROUPS: readonly { id: OfferGroup; label: string }[] = [
   { id: 'plan', label: 'Guided-setup plan' },
-  { id: 'partner', label: 'Partner (custom)' },
+  { id: 'partner', label: 'Custom build' },
 ]
 
 export const OFFER_CHOICES: readonly OfferChoice[] = [
   ...PLANS.map((plan) => ({ val: plan.id, group: 'plan' as const, label: `${plan.name} · ${priceLabel(plan)}${plan.lockedMonths ? ` (locked ${plan.lockedMonths} months)` : ''}` })),
-  { val: PARTNER.id, group: 'partner' as const, label: 'Partner · custom build, let’s talk' },
+  { val: PARTNER.id, group: 'partner' as const, label: 'Custom build, let’s talk' },
   { val: 'unsure', group: 'partner' as const, label: 'Not sure yet — help me decide' },
 ]
 
+/** Internal label (admin email only). Partner keeps its internal name here; the public form says "Custom build". */
 export function offerLabel(val: string | null | undefined): string {
   if (!val) return 'Not specified'
+  if (val === PARTNER.id) return 'Partner · custom build'
   return OFFER_CHOICES.find((choice) => choice.val === val)?.label ?? val
 }

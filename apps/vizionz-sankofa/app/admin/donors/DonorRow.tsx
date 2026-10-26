@@ -24,6 +24,8 @@ import {
   deleteDonor,
   recordGift,
 } from '../actions/donors'
+import { formatDateValue, todayInMountain } from '@/lib/format/datetime'
+import { useCanEdit } from '@/components/admin/CanEdit'
 
 type Props = {
   donor: DonorRecord
@@ -210,12 +212,9 @@ function ViewMode({
   onCollapseHistory: () => void
   onDelete: () => void
 }) {
+  const canEdit = useCanEdit()
   const lastGift = donor.last_gift_date
-    ? new Date(donor.last_gift_date).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      })
+    ? formatDateValue(donor.last_gift_date)
     : 'No gifts recorded'
 
   return (
@@ -333,12 +332,16 @@ function ViewMode({
 
       {/* Actions */}
       <div style={{ display: 'flex', gap: '8px', marginTop: '12px', flexWrap: 'wrap' }}>
-        <button type="button" onClick={onGiftEntry} style={primaryButtonStyle}>
-          + Record Gift
-        </button>
-        <button type="button" onClick={onEdit} style={ghostButtonStyle}>
-          Edit
-        </button>
+        {canEdit && (
+          <button type="button" onClick={onGiftEntry} style={primaryButtonStyle}>
+            + Record Gift
+          </button>
+        )}
+        {canEdit && (
+          <button type="button" onClick={onEdit} style={ghostButtonStyle}>
+            Edit
+          </button>
+        )}
         <button
           type="button"
           onClick={historyExpanded ? onCollapseHistory : onToggleHistory}
@@ -346,13 +349,15 @@ function ViewMode({
         >
           {historyExpanded ? 'Hide history' : 'Show history'}
         </button>
-        <button
-          type="button"
-          onClick={onDelete}
-          style={{ ...ghostButtonStyle, color: '#CE1126' }}
-        >
-          Delete
-        </button>
+        {canEdit && (
+          <button
+            type="button"
+            onClick={onDelete}
+            style={{ ...ghostButtonStyle, color: '#CE1126' }}
+          >
+            Delete
+          </button>
+        )}
       </div>
 
       {/* Gift history accordion */}
@@ -388,11 +393,7 @@ function ViewMode({
                 {gifts.map((g) => (
                   <tr key={g.id} style={{ borderBottom: '1px solid rgba(10, 10, 10, 0.04)' }}>
                     <td style={tableCellStyle}>
-                      {new Date(g.gift_date).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
+                      {formatDateValue(g.gift_date)}
                     </td>
                     <td style={{ ...tableCellStyle, fontWeight: 600 }}>
                       {formatCurrency(g.amount_cents)}
@@ -532,7 +533,7 @@ function GiftEntryMode({
   }) => void
 }) {
   const [amount, setAmount] = useState('')
-  const [giftDate, setGiftDate] = useState(new Date().toISOString().slice(0, 10))
+  const [giftDate, setGiftDate] = useState(todayInMountain())
   const [method, setMethod] = useState<GiftMethod>('check')
   const [designation, setDesignation] = useState('')
   const [validationError, setValidationError] = useState<string | null>(null)

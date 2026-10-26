@@ -97,9 +97,13 @@ export async function submitIntakeRequest(
 
   const supabase = await createClient()
 
-  const { data: inserted, error: insertError } = await supabase
+  // Anonymous visitors may INSERT but not SELECT intake_requests (RLS), so
+  // the id is generated here and the insert asks for no row back.
+  const id = crypto.randomUUID()
+  const { error: insertError } = await supabase
     .from('intake_requests')
     .insert({
+      id,
       full_name: submission.full_name,
       email: submission.email,
       phone: submission.phone,
@@ -107,8 +111,7 @@ export async function submitIntakeRequest(
       details: submission.details,
       consent_given: submission.consent_given,
     })
-    .select('id')
-    .single()
+  const inserted = insertError ? null : { id }
 
   if (insertError || !inserted) {
     console.error('Intake insert failed:', insertError)

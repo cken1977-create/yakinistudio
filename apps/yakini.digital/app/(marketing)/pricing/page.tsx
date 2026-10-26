@@ -115,16 +115,6 @@ export default function PricingPage() {
                 </div>
               )
             })}
-            <div id="partner" className="pr-tier pn-tier pn-partner">
-              <div className="pn-tag">Quoted per project</div>
-              <div className="pr-tier-name">{PARTNER.name}</div>
-              <div className="pn-partner-line">{PARTNER.line}</div>
-              <div className="pr-tier-tagline">{PARTNER.detail}</div>
-              <a href={PARTNER.href} className="pr-tier-cta pn-cta-push">
-                <span>{PARTNER.cta}</span>
-                <span className="yk-btn-arrow">→</span>
-              </a>
-            </div>
           </div>
 
           <aside className="pn-promise">
@@ -263,7 +253,7 @@ export default function PricingPage() {
             </details>
             <details className="pr-faq-item">
               <summary className="pr-faq-q">I need something custom.<span className="pr-faq-icon">+</span></summary>
-              <div className="pr-faq-a">That is Partner: custom builds such as lead engines and payment systems, priced on the work and agreed in writing before anything starts. <a href="/custom-builds" className="yk-gold">See custom builds</a> or <a href={PARTNER.href} className="yk-gold">book a call →</a></div>
+              <div className="pr-faq-a">Custom builds, such as lead engines and payment systems, are priced on the work and agreed in writing before anything starts. <a href="/custom-builds" className="yk-gold">See custom builds</a> or <a href={PARTNER.href} className="yk-gold">book a call →</a></div>
             </details>
           </div>
         </div>
@@ -1029,7 +1019,7 @@ const NEW_CSS = `
   .pn-setup-list li::before, .pn-addons li::before { content: '✓'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
   .pn-hero-ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
   .pn-hero-ctas .pr-tier-cta { margin-top: 0; }
-  .pn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; align-items: stretch; }
+  .pn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; align-items: stretch; }
   @media (max-width: 1200px) { .pn-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 700px) { .pn-grid { grid-template-columns: 1fr; } }
   .pn-tier { padding: 34px 28px; border-radius: 4px; transition: transform .25s ease, border-color .25s ease; }

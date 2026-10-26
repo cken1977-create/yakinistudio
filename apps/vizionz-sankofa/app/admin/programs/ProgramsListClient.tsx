@@ -13,6 +13,7 @@ import { useMemo, useState, useTransition } from 'react'
 import { useUrlState } from '@/components/admin/nav/useUrlState'
 import { createClient as createBrowserClient } from '@/lib/supabase/client'
 import type { ProgramEditableFields, ProgramRecord } from './types'
+import { useCanEdit } from '@/components/admin/CanEdit'
 
 type TabKey = 'all' | 'public' | 'draft'
 
@@ -152,6 +153,7 @@ function ProgramRow({
   program: ProgramRecord
   onEdit: () => void
 }) {
+  const canEdit = useCanEdit()
   const hasDescription =
     program.public_description &&
     program.public_description.trim().length > 0
@@ -206,22 +208,24 @@ function ProgramRow({
             : 'No public description yet. Click Edit to write one.'}
         </div>
       </div>
-      <button
-        onClick={onEdit}
-        style={{
-          padding: '8px 16px',
-          border: '1px solid #0A0A0A',
-          background: '#FFFFFF',
-          color: '#0A0A0A',
-          borderRadius: '6px',
-          fontSize: '13px',
-          fontWeight: 500,
-          cursor: 'pointer',
-          fontFamily: 'inherit',
-        }}
-      >
-        Edit
-      </button>
+      {canEdit && (
+        <button
+          onClick={onEdit}
+          style={{
+            padding: '8px 16px',
+            border: '1px solid #0A0A0A',
+            background: '#FFFFFF',
+            color: '#0A0A0A',
+            borderRadius: '6px',
+            fontSize: '13px',
+            fontWeight: 500,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          Edit
+        </button>
+      )}
     </article>
   )
 }

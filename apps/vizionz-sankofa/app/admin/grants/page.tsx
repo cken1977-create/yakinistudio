@@ -22,6 +22,9 @@ import type {
 } from './types'
 import { getRelevantDeadline, getDeadlineUrgency } from './types'
 import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
+import { CanEditProvider } from '@/components/admin/CanEdit'
+import { isExecOrOp } from '@/lib/crm/model'
+import { getAccessRole } from '@/lib/supabase/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -145,7 +148,7 @@ export default async function GrantsPage() {
               'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
           }}
         >
-          Substrate · Wave 3
+          Funding
         </div>
         <h1
           style={{
@@ -219,13 +222,15 @@ export default async function GrantsPage() {
       </section>
 
       {/* Client list */}
-      <GrantsListClient
-        initialGrants={grants}
-        funders={funders}
-        programs={programs}
-        cohorts={cohorts}
-        staff={staff}
-      />
+      <CanEditProvider value={isExecOrOp(getAccessRole(user))}>
+        <GrantsListClient
+          initialGrants={grants}
+          funders={funders}
+          programs={programs}
+          cohorts={cohorts}
+          staff={staff}
+        />
+      </CanEditProvider>
     </div>
   )
 }
