@@ -2,14 +2,32 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"],
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**"
+      ],
       "env": [
         "RESEND_API_KEY",
         "ANTHROPIC_API_KEY",
         "NEXT_PUBLIC_SUPABASE_URL",
         "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-        "SUPABASE_SERVICE_ROLE_KEY"
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "OFFICE_ENABLED",
+        "OFFICE_SQUARE_SYNC_ENABLED",
+        "OFFICE_RECEIPTS_ENABLED",
+        "SQUARE_ENVIRONMENT",
+        "SQUARE_APPLICATION_ID",
+        "SQUARE_APPLICATION_SECRET",
+        "SQUARE_REDIRECT_URL",
+        "SQUARE_WEBHOOK_SIGNATURE_KEY",
+        "SQUARE_WEBHOOK_NOTIFICATION_URL",
+        "SQUARE_TOKEN_ENCRYPTION_KEY",
+        "SQUARE_BACKFILL_DAYS",
+        "CRON_SECRET",
+        "RECEIPT_EXTRACTOR"
       ]
     },
     "dev": {

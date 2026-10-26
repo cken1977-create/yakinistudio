@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { handleMagicLinkVerify } from '@yakini/database'
+import { config } from '@/config/brand'
 
 export async function POST(req: NextRequest) {
+  // Portal is off: its sign-in endpoints don't exist either.
+  if (!config.portal.enabled) return new NextResponse('Not found', { status: 404 })
   try {
     const body = await req.json()
     const result = await handleMagicLinkVerify(body)
