@@ -23,6 +23,7 @@ if (!validation.valid) {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(config.seo.siteUrl),
   title: `${config.business.dba || config.business.name} — ${config.business.tagline}`,
   description: config.business.description,
   keywords: config.seo.keywords.join(', '),

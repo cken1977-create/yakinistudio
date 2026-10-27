@@ -129,7 +129,7 @@ export const config: BrandConfig = {
   },
 
   seo: {
-    siteUrl: 'https://vizionz-sankofa-demo.yakini.digital',
+    siteUrl: 'https://myvizionz.org',
     keywords: [
       'vizionz sankofa',
       'new mexico nonprofit',
