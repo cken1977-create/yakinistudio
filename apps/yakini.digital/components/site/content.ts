@@ -14,7 +14,7 @@ export const TOUR = [
   { k: '03', title: 'A help desk with a real person', body: 'Customers send requests and follow the status. When you need help, your Yakini person is right there in the help desk too.' },
   { k: '04', title: 'Payments on your invoices', body: 'Send an invoice and get paid by card, right from the portal.', tag: 'Grow plan' },
   { k: '05', title: 'Replies drafted for you', body: 'Replies and voice-note transcripts are drafted for you to check. Nothing goes out without your OK.' },
-  { k: '06', title: 'Booking you confirm', body: 'Customers ask for a time and you confirm each one, so your calendar stays yours.' },
+  { k: '06', title: 'Booking you confirm', body: 'Customers ask for a time and you confirm each one.' },
 ] as const
 
 export const BUILDS = [
@@ -139,7 +139,8 @@ export const SECTIONS_CSS = SEAT_CSS + `
   .hm-plan-num { font-family: var(--font-display); font-size: 56px; line-height: 1; color: var(--cream); }
   .hm-plan-per { font-size: 15px; color: var(--muted); }
   .hm-plan-setup { margin-top: 8px; font-size: 14px; color: rgba(244,241,235,0.75); }
-  .hm-plan-list { margin: 22px 0 28px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .hm-plan-list { margin: 22px 0 12px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .hm-plan-more { margin: 0 0 18px; font-size: 13.5px; line-height: 1.45; color: rgba(244,241,235,0.62); }
   .hm-plan-list li { position: relative; padding-left: 22px; font-size: 14.5px; line-height: 1.5; color: rgba(244,241,235,0.82); }
   .hm-plan-list li::before { content: ''; position: absolute; left: 0; top: 8px; width: 10px; height: 1.5px; background: var(--gold); }
   .hm-plan .hm-btn { margin-top: auto; width: 100%; }
