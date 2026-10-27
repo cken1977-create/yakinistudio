@@ -9,6 +9,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { config } from '@/config/brand'
 
 const REQUEST_TYPE_VALUES = [
   'food_assistance',
@@ -159,7 +160,7 @@ async function sendOperatorNotification(
   }
 
   const requestType = REQUEST_TYPE_LABELS[submission.request_type as RequestType] ?? submission.request_type
-  const adminUrl = 'https://vizionz-sankofa-demo.vercel.app/admin/intakes'
+  const adminUrl = `${config.seo.siteUrl}/admin/intakes`
 
   const html = `
 <!DOCTYPE html>
