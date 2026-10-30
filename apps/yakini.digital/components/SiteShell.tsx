@@ -15,6 +15,7 @@ export const NAV_LINKS = [
   { href: '/pricing', label: 'Plans' },
   { href: '/how-it-works', label: 'How it works' },
   { href: '/custom-builds', label: 'Custom builds' },
+  { href: '/academy', label: 'Academy' },
   { href: '/about', label: 'About' },
 ] as const
 
