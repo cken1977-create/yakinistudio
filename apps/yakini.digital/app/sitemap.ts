@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { ALL } from '@/lib/watch'
 
-const PAGES = ['', '/pricing', '/how-it-works', '/custom-builds', '/about', '/apply', '/watch', '/class', '/clase', '/privacy'] as const
+const PAGES = ['', '/pricing', '/how-it-works', '/custom-builds', '/about', '/apply', '/watch', '/class', '/clase', '/privacy', '/academy', '/academia', '/academy/courses/sales-that-close', '/academia/cursos/ventas-que-cierran'] as const
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
