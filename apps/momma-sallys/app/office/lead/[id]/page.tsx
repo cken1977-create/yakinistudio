@@ -85,7 +85,7 @@ export default async function LeadPage({ params, searchParams }: { params: Promi
         <table className="of-table" style={{ marginTop: 8 }}>
           <tbody>
             {emails.map((m) => (
-              <tr key={m.id}><td>{EMAIL_LABEL[m.kind] ?? m.kind}</td><td><span className="of-tag">{m.status}</span></td>
+              <tr key={m.id}><td>{EMAIL_LABEL[m.kind] ?? m.kind}</td><td><span className="of-tag">{m.status === 'scheduled' && m.scheduled_for && new Date(m.scheduled_for).getTime() < Date.now() ? 'sent (on schedule)' : m.status}</span></td>
                 <td className="of-muted">{m.scheduled_for ? `for ${fmtDateTime(m.scheduled_for)}` : fmtDateTime(m.created_at)}{m.error ? ` · ${m.error}` : ''}</td></tr>
             ))}
             {!emails.length && <tr><td className="of-muted">No emails yet.</td></tr>}

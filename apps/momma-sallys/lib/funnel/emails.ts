@@ -33,7 +33,7 @@ function leadContent(kind: 'confirm' | 'day1' | 'day3' | 'day7', v: LeadVars): B
     const what = [date ? `para el ${date}` : null, v.headcount ? `${v.headcount} invitados` : null].filter(Boolean).join(', ')
     switch (kind) {
       case 'confirm':
-        return { subject: "Recibimos tu solicitud — Momma Sally's", paras: [`¡Gracias, ${n}!`, `Momma Sally's recibió tu solicitud de cotización${what ? ` (${what})` : ''}. Nicole te contactará ${REPLY_PROMISE_ES.toLowerCase()} con tu cotización.`, `¿Preguntas? Llama o envía un texto al ${PHONE_DISPLAY}.`] }
+        return { subject: "Recibimos tu solicitud — Momma Sally's", paras: [`¡Gracias, ${n}!`, `Momma Sally's recibió tu solicitud de cotización${what ? ` (${what})` : ''}. Nicole te contactará ${REPLY_PROMISE_ES.toLowerCase()} con tu cotización.`] }
       case 'day1':
         return { subject: 'Lo que más se pide para tu evento', paras: [`Hola ${n},`, `Mientras preparamos tu cotización, esto es lo que más piden para un ${typeLabel(v.eventType, 'es')}:`], bullets: ['Mesa de botanas (grazing table): fruta, quesos, pan y dips', 'Bufé de barbacoa: brisket, salchicha y acompañamientos caseros', 'Postres caseros: cobbler de durazno y pudín de plátano'], cta: { label: 'Ver fotos y detalles', url: v.quoteUrl } }
       case 'day3':
@@ -45,7 +45,7 @@ function leadContent(kind: 'confirm' | 'day1' | 'day3' | 'day7', v: LeadVars): B
   const what = [date ? `for ${date}` : null, v.headcount ? `${v.headcount} guests` : null].filter(Boolean).join(', ')
   switch (kind) {
     case 'confirm':
-      return { subject: "Got it! Your catering request — Momma Sally's", paras: [`Thanks, ${n}!`, `Momma Sally's got your quote request${what ? ` (${what})` : ''}. Nicole will reach out ${REPLY_PROMISE} with your quote.`, `Questions? Call or text ${PHONE_DISPLAY}.`] }
+      return { subject: "Got it! Your catering request — Momma Sally's", paras: [`Thanks, ${n}!`, `Momma Sally's got your quote request${what ? ` (${what})` : ''}. Nicole will reach out ${REPLY_PROMISE} with your quote.`] }
     case 'day1':
       return { subject: 'What most folks pick for a party like yours', paras: [`Hi ${n},`, `While we put your quote together, here's what most people pick for a ${typeLabel(v.eventType, 'en')}:`], bullets: ['Grazing table: fruit, cheese, bread and dips', 'BBQ buffet: smoked brisket, sausage and homestyle sides', 'Homemade desserts: peach cobbler and banana pudding'], cta: { label: 'See photos and details', url: v.quoteUrl } }
     case 'day3':

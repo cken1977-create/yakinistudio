@@ -128,13 +128,23 @@ export async function stopSequence(leadId: string, why: string) {
   let canceled = 0
   for (const e of rows ?? []) {
     let ok = !e.send_id
+    let alreadySent = false
     if (e.send_id && process.env.RESEND_API_KEY) {
+      const auth = { Authorization: `Bearer ${process.env.RESEND_API_KEY}` }
       try {
-        const c = await fetch(`https://api.resend.com/emails/${encodeURIComponent(e.send_id)}/cancel`, { method: 'POST', headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}` } })
+        const c = await fetch(`https://api.resend.com/emails/${encodeURIComponent(e.send_id)}/cancel`, { method: 'POST', headers: auth })
         ok = c.ok
+        if (!ok) {
+          // Too late to cancel? Then it already went out at its scheduled time.
+          const g = await fetch(`https://api.resend.com/emails/${encodeURIComponent(e.send_id)}`, { headers: auth })
+          const j = (await g.json().catch(() => null)) as { last_event?: string } | null
+          alreadySent = !!j?.last_event && j.last_event !== 'scheduled' && j.last_event !== 'canceled'
+        }
       } catch { ok = false }
     }
-    await funnel('email_set_status', ok ? { id: e.id, status: 'canceled', error: why } : { id: e.id, status: 'scheduled', error: `cancel failed (${why}); check before send time` })
+    await funnel('email_set_status', ok ? { id: e.id, status: 'canceled', error: why }
+      : alreadySent ? { id: e.id, status: 'sent', error: null }
+      : { id: e.id, status: 'scheduled', error: `cancel failed (${why}); check before send time` })
     if (ok) canceled++
   }
   return canceled
