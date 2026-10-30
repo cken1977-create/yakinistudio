@@ -1,5 +1,5 @@
 // Class email templates (English and Spanish). Plain, honest, no vendor names, no income claims.
-// Follow-ups 1–3 are DRAFT placeholders and stay off (FOLLOWUPS_ENABLED in ./config) until approved.
+// Follow-up 2 (Day 4) is approved copy; follow-ups 1 and 3 are still DRAFT. All three stay off (FOLLOWUPS_ENABLED in ./config) until approved.
 import type { Lang } from './config'
 import { CLASS_TITLE } from './copy'
 
@@ -16,7 +16,7 @@ export type EmailVars = {
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!))
 
-type Body = { subject: string; paras: string[]; cta?: { label: string; url: string } }
+type Body = { subject: string; paras: string[]; cta?: { label: string; url: string }; noSign?: boolean }
 
 function content(kind: EmailKind, lang: Lang, v: EmailVars): Body {
   const t = CLASS_TITLE[lang]
@@ -36,7 +36,8 @@ function content(kind: EmailKind, lang: Lang, v: EmailVars): Body {
       case 'followup_1':
         return { subject: '[BORRADOR] Una cosa para probar esta semana', paras: [`Hola ${n},`, 'Gracias por ver la clase. Esta semana, haz una lista de cada herramienta por la que pagas cada mes y marca cuáles guardan tu información: tus clientes, tus citas, tus cobros.', 'Esa lista es tu punto de partida.'] }
       case 'followup_2':
-        return { subject: '[BORRADOR] Por qué empecé Yakini', paras: [`Hola ${n},`, '[Historia de Clarence pendiente: por qué empezó Yakini Digital, en sus palabras.]'] }
+        // Spanish version of Clarence's approved Day 4 email (Oct 30). Needs a native speaker's read.
+        return { subject: 'Por qué empecé Yakini', noSign: true, paras: ["He tenido restaurantes, clubes nocturnos y más. Lo que aprendí es que, cuando las cosas no salen como esperas, todo se puede perder. A la gente que maneja tu sitio web, tus datos y tus sistemas no le importa lo que estés pasando. Simplemente te cortan el servicio y lo pierdes todo.", "Pasa lo mismo con el negocio en sí: el dueño del local y todos los demás que te están rentando tu negocio. No todo el mundo puede comprar su propio edificio. Pero sí puedes poner las cosas en orden para entender tu negocio y no depender solo de esperanzas, sueños y oraciones.", "Por eso creé Yakini Digital: infraestructura digital para dueños de negocios, sobre todo para quienes no tienen el dinero de una gran empresa, la tecnología de una gran empresa ni la formación de una franquicia. Quiero ayudarte a entender cada parte de manejar tu negocio, desde el local hasta las operaciones y el personal, y a ser dueño de los sistemas que lo hacen funcionar.", "– Clarence"] }
       case 'followup_3':
         return { subject: '[BORRADOR] El cuaderno de trabajo', paras: [`Hola ${n},`, 'Si quieres llevar lo de la clase a tu propio negocio, paso por paso, el cuaderno de trabajo te guía a tu ritmo.'], cta: v.workbookUrl ? { label: 'Ver el cuaderno de trabajo', url: v.workbookUrl } : undefined }
     }
@@ -55,7 +56,8 @@ function content(kind: EmailKind, lang: Lang, v: EmailVars): Body {
     case 'followup_1':
       return { subject: '[DRAFT] One thing to try this week', paras: [`Hi ${n},`, 'Thanks for watching the class. This week, list every tool you pay for each month and mark the ones that hold your information: your customers, your bookings, your payments.', "That list is your starting point."] }
     case 'followup_2':
-      return { subject: '[DRAFT] Why I started Yakini', paras: [`Hi ${n},`, "[Clarence's story pending: why he started Yakini Digital, in his words.]"] }
+      // Approved by Clarence Oct 30, 2026: use exactly as written. Signed by him, so no standard sign-off.
+      return { subject: 'Why I started Yakini', noSign: true, paras: ["I've owned restaurants, nightclubs and more. What I learned is that when things don't go your way, it can all go away. The people who run your website, your data and your systems don't care what you're going through. They just cut you off, and you lose everything.", "It's the same with the business itself: the landlord, and everyone else who's renting you your business. Not everybody can buy their own building. But you can put things in place so you understand your business better than hopes, dreams and prayers.", "That's why I created Yakini Digital: digital infrastructure for business owners, especially those who don't have big-company money, big-company tech, or a franchise education. I want to help you understand every part of running your business, from the building to operations to staff, and own the systems that run it.", "– Clarence"] }
     case 'followup_3':
       return { subject: '[DRAFT] The workbook', paras: [`Hi ${n},`, 'If you want to take the class into your own business step by step, the workbook walks you through it at your own pace.'], cta: v.workbookUrl ? { label: 'See the workbook', url: v.workbookUrl } : undefined }
   }
@@ -75,10 +77,10 @@ export function buildEmail(kind: EmailKind, lang: Lang, v: EmailVars): { subject
     : ''
   const html = `<!doctype html><html lang="${lang}"><body style="margin:0;background:#F4F1EB"><div style="max-width:560px;margin:0 auto;padding:32px 24px;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#1a1a1a">`
     + `<p style="margin:0 0 24px;font-size:12px;letter-spacing:2px;color:#8a6f22">YAKINI ACADEMY</p>${paras}${cta}`
-    + `<p style="margin:24px 0 0">${esc(f.sign)}</p>`
+    + (b.noSign ? '' : `<p style="margin:24px 0 0">${esc(f.sign)}</p>`)
     + `<hr style="border:0;border-top:1px solid #ddd;margin:32px 0 16px"><p style="margin:0 0 8px;font-size:12px;color:#666">${esc(f.why)}</p>`
     + `<p style="margin:0 0 8px;font-size:12px;color:#666"><a href="${esc(v.unsubUrl)}" style="color:#666">${esc(f.unsub)}</a></p>`
     + `<p style="margin:0;font-size:12px;color:#666">${esc(v.mailingAddress)}</p></div></body></html>`
-  const text = [...b.paras, ...(b.cta ? [`${b.cta.label}: ${b.cta.url}`] : []), f.sign, '—', f.why, `${f.unsub}: ${v.unsubUrl}`, v.mailingAddress].join('\n\n')
+  const text = [...b.paras, ...(b.cta ? [`${b.cta.label}: ${b.cta.url}`] : []), ...(b.noSign ? [] : [f.sign]), '—', f.why, `${f.unsub}: ${v.unsubUrl}`, v.mailingAddress].join('\n\n')
   return { subject: b.subject.replace(/[\r\n]+/g, ' ').slice(0, 200), html, text }
 }
