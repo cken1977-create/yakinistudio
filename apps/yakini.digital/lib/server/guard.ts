@@ -1,11 +1,15 @@
 // Server-only helpers: who is calling, rate limits, escaping, and the one place email is sent from.
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { ADMIN_COOKIE, CLIENT_COOKIE, readSession, type Session } from '@/lib/auth/session'
+import { ADMIN_COOKIE, CLIENT_COOKIE, REP_COOKIE, readSession, type Session } from '@/lib/auth/session'
 import { isTestRecipient } from '@/lib/esign/server'
 
 export async function adminSession(): Promise<Session | null> {
   return readSession((await cookies()).get(ADMIN_COOKIE)?.value, 'admin')
+}
+
+export async function repSession(): Promise<Session | null> {
+  return readSession((await cookies()).get(REP_COOKIE)?.value, 'rep')
 }
 
 export async function clientSession(): Promise<Session | null> {

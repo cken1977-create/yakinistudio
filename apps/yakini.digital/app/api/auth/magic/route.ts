@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomBytes } from 'crypto'
 import { rest, clientIp } from '@/lib/esign/server'
-import { isAdminEmail } from '@/lib/auth/session'
+import { isAdminEmail, isRepEmail } from '@/lib/auth/session'
 import { esc, ilikeExact, rateLimited, sendEmail, sha256Hex, siteUrl, tooMany } from '@/lib/server/guard'
 
-// Emails a one-time login link (1 hour) to a known client, or to an admin for /dashboard.
+// Emails a one-time login link (1 hour) to a known client, to an admin for /dashboard,
+// or to a sales rep on REP_EMAILS for the Demo Library (/reps).
 // Only the SHA-256 of the link's code is stored, so a leaked table row can't be used to log in.
 
 const LOGIN_FROM = process.env.LOGIN_FROM_EMAIL?.trim() || 'Yakini <hello@yakini.digital>'
@@ -14,6 +15,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json().catch(() => ({}))
     const email = String(body.email ?? '').trim().toLowerCase()
     const forDashboard = body.for === 'dashboard'
+    const forReps = body.for === 'reps'
     if (!email || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json({ error: 'Email required' }, { status: 400 })
     }
@@ -23,6 +25,8 @@ export async function POST(req: NextRequest) {
     let allowed = false
     if (forDashboard) {
       allowed = isAdminEmail(email)
+    } else if (forReps) {
+      allowed = isRepEmail(email)
     } else {
       const r = await rest<{ email: string }[]>(`clients?select=email&email=ilike.${ilikeExact(email)}&active=is.true&limit=1`)
       if (!r.ok) throw new Error(`clients lookup failed (${r.status})`)
@@ -30,8 +34,8 @@ export async function POST(req: NextRequest) {
     }
 
     if (!allowed) {
-      // Dashboard: answer the same either way so the admin list can't be probed.
-      if (forDashboard) return NextResponse.json({ success: true })
+      // Dashboard and reps: answer the same either way so the allow lists can't be probed.
+      if (forDashboard || forReps) return NextResponse.json({ success: true })
       return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
     }
 
@@ -48,8 +52,8 @@ export async function POST(req: NextRequest) {
     })
     if (!ins.ok) throw new Error(`token insert failed (${ins.status})`)
 
-    const link = `${siteUrl(req.url)}/api/auth/verify?token=${code}${forDashboard ? '&to=dashboard' : ''}`
-    const title = forDashboard ? 'Yakini Dashboard' : 'Yakini Client Portal'
+    const link = `${siteUrl(req.url)}/api/auth/verify?token=${code}${forDashboard ? '&to=dashboard' : forReps ? '&to=reps' : ''}`
+    const title = forDashboard ? 'Yakini Dashboard' : forReps ? 'Yakini Demo Library' : 'Yakini Client Portal'
     const html = '<div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:32px;background:#141414;color:#F5EFE3">' +
       `<div style="border-left:3px solid #C9A84C;padding-left:16px;margin-bottom:24px"><h1 style="font-size:20px;margin:0 0 4px;color:#F5EFE3">${esc(title)}</h1>` +
       '<p style="color:#C9A84C;margin:0;font-size:12px">Digital Infrastructure</p></div>' +

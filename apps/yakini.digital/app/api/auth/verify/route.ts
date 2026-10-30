@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { rest } from '@/lib/esign/server'
-import { ADMIN_COOKIE, ADMIN_SESSION_SECONDS, CLIENT_COOKIE, CLIENT_SESSION_SECONDS, isAdminEmail, signSession } from '@/lib/auth/session'
+import { ADMIN_COOKIE, ADMIN_SESSION_SECONDS, CLIENT_COOKIE, CLIENT_SESSION_SECONDS, REP_COOKIE, REP_SESSION_SECONDS, isAdminEmail, isRepEmail, signSession } from '@/lib/auth/session'
 import { ilikeExact, sha256Hex } from '@/lib/server/guard'
 
 type Tok = { id: string; email: string; expires_at: string }
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get('token') ?? ''
-  const toDashboard = req.nextUrl.searchParams.get('to') === 'dashboard'
-  const loginPage = toDashboard ? '/dashboard/login' : '/client/login'
+  const to = req.nextUrl.searchParams.get('to')
+  const toDashboard = to === 'dashboard'
+  const toReps = to === 'reps'
+  const loginPage = toDashboard ? '/dashboard/login' : toReps ? '/reps/login' : '/client/login'
   const fail = (why: string) => NextResponse.redirect(new URL(`${loginPage}?error=${why}`, req.url))
   if (!/^[a-f0-9]{64}$/.test(code)) return fail('expired')
 
@@ -28,6 +30,13 @@ export async function GET(req: NextRequest) {
       if (!isAdminEmail(email)) return fail('denied')
       const res = NextResponse.redirect(new URL('/dashboard/contracts', req.url), { status: 302 })
       res.cookies.set({ name: ADMIN_COOKIE, value: await signSession('admin', email, ADMIN_SESSION_SECONDS), httpOnly: true, secure: true, sameSite: 'lax', maxAge: ADMIN_SESSION_SECONDS, path: '/' })
+      return res
+    }
+
+    if (toReps) {
+      if (!isRepEmail(email)) return fail('denied')
+      const res = NextResponse.redirect(new URL('/reps', req.url), { status: 302 })
+      res.cookies.set({ name: REP_COOKIE, value: await signSession('rep', email, REP_SESSION_SECONDS), httpOnly: true, secure: true, sameSite: 'lax', maxAge: REP_SESSION_SECONDS, path: '/' })
       return res
     }
 

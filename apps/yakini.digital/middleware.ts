@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { ADMIN_COOKIE, readSession } from '@/lib/auth/session'
+import { ADMIN_COOKIE, REP_COOKIE, readSession } from '@/lib/auth/session'
 
 const SIGN_HOST = 'sign.yakini.digital'
 
@@ -35,7 +35,26 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // Rep Demo Library: a signed rep session is required. Signed-out visitors only ever get the
+  // sign-in page; the kit list is never rendered for them. Kept out of search engines.
+  if (path === '/reps' || path.startsWith('/reps/')) {
+    const rep = await readSession(request.cookies.get(REP_COOKIE)?.value, 'rep')
+    if (path === '/reps/login') {
+      if (rep) return noindex(NextResponse.redirect(new URL('/reps', request.url)))
+      return noindex(NextResponse.next())
+    }
+    if (!rep) return noindex(NextResponse.redirect(new URL('/reps/login', request.url)))
+    const res = noindex(NextResponse.next())
+    res.headers.set('Cache-Control', 'private, no-store')
+    return res
+  }
+
   return NextResponse.next()
+}
+
+function noindex(res: NextResponse): NextResponse {
+  res.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive')
+  return res
 }
 
 export const config = {
