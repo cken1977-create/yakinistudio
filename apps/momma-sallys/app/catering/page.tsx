@@ -184,7 +184,7 @@ export default function CateringPage() {
             <p className="ms-es" style={{ margin: 0 }}>La misma receta y el mismo cariño en cada evento.</p>
           </div>
           <div style={{ position: 'relative', aspectRatio: '4 / 5', borderRadius: 18, overflow: 'hidden', maxWidth: 420, width: '100%', justifySelf: 'center' }}>
-            <Image src="/photos/nicole-chef-coat.webp" alt="Nicole of Momma Sally's in her chef coat" fill sizes="(min-width: 900px) 420px, 90vw" style={{ objectFit: 'cover' }} />
+            <Image src="/photos/nicole-chef-coat.webp" alt="Nicole of Momma Sally's in her chef coat" unoptimized fill sizes="(min-width: 900px) 420px, 90vw" style={{ objectFit: 'cover' }} />
           </div>
         </div>
       </section>
