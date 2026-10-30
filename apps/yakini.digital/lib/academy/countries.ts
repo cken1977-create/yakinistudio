@@ -1,0 +1,12 @@
+// ISO 3166-1 alpha-2 codes for the country picker. Names come from the browser (Intl.DisplayNames)
+// in the page's language, so there is no long list of names to translate by hand.
+export const COUNTRY_CODES = (
+  'US MX CA PR GT SV HN NI CR PA CO VE EC PE BO CL AR UY PY BR DO CU HT JM TT BS BB ' +
+  'AD AE AF AG AI AL AM AO AQ AS AT AU AW AX AZ BA BD BE BF BG BH BI BJ BL BM BN BQ BT BV BW BY BZ ' +
+  'CC CD CF CG CH CI CK CM CN CV CW CX CY CZ DE DJ DK DM DZ EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD ' +
+  'GE GF GG GH GI GL GM GN GP GQ GR GS GU GW GY HK HM HR HU ID IE IL IM IN IO IQ IR IS IT JE JO JP KE KG ' +
+  'KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ ' +
+  'MR MS MT MU MV MW MY MZ NA NC NE NF NG NL NO NP NR NU NZ OM PF PG PH PK PL PM PN PS PT PW QA RE RO RS ' +
+  'RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR ' +
+  'TV TW TZ UA UG UM UZ VA VC VG VI VN VU WF WS YE YT ZA ZM ZW'
+).split(' ')
