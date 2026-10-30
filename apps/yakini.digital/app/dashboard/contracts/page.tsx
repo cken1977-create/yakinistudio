@@ -210,6 +210,7 @@ export default function ContractsPage() {
           <nav className="yc-nav">
             <div className="yc-nav-item"><span>⬡</span> Pipeline</div>
             <div className="yc-nav-item yc-nav-active"><span>✍</span> Contracts</div>
+            <a className="yc-nav-item" href="/dashboard/class" style={{ textDecoration: 'none' }}><span>◆</span> Yakini Academy</a>
             <div className="yc-nav-item"><span>◈</span> Clients</div>
             <div className="yc-nav-item"><span>○</span> Analytics</div>
             <div className="yc-nav-item"><span>◻</span> Settings</div>

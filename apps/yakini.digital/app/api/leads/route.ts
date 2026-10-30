@@ -4,6 +4,9 @@ import { esc, rateLimited, tooMany } from '@/lib/server/guard'
 import { Lead } from '@/types'
 import { Resend } from 'resend'
 
+// Verified Yakini sending domain (same sender /api/apply already uses), not the shared test sender.
+const LEADS_FROM = 'Yakini <hello@yakini.digital>'
+
 function getResend() {
   const key = process.env.RESEND_API_KEY
   if (!key) return null
@@ -38,14 +41,14 @@ export async function POST(req: NextRequest) {
 
     const resend = getResend()
     if (resend && !isTestRecipient(body.email)) await resend.emails.send({
-      from: 'Yakini <onboarding@resend.dev>',
+      from: LEADS_FROM,
       to: 'cken1977@gmail.com',
       subject: ('New Lead: ' + body.name + ' — ' + body.service).replace(/[\r\n]+/g, ' ').slice(0, 200),
       html: '<div style="font-family:sans-serif;padding:32px"><h2>New Inquiry</h2><p><strong>Name:</strong> ' + esc(body.name) + '</p><p><strong>Email:</strong> ' + esc(body.email) + '</p><p><strong>Service:</strong> ' + esc(body.service) + '</p><p><strong>Budget:</strong> ' + esc(body.budget ?? 'Not specified') + '</p><p><strong>Message:</strong> ' + esc(body.message) + '</p></div>',
     })
 
     if (resend && !isTestRecipient(body.email)) await resend.emails.send({
-      from: 'Yakini <onboarding@resend.dev>',
+      from: LEADS_FROM,
       to: body.email,
       subject: 'We received your inquiry.',
       html: '<div style="font-family:sans-serif;padding:32px"><h2>Hi ' + esc(body.name.split(' ')[0]) + ',</h2><p>We received your inquiry about ' + esc(body.service) + ' and will follow up within 24 hours.</p><p>— Yakini</p></div>',
