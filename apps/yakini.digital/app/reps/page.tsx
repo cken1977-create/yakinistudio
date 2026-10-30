@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { repSession } from '@/lib/server/guard'
-import { KITS, isLive, videoUrl } from '@/lib/reps/kits'
+import { KITS, tourUrl, videoUrl } from '@/lib/reps/kits'
 import { KitCard, type KitCardData } from './KitCard'
 
 // Rendered per request for a signed-in rep only (middleware also gates /reps).
@@ -16,8 +16,8 @@ export default async function RepsPage() {
     audience: k.audience,
     pitch: k.pitch,
     thumbnail: k.thumbnail ?? null,
-    url: isLive(k) ? k.url : null,
-    video: isLive(k) ? videoUrl(k) : null,
+    url: tourUrl(k),
+    video: videoUrl(k),
     blurb: k.blurb ?? `the ${k.name}`,
   }))
 

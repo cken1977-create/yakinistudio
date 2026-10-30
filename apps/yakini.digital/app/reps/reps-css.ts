@@ -30,7 +30,7 @@ export const REPS_CSS = `
   .rp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 24px; }
   .rp-card { display: flex; flex-direction: column; background: var(--ink-2); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
   .rp-card:hover { border-color: rgba(200,168,75,0.35); }
-  .rp-thumb { position: relative; display: block; aspect-ratio: 1200 / 630; background: #000; overflow: hidden; }
+  .rp-thumb { position: relative; display: block; text-decoration: none; aspect-ratio: 1200 / 630; background: #000; overflow: hidden; }
   .rp-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
   .rp-thumb-empty { display: flex; align-items: center; justify-content: center; height: 100%; font-family: var(--font-display); font-size: 64px; color: var(--gold); background: radial-gradient(circle at 30% 20%, rgba(200,168,75,0.18), transparent 60%), #0d0c0a; }
   .rp-badge { position: absolute; top: 12px; left: 12px; padding: 5px 10px; border-radius: 999px; background: var(--gold); color: var(--ink); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
@@ -38,7 +38,12 @@ export const REPS_CSS = `
   .rp-aud { margin: 0 0 6px; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
   .rp-name { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: 26px; line-height: 1.15; }
   .rp-pitch { margin: 8px 0 18px; color: var(--muted); font-size: 15px; line-height: 1.55; flex: 1; }
-  .rp-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .rp-actions { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; }
+  .rp-soon { margin: 0; padding: 12px 14px; border: 1px dashed var(--line-strong); border-radius: 10px; color: var(--muted); font-size: 14px; }
+  .rp-thumb-empty { flex-direction: column; gap: 10px; }
+  .rp-thumb-y { font-family: var(--font-display); font-size: 64px; line-height: 1; color: var(--gold); }
+  .rp-thumb-name { font-family: var(--font-display); font-size: 24px; color: var(--cream); letter-spacing: 0.02em; padding: 0 16px; text-align: center; }
+  .rp-badge-soft { background: rgba(10,9,8,0.82); color: var(--gold); border: 1px solid rgba(200,168,75,0.55); }
   .rp-act { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--line-strong); background: transparent; color: var(--cream); font: inherit; font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer; white-space: nowrap; }
   .rp-act:hover { border-color: var(--gold); color: var(--gold); }
   .rp-act-primary { background: var(--gold); border-color: var(--gold); color: var(--ink); }
