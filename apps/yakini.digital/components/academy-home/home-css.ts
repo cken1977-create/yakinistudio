@@ -82,7 +82,7 @@ export const HOME_CSS = `
   .yh-form h3 { font-family:var(--ya-display); font-weight:400; font-size:28px; margin:0 0 14px; }
   .yh-form textarea.ya-input { min-height:90px; resize:vertical; }
   .yh-ok { border:1px solid rgba(200,168,75,0.5); background:rgba(200,168,75,0.08); border-radius:10px; padding:12px 14px; font-size:14px; margin:0 0 14px; }
-  .yh-course-hero { padding:40px 0 48px; }
+  .yh-course-hero { padding:40px 20px 56px; }
   .yh-crumb { font-size:14px; color:var(--ya-muted); margin-bottom:24px; display:inline-block; text-decoration:none; }
   .yh-crumb:hover { color:var(--ya-gold); }
   .yh-course-grid { display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:48px; align-items:start; }
