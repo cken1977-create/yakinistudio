@@ -22,8 +22,9 @@ export default function EventsPage() {
         <div className="ms-wrap">
           <div className="ms-eyebrow">Book Your Event · Reserva</div>
           <h2 style={{ fontSize: 'clamp(30px, 7vw, 48px)', marginBottom: 10 }}>Let&rsquo;s plan your party.</h2>
-          <p style={{ color: '#ddd', marginBottom: 4 }}>Call, text or email with your date and guest count.</p>
-          <p className="ms-es" style={{ marginBottom: 20 }}>Llama, envía un texto o correo con la fecha y el número de invitados.</p>
+          <p style={{ color: '#ddd', marginBottom: 4 }}>Get a quote in about a minute, or call, text or email with your date and guest count.</p>
+          <p className="ms-es" style={{ marginBottom: 20 }}>Cotiza en un minuto, o llama, envía un texto o correo con la fecha y el número de invitados.</p>
+          <a href="/catering?type=party&src=events#quote" className="ms-btn ms-btn-red" style={{ marginBottom: 12 }}>Get my party quote · Cotizar</a>
           <ContactCTA subject="Event booking" label="Book:" />
         </div>
       </section>

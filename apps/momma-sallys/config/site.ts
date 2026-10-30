@@ -19,8 +19,8 @@ export const SQUARE_PAY_URL: string = (process.env.NEXT_PUBLIC_SQUARE_PAY_URL ??
 
 export const HAS_PAY = /^https:\/\//i.test(SQUARE_PAY_URL)
 
-/** Facebook page URL — TODO from Nicole. Hidden while empty. */
-export const FACEBOOK_URL: string = ''
+/** Facebook page URL. Hidden while empty. */
+export const FACEBOOK_URL: string = 'https://www.facebook.com/mommasally16'
 
 /** Public email (no mailbox/forwarding set up yet). */
 export const PUBLIC_EMAIL: string = 'hello@mamasallys.com'
