@@ -58,7 +58,7 @@ export const REPS_CSS = `
 
   .rp-login { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
   .rp-login-box { width: 100%; max-width: 440px; }
-  .rp-login-box img { height: 64px; width: auto; border-radius: 8px; border: 1px solid var(--line-strong); margin-bottom: 24px; }
+  .rp-login-box img { display: block; height: 64px; width: auto; border-radius: 8px; border: 1px solid var(--line-strong); margin-bottom: 24px; }
   .rp-login-h1 { font-family: var(--font-display); font-weight: 400; font-size: 38px; margin: 12px 0 8px; }
   .rp-login p { color: var(--muted); font-size: 15px; line-height: 1.6; margin: 0 0 22px; }
   .rp-input { width: 100%; min-height: 48px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--line-strong); background: #13110F; color: var(--cream); font: inherit; font-size: 16px; outline: none; }
