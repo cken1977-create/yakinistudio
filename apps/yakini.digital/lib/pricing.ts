@@ -23,7 +23,7 @@ export const REFUND_RULE =
   'The setup fee is refundable in full until your kickoff call or 14 days after you sign up, whichever comes first. After that it is non-refundable.'
 
 export const BILLING_NOTE =
-  'When you sign up, we’ll send you an invoice for the one-time guided-setup fee. Your monthly plan starts after setup.'
+  'When you sign up, you pay the one-time guided-setup fee by card or bank account. Your monthly plan starts after setup.'
 
 export const EXTRA_HELP_NOTE =
   'Need more help than your plan includes? Extra hours are $150/hour, or move up a plan.'
@@ -42,7 +42,7 @@ export const PASS_THROUGH_NOTE =
   'Your hosting, database, email, texting line and payment processing are set up in your business’s name, so everything stays yours. Those services bill you directly at their own cost; they are not part of Yakini’s price.'
 
 export const GUIDED_STEPS = [
-  { title: 'Pick a plan and sign up', detail: 'Tell us about your business and we’ll send you an invoice for the one-time guided-setup fee. Your monthly plan starts after setup.' },
+  { title: 'Pick a plan and sign up', detail: 'Tell us about your business and pay the one-time guided-setup fee by card or bank account. Your monthly plan starts after setup.' },
   { title: 'Kickoff call with your Yakini person', detail: 'About 30 minutes. We learn how your business runs today and agree the first thing to fix.' },
   { title: 'We set it up with you', detail: 'Your website, customer portal and the tools on your plan, in your business’s name. You approve each step.' },
   { title: 'Go live, and we stay', detail: 'Your monthly plan starts. Your Yakini person stays on, and the help desk is always open.' },
