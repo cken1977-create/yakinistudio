@@ -144,7 +144,7 @@ export default function CustomBuildsPage() {
 const PAGE_CSS = `
   .cb-header {
     min-height: 88vh; display: flex; align-items: flex-end;
-    background: linear-gradient(180deg, rgba(10,9,8,0.45) 0%, rgba(10,9,8,0.94) 100%), url('/yakini-services-bg.jpg') center / cover no-repeat;
+    background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.94) 100%), none center / cover no-repeat;
   }
   .cb-header .yk-page-header-inner { width: 100%; }
   .cb-h1 { max-width: 15ch; }
@@ -153,11 +153,11 @@ const PAGE_CSS = `
   .cb-build-list { display: grid; gap: 20px; }
   .cb-build {
     display: grid; grid-template-columns: 1fr; gap: 28px;
-    padding: 40px 28px; border: 1px solid rgba(200,168,75,0.35);
-    background: linear-gradient(135deg, rgba(200,168,75,0.07), rgba(255,255,255,0.01));
+    padding: 40px 28px; border: 1px solid rgba(22,56,232,0.35);
+    background: linear-gradient(135deg, rgba(22,56,232,0.07), rgba(11,20,55,0.01));
   }
   .cb-build h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(32px, 4vw, 52px); line-height: 1.05; color: var(--cream); margin-bottom: 18px; }
-  .cb-build-head p { font-size: 16.5px; line-height: 1.7; color: rgba(244,241,235,0.75); max-width: 560px; }
+  .cb-build-head p { font-size: 16.5px; line-height: 1.7; color: rgba(11,20,55,0.75); max-width: 560px; }
   .cb-points { border-top: 1px solid var(--line-strong); align-self: center; }
   .cb-points li { position: relative; padding: 18px 0 18px 30px; border-bottom: 1px solid var(--line-strong); font-size: 17px; color: var(--cream); }
   .cb-points li::before { content: '→'; position: absolute; left: 0; color: var(--gold); }
@@ -167,7 +167,7 @@ const PAGE_CSS = `
   .cb-more-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
   .cb-more-item { background: var(--black-soft); padding: 30px 26px; }
   .cb-more-item h3 { font-family: var(--font-display); font-weight: 500; font-size: 26px; line-height: 1.15; color: var(--cream); margin-bottom: 10px; }
-  .cb-more-item p { font-size: 15px; line-height: 1.6; color: rgba(244,241,235,0.7); }
+  .cb-more-item p { font-size: 15px; line-height: 1.6; color: rgba(11,20,55,0.74); }
   @media (min-width: 800px) { .cb-more-grid { grid-template-columns: 1fr 1fr; } }
 
   .cb-why { background: var(--navy-deep); border-top: 1px solid var(--line); }
@@ -175,7 +175,7 @@ const PAGE_CSS = `
   .cb-why-item { border-top: 1px solid var(--gold); padding-top: 22px; }
   .cb-why-num { font-family: var(--font-display); font-style: italic; font-size: 24px; color: var(--gold); }
   .cb-why-item h3 { font-family: var(--font-display); font-weight: 500; font-size: 26px; color: var(--cream); margin: 10px 0 8px; line-height: 1.15; }
-  .cb-why-item p { font-size: 15px; line-height: 1.65; color: rgba(244,241,235,0.72); }
+  .cb-why-item p { font-size: 15px; line-height: 1.65; color: rgba(11,20,55,0.74); }
   @media (min-width: 800px) { .cb-why-grid { grid-template-columns: 1fr 1fr; gap: 40px; } }
   @media (min-width: 1200px) { .cb-why-grid { grid-template-columns: repeat(4, 1fr); } }
 
@@ -184,11 +184,11 @@ const PAGE_CSS = `
   .cb-steps li { border: 1px solid var(--line-strong); padding: 28px 24px; }
   .cb-step-num { font-family: var(--font-display); font-style: italic; font-size: 26px; color: var(--gold); }
   .cb-steps h3 { font-family: var(--font-display); font-weight: 500; font-size: 26px; color: var(--cream); margin: 12px 0 8px; line-height: 1.15; }
-  .cb-steps p { font-size: 15px; line-height: 1.6; color: rgba(244,241,235,0.72); }
+  .cb-steps p { font-size: 15px; line-height: 1.6; color: rgba(11,20,55,0.74); }
   @media (min-width: 800px) { .cb-steps { grid-template-columns: 1fr 1fr; } }
   @media (min-width: 1200px) { .cb-steps { grid-template-columns: repeat(4, 1fr); } }
 
-  .cb-cta { padding: 140px 24px; text-align: center; background: radial-gradient(ellipse at center, rgba(200,168,75,0.14) 0%, transparent 60%), var(--black); border-top: 1px solid rgba(200,168,75,0.35); }
+  .cb-cta { padding: 140px 24px; text-align: center; background: radial-gradient(ellipse at center, rgba(22,56,232,0.14) 0%, transparent 60%), var(--black); border-top: 1px solid rgba(22,56,232,0.35); }
   .cb-cta-inner { max-width: 900px; margin: 0 auto; }
   .cb-portal-note { margin-top: 28px; font-size: 14px; color: var(--muted); }
   .cb-portal-note a { color: var(--gold); }

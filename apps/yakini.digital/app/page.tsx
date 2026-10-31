@@ -116,15 +116,15 @@ const HOME_CSS = `
     display: flex; align-items: center;
     padding: 120px 20px 72px;
     background:
-      linear-gradient(90deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0.72) 55%, rgba(10,9,8,0.55) 100%),
-      linear-gradient(180deg, rgba(10,9,8,0.35) 0%, rgba(10,9,8,0.95) 100%),
-      url('/yakini-apply-bg.jpg') center / cover no-repeat;
+      radial-gradient(ellipse at 85% 20%, rgba(22,56,232,0.08), transparent 55%),
+      radial-gradient(ellipse at 10% 95%, rgba(198,244,50,0.14), transparent 45%),
+      #FFFFFF;
     overflow: hidden;
   }
   .hh::after {
     content: ''; position: absolute; left: 50%; bottom: -30%; transform: translateX(-50%);
     width: 1200px; height: 700px; pointer-events: none;
-    background: radial-gradient(ellipse at center, rgba(200,168,75,0.14) 0%, transparent 60%);
+    background: radial-gradient(ellipse at center, rgba(22,56,232,0.14) 0%, transparent 60%);
   }
   .hh-inner {
     position: relative; z-index: 1; width: 100%; max-width: 1400px; margin: 0 auto;
@@ -139,11 +139,11 @@ const HOME_CSS = `
     color: var(--cream); max-width: 14ch; margin-bottom: 28px;
   }
   .hh-h1-gold { display: block; color: var(--gold); font-style: italic; font-size: 0.62em; line-height: 1.08; margin-top: 18px; max-width: 18ch; }
-  .hh-sub { font-size: clamp(17px, 1.5vw, 21px); line-height: 1.6; color: rgba(244,241,235,0.8); max-width: 560px; }
+  .hh-sub { font-size: clamp(17px, 1.5vw, 21px); line-height: 1.6; color: rgba(11,20,55,0.8); max-width: 560px; }
   .hh-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
   .hh-primary { padding: 19px 34px; font-size: 15px; }
   .hh-signin { margin-top: 18px; font-size: 14px; color: var(--muted); }
-  .hh-signin a { color: var(--cream); border-bottom: 1px solid rgba(244,241,235,0.35); }
+  .hh-signin a { color: var(--cream); border-bottom: 1px solid rgba(11,20,55,0.74); }
   .hh-signin a:hover { color: var(--gold); border-color: var(--gold); }
   @media (min-width: 1100px) {
     .hh { padding: 140px 32px 96px; }
@@ -162,6 +162,6 @@ const HOME_CSS = `
   .hf-item summary::-webkit-details-marker { display: none; }
   .hf-icon { color: var(--gold); font-family: var(--font-body); font-size: 22px; transition: transform 0.3s; flex-shrink: 0; }
   .hf-item[open] .hf-icon { transform: rotate(45deg); }
-  .hf-item p { padding: 0 0 24px; font-size: 15.5px; line-height: 1.7; color: rgba(244,241,235,0.72); max-width: 680px; }
+  .hf-item p { padding: 0 0 24px; font-size: 15.5px; line-height: 1.7; color: rgba(11,20,55,0.74); max-width: 680px; }
   @media (min-width: 1000px) { .hf-inner { grid-template-columns: 0.9fr 1.1fr; gap: 80px; } }
 `

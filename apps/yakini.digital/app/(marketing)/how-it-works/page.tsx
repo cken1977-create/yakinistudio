@@ -119,7 +119,7 @@ export default function HowItWorksPage() {
 
 const PAGE_CSS = `
   .hw-header {
-    background: linear-gradient(180deg, rgba(10,9,8,0.6) 0%, rgba(10,9,8,0.92) 100%), url('/yakini-process-bg.jpg') center / cover no-repeat;
+    background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.92) 100%), none center / cover no-repeat;
   }
   .hw-h1 { max-width: 12ch; }
   .hw-provide { background: var(--navy-deep); border-top: 1px solid var(--line); }
@@ -133,19 +133,19 @@ const PAGE_CSS = `
   .hw-fine-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
   .hw-fine-item { background: var(--black-soft); padding: 28px 26px; }
   .hw-fine-item h3 { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; font-weight: 600; }
-  .hw-fine-item p { font-size: 15px; line-height: 1.65; color: rgba(244,241,235,0.75); }
+  .hw-fine-item p { font-size: 15px; line-height: 1.65; color: rgba(11,20,55,0.75); }
   @media (min-width: 800px) { .hw-fine-grid { grid-template-columns: 1fr 1fr; } }
   @media (min-width: 1200px) { .hw-fine-grid { grid-template-columns: repeat(3, 1fr); } }
 
   .hw-builds {
-    background: linear-gradient(180deg, rgba(6,5,4,0.9), rgba(10,9,8,0.95)), url('/yakini-services-bg.jpg') center / cover no-repeat;
-    border-top: 1px solid rgba(200,168,75,0.35);
+    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.95)), none center / cover no-repeat;
+    border-top: 1px solid rgba(22,56,232,0.35);
   }
   .hw-build-steps { display: grid; grid-template-columns: 1fr; gap: 16px; }
-  .hw-build-steps li { border: 1px solid rgba(200,168,75,0.3); background: rgba(10,9,8,0.7); padding: 28px 24px; }
+  .hw-build-steps li { border: 1px solid rgba(22,56,232,0.3); background: rgba(255,255,255,0.7); padding: 28px 24px; }
   .hw-bnum { font-family: var(--font-display); font-style: italic; font-size: 26px; color: var(--gold); }
   .hw-build-steps h3 { font-family: var(--font-display); font-weight: 500; font-size: 26px; color: var(--cream); margin: 12px 0 8px; line-height: 1.15; }
-  .hw-build-steps p { font-size: 15px; line-height: 1.6; color: rgba(244,241,235,0.72); }
+  .hw-build-steps p { font-size: 15px; line-height: 1.6; color: rgba(11,20,55,0.74); }
   @media (min-width: 800px) { .hw-build-steps { grid-template-columns: 1fr 1fr; } }
   @media (min-width: 1200px) { .hw-build-steps { grid-template-columns: repeat(4, 1fr); } }
 `

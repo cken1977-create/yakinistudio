@@ -408,17 +408,17 @@ function Field({ label, value, onChange, placeholder, type = 'text' }: FieldProp
 }
 
 const PAGE_CSS = `
-  .ap-plan-note { margin-top: 22px; font-size: 15px; color: rgba(244,241,235,0.7); }
-  .ap-plan-note a { color: var(--gold); border-bottom: 1px solid rgba(200,168,75,0.4); }
+  .ap-plan-note { margin-top: 22px; font-size: 15px; color: rgba(11,20,55,0.74); }
+  .ap-plan-note a { color: var(--gold); border-bottom: 1px solid rgba(22,56,232,0.4); }
   /* ═══ HEADER ═══ */
   .ap-header {
-    background: linear-gradient(180deg, rgba(10, 9, 8, 0.55) 0%, rgba(10, 9, 8, 0.85) 100%), url('/yakini-office-bg.jpg') center center / cover no-repeat;
+    background: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.85) 100%), none center center / cover no-repeat;
     min-height: 600px;
     position: relative;
   }
   .ap-header::before {
     background: radial-gradient(ellipse at center,
-      rgba(200, 168, 75, 0.15) 0%,
+      rgba(22,56,232,0.15) 0%,
     rgba(74, 144, 217, 0.06) 40%,
       transparent 70%) !important;
   }
@@ -440,7 +440,7 @@ const PAGE_CSS = `
   .ap-progress-inner {
     display: flex;
     gap: 0;
-    background: rgba(255,255,255,0.02);
+    background: rgba(11,20,55,0.03);
     border: 1px solid var(--line);
     padding: 8px;
   }
@@ -454,7 +454,7 @@ const PAGE_CSS = `
     border-bottom: 2px solid transparent;
   }
   .ap-progress-step.active {
-    background: rgba(200, 168, 75, 0.08);
+    background: rgba(22,56,232,0.08);
     border-bottom-color: var(--gold);
   }
   .ap-progress-step.complete .ap-progress-num {
@@ -492,7 +492,7 @@ const PAGE_CSS = `
   /* Form card */
   .ap-form-card {
     padding: 48px;
-    background: rgba(255,255,255,0.02);
+    background: rgba(11,20,55,0.03);
     border: 1px solid var(--line);
   }
 
@@ -560,7 +560,7 @@ const PAGE_CSS = `
   }
   .ap-field input::placeholder,
   .ap-field textarea::placeholder {
-    color: rgba(255,255,255,0.3);
+    color: rgba(11,20,55,0.74);
   }
   .ap-field textarea {
     resize: vertical;
@@ -679,7 +679,7 @@ const PAGE_CSS = `
   }
   .ap-sidebar-card {
     padding: 28px;
-    background: rgba(255,255,255,0.02);
+    background: rgba(11,20,55,0.03);
     border: 1px solid var(--line);
   }
   .ap-sidebar-h {
@@ -761,7 +761,7 @@ const PAGE_CSS = `
     max-width: 540px;
     margin: 0 auto 40px;
     padding: 32px;
-    background: rgba(200, 168, 75, 0.04);
+    background: rgba(22,56,232,0.04);
     border: 1px solid var(--gold);
   }
   .ap-success-next h3 {

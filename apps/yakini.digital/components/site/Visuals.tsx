@@ -155,15 +155,15 @@ export const VISUALS_CSS = `
   /* hero stage */
   .vs-stage { position: relative; width: 100%; max-width: 760px; aspect-ratio: 1.18; margin: 0 auto; }
   .vs-stage figure { position: absolute; margin: 0; }
-  .vs-glow { position: absolute; inset: 12% 8%; background: radial-gradient(closest-side, rgba(201,161,74,0.28), transparent); filter: blur(30px); z-index: 0; }
+  .vs-glow { position: absolute; inset: 12% 8%; background: radial-gradient(closest-side, rgba(22,56,232,0.28), transparent); filter: blur(30px); z-index: 0; }
   .vs-browser { border-radius: 14px; overflow: hidden; background: #14120e; box-shadow: var(--yk-shadow-float); }
   .vs-browser img, .vs-card img, .vs-phone img, .vs-kit-shot img, .vs-founder-photo img { display: block; width: 100%; height: auto; }
   .vs-bar { display: flex; align-items: center; gap: 6px; padding: 9px 12px; background: #1b1914; border-bottom: 1px solid var(--yk-line-dark); }
-  .vs-bar i { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,0.18); }
-  .vs-bar span { margin-left: 10px; font-size: 11px; letter-spacing: 0.04em; color: rgba(244,241,235,0.55); }
+  .vs-bar i { width: 9px; height: 9px; border-radius: 50%; background: rgba(11,20,55,0.2); }
+  .vs-bar span { margin-left: 10px; font-size: 11px; letter-spacing: 0.04em; color: rgba(11,20,55,0.74); }
   .vs-stage .vs-browser { left: 0; top: 4%; width: 84%; z-index: 1; }
   .vs-card { right: 0; bottom: 4%; width: 52%; border-radius: 14px; overflow: hidden; background: #fff; box-shadow: var(--yk-shadow-float); z-index: 2; }
-  .vs-card figcaption { position: absolute; left: 10px; top: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; background: var(--yk-ink); color: var(--yk-gold); padding: 5px 10px; border-radius: 999px; }
+  .vs-card figcaption { position: absolute; left: 10px; top: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; background: #C6F432; color: #0B1437; padding: 5px 10px; border-radius: 999px; }
   .vs-phone { border-radius: 28px; overflow: hidden; border: 6px solid #0d0c0a; background: #0d0c0a; box-shadow: var(--yk-shadow-float); }
   .vs-stage .vs-phone { left: 2%; bottom: 0; width: 23%; z-index: 3; }
   @media (prefers-reduced-motion: no-preference) {
@@ -175,28 +175,28 @@ export const VISUALS_CSS = `
 
   /* kits */
   .vs-kits { background:
-      linear-gradient(180deg, rgba(10,9,8,0.96) 0%, rgba(10,9,8,0.86) 40%, rgba(10,9,8,0.97) 100%),
-      url('/art/yakini-platforms-bg.jpg') center / cover no-repeat; border-top: 1px solid var(--line); }
+      linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.86) 40%, rgba(255,255,255,0.97) 100%),
+      none center / cover no-repeat; border-top: 1px solid var(--line); }
   .vs-kit-grid { display: grid; grid-template-columns: 1fr; gap: 22px; margin-top: 48px; }
-  .vs-kit { display: grid; border: 1px solid var(--line-strong); border-radius: var(--yk-radius-lg); overflow: hidden; background: rgba(21,19,15,0.9); color: var(--cream); text-decoration: none; transition: border-color .25s, transform .25s; }
-  .vs-kit:hover, .vs-kit:focus-visible { border-color: rgba(201,161,74,0.6); }
+  .vs-kit { display: grid; border: 1px solid var(--line-strong); border-radius: var(--yk-radius-lg); overflow: hidden; background: rgba(255,255,255,0.9); color: var(--cream); text-decoration: none; transition: border-color .25s, transform .25s; }
+  .vs-kit:hover, .vs-kit:focus-visible { border-color: rgba(22,56,232,0.6); }
   @media (prefers-reduced-motion: no-preference) { .vs-kit:hover { transform: translateY(-3px); } }
   .vs-kit-shot { display: block; aspect-ratio: 16 / 9.4; overflow: hidden; border-bottom: 1px solid var(--line); }
   .vs-kit-body { display: grid; gap: 6px; padding: 20px 22px 22px; }
   .vs-kit-body strong, .vs-more-card strong { font-family: var(--font-display); font-weight: 500; font-size: 26px; }
-  .vs-kit-body span:not(.vs-kit-tag), .vs-more-card span:not(.vs-kit-tag) { font-size: 15px; line-height: 1.55; color: rgba(244,241,235,0.72); }
+  .vs-kit-body span:not(.vs-kit-tag), .vs-more-card span:not(.vs-kit-tag) { font-size: 15px; line-height: 1.55; color: rgba(11,20,55,0.74); }
   .vs-kit-body em { font-style: normal; color: var(--gold); font-size: 14px; margin-top: 6px; }
   .vs-kit-tag { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
   .vs-more { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 22px; }
-  .vs-more-card { display: grid; gap: 6px; padding: 22px; border: 1px dashed var(--line-strong); border-radius: var(--yk-radius); color: var(--cream); text-decoration: none; background: rgba(10,9,8,0.6); }
-  .vs-more-card:hover { border-color: rgba(201,161,74,0.6); }
+  .vs-more-card { display: grid; gap: 6px; padding: 22px; border: 1px dashed var(--line-strong); border-radius: var(--yk-radius); color: var(--cream); text-decoration: none; background: rgba(255,255,255,0.6); }
+  .vs-more-card:hover { border-color: rgba(22,56,232,0.6); }
   @media (min-width: 900px) { .vs-kit-grid { grid-template-columns: 1fr 1fr; } .vs-more { grid-template-columns: repeat(3, 1fr); } }
 
   /* client portal showcase */
-  .vs-portal { background: radial-gradient(ellipse at 80% 30%, rgba(201,161,74,0.10), transparent 55%), var(--navy-deep); }
+  .vs-portal { background: radial-gradient(ellipse at 80% 30%, rgba(22,56,232,0.1), transparent 55%), var(--navy-deep); }
   .vs-portal-grid { display: grid; grid-template-columns: 1fr; gap: 56px; align-items: center; }
   .vs-points { list-style: none; display: grid; gap: 14px; margin: 28px 0 8px; padding: 0; }
-  .vs-points li { padding-left: 22px; position: relative; font-size: 16px; line-height: 1.6; color: rgba(244,241,235,0.78); max-width: 560px; }
+  .vs-points li { padding-left: 22px; position: relative; font-size: 16px; line-height: 1.6; color: rgba(11,20,55,0.78); max-width: 560px; }
   .vs-points li::before { content: ''; position: absolute; left: 0; top: 0.62em; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
   .vs-points b { color: var(--cream); font-weight: 600; }
   .vs-portal-visual { position: relative; padding-bottom: 40px; }
@@ -205,10 +205,10 @@ export const VISUALS_CSS = `
 
   /* founder */
   .vs-founder { padding: 120px 32px; background:
-      linear-gradient(90deg, rgba(10,9,8,0.97) 0%, rgba(10,9,8,0.9) 50%, rgba(10,9,8,0.75) 100%),
-      url('/art/yakini-work-bg.jpg') center / cover no-repeat; border-top: 1px solid var(--line); }
+      linear-gradient(90deg, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0.75) 100%),
+      none center / cover no-repeat; border-top: 1px solid var(--line); }
   .vs-founder-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 48px; align-items: center; }
-  .vs-founder-photo { margin: 0 auto; width: min(340px, 76vw); border-radius: var(--yk-radius-lg); overflow: hidden; box-shadow: var(--yk-shadow-float); border: 1px solid rgba(201,161,74,0.35); }
+  .vs-founder-photo { margin: 0 auto; width: min(340px, 76vw); border-radius: var(--yk-radius-lg); overflow: hidden; box-shadow: var(--yk-shadow-float); border: 1px solid rgba(22,56,232,0.35); }
   .vs-quote { font-family: var(--font-display); font-style: italic; font-size: clamp(26px, 3vw, 40px); line-height: 1.25; color: var(--cream); margin: 0 0 26px; }
   .vs-founder-name { font-size: 18px; font-weight: 600; color: var(--cream); }
   .vs-founder-role { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin: 4px 0 22px; }

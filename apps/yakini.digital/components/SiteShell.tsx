@@ -23,11 +23,11 @@ export const TAGLINE = 'SET UP WITH YOU · HERE TO STAY'
 export function BrandMark() {
   return (
     <Link href="/" className="yk-brand" aria-label="Yakini home">
-      {/* The Yakini logo: the full locked lockup (/yakini-lockup.jpg, gold Y over the
-          YAKINI lettering), framed to the artwork so the lettering reads at header size. */}
+      {/* The Yakini logo, white + blue refresh (/yakini-lockup-blue.svg). The original gold
+          lockup (/yakini-lockup.jpg) stays in the repo, unused here. */}
       <span className="yk-brand-logo">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/yakini-lockup.jpg" alt="Yakini" width={784} height={1168} />
+        <img src="/yakini-lockup-blue.svg" alt="Yakini" width={520} height={120} />
       </span>
       <span className="yk-brand-sub">{TAGLINE}</span>
     </Link>
@@ -143,29 +143,29 @@ const GLOBAL_CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
   :root {
-    --navy: #0A0908;
-    --navy-deep: #0A0908;
-    --black: #000000;
-    --black-soft: #0A0A0A;
-    --gold: #C9A14A;
+    --navy: #F4F7FF;
+    --navy-deep: #FFFFFF;
+    --black: #F4F7FF;
+    --black-soft: #F4F7FF;
+    --gold: #1638E8;
     /* Shared Yakini dashboard style (same tokens as the client portal) */
     --yk-ink: #15130F;
-    --yk-gold: #C9A14A;
-    --yk-gold-soft: rgba(201, 161, 74, 0.14);
+    --yk-gold: #1638E8;
+    --yk-gold-soft: rgba(22,56,232,0.14);
     --yk-tray: #F6F3EC;
-    --yk-line-dark: rgba(255, 255, 255, 0.09);
+    --yk-line-dark: rgba(11,20,55,0.12);
     --yk-radius: 16px;
     --yk-radius-lg: 22px;
-    --yk-shadow-float: 0 40px 80px -30px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.06);
-    --gold-warm: #B5915F;
-    --cream: #F4F1EB;
+    --yk-shadow-float: 0 40px 80px -30px rgba(11,20,55,0.21), 0 0 0 1px rgba(11,20,55,0.08);
+    --gold-warm: #1638E8;
+    --cream: #0B1437;
     --warm-white: #FAFAF8;
     --electric: #4A90D9;
     --electric-soft: rgba(74, 144, 217, 0.15);
-    --gold-soft: rgba(200, 168, 75, 0.1);
-    --line: rgba(255,255,255,0.08);
-    --line-strong: rgba(255,255,255,0.15);
-    --muted: rgba(255,255,255,0.55);
+    --gold-soft: rgba(22,56,232,0.1);
+    --line: rgba(11,20,55,0.1);
+    --line-strong: rgba(11,20,55,0.2);
+    --muted: rgba(11,20,55,0.74);
     --font-display: 'Cormorant Garamond', Georgia, serif;
     --font-body: 'Inter', -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', Menlo, monospace;
@@ -185,6 +185,12 @@ const GLOBAL_CSS = `
   ul { list-style: none; }
   ::selection { background: var(--gold); color: var(--navy-deep); }
 
+  /* Palette 11: lime is decoration only (underline, pills, tags, active states); anything on lime is navy. */
+  .yk-gold.yk-italic, .hh-h1-gold {
+    background-image: linear-gradient(transparent 80%, rgba(198,244,50,0.95) 80%, rgba(198,244,50,0.95) 94%, transparent 94%);
+    -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  }
+  .yk-num { background: #C6F432 !important; color: #0B1437 !important; padding: 2px 8px; border-radius: 6px; }
   .yk-italic { font-style: italic; font-family: var(--font-display); font-weight: 400; }
   .yk-gold { color: var(--gold); }
   .yk-electric { color: var(--electric); }
@@ -198,7 +204,7 @@ const GLOBAL_CSS = `
   }
   .yk-nav.scrolled {
     padding: 10px 32px;
-    background: rgba(5, 14, 31, 0.85);
+    background: rgba(255,255,255,0.85);
     backdrop-filter: blur(24px) saturate(180%);
     border-bottom: 1px solid var(--line);
   }
@@ -210,25 +216,9 @@ const GLOBAL_CSS = `
   .yk-brand {
     display: flex; align-items: center; gap: 12px;
   }
-  /* Logo frame: shows the lockup artwork (source box 70,245 → 720,985 of 784×1168),
-     trimming only the empty background around it. --logo-h sets the size. */
-  .yk-brand-logo {
-    --logo-h: 72px;
-    position: relative; display: block; overflow: hidden; flex-shrink: 0;
-    height: var(--logo-h);
-    width: calc(var(--logo-h) * 650 / 740);
-    border: 1px solid rgba(200, 168, 75, 0.3);
-    background: #222327;
-    transition: border-color 0.3s;
-  }
-  .yk-brand-logo img {
-    position: absolute; max-width: none;
-    height: calc(var(--logo-h) * 1168 / 740);
-    width: auto;
-    left: calc(var(--logo-h) * -70 / 740);
-    top: calc(var(--logo-h) * -245 / 740);
-  }
-  .yk-brand:hover .yk-brand-logo { border-color: var(--gold); }
+  .yk-brand-logo { display: block; flex-shrink: 0; height: 40px; }
+  .yk-brand-logo img { display: block; height: 100%; width: auto; }
+  .yk-brand:hover .yk-brand-logo { opacity: 0.85; }
   .yk-brand-sub {
     font-family: var(--font-body);
     font-weight: 500;
@@ -246,7 +236,7 @@ const GLOBAL_CSS = `
     font-size: 13px;
     font-weight: 500;
     letter-spacing: 0.02em;
-    color: rgba(244, 241, 235, 0.75);
+    color: rgba(11,20,55,0.75);
     position: relative;
     padding: 4px 0;
   }
@@ -263,7 +253,7 @@ const GLOBAL_CSS = `
   .yk-nav-right { display: flex; align-items: center; gap: 18px; flex-shrink: 0; }
   .yk-nav-signin {
     font-size: 13px; font-weight: 500; letter-spacing: 0.02em;
-    color: rgba(244, 241, 235, 0.85);
+    color: rgba(11,20,55,0.85);
     padding: 10px 4px;
   }
   .yk-nav-signin:hover { color: var(--gold); }
@@ -284,7 +274,7 @@ const GLOBAL_CSS = `
     background: var(--cream);
     color: var(--navy-deep);
     transform: translateY(-1px);
-    box-shadow: 0 12px 30px rgba(200, 168, 75, 0.25);
+    box-shadow: 0 12px 30px rgba(22,56,232,0.25);
   }
   .yk-nav-cta-arrow { transition: transform 0.2s; }
   .yk-nav-cta:hover .yk-nav-cta-arrow { transform: translateX(4px); }
@@ -367,7 +357,6 @@ const GLOBAL_CSS = `
     font-style: italic;
     font-size: 18px;
     font-weight: 400;
-    opacity: 0.6;
   }
   .yk-section-h2 {
     font-family: var(--font-display);
@@ -385,7 +374,7 @@ const GLOBAL_CSS = `
     display: inline-flex; align-items: center; gap: 12px;
     padding: 8px 16px;
     border: 1px solid var(--line-strong);
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(11,20,55,0.03);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.25em;
@@ -419,7 +408,7 @@ const GLOBAL_CSS = `
     background: var(--gold);
     border-color: var(--gold);
     transform: translateY(-2px);
-    box-shadow: 0 15px 40px rgba(200, 168, 75, 0.3);
+    box-shadow: 0 15px 40px rgba(22,56,232,0.3);
   }
   .yk-btn-arrow { transition: transform 0.25s; }
   .yk-btn-primary:hover .yk-btn-arrow { transform: translateX(6px); }
@@ -455,7 +444,7 @@ const GLOBAL_CSS = `
     transform: translateX(-50%);
     width: 1000px; height: 600px;
     background: radial-gradient(ellipse at center,
-      rgba(200, 168, 75, 0.12) 0%,
+      rgba(22,56,232,0.12) 0%,
       transparent 60%);
     pointer-events: none;
   }
@@ -476,7 +465,7 @@ const GLOBAL_CSS = `
   .yk-page-sub {
     font-size: clamp(17px, 1.5vw, 21px);
     line-height: 1.6;
-    color: rgba(244, 241, 235, 0.7);
+    color: rgba(11,20,55,0.74);
     max-width: 640px;
   }
 
