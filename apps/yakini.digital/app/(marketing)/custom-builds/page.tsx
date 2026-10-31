@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { SiteShell } from '@/components/SiteShell'
 import { BOOK_CALL_URL, BUILDS, BUILD_STEPS, SECTIONS_CSS } from '@/components/site/content'
 import { START_URL } from '@/lib/pricing'
+import { KitGallery, VISUALS_CSS } from '@/components/site/Visuals'
 
 // Custom builds: Yakini's premium second lane. Outcomes only: no client names, no demo numbers, never priced.
 
@@ -35,7 +36,7 @@ const WHY = [
 export default function CustomBuildsPage() {
   return (
     <SiteShell>
-      <style>{SECTIONS_CSS + PAGE_CSS}</style>
+      <style>{SECTIONS_CSS + VISUALS_CSS + PAGE_CSS}</style>
 
       <header className="yk-page-header cb-header">
         <div className="yk-page-header-inner">
@@ -76,9 +77,11 @@ export default function CustomBuildsPage() {
         </div>
       </section>
 
+      <KitGallery num="02" />
+
       <section className="yk-section cb-more">
         <div className="yk-section-inner">
-          <div className="yk-section-tag"><span className="yk-num">02</span><span>And more</span></div>
+          <div className="yk-section-tag"><span className="yk-num">03</span><span>And more</span></div>
           <h2 className="hm-h2">If the business needs it,<br /><span className="yk-gold yk-italic">we can build it.</span></h2>
           <div className="cb-more-grid">
             {MORE.map((m) => (
@@ -93,7 +96,7 @@ export default function CustomBuildsPage() {
 
       <section className="yk-section cb-why">
         <div className="yk-section-inner">
-          <div className="yk-section-tag"><span className="yk-num">03</span><span>Why Yakini</span></div>
+          <div className="yk-section-tag"><span className="yk-num">04</span><span>Why Yakini</span></div>
           <h2 className="hm-h2">We don&apos;t build it and leave.<br /><span className="yk-gold yk-italic">We stay.</span></h2>
           <div className="cb-why-grid">
             {WHY.map((w, i) => (
@@ -109,7 +112,7 @@ export default function CustomBuildsPage() {
 
       <section id="how" className="yk-section cb-how">
         <div className="yk-section-inner">
-          <div className="yk-section-tag"><span className="yk-num">04</span><span>How a build runs</span></div>
+          <div className="yk-section-tag"><span className="yk-num">05</span><span>How a build runs</span></div>
           <h2 className="hm-h2">Four steps,<br /><span className="yk-gold yk-italic">in the open.</span></h2>
           <ol className="cb-steps">
             {BUILD_STEPS.map((s, i) => (
@@ -141,7 +144,7 @@ export default function CustomBuildsPage() {
 const PAGE_CSS = `
   .cb-header {
     min-height: 88vh; display: flex; align-items: flex-end;
-    background: linear-gradient(180deg, rgba(10,9,8,0.45) 0%, rgba(10,9,8,0.94) 100%), url('/yakini-services-bg.jpg') center / cover no-repeat;
+    background: #F4F7FF;
   }
   .cb-header .yk-page-header-inner { width: 100%; }
   .cb-h1 { max-width: 15ch; }
@@ -150,11 +153,11 @@ const PAGE_CSS = `
   .cb-build-list { display: grid; gap: 20px; }
   .cb-build {
     display: grid; grid-template-columns: 1fr; gap: 28px;
-    padding: 40px 28px; border: 1px solid rgba(200,168,75,0.35);
-    background: linear-gradient(135deg, rgba(200,168,75,0.07), rgba(255,255,255,0.01));
+    padding: 40px 28px; border: 1px solid rgba(22,56,232,0.35);
+    background: linear-gradient(135deg, rgba(22,56,232,0.07), rgba(11,20,55,0.01));
   }
   .cb-build h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(32px, 4vw, 52px); line-height: 1.05; color: var(--cream); margin-bottom: 18px; }
-  .cb-build-head p { font-size: 16.5px; line-height: 1.7; color: rgba(244,241,235,0.75); max-width: 560px; }
+  .cb-build-head p { font-size: 16.5px; line-height: 1.7; color: rgba(11,20,55,0.75); max-width: 560px; }
   .cb-points { border-top: 1px solid var(--line-strong); align-self: center; }
   .cb-points li { position: relative; padding: 18px 0 18px 30px; border-bottom: 1px solid var(--line-strong); font-size: 17px; color: var(--cream); }
   .cb-points li::before { content: '→'; position: absolute; left: 0; color: var(--gold); }
@@ -164,7 +167,7 @@ const PAGE_CSS = `
   .cb-more-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
   .cb-more-item { background: var(--black-soft); padding: 30px 26px; }
   .cb-more-item h3 { font-family: var(--font-display); font-weight: 500; font-size: 26px; line-height: 1.15; color: var(--cream); margin-bottom: 10px; }
-  .cb-more-item p { font-size: 15px; line-height: 1.6; color: rgba(244,241,235,0.7); }
+  .cb-more-item p { font-size: 15px; line-height: 1.6; color: rgba(11,20,55,0.74); }
   @media (min-width: 800px) { .cb-more-grid { grid-template-columns: 1fr 1fr; } }
 
   .cb-why { background: var(--navy-deep); border-top: 1px solid var(--line); }
@@ -172,7 +175,7 @@ const PAGE_CSS = `
   .cb-why-item { border-top: 1px solid var(--gold); padding-top: 22px; }
   .cb-why-num { font-family: var(--font-display); font-style: italic; font-size: 24px; color: var(--gold); }
   .cb-why-item h3 { font-family: var(--font-display); font-weight: 500; font-size: 26px; color: var(--cream); margin: 10px 0 8px; line-height: 1.15; }
-  .cb-why-item p { font-size: 15px; line-height: 1.65; color: rgba(244,241,235,0.72); }
+  .cb-why-item p { font-size: 15px; line-height: 1.65; color: rgba(11,20,55,0.74); }
   @media (min-width: 800px) { .cb-why-grid { grid-template-columns: 1fr 1fr; gap: 40px; } }
   @media (min-width: 1200px) { .cb-why-grid { grid-template-columns: repeat(4, 1fr); } }
 
@@ -181,11 +184,11 @@ const PAGE_CSS = `
   .cb-steps li { border: 1px solid var(--line-strong); padding: 28px 24px; }
   .cb-step-num { font-family: var(--font-display); font-style: italic; font-size: 26px; color: var(--gold); }
   .cb-steps h3 { font-family: var(--font-display); font-weight: 500; font-size: 26px; color: var(--cream); margin: 12px 0 8px; line-height: 1.15; }
-  .cb-steps p { font-size: 15px; line-height: 1.6; color: rgba(244,241,235,0.72); }
+  .cb-steps p { font-size: 15px; line-height: 1.6; color: rgba(11,20,55,0.74); }
   @media (min-width: 800px) { .cb-steps { grid-template-columns: 1fr 1fr; } }
   @media (min-width: 1200px) { .cb-steps { grid-template-columns: repeat(4, 1fr); } }
 
-  .cb-cta { padding: 140px 24px; text-align: center; background: radial-gradient(ellipse at center, rgba(200,168,75,0.14) 0%, transparent 60%), var(--black); border-top: 1px solid rgba(200,168,75,0.35); }
+  .cb-cta { padding: 140px 24px; text-align: center; background: radial-gradient(ellipse at center, rgba(22,56,232,0.14) 0%, transparent 60%), var(--black); border-top: 1px solid rgba(22,56,232,0.35); }
   .cb-cta-inner { max-width: 900px; margin: 0 auto; }
   .cb-portal-note { margin-top: 28px; font-size: 14px; color: var(--muted); }
   .cb-portal-note a { color: var(--gold); }

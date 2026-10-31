@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { SiteShell } from '@/components/SiteShell'
 import { FinalCta, GuidedSteps } from '@/components/site/Sections'
+import { PortalShowcase, VISUALS_CSS } from '@/components/site/Visuals'
 import { BOOK_CALL_URL, BUILD_STEPS, SECTIONS_CSS } from '@/components/site/content'
 import {
   AI_LIMIT_NOTE,
@@ -38,7 +39,7 @@ const FINE_PRINT = [
 export default function HowItWorksPage() {
   return (
     <SiteShell>
-      <style>{SECTIONS_CSS + PAGE_CSS}</style>
+      <style>{SECTIONS_CSS + VISUALS_CSS + PAGE_CSS}</style>
 
       <header className="yk-page-header hw-header">
         <div className="yk-page-header-inner">
@@ -60,11 +61,12 @@ export default function HowItWorksPage() {
       </header>
 
       <GuidedSteps num="01" />
+      <PortalShowcase num="02" />
 
       <section className="yk-section hw-provide">
         <div className="yk-section-inner hw-two">
           <div>
-            <div className="yk-section-tag"><span className="yk-num">02</span><span>What you bring</span></div>
+            <div className="yk-section-tag"><span className="yk-num">03</span><span>What you bring</span></div>
             <h2 className="hm-h2">Not much.<br /><span className="yk-gold yk-italic">We handle the rest.</span></h2>
             <p className="hm-lead">You know your business. We know the setup. Together, it goes quickly.</p>
           </div>
@@ -76,7 +78,7 @@ export default function HowItWorksPage() {
 
       <section className="yk-section hw-fine">
         <div className="yk-section-inner">
-          <div className="yk-section-tag"><span className="yk-num">03</span><span>The fine print</span></div>
+          <div className="yk-section-tag"><span className="yk-num">04</span><span>The fine print</span></div>
           <h2 className="hm-h2">In plain words.</h2>
           <div className="hw-fine-grid">
             {FINE_PRINT.map((f) => (
@@ -91,7 +93,7 @@ export default function HowItWorksPage() {
 
       <section className="yk-section hw-builds">
         <div className="yk-section-inner">
-          <div className="yk-section-tag"><span className="yk-num">04</span><span>Custom builds</span></div>
+          <div className="yk-section-tag"><span className="yk-num">05</span><span>Custom builds</span></div>
           <h2 className="hm-h2">Custom builds<br /><span className="yk-gold yk-italic">work a little differently.</span></h2>
           <p className="hm-lead">For a lead engine, a payment and accounting system, or anything built around your business.</p>
           <ol className="hw-build-steps">
@@ -117,7 +119,7 @@ export default function HowItWorksPage() {
 
 const PAGE_CSS = `
   .hw-header {
-    background: linear-gradient(180deg, rgba(10,9,8,0.6) 0%, rgba(10,9,8,0.92) 100%), url('/yakini-process-bg.jpg') center / cover no-repeat;
+    background: #F4F7FF;
   }
   .hw-h1 { max-width: 12ch; }
   .hw-provide { background: var(--navy-deep); border-top: 1px solid var(--line); }
@@ -131,19 +133,19 @@ const PAGE_CSS = `
   .hw-fine-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
   .hw-fine-item { background: var(--black-soft); padding: 28px 26px; }
   .hw-fine-item h3 { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; font-weight: 600; }
-  .hw-fine-item p { font-size: 15px; line-height: 1.65; color: rgba(244,241,235,0.75); }
+  .hw-fine-item p { font-size: 15px; line-height: 1.65; color: rgba(11,20,55,0.75); }
   @media (min-width: 800px) { .hw-fine-grid { grid-template-columns: 1fr 1fr; } }
   @media (min-width: 1200px) { .hw-fine-grid { grid-template-columns: repeat(3, 1fr); } }
 
   .hw-builds {
-    background: linear-gradient(180deg, rgba(6,5,4,0.9), rgba(10,9,8,0.95)), url('/yakini-services-bg.jpg') center / cover no-repeat;
-    border-top: 1px solid rgba(200,168,75,0.35);
+    background: #F4F7FF;
+    border-top: 1px solid rgba(22,56,232,0.35);
   }
   .hw-build-steps { display: grid; grid-template-columns: 1fr; gap: 16px; }
-  .hw-build-steps li { border: 1px solid rgba(200,168,75,0.3); background: rgba(10,9,8,0.7); padding: 28px 24px; }
+  .hw-build-steps li { border: 1px solid rgba(22,56,232,0.3); background: rgba(255,255,255,0.7); padding: 28px 24px; }
   .hw-bnum { font-family: var(--font-display); font-style: italic; font-size: 26px; color: var(--gold); }
   .hw-build-steps h3 { font-family: var(--font-display); font-weight: 500; font-size: 26px; color: var(--cream); margin: 12px 0 8px; line-height: 1.15; }
-  .hw-build-steps p { font-size: 15px; line-height: 1.6; color: rgba(244,241,235,0.72); }
+  .hw-build-steps p { font-size: 15px; line-height: 1.6; color: rgba(11,20,55,0.74); }
   @media (min-width: 800px) { .hw-build-steps { grid-template-columns: 1fr 1fr; } }
   @media (min-width: 1200px) { .hw-build-steps { grid-template-columns: repeat(4, 1fr); } }
 `

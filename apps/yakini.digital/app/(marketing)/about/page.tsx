@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { SiteShell } from '@/components/SiteShell'
 import { FinalCta } from '@/components/site/Sections'
 import { SECTIONS_CSS } from '@/components/site/content'
@@ -68,11 +69,16 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-          <aside className="ab-facts">
+          <aside className="ab-side">
+            <figure className="ab-photo">
+              <Image src="/art/founder-clarence.jpg" alt="Clarence Kennedy, founder of Yakini" width={800} height={992} sizes="(min-width: 1000px) 420px, 80vw" />
+            </figure>
+          <div className="ab-facts">
             <div className="ab-fact"><span>Parent company</span><strong>BRSA Holdings, Inc. · Delaware</strong></div>
             <div className="ab-fact"><span>Nonprofit arm</span><strong>BRSA Foundation · 501(c)(3) · New Mexico</strong></div>
             <div className="ab-fact"><span>Based in</span><strong>Houston, Texas</strong></div>
             <div className="ab-fact"><span>Talk to us</span><strong><a href="mailto:hello@yakini.digital">hello@yakini.digital</a></strong></div>
+          </div>
           </aside>
         </div>
       </section>
@@ -133,15 +139,18 @@ export default function AboutPage() {
 
 const PAGE_CSS = `
   .ab-header {
-    background: linear-gradient(180deg, rgba(10,9,8,0.62) 0%, rgba(10,9,8,0.92) 100%), url('/yakini-about-bg.jpg') center / cover no-repeat;
+    background: #F4F7FF;
   }
   .ab-h1 { max-width: 12ch; }
   .ab-founder { background: var(--navy-deep); }
   .ab-founder-grid { display: grid; grid-template-columns: 1fr; gap: 48px; }
   .ab-role { font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin: -8px 0 28px; }
-  .ab-story p { font-size: clamp(17px, 1.5vw, 20px); line-height: 1.7; color: rgba(244,241,235,0.78); margin-bottom: 18px; max-width: 640px; }
+  .ab-story p { font-size: clamp(17px, 1.5vw, 20px); line-height: 1.7; color: rgba(11,20,55,0.78); margin-bottom: 18px; max-width: 640px; }
   .ab-story-strong { font-family: var(--font-display); font-style: italic; font-size: clamp(24px, 2.4vw, 32px) !important; line-height: 1.3 !important; color: var(--gold) !important; }
-  .ab-facts { border: 1px solid var(--line-strong); padding: 28px; align-self: start; display: grid; gap: 20px; background: rgba(255,255,255,0.015); }
+  .ab-side { display: grid; gap: 20px; align-self: start; }
+  .ab-photo { margin: 0; border-radius: 22px; overflow: hidden; border: 1px solid rgba(22,56,232,0.35); box-shadow: 0 40px 80px -30px rgba(11,20,55,0.21); max-width: 420px; }
+  .ab-photo img { display: block; width: 100%; height: auto; }
+  .ab-facts { border: 1px solid var(--line-strong); padding: 28px; align-self: start; display: grid; gap: 20px; background: rgba(11,20,55,0.02); }
   .ab-fact span { display: block; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
   .ab-fact strong { font-weight: 500; color: var(--cream); font-size: 16px; }
   .ab-fact a { color: var(--gold); }
@@ -152,7 +161,7 @@ const PAGE_CSS = `
   .ab-belief { background: var(--navy-deep); padding: 32px 28px; }
   .ab-belief-num { font-family: var(--font-display); font-style: italic; font-size: 22px; color: var(--gold); }
   .ab-belief h3 { font-family: var(--font-display); font-weight: 500; font-size: 27px; line-height: 1.15; color: var(--cream); margin: 16px 0 12px; }
-  .ab-belief p { font-size: 15px; line-height: 1.65; color: rgba(244,241,235,0.7); }
+  .ab-belief p { font-size: 15px; line-height: 1.65; color: rgba(11,20,55,0.74); }
   @media (min-width: 760px) { .ab-belief-grid { grid-template-columns: 1fr 1fr; } }
   @media (min-width: 1200px) { .ab-belief-grid { grid-template-columns: repeat(3, 1fr); } }
 
@@ -168,7 +177,7 @@ const PAGE_CSS = `
   .ab-brsa-card { border: 1px solid var(--line-strong); padding: 32px 28px; }
   .ab-brsa-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
   .ab-brsa-card h3 { font-family: var(--font-display); font-weight: 500; font-size: 32px; color: var(--cream); margin-bottom: 10px; }
-  .ab-brsa-card p { font-size: 15px; line-height: 1.65; color: rgba(244,241,235,0.7); margin-bottom: 18px; }
+  .ab-brsa-card p { font-size: 15px; line-height: 1.65; color: rgba(11,20,55,0.74); margin-bottom: 18px; }
   .ab-brsa-card a { color: var(--gold); font-size: 14px; }
   @media (min-width: 800px) { .ab-brsa-grid { grid-template-columns: 1fr 1fr; } }
 `

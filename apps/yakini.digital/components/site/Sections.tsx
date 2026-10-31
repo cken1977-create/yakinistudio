@@ -69,11 +69,11 @@ export function PortalWindow() {
 /* ───────────────────────── Portal tour ───────────────────────── */
 
 
-export function PortalTour() {
+export function PortalTour({ num = '01' }: { num?: string }) {
   return (
     <section id="portal" className="yk-section hm-tour">
       <div className="yk-section-inner">
-        <div className="yk-section-tag"><span className="yk-num">01</span><span>Inside your portal</span></div>
+        <div className="yk-section-tag"><span className="yk-num">{num}</span><span>Inside your portal</span></div>
         <h2 className="hm-h2">
           One place for the whole business.
           <br />
