@@ -166,7 +166,7 @@ export const SECTIONS_CSS = SEAT_CSS + `
   /* Custom builds band */
   .hm-builds {
     position: relative; padding: 120px 24px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.94) 100%), none center / cover no-repeat;
+    background: #F4F7FF;
     border-top: 1px solid rgba(22,56,232,0.35); border-bottom: 1px solid rgba(22,56,232,0.35);
   }
   .hm-builds-inner { max-width: 1400px; margin: 0 auto; }

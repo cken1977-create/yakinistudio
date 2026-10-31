@@ -13,7 +13,7 @@ export function HeroStage() {
     <div className="vs-stage" aria-label="Sample screens from Yakini demos and the client portal">
       <figure className="vs-browser vs-float-a">
         <div className="vs-bar" aria-hidden><i /><i /><i /><span>Food truck desk · sample data</span></div>
-        <Image src="/kits/foodtruck-desktop.jpg" alt="Food truck owner desk with today's orders, sales and catering requests (sample data)" width={1440} height={878} fetchPriority="high" loading="eager" sizes="(min-width: 1100px) 46vw, 92vw" />
+        <Image src="/kits/foodtruck-desktop.jpg" alt="Food truck owner desk with today's orders, sales and catering requests (sample data)" width={1440} height={868} fetchPriority="high" loading="eager" sizes="(min-width: 1100px) 46vw, 92vw" />
       </figure>
       <figure className="vs-card vs-float-b">
         <Image src="/kits/portal-dashboard-sample.jpg" alt="Client portal home: next steps, build progress and go-live date (sample client)" width={1440} height={900} sizes="(min-width: 1100px) 26vw, 50vw" />
@@ -174,9 +174,7 @@ export const VISUALS_CSS = `
   }
 
   /* kits */
-  .vs-kits { background:
-      linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.86) 40%, rgba(255,255,255,0.97) 100%),
-      none center / cover no-repeat; border-top: 1px solid var(--line); }
+  .vs-kits { background: #F4F7FF; border-top: 1px solid var(--line); }
   .vs-kit-grid { display: grid; grid-template-columns: 1fr; gap: 22px; margin-top: 48px; }
   .vs-kit { display: grid; border: 1px solid var(--line-strong); border-radius: var(--yk-radius-lg); overflow: hidden; background: rgba(255,255,255,0.9); color: var(--cream); text-decoration: none; transition: border-color .25s, transform .25s; }
   .vs-kit:hover, .vs-kit:focus-visible { border-color: rgba(22,56,232,0.6); }
@@ -204,9 +202,7 @@ export const VISUALS_CSS = `
   @media (min-width: 1000px) { .vs-portal-grid { grid-template-columns: 0.85fr 1.15fr; gap: 72px; } }
 
   /* founder */
-  .vs-founder { padding: 120px 32px; background:
-      linear-gradient(90deg, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0.75) 100%),
-      none center / cover no-repeat; border-top: 1px solid var(--line); }
+  .vs-founder { padding: 120px 32px; background: #F4F7FF; border-top: 1px solid var(--line); }
   .vs-founder-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 48px; align-items: center; }
   .vs-founder-photo { margin: 0 auto; width: min(340px, 76vw); border-radius: var(--yk-radius-lg); overflow: hidden; box-shadow: var(--yk-shadow-float); border: 1px solid rgba(22,56,232,0.35); }
   .vs-quote { font-family: var(--font-display); font-style: italic; font-size: clamp(26px, 3vw, 40px); line-height: 1.25; color: var(--cream); margin: 0 0 26px; }

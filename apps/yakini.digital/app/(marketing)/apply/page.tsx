@@ -412,7 +412,7 @@ const PAGE_CSS = `
   .ap-plan-note a { color: var(--gold); border-bottom: 1px solid rgba(22,56,232,0.4); }
   /* ═══ HEADER ═══ */
   .ap-header {
-    background: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.85) 100%), none center center / cover no-repeat;
+    background: #F4F7FF;
     min-height: 600px;
     position: relative;
   }

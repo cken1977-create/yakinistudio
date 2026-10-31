@@ -139,7 +139,7 @@ export default function AboutPage() {
 
 const PAGE_CSS = `
   .ab-header {
-    background: linear-gradient(180deg, rgba(255,255,255,0.62) 0%, rgba(255,255,255,0.92) 100%), none center / cover no-repeat;
+    background: #F4F7FF;
   }
   .ab-h1 { max-width: 12ch; }
   .ab-founder { background: var(--navy-deep); }

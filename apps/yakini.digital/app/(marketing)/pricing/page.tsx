@@ -265,7 +265,7 @@ function Mark({ yes = false }: { yes?: boolean }) {
 const PAGE_CSS = `
   /* ═══ HEADER ═══ */
   .pr-header {
-    background: linear-gradient(180deg, rgba(255,255,255,0.62) 0%, rgba(255,255,255,0.9) 100%), none center center / cover no-repeat;
+    background: #F4F7FF;
     min-height: 520px;
     position: relative;
   }

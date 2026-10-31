@@ -119,7 +119,7 @@ export default function HowItWorksPage() {
 
 const PAGE_CSS = `
   .hw-header {
-    background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.92) 100%), none center / cover no-repeat;
+    background: #F4F7FF;
   }
   .hw-h1 { max-width: 12ch; }
   .hw-provide { background: var(--navy-deep); border-top: 1px solid var(--line); }
@@ -138,7 +138,7 @@ const PAGE_CSS = `
   @media (min-width: 1200px) { .hw-fine-grid { grid-template-columns: repeat(3, 1fr); } }
 
   .hw-builds {
-    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.95)), none center / cover no-repeat;
+    background: #F4F7FF;
     border-top: 1px solid rgba(22,56,232,0.35);
   }
   .hw-build-steps { display: grid; grid-template-columns: 1fr; gap: 16px; }

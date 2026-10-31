@@ -144,7 +144,7 @@ export default function CustomBuildsPage() {
 const PAGE_CSS = `
   .cb-header {
     min-height: 88vh; display: flex; align-items: flex-end;
-    background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.94) 100%), none center / cover no-repeat;
+    background: #F4F7FF;
   }
   .cb-header .yk-page-header-inner { width: 100%; }
   .cb-h1 { max-width: 15ch; }
