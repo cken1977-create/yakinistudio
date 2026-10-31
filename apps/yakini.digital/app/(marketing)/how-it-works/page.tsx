@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { SiteShell } from '@/components/SiteShell'
 import { FinalCta, GuidedSteps } from '@/components/site/Sections'
+import { PortalShowcase, VISUALS_CSS } from '@/components/site/Visuals'
 import { BOOK_CALL_URL, BUILD_STEPS, SECTIONS_CSS } from '@/components/site/content'
 import {
   AI_LIMIT_NOTE,
@@ -38,7 +39,7 @@ const FINE_PRINT = [
 export default function HowItWorksPage() {
   return (
     <SiteShell>
-      <style>{SECTIONS_CSS + PAGE_CSS}</style>
+      <style>{SECTIONS_CSS + VISUALS_CSS + PAGE_CSS}</style>
 
       <header className="yk-page-header hw-header">
         <div className="yk-page-header-inner">
@@ -60,11 +61,12 @@ export default function HowItWorksPage() {
       </header>
 
       <GuidedSteps num="01" />
+      <PortalShowcase num="02" />
 
       <section className="yk-section hw-provide">
         <div className="yk-section-inner hw-two">
           <div>
-            <div className="yk-section-tag"><span className="yk-num">02</span><span>What you bring</span></div>
+            <div className="yk-section-tag"><span className="yk-num">03</span><span>What you bring</span></div>
             <h2 className="hm-h2">Not much.<br /><span className="yk-gold yk-italic">We handle the rest.</span></h2>
             <p className="hm-lead">You know your business. We know the setup. Together, it goes quickly.</p>
           </div>
@@ -76,7 +78,7 @@ export default function HowItWorksPage() {
 
       <section className="yk-section hw-fine">
         <div className="yk-section-inner">
-          <div className="yk-section-tag"><span className="yk-num">03</span><span>The fine print</span></div>
+          <div className="yk-section-tag"><span className="yk-num">04</span><span>The fine print</span></div>
           <h2 className="hm-h2">In plain words.</h2>
           <div className="hw-fine-grid">
             {FINE_PRINT.map((f) => (
@@ -91,7 +93,7 @@ export default function HowItWorksPage() {
 
       <section className="yk-section hw-builds">
         <div className="yk-section-inner">
-          <div className="yk-section-tag"><span className="yk-num">04</span><span>Custom builds</span></div>
+          <div className="yk-section-tag"><span className="yk-num">05</span><span>Custom builds</span></div>
           <h2 className="hm-h2">Custom builds<br /><span className="yk-gold yk-italic">work a little differently.</span></h2>
           <p className="hm-lead">For a lead engine, a payment and accounting system, or anything built around your business.</p>
           <ol className="hw-build-steps">

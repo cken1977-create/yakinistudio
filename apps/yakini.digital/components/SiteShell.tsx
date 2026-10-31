@@ -147,7 +147,16 @@ const GLOBAL_CSS = `
     --navy-deep: #0A0908;
     --black: #000000;
     --black-soft: #0A0A0A;
-    --gold: #C8A84B;
+    --gold: #C9A14A;
+    /* Shared Yakini dashboard style (same tokens as the client portal) */
+    --yk-ink: #15130F;
+    --yk-gold: #C9A14A;
+    --yk-gold-soft: rgba(201, 161, 74, 0.14);
+    --yk-tray: #F6F3EC;
+    --yk-line-dark: rgba(255, 255, 255, 0.09);
+    --yk-radius: 16px;
+    --yk-radius-lg: 22px;
+    --yk-shadow-float: 0 40px 80px -30px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.06);
     --gold-warm: #B5915F;
     --cream: #F4F1EB;
     --warm-white: #FAFAF8;

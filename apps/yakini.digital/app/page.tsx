@@ -7,8 +7,8 @@ import {
   GuidedSteps,
   PlanGrid,
   PortalTour,
-  PortalWindow,
 } from '@/components/site/Sections'
+import { FounderBand, HeroStage, KitGallery, PortalShowcase, VISUALS_CSS } from '@/components/site/Visuals'
 import { SECTIONS_CSS } from '@/components/site/content'
 import {
   BILLING_NOTE,
@@ -23,6 +23,7 @@ import {
 
 // yakini.digital home, portal first (plan approved by Clarence Kennedy, Oct 22 2026):
 // hero → portal tour → plans + Partner → how guided setup works → custom builds → FAQ → final CTA.
+// Preview (Oct 30 2026): hero shows real demo screens; adds client-portal showcase, kit gallery and founder band.
 
 export const metadata: Metadata = {
   title: 'Yakini · Your business, in one portal. Set up with you.',
@@ -42,7 +43,7 @@ const FAQ = [
 export default function HomePage() {
   return (
     <SiteShell>
-      <style>{SECTIONS_CSS + HOME_CSS}</style>
+      <style>{SECTIONS_CSS + VISUALS_CSS + HOME_CSS}</style>
 
       <header className="hh">
         <div className="hh-inner">
@@ -73,20 +74,23 @@ export default function HomePage() {
             <FoundingStrip />
           </div>
           <div className="hh-visual">
-            <PortalWindow />
+            <HeroStage />
           </div>
         </div>
       </header>
 
-      <PortalTour />
-      <PlanGrid num="02" />
-      <GuidedSteps num="03" />
-      <CustomBuildsBand num="04" />
+      <PortalShowcase num="01" />
+      <KitGallery num="02" />
+      <PortalTour num="03" />
+      <PlanGrid num="04" />
+      <GuidedSteps num="05" />
+      <FounderBand />
+      <CustomBuildsBand num="06" />
 
       <section className="yk-section hf">
         <div className="yk-section-inner hf-inner">
           <div>
-            <div className="yk-section-tag"><span className="yk-num">05</span><span>Questions</span></div>
+            <div className="yk-section-tag"><span className="yk-num">07</span><span>Questions</span></div>
             <h2 className="hm-h2">Good questions.<br /><span className="yk-gold yk-italic">Straight answers.</span></h2>
             <p className="hm-lead">Anything else? Email <a className="yk-gold" href="mailto:hello@yakini.digital">hello@yakini.digital</a>. A real person reads every message.</p>
           </div>

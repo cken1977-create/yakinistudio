@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { SiteShell } from '@/components/SiteShell'
 import { BOOK_CALL_URL, BUILDS, BUILD_STEPS, SECTIONS_CSS } from '@/components/site/content'
 import { START_URL } from '@/lib/pricing'
+import { KitGallery, VISUALS_CSS } from '@/components/site/Visuals'
 
 // Custom builds: Yakini's premium second lane. Outcomes only: no client names, no demo numbers, never priced.
 
@@ -35,7 +36,7 @@ const WHY = [
 export default function CustomBuildsPage() {
   return (
     <SiteShell>
-      <style>{SECTIONS_CSS + PAGE_CSS}</style>
+      <style>{SECTIONS_CSS + VISUALS_CSS + PAGE_CSS}</style>
 
       <header className="yk-page-header cb-header">
         <div className="yk-page-header-inner">
@@ -76,9 +77,11 @@ export default function CustomBuildsPage() {
         </div>
       </section>
 
+      <KitGallery num="02" />
+
       <section className="yk-section cb-more">
         <div className="yk-section-inner">
-          <div className="yk-section-tag"><span className="yk-num">02</span><span>And more</span></div>
+          <div className="yk-section-tag"><span className="yk-num">03</span><span>And more</span></div>
           <h2 className="hm-h2">If the business needs it,<br /><span className="yk-gold yk-italic">we can build it.</span></h2>
           <div className="cb-more-grid">
             {MORE.map((m) => (
@@ -93,7 +96,7 @@ export default function CustomBuildsPage() {
 
       <section className="yk-section cb-why">
         <div className="yk-section-inner">
-          <div className="yk-section-tag"><span className="yk-num">03</span><span>Why Yakini</span></div>
+          <div className="yk-section-tag"><span className="yk-num">04</span><span>Why Yakini</span></div>
           <h2 className="hm-h2">We don&apos;t build it and leave.<br /><span className="yk-gold yk-italic">We stay.</span></h2>
           <div className="cb-why-grid">
             {WHY.map((w, i) => (
@@ -109,7 +112,7 @@ export default function CustomBuildsPage() {
 
       <section id="how" className="yk-section cb-how">
         <div className="yk-section-inner">
-          <div className="yk-section-tag"><span className="yk-num">04</span><span>How a build runs</span></div>
+          <div className="yk-section-tag"><span className="yk-num">05</span><span>How a build runs</span></div>
           <h2 className="hm-h2">Four steps,<br /><span className="yk-gold yk-italic">in the open.</span></h2>
           <ol className="cb-steps">
             {BUILD_STEPS.map((s, i) => (
