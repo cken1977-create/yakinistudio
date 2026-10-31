@@ -108,7 +108,7 @@ export function PortalShowcase({ num = '01' }: { num?: string }) {
             <li><b>Where we are.</b> Kickoff, Build, Review, Live, with your target go-live date.</li>
             <li><b>Next up.</b> The two or three things we need from you, in order.</li>
             <li><b>Your Yakini person.</b> A name and face, plus messages and files in one place.</li>
-            <li><b>Yours to keep.</b> You own your website, system and data. Hosting and running costs are covered in the monthly fee, with usage billed at cost.</li>
+            <li><b>Yours to keep.</b> You own your website, system and data. Hosting and running costs are covered in the monthly fee. Texting, calls and transcription are billed monthly by usage, with a monthly cap you control.</li>
           </ul>
           <div className="hm-ctas">
             <a href={START_URL} className="hm-btn hm-btn-gold"><span>Start your setup</span><span className="yk-btn-arrow">→</span></a>
