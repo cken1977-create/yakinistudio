@@ -4,6 +4,7 @@
 // only their own caseload. Nothing here uses the service-role key.
 
 import { createClient } from '@/lib/supabase/server'
+import { withRoster } from '@/lib/participants/roster'
 import type { Funder } from './funders'
 import { queryBounds, type Period } from './period'
 import { buildFunderReport, type FunderReport, type ReportFlags, type ReportParticipant, type ReportService, type ServiceTypeInfo } from './aggregate'
@@ -56,7 +57,11 @@ export async function loadReportData(supabase: Supa, funder: Funder | null, peri
   let intakes: ReportParticipant[] = []
   if (!tagged) {
     const r = await pageAll<ReportParticipant>((from, to) =>
-      supabase.from('participants').select(PARTICIPANT_COLS).gte('intake_date', period.start).lte('intake_date', period.end).range(from, to),
+      withRoster((hide) => {
+        let query = supabase.from('participants').select(PARTICIPANT_COLS).gte('intake_date', period.start).lte('intake_date', period.end)
+        if (hide) query = query.is('deleted_at', null)
+        return query.range(from, to)
+      }),
     )
     if (r.error) return { data: null, error: r.error }
     intakes = r.rows
@@ -65,7 +70,11 @@ export async function loadReportData(supabase: Supa, funder: Funder | null, peri
   const ids = [...new Set(svc.rows.map((s) => s.participant_id))]
   const participants: ReportParticipant[] = []
   for (const part of chunks(ids, 200)) {
-    const { data, error } = await supabase.from('participants').select(PARTICIPANT_COLS).in('id', part)
+    const { data, error } = await withRoster((hide) => {
+      let query = supabase.from('participants').select(PARTICIPANT_COLS).in('id', part)
+      if (hide) query = query.is('deleted_at', null)
+      return query
+    })
     if (error) return { data: null, error }
     participants.push(...((data ?? []) as ReportParticipant[]))
   }
@@ -115,7 +124,11 @@ export async function consentedRoster(supabase: Supa, report: FunderReport, fund
   const ids = [...consented]
   const people: { id: string; first_name: string; last_name: string; service_county: string | null; intake_date: string | null }[] = []
   for (const part of chunks(ids, 200)) {
-    const { data } = await supabase.from('participants').select('id, first_name, last_name, service_county, intake_date').in('id', part)
+    const { data } = await withRoster((hide) => {
+      let query = supabase.from('participants').select('id, first_name, last_name, service_county, intake_date').in('id', part)
+      if (hide) query = query.is('deleted_at', null)
+      return query
+    })
     people.push(...((data ?? []) as typeof people))
   }
   const b = queryBounds(period)

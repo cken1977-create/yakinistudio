@@ -8,6 +8,8 @@ import { Section, Button } from '@yakini/ui'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { applyHref } from '@/lib/programs/apply'
+import { brandProgramBySlug } from '@/lib/site/public-pages'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,7 +39,7 @@ export default async function ProgramDetailPage({
     .select(
       'id, slug, name, public_description, public_long_description, ' +
         'who_we_serve, eligibility_criteria, duration_description, ' +
-        'icon_emoji, apply_cta_label, apply_url',
+        'icon_emoji, apply_cta_label, apply_url, slug',
     )
     .eq('slug', slug)
     .eq('is_public', true)
@@ -45,11 +47,13 @@ export default async function ProgramDetailPage({
     .maybeSingle()
 
   if (error || !data) {
-    notFound()
+    const written = brandProgramBySlug(slug)
+    if (!written) notFound()
+    return <WrittenProgram program={written} />
   }
 
   const program = data as unknown as ProgramDetail
-  const applyHref = program.apply_url ?? '/get-help'
+  const applicationHref = applyHref(program)
 
   return (
     <>
@@ -246,9 +250,39 @@ export default async function ProgramDetailPage({
             Reach out and a real person will respond. All backgrounds welcome.
             No one turned away.
           </p>
-          <Link href={applyHref}>
-            <Button>{program.apply_cta_label ?? 'Get Help'}</Button>
+          <Button href={applicationHref}>{program.apply_cta_label ?? 'Apply Now'}</Button>
+        </div>
+      </Section>
+    </>
+  )
+}
+
+function WrittenProgram({ program }: { program: { slug: string; title: string; description: string; features: string[] } }) {
+  return (
+    <>
+      <Section padding="xl">
+        <div style={{ paddingTop: 80, maxWidth: 920 }}>
+          <Link href="/programs" style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--brand-primary)', textDecoration: 'none' }}>
+            ← All Programs
           </Link>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(40px, 6vw, 72px)', fontWeight: 500, lineHeight: 1.1, margin: '32px 0' }}>
+            {program.title}
+          </h1>
+          <p style={{ fontSize: 22, lineHeight: 1.6, color: 'var(--brand-muted)', fontFamily: 'var(--font-display)', fontStyle: 'italic' }}>
+            {program.description}
+          </p>
+        </div>
+      </Section>
+      {program.features.length > 0 && (
+        <Section padding="lg">
+          <ul style={{ maxWidth: 720, fontSize: 18, lineHeight: 1.7 }}>
+            {program.features.map((feature) => <li key={feature}>{feature}</li>)}
+          </ul>
+        </Section>
+      )}
+      <Section padding="xl" background="var(--brand-text)">
+        <div style={{ textAlign: 'center', color: 'white' }}>
+          <Button href={applyHref({ slug: program.slug })}>Apply Now</Button>
         </div>
       </Section>
     </>

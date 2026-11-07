@@ -8,6 +8,7 @@ import { Section, Button } from '@yakini/ui'
 import { config } from '@/config/brand'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import { applyHref } from '@/lib/programs/apply'
 
 export const dynamic = 'force-dynamic'
 
@@ -152,9 +153,7 @@ export default async function ProgramsPage() {
             Whether it&apos;s housing, family support, refugee resettlement, food
             assistance, or educational pathways — we hear you.
           </p>
-          <Link href="/get-help">
-            <Button>Get Help Now</Button>
-          </Link>
+          <Button href="/get-help">Get Help Now</Button>
         </div>
       </Section>
     </>
@@ -163,14 +162,6 @@ export default async function ProgramsPage() {
 
 function ProgramCard({ program }: { program: PublicProgram }) {
   return (
-    <Link
-      href={`/programs/${program.slug}`}
-      style={{
-        textDecoration: 'none',
-        color: 'inherit',
-        display: 'block',
-      }}
-    >
       <article
         style={{
           padding: 40,
@@ -197,7 +188,9 @@ function ProgramCard({ program }: { program: PublicProgram }) {
             color: 'var(--brand-text)',
           }}
         >
-          {program.name}
+          <Link href={`/programs/${program.slug}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+            {program.name}
+          </Link>
         </h3>
         <p
           style={{
@@ -227,20 +220,15 @@ function ProgramCard({ program }: { program: PublicProgram }) {
             {program.duration_description}
           </div>
         )}
-        <div
-          style={{
-            marginTop: 24,
-            fontFamily: 'var(--font-body)',
-            fontSize: 13,
-            fontWeight: 600,
-            color: 'var(--brand-primary)',
-            letterSpacing: '0.04em',
-          }}
-        >
-          {program.apply_cta_label ?? 'Learn more'} →
+        <div style={{ marginTop: 24, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+          <Link href={`/programs/${program.slug}`} style={{ fontSize: 13, fontWeight: 600, color: 'var(--brand-text)' }}>
+            Learn more
+          </Link>
+          <a href={applyHref(program)} style={{ fontSize: 13, fontWeight: 600, color: 'var(--brand-primary)' }}>
+            {program.apply_cta_label ?? 'Apply Now'}
+          </a>
         </div>
       </article>
-    </Link>
   )
 }
 

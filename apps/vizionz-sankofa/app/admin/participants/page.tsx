@@ -13,7 +13,7 @@ import { ParticipantsListClient } from './ParticipantsListClient'
 import type { ParticipantRecord, StaffRecord } from './types'
 import { AdminCrumbs } from '@/components/admin/nav/AdminCrumbs'
 import { CanEditProvider } from '@/components/admin/CanEdit'
-import { canWriteCrm } from '@/lib/crm/model'
+import { canWriteCrm, isExecOrOp } from '@/lib/crm/model'
 import { getAccessRole } from '@/lib/supabase/auth'
 
 export const dynamic = 'force-dynamic'
@@ -58,8 +58,13 @@ export default async function ParticipantsPage() {
     }
     return { data: rows, error: null }
   }
-  // service_county arrives with migration 0900; read without it until then.
-  let { data: participantsData, error: participantsError } = await listParticipants(PARTICIPANT_COLS + ', service_county')
+  // service_county arrives with migration 0900, deleted_at with the roster
+  // removal migration. Read without either column until it exists.
+  const removalCols = ', deleted_at, deleted_by, delete_reason'
+  let { data: participantsData, error: participantsError } = await listParticipants(PARTICIPANT_COLS + ', service_county' + removalCols)
+  if (participantsError && /deleted_at|deleted_by|delete_reason/.test(participantsError.message)) {
+    ;({ data: participantsData, error: participantsError } = await listParticipants(PARTICIPANT_COLS + ', service_county'))
+  }
   if (participantsError && /service_county/.test(participantsError.message)) {
     ;({ data: participantsData, error: participantsError } = await listParticipants(PARTICIPANT_COLS))
   }
@@ -78,9 +83,10 @@ export default async function ParticipantsPage() {
   const staff = (staffData ?? []) as unknown as StaffRecord[]
 
   // Substrate counts
-  const totalCount = participants.length
-  const activeCount = participants.filter((p) => p.status === 'active').length
-  const intakeCount = participants.filter((p) => p.status === 'intake').length
+  const onRoster = participants.filter((p) => !p.deleted_at)
+  const totalCount = onRoster.length
+  const activeCount = onRoster.filter((p) => p.status === 'active').length
+  const intakeCount = onRoster.filter((p) => p.status === 'intake').length
 
   const greetingName = getOperatorDisplayName(user)
 
@@ -158,6 +164,7 @@ export default async function ParticipantsPage() {
         <ParticipantsListClient
           initialParticipants={participants}
           staff={staff}
+          canDelete={isExecOrOp(getAccessRole(user))}
         />
       </CanEditProvider>
     </div>

@@ -23,3 +23,7 @@ psql -v ON_ERROR_STOP=1 -d "$DB" -f tests/obr-coalition-tests.sql
 psql -v ON_ERROR_STOP=1 -d "$DB" -f tests/funder-wave2-tests.sql
 psql -v ON_ERROR_STOP=1 -d "$DB" -f tests/crm-tests.sql
 psql -v ON_ERROR_STOP=1 -d "$DB" -f tests/hr-chat-tests.sql
+psql -v ON_ERROR_STOP=1 -d "$DB" -f tests/participant-removal-tests.sql
+psql -v ON_ERROR_STOP=1 -d "$DB" -f tests/intake-apply-tests.sql
+psql -v ON_ERROR_STOP=1 -d "$DB" -f tests/contact-form-tests.sql
+psql -v ON_ERROR_STOP=1 -d "$DB" -f tests/document-bucket-tests.sql

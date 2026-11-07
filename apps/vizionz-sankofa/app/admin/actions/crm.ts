@@ -211,8 +211,32 @@ export async function updateContact(id: string, fd: FormData): Promise<CrmResult
   return { ok: true }
 }
 
+export async function deleteContact(id: string): Promise<CrmResult> {
+  const user = await requireOperatorOrEmployee()
+  if (!isExecOrOp(getAccessRole(user))) {
+    return { ok: false, error: 'Only an executive or operator can delete a contact.' }
+  }
+  if (!UUID.test(id)) return { ok: false, error: 'Unknown person.' }
+  const supabase = await createClient()
+  const { data: existing, error: readError } = await supabase
+    .from('vs_contacts').select('id, archived_at').eq('id', id).maybeSingle()
+  if (readError) return { ok: false, error: friendly(readError) }
+  if (!existing) return { ok: false, error: 'That contact was not found. Nothing was changed.' }
+  if (existing.archived_at) return { ok: true }
+  const { data, error } = await supabase.from('vs_contacts')
+    .update({ archived_at: new Date().toISOString() }).eq('id', id).select('id')
+  if (error) return { ok: false, error: friendly(error) }
+  if (!data || data.length === 0) return { ok: false, error: "You can't delete this contact." }
+  revalidatePath('/admin/contacts')
+  revalidatePath(`/admin/contacts/${id}`)
+  return { ok: true }
+}
+
 export async function setContactArchived(id: string, archived: boolean): Promise<CrmResult> {
-  await requireOperatorOrEmployee()
+  const user = await requireOperatorOrEmployee()
+  if (!isExecOrOp(getAccessRole(user))) {
+    return { ok: false, error: 'Only an executive or operator can change whether a contact is on the active list.' }
+  }
   if (!UUID.test(id)) return { ok: false, error: 'Unknown person.' }
   const supabase = await createClient()
   const { data, error } = await supabase.from('vs_contacts')

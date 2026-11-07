@@ -66,6 +66,10 @@ export type ParticipantRecord = {
   service_county?: 'bernalillo' | 'lea' | 'other' | null
   created_at: string
   updated_at: string
+  // Set by the roster-removal migration. Absent until that migration is applied.
+  deleted_at?: string | null
+  deleted_by?: string | null
+  delete_reason?: string | null
 }
 
 export type ParticipantEditableFields = {

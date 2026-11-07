@@ -7,8 +7,22 @@
 // participant_documents table with category, description, expiration,
 // confidentiality flag. Download via signed URL (15-minute TTL).
 
-import { useMemo, useState, useTransition, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { createClient as createBrowserClient } from '@/lib/supabase/client'
+import { UploadStatus } from '@/components/admin/UploadStatus'
+import {
+  beginUpload,
+  finishUpload,
+  idleUpload,
+  isPreviewableImage,
+  isUploadActive,
+  markUploadFile,
+  pathsToRemoveAfterFailure,
+  retryFailedUpload,
+  selectUploadFiles,
+  uploadStatusText,
+  type UploadSession,
+} from '@/lib/media/picture-upload'
 import type {
   ParticipantDocumentWithStaff,
   DocumentCategory,
@@ -20,6 +34,7 @@ import {
   getDocumentStoragePath,
   formatFileSize,
 } from './types'
+import { decideParticipantDocument } from '@/lib/documents/files'
 import type { StaffRecord } from '../types'
 import { formatDateTimeValue, formatDateValue } from '@/lib/format/datetime'
 import { useCanEdit } from '@/components/admin/CanEdit'
@@ -210,6 +225,36 @@ export function DocumentsTab({
   )
 }
 
+function DocumentImage({ path }: { path: string }) {
+  const [url, setUrl] = useState<string | null>(null)
+  const [failed, setFailed] = useState(false)
+  useEffect(() => {
+    let cancel = false
+    const supabase = createBrowserClient()
+    void supabase.storage.from(STORAGE_BUCKET_PARTICIPANT_DOCS).createSignedUrl(path, SIGNED_URL_TTL_SECONDS).then(({ data, error }) => {
+      if (cancel) return
+      if (error || !data?.signedUrl) setFailed(true)
+      else setUrl(data.signedUrl)
+    })
+    return () => { cancel = true }
+  }, [path])
+  if (failed) return <span style={{ fontSize: '12px', color: '#CE1126' }}>Saved, but the picture could not be shown.</span>
+  if (!url) return <span role="status" style={{ fontSize: '12px' }}>Loading picture…</span>
+  return <img src={url} alt="" onError={() => setFailed(true)} style={{ width: '72px', height: '54px', objectFit: 'cover', display: 'block' }} />
+}
+
+const hiddenFileInput: CSSProperties = {
+  position: 'absolute',
+  width: '1px',
+  height: '1px',
+  padding: 0,
+  margin: '-1px',
+  overflow: 'hidden',
+  clip: 'rect(0 0 0 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+}
+
 function DocStat({
   label,
   value,
@@ -290,16 +335,8 @@ function UploadButton({
 
   return (
     <>
-      <input
-        ref={fileInputRef}
-        type="file"
-        onChange={handleFileSelect}
-        style={{ display: 'none' }}
-        disabled={uploading}
-      />
-      <button
-        onClick={() => fileInputRef.current?.click()}
-        disabled={uploading}
+      <label
+        htmlFor={`participant-doc-${participantId}`}
         style={{
           padding: '10px 18px',
           border: '1px solid #0A0A0A',
@@ -314,7 +351,16 @@ function UploadButton({
         }}
       >
         {uploading ? 'Uploading…' : '+ Upload Document'}
-      </button>
+        <input
+          ref={fileInputRef}
+          id={`participant-doc-${participantId}`}
+          type="file"
+          accept="image/jpeg,image/png,image/gif,image/webp,image/bmp,.jpg,.jpeg,.jfif,.png,.gif,.webp,.bmp,.pdf,.doc,.docx,.txt,image/*"
+          onChange={handleFileSelect}
+          disabled={uploading}
+          style={hiddenFileInput}
+        />
+      </label>
 
       {pendingFile && (
         <UploadDetailsModal
@@ -329,10 +375,7 @@ function UploadButton({
             setPendingFile(null)
             onUploaded(doc)
           }}
-          onError={(msg) => {
-            setPendingFile(null)
-            onError(msg)
-          }}
+          onError={onError}
         />
       )}
     </>
@@ -365,36 +408,65 @@ function UploadDetailsModal({
   const [expiresAt, setExpiresAt] = useState('')
   const [isConfidential, setIsConfidential] = useState(false)
   const [uploaderId, setUploaderId] = useState<string>(defaultUploaderId ?? '')
-  const [pending, startTransition] = useTransition()
+  const sessionRef = useRef<UploadSession>(selectUploadFiles(idleUpload(), [file.name]))
+  const [uploadSession, setUploadSession] = useState<UploadSession>(sessionRef.current)
+  const [localPreview, setLocalPreview] = useState<string | null>(null)
+
+  function commitUpload(next: UploadSession) {
+    sessionRef.current = next
+    setUploadSession(next)
+  }
 
   function save() {
-    startTransition(async () => {
+    if (isUploadActive(sessionRef.current.phase) && sessionRef.current.phase !== 'selected') return
+    const base = sessionRef.current.phase === 'failed'
+      ? retryFailedUpload(sessionRef.current).session
+      : sessionRef.current.phase === 'selected'
+        ? beginUpload(sessionRef.current).session
+        : beginUpload(selectUploadFiles(idleUpload(), [file.name])).session
+    if (!isUploadActive(base.phase)) return
+    commitUpload(base)
+    void (async () => {
       onUploadStart()
+      let current = markUploadFile(sessionRef.current, 0, 'preparing')
+      commitUpload(current)
+      const decided = decideParticipantDocument({ name: file.name, type: file.type, size: file.size })
+      if (!decided.ok) {
+        current = finishUpload(markUploadFile(current, 0, 'failed', decided.reason))
+        commitUpload(current)
+        onUploadEnd()
+        onError(decided.reason)
+        return
+      }
       const supabase = createBrowserClient()
-
-      // 1. Upload file to Storage
+      const contentType = decided.contentType
       const path = getDocumentStoragePath(participantId, file.name)
+      current = markUploadFile(current, 0, 'uploading')
+      commitUpload(current)
       const { error: uploadError } = await supabase.storage
         .from(STORAGE_BUCKET_PARTICIPANT_DOCS)
         .upload(path, file, {
-          contentType: file.type,
+          contentType,
           upsert: false,
         })
 
       if (uploadError) {
+        current = finishUpload(markUploadFile(current, 0, 'failed', `Upload failed: ${uploadError.message}. The documents already on this record were not changed.`))
+        commitUpload(current)
         onUploadEnd()
-        onError(`Upload failed: ${uploadError.message}`)
+        onError(current.files[0]?.reason ?? 'Upload failed.')
         return
       }
 
-      // 2. Insert metadata row
+      current = markUploadFile(current, 0, 'saving')
+      commitUpload(current)
       const insertPayload = {
         participant_id: participantId,
         uploaded_by_id: uploaderId || null,
         filename: file.name,
         storage_path: path,
         file_size_bytes: file.size,
-        mime_type: file.type || null,
+        mime_type: contentType,
         category,
         description: description.trim() || null,
         is_confidential: isConfidential,
@@ -409,29 +481,35 @@ function UploadDetailsModal({
         .single()
 
       if (insertError || !data) {
-        // Clean up the uploaded file since metadata failed
-        await supabase.storage
-          .from(STORAGE_BUCKET_PARTICIPANT_DOCS)
-          .remove([path])
+        const cleanup = pathsToRemoveAfterFailure(path, false)
+        if (cleanup.length > 0) {
+          await supabase.storage.from(STORAGE_BUCKET_PARTICIPANT_DOCS).remove(cleanup)
+        }
+        current = finishUpload(markUploadFile(current, 0, 'failed', `Could not save the file record: ${insertError?.message ?? 'unknown'}. The documents already on this record were not changed.`))
+        commitUpload(current)
         onUploadEnd()
-        onError(`Metadata save failed: ${insertError?.message ?? 'unknown'}`)
+        onError(current.files[0]?.reason ?? 'Could not save the file record.')
         return
       }
 
-      // 3. Decorate with uploader name and return
       const uploader = staff.find((s) => s.id === uploaderId)
       const decorated: ParticipantDocumentWithStaff = {
         ...(data as unknown as ParticipantDocumentWithStaff),
         uploaded_by_name: uploader?.full_name ?? null,
       }
+      if (isPreviewableImage(file.name, contentType)) setLocalPreview(URL.createObjectURL(file))
+      current = finishUpload(markUploadFile(current, 0, 'done'))
+      commitUpload(current)
       onUploadEnd()
       onUploaded(decorated)
     })
   }
 
+  const uploadActive = isUploadActive(uploadSession.phase) && uploadSession.phase !== 'selected'
+
   return (
     <div
-      onClick={onClose}
+      onClick={() => { if (!uploadActive) onClose() }}
       style={{
         position: 'fixed',
         inset: 0,
@@ -477,6 +555,10 @@ function UploadDetailsModal({
         >
           {file.name} · {formatFileSize(file.size)}
         </p>
+        <UploadStatus text={uploadSession.phase === 'selected' ? null : uploadStatusText(uploadSession)} active={uploadActive} percent={null} />
+        {localPreview && (
+          <img src={localPreview} alt="" style={{ width: '160px', height: '120px', objectFit: 'cover', display: 'block', marginBottom: '12px' }} />
+        )}
 
         <Field label="Category *">
           <select
@@ -563,12 +645,16 @@ function UploadDetailsModal({
             marginTop: '8px',
           }}
         >
-          <button onClick={onClose} disabled={pending} style={cancelBtn(pending)}>
-            Cancel
+          <button onClick={onClose} disabled={uploadActive} style={cancelBtn(uploadActive)}>
+            {uploadSession.phase === 'completed' ? 'Close' : 'Cancel'}
           </button>
-          <button onClick={save} disabled={pending} style={saveBtn(pending)}>
-            {pending ? 'Uploading…' : 'Upload'}
-          </button>
+          {uploadSession.phase === 'failed' ? (
+            <button onClick={save} style={saveBtn(false)}>Retry</button>
+          ) : (
+            <button onClick={save} disabled={uploadActive || uploadSession.phase === 'completed'} style={saveBtn(uploadActive || uploadSession.phase === 'completed')}>
+              {uploadActive ? 'Uploading…' : 'Upload'}
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -662,7 +748,11 @@ function DocumentRow({
           gap: '14px',
         }}
       >
-        <div style={{ fontSize: '28px', lineHeight: 1 }}>{icon}</div>
+        <div style={{ fontSize: '28px', lineHeight: 1 }}>
+          {isPreviewableImage(document.filename, document.mime_type ?? '') ? (
+            <DocumentImage path={document.storage_path} />
+          ) : icon}
+        </div>
         <div style={{ flex: '1 1 auto', minWidth: 0 }}>
           <div
             style={{

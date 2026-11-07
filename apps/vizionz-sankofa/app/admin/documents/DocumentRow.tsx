@@ -15,6 +15,8 @@ import {
   type DocumentCategory,
 } from './types'
 import { formatDateValue, formatDateTimeValue } from '@/lib/format/datetime'
+import { createClient } from '@/lib/supabase/client'
+import { LIBRARY_DOCUMENT_BUCKET } from '@/lib/documents/files'
 
 type DocumentRecord = {
   id: string
@@ -79,6 +81,7 @@ export function DocumentRow({
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
   const [isRetrying, startRetry] = useTransition()
+  const [opening, setOpening] = useState(false)
   const router = useRouter()
 
   // Editable fields
@@ -90,6 +93,21 @@ export function DocumentRow({
 
   const statusLabel = STATUS_LABELS[doc.processing_status]
   const statusColor = STATUS_COLORS[doc.processing_status]
+
+  async function handleOpen() {
+    setError(null)
+    setOpening(true)
+    const supabase = createClient()
+    const { data, error: openError } = await supabase.storage
+      .from(LIBRARY_DOCUMENT_BUCKET)
+      .createSignedUrl(doc.storage_path, 60)
+    setOpening(false)
+    if (openError || !data?.signedUrl) {
+      setError(openError?.message ?? 'The file could not be opened. It is still in the library.')
+      return
+    }
+    window.open(data.signedUrl, '_blank', 'noopener,noreferrer')
+  }
 
   function handleSaveEdits() {
     setError(null)
@@ -417,9 +435,17 @@ export function DocumentRow({
               <>
                 <button
                   type="button"
+                  onClick={() => void handleOpen()}
+                  disabled={isPending || opening}
+                  style={primaryButtonStyle}
+                >
+                  {opening ? 'Opening…' : 'Open file'}
+                </button>
+                <button
+                  type="button"
                   onClick={() => setEditing(true)}
                   disabled={isPending}
-                  style={primaryButtonStyle}
+                  style={outlineButtonStyle}
                 >
                   Edit metadata
                 </button>

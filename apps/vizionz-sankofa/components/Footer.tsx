@@ -8,7 +8,8 @@
 // ═════════════════════════════════════════════════════════════════════════
 
 import type { BrandConfig } from '@yakini/config'
-import { VS_NAVY, VS_RED, VS_INK, VS_GREEN } from './TriColorRule'
+import { FOOTER_ABOUT, FOOTER_ENGAGE, FOOTER_PROGRAM_LINKS } from '@/lib/site/public-pages'
+import { VS_RED, VS_INK, VS_GREEN } from './TriColorRule'
 
 const VS_BLACK_DEEP = '#0A0A0A'  // True deep black for the Pan-African footer ground
 
@@ -126,6 +127,10 @@ export function Footer({ config }: { config: BrandConfig }) {
         .vs-footer-col a:hover {
           color: #FFFFFF;
         }
+        .vs-footer-text {
+          color: rgba(255, 255, 255, 0.78);
+          font-size: 0.9rem;
+        }
 
         .vs-footer-bar {
           border-top: 1px solid rgba(255, 255, 255, 0.15);
@@ -199,30 +204,31 @@ export function Footer({ config }: { config: BrandConfig }) {
             <div className="vs-footer-col">
               <h5>About</h5>
               <ul>
-                <li><a href="/about">Our Story</a></li>
-                <li><a href="/staff">Leadership</a></li>
-                <li><a href="/partners">Coalition</a></li>
-                <li><a href="/gallery">Events</a></li>
+                {FOOTER_ABOUT.map((item) => (
+                  <li key={item.label}>
+                    {'href' in item ? <a href={item.href}>{item.label}</a> : <span className="vs-footer-text">{item.label}</span>}
+                  </li>
+                ))}
               </ul>
             </div>
 
             <div className="vs-footer-col">
               <h5>Programs</h5>
               <ul>
-                <li><a href="/programs/unsheltered">Unsheltered Outreach</a></li>
-                <li><a href="/programs/refugee-immigrant">Refugee &amp; Immigrant</a></li>
-                <li><a href="/programs/housing">Housing Stability</a></li>
-                <li><a href="/programs/youth">Youth &amp; Education</a></li>
+                {FOOTER_PROGRAM_LINKS.map((link) => (
+                  <li key={link.href}><a href={link.href}>{link.label}</a></li>
+                ))}
               </ul>
             </div>
 
             <div className="vs-footer-col">
               <h5>Engage</h5>
               <ul>
-                <li><a href="/get-help">Get Help</a></li>
-                <li><a href="/contact">Donate</a></li>
-                <li><a href="/volunteer">Volunteer</a></li>
-                <li><a href="/contact">Contact</a></li>
+                {FOOTER_ENGAGE.map((item) => (
+                  <li key={item.label}>
+                    {'href' in item ? <a href={item.href}>{item.label}</a> : <span className="vs-footer-text">{item.label}</span>}
+                  </li>
+                ))}
               </ul>
             </div>
 

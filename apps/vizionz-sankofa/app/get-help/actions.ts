@@ -10,6 +10,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { config } from '@/config/brand'
+import { isIntakeRequestType, programNote, validateIntake } from '@/lib/programs/apply'
 
 const REQUEST_TYPE_VALUES = [
   'food_assistance',
@@ -38,80 +39,81 @@ type IntakeSubmission = {
   request_type: string
   details: string | null
   consent_given: boolean
+  program_slug?: string | null
+  client_request_id?: string | null
 }
 
 type ActionResult =
-  | { ok: true; id: string }
+  | { ok: true; id: string; duplicate?: boolean; programName: string | null; programLinked: 'saved' | 'noted' | 'none' }
   | { ok: false; error: string }
 
-function isValidEmail(value: string): boolean {
-  // Pragmatic email check — accepts the shape, lets Resend reject bad ones
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-}
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 export async function submitIntakeRequest(
   submission: IntakeSubmission
 ): Promise<ActionResult> {
   // ─── Server-side validation ─────────────────────────────────────────
 
-  if (!submission.full_name || submission.full_name.length < 2) {
-    return { ok: false, error: 'Please enter your full name.' }
-  }
-
-  if (!submission.email || !isValidEmail(submission.email)) {
-    return { ok: false, error: 'Please enter a valid email address.' }
-  }
-
-  if (
-    !submission.request_type ||
-    !REQUEST_TYPE_VALUES.includes(submission.request_type as RequestType)
-  ) {
+  const invalid = validateIntake({
+    full_name: submission.full_name,
+    email: submission.email,
+    phone: submission.phone ?? '',
+    request_type: submission.request_type,
+    details: submission.details ?? '',
+    consent_given: submission.consent_given,
+  })
+  if (invalid) return { ok: false, error: invalid }
+  if (!isIntakeRequestType(submission.request_type)) {
     return { ok: false, error: 'Please select what we can help with.' }
-  }
-
-  if (!submission.consent_given) {
-    return {
-      ok: false,
-      error:
-        'Consent is required so we can reach out about your request.',
-    }
-  }
-
-  // Length guards — protect the DB from oversize payloads
-  if (submission.full_name.length > 200) {
-    return { ok: false, error: 'Name is too long.' }
-  }
-  if (submission.email.length > 320) {
-    return { ok: false, error: 'Email is too long.' }
-  }
-  if (submission.phone && submission.phone.length > 50) {
-    return { ok: false, error: 'Phone number is too long.' }
-  }
-  if (submission.details && submission.details.length > 5000) {
-    return {
-      ok: false,
-      error: 'Details are too long. Please summarize your situation.',
-    }
   }
 
   // ─── DB insert ──────────────────────────────────────────────────────
 
   const supabase = await createClient()
+  const slug = submission.program_slug?.trim() || ''
+  let programId: string | null = null
+  let programName: string | null = null
+  if (slug) {
+    const { data: program, error: programError } = await supabase
+      .from('programs')
+      .select('id, name')
+      .eq('slug', slug)
+      .eq('is_public', true)
+      .eq('is_active', true)
+      .maybeSingle()
+    if (programError || !program) {
+      return { ok: false, error: 'That program was not found. Nothing was saved. You can send a general request from Get Help.' }
+    }
+    programId = program.id as string
+    programName = program.name as string
+  }
 
   // Anonymous visitors may INSERT but not SELECT intake_requests (RLS), so
-  // the id is generated here and the insert asks for no row back.
-  const id = crypto.randomUUID()
-  const { error: insertError } = await supabase
-    .from('intake_requests')
-    .insert({
-      id,
-      full_name: submission.full_name,
-      email: submission.email,
-      phone: submission.phone,
-      request_type: submission.request_type,
-      details: submission.details,
-      consent_given: submission.consent_given,
-    })
+  // the id is chosen here and the insert asks for no row back. The same id
+  // on a repeat click hits the primary key and does not create a second row.
+  const id = submission.client_request_id && UUID.test(submission.client_request_id)
+    ? submission.client_request_id
+    : crypto.randomUUID()
+  const details = programName ? programNote(programName, submission.details ?? '') : submission.details
+  const base = {
+    id,
+    full_name: submission.full_name,
+    email: submission.email,
+    phone: submission.phone,
+    request_type: submission.request_type,
+    details,
+    consent_given: submission.consent_given,
+  }
+  let programLinked: 'saved' | 'noted' | 'none' = programId ? 'saved' : 'none'
+  const withProgram = programId ? { ...base, program_id: programId } : base
+  let { error: insertError } = await supabase.from('intake_requests').insert(withProgram as typeof base)
+  if (insertError && programId && /program_id/i.test(insertError.message)) {
+    programLinked = 'noted'
+    ;({ error: insertError } = await supabase.from('intake_requests').insert(base))
+  }
+  if (insertError && insertError.code === '23505') {
+    return { ok: true, id, duplicate: true, programName, programLinked }
+  }
   const inserted = insertError ? null : { id }
 
   if (insertError || !inserted) {
@@ -126,14 +128,14 @@ export async function submitIntakeRequest(
   // ─── Operator notification (best-effort, non-blocking on failure) ───
 
   try {
-    await sendOperatorNotification(submission, inserted.id)
+    await sendOperatorNotification({ ...submission, details }, inserted.id)
   } catch (err) {
     // Email failed but the row landed. Log and continue — substrate truth
     // is in the DB, operators will see the request in /admin/intakes.
     console.error('Operator notification failed (row still saved):', err)
   }
 
-  return { ok: true, id: inserted.id }
+  return { ok: true, id: inserted.id, programName, programLinked }
 }
 
 async function sendOperatorNotification(

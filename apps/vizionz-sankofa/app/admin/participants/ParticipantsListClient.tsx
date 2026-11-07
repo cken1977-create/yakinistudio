@@ -22,6 +22,8 @@ import {
 } from './types'
 import { todayInMountain } from '@/lib/format/datetime'
 import { useCanEdit } from '@/components/admin/CanEdit'
+import { DeleteParticipantControl } from './DeleteParticipantControl'
+import { rosterDuplicateNotice } from '@/lib/participants/removal'
 
 const STATUS_TABS: { key: 'all' | ParticipantStatus; label: string }[] = [
   { key: 'all', label: 'All' },
@@ -37,9 +39,11 @@ const STATUS_TABS: { key: 'all' | ParticipantStatus; label: string }[] = [
 export function ParticipantsListClient({
   initialParticipants,
   staff,
+  canDelete = false,
 }: {
   initialParticipants: ParticipantRecord[]
   staff: StaffRecord[]
+  canDelete?: boolean
 }) {
   const canEdit = useCanEdit()
   const [participants, setParticipants] =
@@ -54,11 +58,16 @@ export function ParticipantsListClient({
   )
   const [editing, setEditing] = useState<ParticipantRecord | null>(null)
   const [adding, setAdding] = useState(false)
+  const [removedView, setRemovedView] = useUrlState<'0' | '1'>('removed', '0', ['0', '1'])
+  const [banner, setBanner] = useState<string | null>(null)
+  const onRoster = useMemo(() => participants.filter((p) => !p.deleted_at), [participants])
+  const removed = useMemo(() => participants.filter((p) => !!p.deleted_at), [participants])
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
-    return participants.filter((p) => {
-      if (tab !== 'all' && p.status !== tab) return false
+    const source = removedView === '1' ? removed : onRoster
+    return source.filter((p) => {
+      if (removedView !== '1' && tab !== 'all' && p.status !== tab) return false
       if (!q) return true
       const haystack = [
         p.first_name,
@@ -72,7 +81,7 @@ export function ParticipantsListClient({
         .toLowerCase()
       return haystack.includes(q)
     })
-  }, [participants, search, tab])
+  }, [onRoster, removed, removedView, search, tab])
 
   function exportCSV() {
     // Pilot protection: exports are audited (fire-and-forget; the export
@@ -173,7 +182,21 @@ export function ParticipantsListClient({
           >
             Export CSV
           </button>
+        {canDelete && (
+          <button type="button" onClick={() => setRemovedView(removedView === '1' ? '0' : '1')} style={{
+            padding: '10px 18px', border: '1px solid rgba(10, 10, 10, 0.16)', background: removedView === '1' ? '#0A0A0A' : '#FFFFFF',
+            color: removedView === '1' ? '#FFFFFF' : '#0A0A0A', borderRadius: '6px', fontSize: '14px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit',
+          }}>
+            Removed · {removed.length}
+          </button>
+        )}
       </section>
+      {banner && <p role="status" style={{ margin: '0 0 16px', fontSize: '14px' }}>{banner}</p>}
+      {removedView === '1' && (
+        <p style={{ fontSize: '14px', color: 'rgba(10,10,10,0.7)', marginTop: 0 }}>
+          These people were removed from the active roster. Their records were not erased. Restore puts them back.
+        </p>
+      )}
 
       {/* Status tabs */}
       <section
@@ -187,8 +210,8 @@ export function ParticipantsListClient({
         {STATUS_TABS.map((t) => {
           const count =
             t.key === 'all'
-              ? participants.length
-              : participants.filter((p) => p.status === t.key).length
+              ? onRoster.length
+              : onRoster.filter((p) => p.status === t.key).length
           return (
             <TabButton
               key={t.key}
@@ -215,6 +238,12 @@ export function ParticipantsListClient({
                   : undefined
               }
               onEdit={() => setEditing(p)}
+              canDelete={canDelete}
+              onChanged={(message) => {
+                setBanner(message)
+                const restoring = /back on the active roster|is on the active roster/.test(message)
+                setParticipants((prev) => prev.map((row) => row.id === p.id ? { ...row, deleted_at: restoring ? null : new Date().toISOString() } : row))
+              }}
             />
           ))}
         </div>
@@ -226,6 +255,7 @@ export function ParticipantsListClient({
           mode="edit"
           participant={editing}
           staff={staff}
+          roster={participants}
           onClose={() => setEditing(null)}
           onSaved={(updated) => {
             setParticipants((prev) =>
@@ -241,6 +271,7 @@ export function ParticipantsListClient({
         <ParticipantModal
           mode="add"
           staff={staff}
+          roster={participants}
           onClose={() => setAdding(false)}
           onSaved={(created) => {
             setParticipants((prev) => [created, ...prev])
@@ -389,10 +420,14 @@ function ParticipantRow({
   participant,
   caseManager,
   onEdit,
+  canDelete,
+  onChanged,
 }: {
   participant: ParticipantRecord
   caseManager: StaffRecord | undefined
   onEdit: () => void
+  canDelete: boolean
+  onChanged: (message: string) => void
 }) {
   const canEdit = useCanEdit()
   const [quickNote, setQuickNote] = useState(false)
@@ -538,6 +573,7 @@ function ParticipantRow({
             + Note
           </button>
         )}
+        <DeleteParticipantControl participant={participant} canDelete={canDelete} onChanged={onChanged} />
       </div>
           {quickNote && (
             <QuickNoteModal
@@ -640,12 +676,14 @@ function ParticipantModal({
   mode,
   participant,
   staff,
+  roster,
   onClose,
   onSaved,
 }: {
   mode: 'add' | 'edit'
   participant?: ParticipantRecord
   staff: StaffRecord[]
+  roster: ParticipantRecord[]
   onClose: () => void
   onSaved: (record: ParticipantRecord) => void
 }) {
@@ -709,6 +747,8 @@ function ParticipantModal({
         }
         if (data) onSaved(data as unknown as ParticipantRecord)
       } else {
+        // Name, email, and phone are not unique. A second save creates another
+        // participant; it does not merge or remove the existing one.
         const { data, error } = await supabase
           .from('participants')
           .insert(payload)
@@ -1003,6 +1043,12 @@ function ParticipantModal({
             </label>
           </div>
         </Field>
+
+        {rosterDuplicateNotice(draft, roster, participant?.id) && (
+          <div style={{ padding: '10px 14px', background: 'rgba(180, 130, 0, 0.1)', borderRadius: '6px', fontSize: '13px', marginBottom: '16px' }}>
+            {rosterDuplicateNotice(draft, roster, participant?.id)}
+          </div>
+        )}
 
         {errorMsg && (
           <div

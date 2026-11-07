@@ -8,6 +8,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { addDays, needsAttention } from '@/lib/crm/model'
 import { loadStaff } from '@/lib/crm/load'
 import { Pill, SectionLabel, TONES, todayMountain } from '../ui'
+import { withRoster } from '@/lib/participants/roster'
 
 export async function NeedsAttention({ supabase }: { supabase: SupabaseClient }) {
   const today = todayMountain()
@@ -22,7 +23,11 @@ export async function NeedsAttention({ supabase }: { supabase: SupabaseClient })
     supabase.from('vs_partner_agreements').select('organization_id, title, expires_on').in('status', ['signed', 'active'])
       .lte('expires_on', addDays(today, 30)).gte('expires_on', today).limit(25),
     supabase.from('intake_requests').select('*', { count: 'exact', head: true }).eq('status', 'new'),
-    supabase.from('participants').select('id').eq('status', 'active').limit(2000),
+    withRoster((hide) => {
+      let query = supabase.from('participants').select('id').eq('status', 'active').limit(2000)
+      if (hide) query = query.is('deleted_at', null)
+      return query
+    }),
     supabase.from('case_notes').select('participant_id').gte('occurred_at', staleCutoff).limit(5000),
     loadStaff(supabase),
   ])
