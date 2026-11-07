@@ -33,7 +33,15 @@ export type RemovalPreview = {
   }
   counts?: Record<string, number>
   possible_duplicates?: { id: string; name: string; removed: boolean }[]
+  blockers?: RemovalBlocker[]
   error?: string
+}
+
+export type RemovalBlocker = {
+  kind: 'enrollment' | 'task'
+  id: string
+  label: string
+  status?: string
 }
 
 export function legalName(p: { first_name: string; last_name: string }): string {
@@ -68,6 +76,11 @@ const PRESERVED: [string, string][] = [
   ['addresses', 'Addresses'],
   ['identifiers', 'Identifiers'],
 ]
+
+export function blockerHref(participantId: string, blocker: RemovalBlocker): string {
+  const anchor = blocker.kind === 'enrollment' ? `enrollment-${blocker.id}` : `task-${blocker.id}`
+  return `/admin/participants/${participantId}#${anchor}`
+}
 
 export function blockersFromCounts(counts: Record<string, number> | undefined): { key: string; label: string; count: number }[] {
   const out: { key: string; label: string; count: number }[] = []

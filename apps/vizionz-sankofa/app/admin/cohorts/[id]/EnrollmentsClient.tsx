@@ -23,6 +23,7 @@ import {
 } from './types'
 import { formatDateValue, todayInMountain } from '@/lib/format/datetime'
 import { useCanEdit } from '@/components/admin/CanEdit'
+import { EnrollmentEndButtons } from '@/components/admin/EnrollmentEnd'
 
 const STATUS_TABS: { key: 'all' | EnrollmentStatus; label: string }[] = [
   { key: 'all', label: 'All' },
@@ -38,11 +39,15 @@ export function EnrollmentsClient({
   cohortCapacity,
   initialEnrollments,
   allParticipants,
+  programName,
+  cohortName,
 }: {
   cohortId: string
   cohortCapacity: number | null
   initialEnrollments: EnrollmentWithParticipant[]
   allParticipants: AvailableParticipant[]
+  programName: string
+  cohortName: string
 }) {
   const canEdit = useCanEdit()
   const [enrollments, setEnrollments] =
@@ -169,11 +174,14 @@ export function EnrollmentsClient({
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {filtered.map((enrollment) => (
-            <EnrollmentRow
-              key={enrollment.id}
-              enrollment={enrollment}
-              onEdit={() => setEditingId(enrollment.id)}
-            />
+          <EnrollmentRow
+            key={enrollment.id}
+            enrollment={enrollment}
+            programName={programName}
+            cohortName={cohortName}
+            canEnd={canEdit}
+            onEdit={() => setEditingId(enrollment.id)}
+          />
           ))}
         </div>
       )}
@@ -242,9 +250,15 @@ function TabButton({
 
 function EnrollmentRow({
   enrollment,
+  programName,
+  cohortName,
+  canEnd,
   onEdit,
 }: {
   enrollment: EnrollmentWithParticipant
+  programName: string
+  cohortName: string
+  canEnd: boolean
   onEdit: () => void
 }) {
   const canEdit = useCanEdit()
@@ -334,6 +348,23 @@ function EnrollmentRow({
           </div>
         )}
       </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'flex-end' }}>
+        <EnrollmentEndButtons
+          canEnd={canEnd}
+          enrollment={{
+            id: enrollment.id,
+            status: enrollment.status,
+            updatedAt: enrollment.updated_at,
+            enrolledAt: enrollment.enrolled_at,
+            completedAt: enrollment.completed_at,
+            withdrewAt: enrollment.withdrew_at,
+            withdrawalReason: enrollment.withdrawal_reason,
+            programName,
+            cohortName,
+            participantId: enrollment.participant_id,
+            participantName: displayName,
+          }}
+        />
       {canEdit && (
         <button
           onClick={onEdit}
@@ -352,6 +383,7 @@ function EnrollmentRow({
           Edit
         </button>
       )}
+      </div>
     </article>
   )
 }

@@ -279,6 +279,8 @@ export default async function CohortDetailPage({
           cohortCapacity={cohort.capacity}
           initialEnrollments={enrollments}
           allParticipants={allParticipants}
+          programName={cohort.program_name ?? 'Program'}
+          cohortName={cohort.name}
         />
       </CanEditProvider>
 
