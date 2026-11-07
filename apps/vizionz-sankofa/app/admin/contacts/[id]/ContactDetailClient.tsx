@@ -83,9 +83,15 @@ export function ContactDetailClient({
           <form action={(fd) => start(async () => {
             fd.set('display_name', [String(fd.get('first_name') ?? '').trim(), String(fd.get('last_name') ?? '').trim()].filter(Boolean).join(' ') || contact.display_name)
             const r = await updateContact(contact.id, fd)
-            if (r.ok) { setEditing(false); router.refresh() } else setErr(r.error)
+            if (r.ok) {
+              setEditing(false)
+              setErr(null)
+              setNotice(`Saved. ${contact.display_name} is updated.`)
+              router.refresh()
+            } else setErr(r.error)
           })}>
             <PersonFields orgs={orgs} caseManager={caseManager} initial={contact} />
+            {err && <p role="alert" style={{ color: '#CE1126', fontSize: '14px' }}>{err}</p>}
             <div style={{ display: 'flex', gap: '10px' }}>
               <button type="submit" disabled={pending} style={primaryBtn(pending)}>Save</button>
               <button type="button" onClick={() => setEditing(false)} style={secondaryBtn()}>Cancel</button>

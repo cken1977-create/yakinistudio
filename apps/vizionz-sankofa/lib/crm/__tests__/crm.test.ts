@@ -4,8 +4,20 @@ import {
   addDays, attachmentPath, canDeleteContact, canWriteSubject, caseNoteMethod, daysBetween, groupTasks, needsAttention,
   safeFileName, slugify, subjectHref, taskBucket,
 } from '../model'
+import { logContactFeedback } from '../log-contact-ui'
 
 const today = '2026-10-17'
+
+test('a saved client contact stays visible after the form closes', () => {
+  const saved = logContactFeedback({ ok: true })
+  assert.equal(saved.formOpen, false)
+  assert.equal(saved.failed, false)
+  assert.match(saved.status, /Saved/)
+  const failed = logContactFeedback({ ok: false, error: 'Choose a client.' })
+  assert.equal(failed.formOpen, true)
+  assert.equal(failed.failed, true)
+  assert.equal(failed.status, 'Choose a client.')
+})
 
 test('only executives and operators can delete a contact', () => {
   assert.equal(canDeleteContact('executive'), true)

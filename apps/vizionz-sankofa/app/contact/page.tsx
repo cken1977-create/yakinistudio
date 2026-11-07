@@ -1,19 +1,17 @@
-'use client'
-
-export const dynamic = 'force-dynamic';
-
-import { Section, ContactForm, SocialIcons } from '@yakini/ui'
+import { Section, SocialIcons } from '@yakini/ui'
 import { config } from '@/config/brand'
+import { PublicContactForm } from '@/components/PublicContactForm'
+
+export const dynamic = 'force-dynamic'
 
 export default function ContactPage() {
   return (
     <Section padding="xl">
-      <div style={{
-        paddingTop: 80,
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: 80
-      }}>
+      <style>{`
+        .vs-contact-grid { padding-top: 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+        @media (max-width: 800px) { .vs-contact-grid { grid-template-columns: 1fr; gap: 32px; } }
+      `}</style>
+      <div className="vs-contact-grid">
 
         {/* Left: Header & Info */}
         <div>
@@ -103,7 +101,7 @@ export default function ContactPage() {
           }}>
             {config.contactPage.formIntro}
           </div>
-          <ContactForm config={config} />
+          <PublicContactForm services={config.services.items.map((item) => item.title)} directEmail={config.contact.email} />
         </div>
 
       </div>

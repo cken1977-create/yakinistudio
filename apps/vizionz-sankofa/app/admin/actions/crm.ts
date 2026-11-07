@@ -233,7 +233,10 @@ export async function deleteContact(id: string): Promise<CrmResult> {
 }
 
 export async function setContactArchived(id: string, archived: boolean): Promise<CrmResult> {
-  await requireOperatorOrEmployee()
+  const user = await requireOperatorOrEmployee()
+  if (!isExecOrOp(getAccessRole(user))) {
+    return { ok: false, error: 'Only an executive or operator can change whether a contact is on the active list.' }
+  }
   if (!UUID.test(id)) return { ok: false, error: 'Unknown person.' }
   const supabase = await createClient()
   const { data, error } = await supabase.from('vs_contacts')

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
   EXPECTED_WAKE_PHRASE, WAKE_PAGE_LIMIT, activePhrase, matchWake, phraseGuidance,
-  shouldUseOnDevice, wakeHeard, wakeOff, wakePress, wakeStartFailed, wakeStarted, wakeSupport,
+  shouldUseOnDevice, simulateRecognition, wakeHeard, wakeOff, wakePress, wakeStartFailed, wakeStarted, wakeSupport,
 } from '../wake'
 
 const support = wakeSupport({ hasRecognition: true, isSecureContext: true })
@@ -93,6 +93,34 @@ test('unsupported browser and a non-https page do not pretend the microphone sta
   if (!insecure.ok) assert.match(insecure.message, /https/)
   const blocked = wakePress(wakeOff(), insecure, EXPECTED_WAKE_PHRASE)
   assert.equal(blocked.phase, 'error')
+})
+
+test('a simulated recognition script shows each transition without a microphone', () => {
+  const heard = simulateRecognition([
+    { type: 'press' },
+    { type: 'started' },
+    { type: 'result', transcript: 'hey', isFinal: false },
+    { type: 'result', transcript: 'Hey Sankofa what time is the food distribution', isFinal: true },
+    { type: 'hidden' },
+  ])
+  assert.equal(heard[0].phase, 'starting')
+  assert.match(heard[0].message ?? '', /Turning the microphone on/)
+  assert.equal(heard[1].phase, 'listening')
+  assert.match(heard[2].message ?? '', /Hearing/)
+  assert.match(heard[3].message ?? '', /Asking: what time is the food distribution/)
+  assert.equal(heard[3].command, 'what time is the food distribution')
+  assert.equal(heard[4].phase, 'off')
+  assert.match(heard[4].message ?? '', /hidden/)
+
+  const denied = simulateRecognition([
+    { type: 'press' },
+    { type: 'error', code: 'not-allowed' },
+    { type: 'started' },
+  ])
+  assert.equal(denied[1].phase, 'error')
+  assert.match(denied[1].message ?? '', /microphone/)
+  assert.equal(denied[2].phase, 'error')
+  assert.doesNotMatch(denied[2].message ?? '', /^Listening/)
 })
 
 test('on-device recognition is not forced just because the switch exists', () => {

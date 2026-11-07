@@ -8,6 +8,8 @@ import {
 } from '../lib/media/picture-upload'
 import { REMOVAL_SEMANTICS, legalName } from '../lib/participants/removal'
 import { EXPECTED_WAKE_PHRASE, wakeStartFailed, wakeStarted } from '../lib/voice/wake'
+import { applyHref } from '../lib/programs/apply'
+import { programTextSections } from '../lib/programs/detail'
 
 const outDir = '/opt/cursor/artifacts'
 mkdirSync(outDir, { recursive: true })
@@ -51,6 +53,49 @@ function uploadPanel(session: ReturnType<typeof beginUpload>['session'], extra =
 }
 
 const person = { first_name: 'Amina', last_name: 'Okonkwo' }
+const sampleProgram = {
+  slug: 'housing-stability',
+  name: 'Housing Stability',
+  short_name: null,
+  is_public: true,
+  public_description: 'Help with a place to stay, utilities, and eviction prevention.',
+  public_long_description: null,
+  who_we_serve: 'Families in Albuquerque who need a stable place to stay.',
+  eligibility_criteria: 'Lives in New Mexico and asks VS for help with housing.',
+  duration_description: 'As long as the current program year.',
+  primary_outcome_domains: ['housing'],
+  apply_cta_label: 'Apply Now',
+  apply_url: null,
+}
+function programPage() {
+  const sections = programTextSections(sampleProgram).map((section) => `<h3>${section.label}</h3><p>${section.value}</p>`).join('')
+  return `<div class="kicker">Programs</div><h1>${sampleProgram.name}</h1>
+    <p>Read only. Opening this page does not change the program.</p>
+    ${sections}
+    <p>Cohort: Spring sample · Meets Tuesdays</p>
+    <p>Enrolled: Amina Okonkwo · Active</p>
+    <p><a class="btn" href="${applyHref(sampleProgram)}">Apply Now</a>
+    <button style="background:#fff;color:#0A2548;border:1px solid #0A2548;text-transform:none;letter-spacing:0">Edit</button></p>`
+}
+function applyPage(state: 'idle' | 'uploading' | 'error') {
+  const status = state === 'uploading'
+    ? 'Uploading sample-lease.pdf…'
+    : state === 'error'
+      ? 'sample-lease.pdf must be a JPG, PNG, or PDF. Nothing else is stored with a request.'
+      : 'Applying for Housing Stability'
+  return `<div class="card"><p class="kicker">Get Help</p><h2>Tell us what you need</h2>
+    <p role="status">${status}</p>
+    <p>Applying for: Housing Stability</p>
+    <p>Eligibility: Lives in New Mexico and asks VS for help with housing.</p>
+    <label>Full name<br><input value="Nia Mensah" style="width:100%;padding:8px"></label>
+    <label>Email<br><input value="nia.mensah@example.test" style="width:100%;padding:8px"></label>
+    <label>What can we help with?<br><input value="Housing" style="width:100%;padding:8px"></label>
+    <label>Tell us more<br><textarea style="width:100%">Need a hotel voucher this week.</textarea></label>
+    <label>File<br><input value="sample-lease.pdf" style="width:100%;padding:8px"></label>
+    <p><button ${state === 'uploading' ? 'disabled' : ''}>${state === 'uploading' ? 'Sending…' : 'Send request'}</button></p>
+    ${state === 'error' ? '<p style="color:#CE1126">Your answers are still here. Nothing was saved.</p>' : ''}
+    </div>`
+}
 const pages: Array<[string, number, number, string]> = [
   ['upload-preparing-laptop.png', 1440, 900, shell('Preparing', uploadPanel(preparing))],
   ['upload-uploading-laptop.png', 1440, 900, shell('Uploading', uploadPanel(uploading))],
@@ -70,6 +115,32 @@ const pages: Array<[string, number, number, string]> = [
     <p><button style="background:#fff;color:#0A2548;border:1px solid #0A2548">Wake</button></p>
     <p role="status" style="color:#CE1126">${wakeStartFailed('not-allowed').message}</p>
     <p>You can still type your question.</p></div>`)],
+  ['upload-pending-mobile.png', 390, 844, shell('Uploading mobile', uploadPanel(uploading))],
+  ['upload-error-mobile.png', 390, 844, shell('Upload error mobile', uploadPanel(failed, `<ul><li>community-fair.jpg: ${failed.files[0].reason}</li></ul><button>Retry failed</button>`))],
+  ['delete-contact-laptop.png', 1440, 900, shell('Delete contact', `<div class="card"><p class="kicker">Contact</p><h2>Delete contact</h2>
+    <p>Delete <strong>Jordan Hale</strong> from the active contact list?</p>
+    <p>This takes them off the active list. Their notes, tasks, and files stay. You can restore them afterward.</p>
+    <p><button style="background:#fff;color:#CE1126;border:1px solid #CE1126;text-transform:none;letter-spacing:0">Cancel</button>
+    <button style="text-transform:none;letter-spacing:0;background:#0A0A0A">Delete Jordan Hale</button></p></div>`)],
+  ['delete-contact-mobile.png', 390, 844, shell('Delete contact mobile', `<div class="card"><h2>Delete contact</h2>
+    <p>Delete <strong>Jordan Hale</strong> from the active contact list?</p>
+    <p>Notes, tasks, and files stay.</p>
+    <p><button style="background:#fff;color:#CE1126;border:1px solid #CE1126;text-transform:none;letter-spacing:0;width:100%">Cancel</button></p>
+    <p><button style="text-transform:none;letter-spacing:0;background:#0A0A0A;width:100%">Delete Jordan Hale</button></p></div>`)],
+  ['restore-contact-laptop.png', 1440, 900, shell('Restore contact', `<div class="card"><h2>Jordan Hale</h2>
+    <p>Archived</p>
+    <p>Jordan Hale was removed from the active contact list. Notes, tasks, and files were kept. Restore puts them back.</p>
+    <p role="status">Jordan Hale was removed from the active contact list. Their notes and files were kept.</p>
+    <button style="text-transform:none;letter-spacing:0">Restore</button></div>`)],
+  ['restore-contact-mobile.png', 390, 844, shell('Restore contact mobile', `<div class="card"><h2>Jordan Hale</h2>
+    <p>Jordan Hale was removed from the active contact list. Notes, tasks, and files were kept.</p>
+    <button style="text-transform:none;letter-spacing:0;width:100%">Restore</button></div>`)],
+  ['program-readonly-laptop.png', 1440, 900, shell('Program', programPage())],
+  ['program-readonly-mobile.png', 390, 844, shell('Program mobile', programPage())],
+  ['apply-form-laptop.png', 1440, 900, shell('Apply', applyPage('idle'))],
+  ['apply-form-mobile.png', 390, 844, shell('Apply mobile', applyPage('idle'))],
+  ['apply-upload-pending-laptop.png', 1440, 900, shell('Apply uploading', applyPage('uploading'))],
+  ['apply-upload-error-mobile.png', 390, 844, shell('Apply error', applyPage('error'))],
   ['delete-participant-narrow.png', 390, 844, shell('Delete narrow', `<div class="card"><h2>Delete participant</h2>
     <p>This removes <strong>Amina Okonkwo</strong> from the active roster.</p>
     <p>${REMOVAL_SEMANTICS}</p>

@@ -5,6 +5,7 @@
 
 import { useState, useTransition } from 'react'
 import { logContact } from '@/app/admin/actions/contacts'
+import { logContactFeedback } from '@/lib/crm/log-contact-ui'
 
 const METHOD_LABELS: Array<[string, string]> = [
   ['phone', 'Phone'], ['text', 'Text'], ['in_person', 'In person'], ['home_visit', 'Home visit'],
@@ -13,20 +14,25 @@ const METHOD_LABELS: Array<[string, string]> = [
 
 export function LogContactForm({ clients }: { clients: Array<{ id: string; label: string }> }) {
   const [open, setOpen] = useState(false)
-  const [msg, setMsg] = useState('')
+  const [status, setStatus] = useState<{ text: string; failed: boolean } | null>(null)
   const [pending, start] = useTransition()
 
   const field = { fontSize: '16px', padding: '10px 12px', border: '1px solid rgba(10,10,10,0.18)', borderRadius: '4px', fontFamily: 'Georgia, serif', width: '100%' } as const
 
   if (!open) {
     return (
-      <button
-        type="button"
-        onClick={() => { setOpen(true); setMsg('') }}
-        style={{ fontSize: '20px', padding: '16px 28px', background: '#CE1126', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontFamily: 'Georgia, serif', width: '100%' }}
-      >
-        + Log contact
-      </button>
+      <div>
+        <button
+          type="button"
+          onClick={() => { setOpen(true); setStatus(null) }}
+          style={{ fontSize: '20px', padding: '16px 28px', background: '#CE1126', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontFamily: 'Georgia, serif', width: '100%' }}
+        >
+          + Log contact
+        </button>
+        {status && (
+          <p role={status.failed ? 'alert' : 'status'} style={{ fontSize: '14px', margin: '8px 0 0', color: status.failed ? '#CE1126' : '#0A0A0A' }}>{status.text}</p>
+        )}
+      </div>
     )
   }
 
@@ -34,8 +40,9 @@ export function LogContactForm({ clients }: { clients: Array<{ id: string; label
     <form
       action={(fd) =>
         start(async () => {
-          const r = await logContact(fd)
-          if (r.ok) { setMsg('Saved.'); setOpen(false) } else setMsg(r.error)
+          const next = logContactFeedback(await logContact(fd))
+          setOpen(next.formOpen)
+          setStatus({ text: next.status, failed: next.failed })
         })
       }
       style={{ background: '#fff', border: '1px solid rgba(10,10,10,0.08)', borderTop: '3px solid #CE1126', borderRadius: '4px', padding: '20px', display: 'grid', gap: '12px', fontFamily: 'Georgia, serif' }}
@@ -61,8 +68,10 @@ export function LogContactForm({ clients }: { clients: Array<{ id: string; label
           {pending ? 'Saving…' : 'Save contact'}
         </button>
         <button type="button" onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: '#CE1126', cursor: 'pointer', fontSize: '15px' }}>Cancel</button>
-        <span style={{ fontSize: '14px' }}>{msg}</span>
       </div>
+      {status && (
+        <p role={status.failed ? 'alert' : 'status'} style={{ fontSize: '14px', margin: 0, color: status.failed ? '#CE1126' : '#0A0A0A' }}>{status.text}</p>
+      )}
     </form>
   )
 }

@@ -182,3 +182,28 @@ export function wakeHidden(): WakeView {
     command: null,
   }
 }
+
+export type RecognitionEvent =
+  | { type: 'press' }
+  | { type: 'started' }
+  | { type: 'result'; transcript: string; isFinal: boolean }
+  | { type: 'error'; code: string }
+  | { type: 'hidden' }
+  | { type: 'end' }
+
+/** Applies a script of recognition events. No microphone is opened. */
+export function simulateRecognition(events: RecognitionEvent[], phrase = EXPECTED_WAKE_PHRASE): WakeView[] {
+  const support: WakeSupport = { ok: true }
+  let view = wakeOff()
+  const frames: WakeView[] = []
+  for (const event of events) {
+    if (event.type === 'press') view = wakePress(view, support, phrase)
+    else if (event.type === 'started') view = view.phase === 'starting' ? wakeStarted(phrase) : view
+    else if (event.type === 'result') view = wakeHeard(view, event.transcript, event.isFinal, phrase).view
+    else if (event.type === 'error') view = wakeStartFailed(event.code)
+    else if (event.type === 'hidden') view = wakeHidden()
+    else view = view.phase === 'listening' || view.phase === 'awaiting-command' ? wakePaused(phrase) : view
+    frames.push(view)
+  }
+  return frames
+}

@@ -5,10 +5,8 @@
 // CTABands and Footer as a quiet final invitation. Two-column layout:
 // left has headline and body copy, right has email input + button.
 //
-// On submit: posts to /api/lead with kind='newsletter' so the same
-// substrate the intake form uses captures newsletter signups too.
-// Status states: idle, sending, sent, error. Sent state replaces
-// the form with a confirmation message.
+// On submit: posts to /api/lead with kind='newsletter'. The address is
+// saved on the staff request list. No email is sent from this form.
 //
 // Mobile: stacks vertically with form below text.
 // ═════════════════════════════════════════════════════════════════════════
@@ -17,6 +15,7 @@
 
 import { useState, FormEvent } from 'react'
 import type { BrandConfig } from '@yakini/config'
+import { savedMessage, type WebsiteSaveResult } from '@/lib/contact/public-message'
 import { VS_RED, VS_INK } from './TriColorRule'
 
 type Status = 'idle' | 'sending' | 'sent' | 'error'
@@ -24,28 +23,31 @@ type Status = 'idle' | 'sending' | 'sent' | 'error'
 export function Newsletter({ config }: { config: BrandConfig }) {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<Status>('idle')
+  const [notice, setNotice] = useState('')
 
   const submit = async (e: FormEvent) => {
     e.preventDefault()
-    if (!email.trim()) return
+    if (!email.trim() || status === 'sending') return
     setStatus('sending')
+    setNotice('Saving your email…')
     try {
       const res = await fetch('/api/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          kind: 'newsletter',
-          email: email.trim(),
-          client_id: config.yakini.clientId,
-          business: config.business.name,
-          notify_email: config.contact.notifyEmail || config.contact.email,
-        }),
+        body: JSON.stringify({ kind: 'newsletter', email: email.trim() }),
       })
-      if (!res.ok) throw new Error('Failed')
+      const body = await res.json().catch(() => null) as WebsiteSaveResult | null
+      if (!res.ok || !body?.ok || !body.saved || body.emailSent) {
+        setStatus('error')
+        setNotice(body && 'error' in body && body.error ? body.error : 'We could not save this. Nothing was sent.')
+        return
+      }
       setStatus('sent')
+      setNotice(savedMessage(body, 'newsletter'))
       setEmail('')
     } catch {
       setStatus('error')
+      setNotice(`We could not save this. Nothing was sent. You can email ${config.contact.email}.`)
     }
   }
 
@@ -192,11 +194,9 @@ export function Newsletter({ config }: { config: BrandConfig }) {
             </div>
 
             {status === 'sent' ? (
-              <div className="vs-newsletter-confirmation">
-                <p className="vs-newsletter-confirmation-headline">Subscribed.</p>
-                <p className="vs-newsletter-confirmation-body">
-                  You'll hear from us within the month.
-                </p>
+              <div className="vs-newsletter-confirmation" role="status">
+                <p className="vs-newsletter-confirmation-headline">Saved.</p>
+                <p className="vs-newsletter-confirmation-body">{notice}</p>
               </div>
             ) : (
               <form className="vs-newsletter-form" onSubmit={submit}>
@@ -215,17 +215,14 @@ export function Newsletter({ config }: { config: BrandConfig }) {
                   className="vs-newsletter-button"
                   disabled={status === 'sending'}
                 >
-                  {status === 'sending' ? 'Subscribing...' : 'Subscribe'}
+                  {status === 'sending' ? 'Saving…' : 'Save email'}
                 </button>
               </form>
             )}
 
+            {status === 'sending' && <p className="vs-newsletter-status" role="status">{notice}</p>}
             {status === 'error' && (
-              <p className="vs-newsletter-status error">
-                Something went wrong. Try again, or email{' '}
-                <a href={`mailto:${config.contact.email}`}>{config.contact.email}</a>{' '}
-                to subscribe directly.
-              </p>
+              <p className="vs-newsletter-status error" role="alert">{notice}</p>
             )}
           </div>
         </div>
