@@ -10,7 +10,6 @@ import {
   EXTRA_SIDE_PER_GUEST,
 } from './catering.ts'
 import {
-  THANKSGIVING_DESSERTS,
   THANKSGIVING_PAN_COUNT,
   THANKSGIVING_SIDES,
   THANKSGIVING_SPECIAL,
@@ -145,13 +144,6 @@ test('Thanksgiving sides are the confirmed list and stay off the daily menu', ()
   assert.equal(dailyNames.includes('White Rice'), true)
   assert.equal(dailyNames.includes('Salad'), true)
   assert.equal(dailyNames.includes('Corn'), true)
-
-  const desserts = category('Desserts')
-  assert.deepEqual(
-    THANKSGIVING_DESSERTS.map((dish) => [dish.name, dish.es]),
-    desserts.items.map((item) => [item.name, item.nameTranslated]),
-  )
-  assert.equal(THANKSGIVING_DESSERTS.some((dish) => /peach|cobbler/i.test(dish.name)), false)
 })
 
 test('Thanksgiving special is five half pans for $125 total, with an honest request', () => {
@@ -169,6 +161,9 @@ test('Thanksgiving special is five half pans for $125 total, with an honest requ
   assert.match(copy, /one total/)
   assert.match(copy, /\$125/)
   assert.match(copy, /does not save it, take payment, or reserve a pickup/)
+  assert.match(copy, /Call or text to confirm which desserts are available/)
+  assert.match(copy, /Llama o envía un texto para confirmar cuáles hay/)
+  assert.doesNotMatch(copy, /Cookies or Brownie|Banana Pudding|Pie|Pudín|Galletas|peach cobbler/i)
   assert.doesNotMatch(copy, /\$25\b/)
   assert.doesNotMatch(copy, /\b25\b/)
   assert.doesNotMatch(copy, /per pan|per guest|serving|tax|deposit|deadline|hours|brisket|peach cobbler|added ingredients/i)
@@ -183,7 +178,9 @@ test('Thanksgiving special is five half pans for $125 total, with an honest requ
   assert.match(repeat, /3 Green Beans/)
   assert.match(repeat, /2 Fried Cabbage/)
   assert.match(repeat, /5 half pans for \$125 total/)
+  assert.match(repeat, /Desserts: call or text to confirm which half pans are available\./)
   assert.match(repeat, /Not a paid order\. Pickup is not reserved\./)
+  assert.doesNotMatch(repeat, /Cookies or Brownie|Banana Pudding|Pie/)
   assert.match(repeat, /Ada West/)
   assert.match(repeat, /Friday afternoon in Abilene/)
   assert.doesNotMatch(repeat, /\$25|paid in full|confirmed|reserved pickup|tax|deposit/i)
@@ -208,18 +205,19 @@ test('Thanksgiving special is five half pans for $125 total, with an honest requ
     }),
     { ok: false, errors: ['unknown-dish'] },
   )
-  assert.equal(buildThanksgivingRequestText({
-    selection: { 'peach-cobbler': 5 },
+  for (const id of ['peach-cobbler', 'cookies-or-brownie', 'banana-pudding', 'pie']) {
+    assert.equal(buildThanksgivingRequestText({
+      selection: { [id]: 5 },
+      name: 'Ada West',
+      phone: '3255550100',
+      pickup: 'Friday afternoon',
+    }), null)
+  }
+  const mixed = validateThanksgivingRequest({
+    selection: { 'banana-pudding': 1, rice: 4 },
     name: 'Ada West',
     phone: '3255550100',
     pickup: 'Friday afternoon',
-  }), null)
-  const mixed = validateThanksgivingRequest({
-    selection: { 'banana-pudding': 1, rice: 4 },
-    name: 'A',
-    phone: '555',
-    pickup: ' ',
   })
-  assert.equal(mixed.ok, false)
-  if (!mixed.ok) assert.deepEqual(mixed.errors, ['name', 'phone', 'pickup'])
+  assert.deepEqual(mixed, { ok: false, errors: ['unknown-dish'] })
 })

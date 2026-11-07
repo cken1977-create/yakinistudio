@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { PHONE_DISPLAY, PHONE_TEL, SMS_LINK } from '@/config/site'
 import {
-  THANKSGIVING_DESSERTS,
   THANKSGIVING_PAN_COUNT,
   THANKSGIVING_SIDES,
   THANKSGIVING_SPECIAL,
@@ -18,7 +17,7 @@ import {
 
 const emptySelection = (): ThanksgivingSelection => {
   const selection: ThanksgivingSelection = {}
-  for (const dish of [...THANKSGIVING_SIDES, ...THANKSGIVING_DESSERTS]) selection[dish.id] = 0
+  for (const dish of THANKSGIVING_SIDES) selection[dish.id] = 0
   return selection
 }
 
@@ -130,14 +129,12 @@ export function ThanksgivingSpecial() {
             onChange={setQty}
           />
           <div style={{ height: 16 }} />
-          <DishList
-            heading={s.dessertsHeading}
-            headingEs={s.dessertsHeadingEs}
-            dishes={THANKSGIVING_DESSERTS}
-            selection={selection}
-            count={count}
-            onChange={setQty}
-          />
+          <div className="tg-panel">
+            <h3>{s.dessertsHeading}</h3>
+            <p className="ms-es" style={{ marginTop: 0 }}>{s.dessertsHeadingEs}</p>
+            <p className="tg-note">{s.dessertsNote}</p>
+            <p className="ms-es">{s.dessertsNoteEs}</p>
+          </div>
         </div>
 
         <form

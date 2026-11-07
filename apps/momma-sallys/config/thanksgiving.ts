@@ -1,8 +1,7 @@
 /**
  * Thanksgiving half-pan bundle.
- * One price for five half pans. Dishes here are the special, not the daily menu.
- * Desserts are the names already on the public menu. Nicole still needs to confirm
- * which of those desserts can be ordered as half pans.
+ * One price for five half pans. Sides here are the special, not the daily menu.
+ * Dessert half pans are not listed: Nicole has not confirmed which desserts qualify.
  */
 
 export const THANKSGIVING_PAN_COUNT = 5
@@ -23,8 +22,10 @@ export const THANKSGIVING_SPECIAL = {
   totalLabelEs: 'en total',
   sidesHeading: 'Thanksgiving sides',
   sidesHeadingEs: 'Acompañamientos de Acción de Gracias',
-  dessertsHeading: 'Desserts on the menu',
-  dessertsHeadingEs: 'Postres del menú',
+  dessertsHeading: 'Desserts',
+  dessertsHeadingEs: 'Postres',
+  dessertsNote: 'Half-pan desserts are not listed here. Call or text to confirm which desserts are available.',
+  dessertsNoteEs: 'Los postres en media charola no están en esta lista. Llama o envía un texto para confirmar cuáles hay.',
   requestNote:
     'Text or call to make the request. This page does not save it, take payment, or reserve a pickup.',
   requestNoteEs:
@@ -48,17 +49,7 @@ export const THANKSGIVING_SIDES: readonly ThanksgivingDish[] = [
   { id: 'collard-greens', name: 'Collard Greens', es: 'Berza' },
 ]
 
-/**
- * Public menu desserts only. Peach cobbler is on the catering builder, not this menu,
- * so it is not offered here.
- */
-export const THANKSGIVING_DESSERTS: readonly ThanksgivingDish[] = [
-  { id: 'cookies-or-brownie', name: 'Cookies or Brownie', es: 'Galletas o brownie' },
-  { id: 'banana-pudding', name: 'Banana Pudding', es: 'Pudín de plátano' },
-  { id: 'pie', name: 'Pie', es: 'Pay' },
-]
-
-const DISHES: readonly ThanksgivingDish[] = [...THANKSGIVING_SIDES, ...THANKSGIVING_DESSERTS]
+const DISHES: readonly ThanksgivingDish[] = THANKSGIVING_SIDES
 const DISH_BY_ID = new Map(DISHES.map((dish) => [dish.id, dish]))
 
 export type ThanksgivingSelection = Record<string, number>
@@ -85,6 +76,8 @@ export function thanksgivingPublicCopy(): string[] {
     s.sidesHeadingEs,
     s.dessertsHeading,
     s.dessertsHeadingEs,
+    s.dessertsNote,
+    s.dessertsNoteEs,
     s.requestNote,
     s.requestNoteEs,
     ...DISHES.flatMap((dish) => [dish.name, dish.es]),
@@ -174,6 +167,7 @@ export function buildThanksgivingRequestText(input: {
     `Requested pickup: ${input.pickup.trim()}`,
     `5 half pans for $125 total`,
     ...lines,
+    'Desserts: call or text to confirm which half pans are available.',
     'Not a paid order. Pickup is not reserved.',
   ].join('\n')
 }
