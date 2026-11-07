@@ -22,7 +22,9 @@ import { embedChunks } from './embeddings'
 import { PiiVault } from '@/lib/intelligence/pii'
 import { loadKnownNames } from '@/lib/intelligence/known-names'
 
-const STORAGE_BUCKET = 'vs-documents'
+import { LIBRARY_DOCUMENT_BUCKET } from '@/lib/documents/files'
+
+const STORAGE_BUCKET = LIBRARY_DOCUMENT_BUCKET
 const MAX_TOTAL_TOKENS = 1_000_000
 
 // ─── Public entry point ───────────────────────────────────────────────────

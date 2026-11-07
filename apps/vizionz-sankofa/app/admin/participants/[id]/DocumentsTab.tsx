@@ -12,7 +12,6 @@ import { createClient as createBrowserClient } from '@/lib/supabase/client'
 import { UploadStatus } from '@/components/admin/UploadStatus'
 import {
   beginUpload,
-  contentTypeForDocument,
   finishUpload,
   idleUpload,
   isPreviewableImage,
@@ -35,6 +34,7 @@ import {
   getDocumentStoragePath,
   formatFileSize,
 } from './types'
+import { decideParticipantDocument } from '@/lib/documents/files'
 import type { StaffRecord } from '../types'
 import { formatDateTimeValue, formatDateValue } from '@/lib/format/datetime'
 import { useCanEdit } from '@/components/admin/CanEdit'
@@ -430,8 +430,16 @@ function UploadDetailsModal({
       onUploadStart()
       let current = markUploadFile(sessionRef.current, 0, 'preparing')
       commitUpload(current)
+      const decided = decideParticipantDocument({ name: file.name, type: file.type, size: file.size })
+      if (!decided.ok) {
+        current = finishUpload(markUploadFile(current, 0, 'failed', decided.reason))
+        commitUpload(current)
+        onUploadEnd()
+        onError(decided.reason)
+        return
+      }
       const supabase = createBrowserClient()
-      const contentType = contentTypeForDocument(file)
+      const contentType = decided.contentType
       const path = getDocumentStoragePath(participantId, file.name)
       current = markUploadFile(current, 0, 'uploading')
       commitUpload(current)

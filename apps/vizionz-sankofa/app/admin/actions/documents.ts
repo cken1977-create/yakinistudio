@@ -17,6 +17,7 @@ import {
   UploadResult,
   UpdateDocumentInput,
 } from '../documents/types'
+import { LIBRARY_DOCUMENT_BUCKET } from '@/lib/documents/files'
 
 
 // ─── Bulk record insert after client uploads ───────────────────────
@@ -197,7 +198,7 @@ export async function deleteDocument(
   // Delete the Storage object (best-effort — if this fails, row delete
   // still proceeds; orphan file in Storage is recoverable manually)
   await supabase.storage
-    .from('vs-documents')
+    .from(LIBRARY_DOCUMENT_BUCKET)
     .remove([doc.storage_path])
     .catch(() => {
       // Silently swallow — orphan file is acceptable; row removal is

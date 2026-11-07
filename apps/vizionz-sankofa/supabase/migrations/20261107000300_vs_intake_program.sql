@@ -92,6 +92,21 @@ END $$;
 REVOKE ALL ON FUNCTION public.vs_intake_upload_ok(text) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.vs_intake_upload_ok(text) TO anon, authenticated;
 
+-- An unattached upload may be removed. A file that is already linked to a
+-- request cannot be removed by an anonymous visitor.
+CREATE OR REPLACE FUNCTION public.vs_intake_orphan_path(p_name text)
+RETURNS boolean LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '' AS $$
+BEGIN
+  IF NOT public.vs_intake_upload_ok(p_name) THEN
+    RETURN false;
+  END IF;
+  RETURN NOT EXISTS (
+    SELECT 1 FROM public.intake_request_files f WHERE f.storage_path = p_name
+  );
+END $$;
+REVOKE ALL ON FUNCTION public.vs_intake_orphan_path(text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.vs_intake_orphan_path(text) TO anon, authenticated;
+
 DO $$
 BEGIN
   IF to_regclass('storage.buckets') IS NULL OR to_regclass('storage.objects') IS NULL THEN
@@ -106,6 +121,7 @@ BEGIN
 
   EXECUTE 'DROP POLICY IF EXISTS vs_intake_files_objects_select ON storage.objects';
   EXECUTE 'DROP POLICY IF EXISTS vs_intake_files_objects_insert ON storage.objects';
+  EXECUTE 'DROP POLICY IF EXISTS vs_intake_files_objects_delete ON storage.objects';
   EXECUTE $p$CREATE POLICY vs_intake_files_objects_select ON storage.objects
     FOR SELECT TO authenticated
     USING (
@@ -127,4 +143,7 @@ BEGIN
   EXECUTE $p$CREATE POLICY vs_intake_files_objects_insert ON storage.objects
     FOR INSERT TO anon, authenticated
     WITH CHECK (bucket_id = 'vs-intake-files' AND public.vs_intake_upload_ok(name))$p$;
+  EXECUTE $p$CREATE POLICY vs_intake_files_objects_delete ON storage.objects
+    FOR DELETE TO anon, authenticated
+    USING (bucket_id = 'vs-intake-files' AND public.vs_intake_orphan_path(name))$p$;
 END $$;

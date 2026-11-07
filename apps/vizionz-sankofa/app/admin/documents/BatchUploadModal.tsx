@@ -22,8 +22,11 @@ import {
   type DocumentCategory,
   type UploadDocumentInput,
 } from './types'
+import {
+  LIBRARY_DOCUMENT_BUCKET, decideLibraryDocument, documentBatchTitle, libraryObjectPath, newObjectToRemove,
+} from '@/lib/documents/files'
 
-type RowStatus = 'queued' | 'uploading' | 'ready' | 'error'
+type RowStatus = 'queued' | 'uploading' | 'saving' | 'ready' | 'error'
 
 type UploadRow = {
   id: string  // local-only client id for keying
@@ -142,20 +145,23 @@ export function BatchUploadModal({ onClose }: { onClose: () => void }) {
     const uploadPromises = rows
       .filter((r) => r.status === 'queued')
       .map(async (row) => {
+        const decided = decideLibraryDocument({ name: row.file.name, type: row.file.type, size: row.file.size })
+        if (!decided.ok) {
+          updateRow(row.id, { status: 'error', errorMessage: decided.reason })
+          return null
+        }
         updateRow(row.id, { status: 'uploading', errorMessage: null })
 
-        // Sanitize filename for storage path
-        const safeName = row.file.name
-          .replace(/[^a-zA-Z0-9._-]/g, '-')
-          .replace(/-+/g, '-')
-          .slice(0, 100)
-        const path = `${user.id}/${Date.now()}-${row.id}-${safeName}`
+        const path = libraryObjectPath(user.id, `${Date.now()}-${row.id}`, row.file.name)
+        if (!path) {
+          updateRow(row.id, { status: 'error', errorMessage: 'This file could not be named safely. Nothing was saved.' })
+          return null
+        }
 
-        // Upload binary to Storage
         const { error: uploadError } = await supabase.storage
-          .from('vs-documents')
+          .from(LIBRARY_DOCUMENT_BUCKET)
           .upload(path, row.file, {
-            contentType: row.file.type || 'application/octet-stream',
+            contentType: decided.contentType,
             upsert: false,
           })
 
@@ -167,15 +173,15 @@ export function BatchUploadModal({ onClose }: { onClose: () => void }) {
           return null
         }
 
-        updateRow(row.id, { storagePath: path })
-        return { rowId: row.id, storagePath: path, row }
+        updateRow(row.id, { status: 'saving', storagePath: path })
+        return { rowId: row.id, storagePath: path, row, contentType: decided.contentType }
       })
 
     const uploadResults = await Promise.all(uploadPromises)
 
     // Collect successful uploads for metadata registration
     const successfulUploads = uploadResults.filter(
-      (r): r is { rowId: string; storagePath: string; row: UploadRow } =>
+      (r): r is { rowId: string; storagePath: string; row: UploadRow; contentType: string } =>
         r !== null
     )
 
@@ -195,7 +201,7 @@ export function BatchUploadModal({ onClose }: { onClose: () => void }) {
       related_program: u.row.relatedProgram.trim() || null,
       file_name: u.row.file.name,
       file_size_bytes: u.row.file.size,
-      mime_type: u.row.file.type || 'application/octet-stream',
+      mime_type: u.contentType,
       storage_path: u.storagePath,
     }))
 
@@ -204,17 +210,20 @@ export function BatchUploadModal({ onClose }: { onClose: () => void }) {
     const results = await registerUploadedDocuments(inputs)
 
     // Map results back to rows
-    results.forEach((result, idx) => {
+    for (let idx = 0; idx < results.length; idx++) {
+      const result = results[idx]
       const upload = successfulUploads[idx]
       if (result.ok) {
         updateRow(upload.rowId, { status: 'ready', errorMessage: null })
       } else {
+        const cleanup = newObjectToRemove(upload.storagePath, false)
+        if (cleanup.length > 0) await supabase.storage.from(LIBRARY_DOCUMENT_BUCKET).remove(cleanup)
         updateRow(upload.rowId, {
           status: 'error',
-          errorMessage: result.error,
+          errorMessage: `${result.error} The file was not added to the library. Files already there were not changed.`,
         })
       }
-    })
+    }
 
     setSubmitting(false)
     setSummaryShown(true)
@@ -296,11 +305,7 @@ export function BatchUploadModal({ onClose }: { onClose: () => void }) {
                 fontFamily: '"DM Serif Display", Georgia, serif',
               }}
             >
-              {summaryShown
-                ? 'Upload complete'
-                : hasUploads
-                  ? `Upload ${rows.length} ${rows.length === 1 ? 'file' : 'files'}`
-                  : 'Select files to upload'}
+              {documentBatchTitle(rows)}
             </h2>
             {summaryShown && (
               <div
@@ -441,7 +446,7 @@ export function BatchUploadModal({ onClose }: { onClose: () => void }) {
             {submitting
               ? 'Uploading…'
               : summaryShown
-                ? 'Close to refresh your library'
+                ? (errorCount > 0 ? 'Failed files were not added. Saved files stayed.' : 'Close to refresh your library')
                 : `${queuedCount} queued`}
           </div>
 
@@ -493,6 +498,33 @@ export function BatchUploadModal({ onClose }: { onClose: () => void }) {
               </button>
             )}
 
+            {summaryShown && errorCount > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setRows((prev) => prev.map((row) => row.status === 'error'
+                    ? { ...row, status: 'queued', errorMessage: null, storagePath: null }
+                    : row))
+                  setSummaryShown(false)
+                }}
+                style={{
+                  padding: '10px 16px',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  color: '#0A0A0A',
+                  background: 'transparent',
+                  border: '1px solid rgba(10, 10, 10, 0.2)',
+                  borderRadius: '2px',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Retry failed
+              </button>
+            )}
+
             {summaryShown && (
               <button
                 type="button"
@@ -526,6 +558,7 @@ export function BatchUploadModal({ onClose }: { onClose: () => void }) {
 const STATUS_BADGE_COLORS: Record<RowStatus, string> = {
   queued: 'rgba(10, 10, 10, 0.5)',
   uploading: '#0A2548',
+  saving: '#0A2548',
   ready: '#007A33',
   error: '#CE1126',
 }
@@ -533,8 +566,9 @@ const STATUS_BADGE_COLORS: Record<RowStatus, string> = {
 const STATUS_BADGE_LABELS: Record<RowStatus, string> = {
   queued: 'Queued',
   uploading: 'Uploading',
-  ready: 'Ready',
-  error: 'Error',
+  saving: 'Saving',
+  ready: 'Saved',
+  error: 'Not saved',
 }
 
 function UploadRowEditor({

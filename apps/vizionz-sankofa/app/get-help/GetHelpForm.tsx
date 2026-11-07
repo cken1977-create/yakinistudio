@@ -8,6 +8,7 @@ import { useRef, useState, type FormEvent } from 'react'
 import { submitIntakeRequest } from './actions'
 import { createClient as createBrowserClient } from '@/lib/supabase/client'
 import { decideSupportFile, intakeFilePath, validateIntake } from '@/lib/programs/apply'
+import { APPLICATION_FILE_BUCKET } from '@/lib/documents/files'
 
 type HelpProgram = {
   slug: string
@@ -118,7 +119,7 @@ export function GetHelpForm({
       setStatusText(`Uploading ${supportFile.name}…`)
       const path = intakeFilePath(intakeId, supportFile.name, crypto.randomUUID())
       const supabase = createBrowserClient()
-      const { error: uploadError } = await supabase.storage.from('vs-intake-files').upload(path, supportFile, {
+      const { error: uploadError } = await supabase.storage.from(APPLICATION_FILE_BUCKET).upload(path, supportFile, {
         contentType: fileCheck.contentType,
         upsert: false,
       })
@@ -138,9 +139,10 @@ export function GetHelpForm({
       })
       const attachedOk = attached && typeof attached === 'object' && (attached as { ok?: boolean }).ok === true
       if (attachError || !attachedOk) {
+        await supabase.storage.from(APPLICATION_FILE_BUCKET).remove([path])
         busy.current = false
         setStatusText(null)
-        setState({ kind: 'error', message: `Your request was saved. Reference ${intakeId}. The file was not attached (${attachError?.message ?? 'the file record was refused'}). Your answers are still here.` })
+        setState({ kind: 'error', message: `Your request was saved. Reference ${intakeId}. The file was not attached (${attachError?.message ?? 'the file record was refused'}). Your answers are still here. Try the file again.` })
         return
       }
       fileSaved = true

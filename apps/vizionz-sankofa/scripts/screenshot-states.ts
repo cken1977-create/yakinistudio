@@ -10,6 +10,7 @@ import { REMOVAL_SEMANTICS, legalName } from '../lib/participants/removal'
 import { EXPECTED_WAKE_PHRASE, wakeStartFailed, wakeStarted } from '../lib/voice/wake'
 import { applyHref } from '../lib/programs/apply'
 import { programTextSections } from '../lib/programs/detail'
+import { documentBatchTitle, decideParticipantDocument } from '../lib/documents/files'
 
 const outDir = '/opt/cursor/artifacts'
 mkdirSync(outDir, { recursive: true })
@@ -96,6 +97,19 @@ function applyPage(state: 'idle' | 'uploading' | 'error') {
     ${state === 'error' ? '<p style="color:#CE1126">Your answers are still here. Nothing was saved.</p>' : ''}
     </div>`
 }
+function documentPanel(state: 'uploading' | 'error') {
+  const refused = decideParticipantDocument({ name: 'scan.tiff', type: 'image/tiff', size: 2000 })
+  const reason = refused.ok ? '' : refused.reason
+  const title = state === 'uploading'
+    ? documentBatchTitle([{ status: 'uploading' }])
+    : documentBatchTitle([{ status: 'ready' }, { status: 'error' }])
+  return `<div class="card"><p class="kicker">Documents</p><h2>${title}</h2>
+    <p>Private library. Not the public photo gallery.</p>
+    <p role="status">${state === 'uploading' ? 'Uploading sample-lease.pdf…' : reason}</p>
+    <p>sample-lease.pdf · PDF · Saving the record</p>
+    ${state === 'error' ? '<p style="color:#CE1126">Not saved. Files already in the library were not changed.</p><button>Retry failed</button>' : '<p>Uploading</p>'}
+    </div>`
+}
 const pages: Array<[string, number, number, string]> = [
   ['upload-preparing-laptop.png', 1440, 900, shell('Preparing', uploadPanel(preparing))],
   ['upload-uploading-laptop.png', 1440, 900, shell('Uploading', uploadPanel(uploading))],
@@ -141,6 +155,8 @@ const pages: Array<[string, number, number, string]> = [
   ['apply-form-mobile.png', 390, 844, shell('Apply mobile', applyPage('idle'))],
   ['apply-upload-pending-laptop.png', 1440, 900, shell('Apply uploading', applyPage('uploading'))],
   ['apply-upload-error-mobile.png', 390, 844, shell('Apply error', applyPage('error'))],
+  ['document-uploading-laptop.png', 1440, 900, shell('Document uploading', documentPanel('uploading'))],
+  ['document-error-mobile.png', 390, 844, shell('Document error', documentPanel('error'))],
   ['delete-participant-narrow.png', 390, 844, shell('Delete narrow', `<div class="card"><h2>Delete participant</h2>
     <p>This removes <strong>Amina Okonkwo</strong> from the active roster.</p>
     <p>${REMOVAL_SEMANTICS}</p>
