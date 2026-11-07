@@ -144,26 +144,20 @@ export function Programs({ config }: { config: BrandConfig }) {
           color: #A20D1E;
         }
         .vs-program-card.has-photo {
-          min-height: 280px;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
         }
         .vs-program-bg {
-          position: absolute;
-          inset: 0;
           width: 100%;
-          height: 100%;
+          height: 168px;
           object-fit: cover;
           object-position: center;
-          z-index: 0;
-        }
-        .vs-program-scrim {
-          position: absolute;
-          inset: 0;
-          z-index: 1;
-          background: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.92) 48%, #FFFFFF 100%);
+          display: block;
         }
         .vs-program-copy {
-          position: relative;
-          z-index: 2;
+          padding: 1.5rem 1.75rem 1.75rem;
+          background: #FFFFFF;
         }
 
         @media (max-width: 1024px) {
@@ -202,7 +196,6 @@ export function Programs({ config }: { config: BrandConfig }) {
                   {photo && (
                     <>
                       <img className="vs-program-bg" src={photo.src} alt={photo.alt} />
-                      <span className="vs-program-scrim" aria-hidden="true" />
                     </>
                   )}
                   <div className="vs-program-copy">

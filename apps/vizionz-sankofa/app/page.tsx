@@ -28,6 +28,7 @@ import {
   CTABands,
   Newsletter,
 } from '@/components'
+import { CommunityStrip } from '@/components/CommunityStrip'
 
 export default function HomePage() {
   return (
@@ -36,6 +37,7 @@ export default function HomePage() {
       <NumbersBand />
       <Mission config={config} />
       <Programs config={config} />
+      <CommunityStrip />
       <Voices />
       <GallerySection />
       <Coalition />

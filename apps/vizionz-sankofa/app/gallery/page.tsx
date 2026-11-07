@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { Section } from '@yakini/ui'
 import { Gallery } from '@/components/Gallery'
+import { CommunityStrip } from '@/components/CommunityStrip'
 
 export default function GalleryPage() {
   return (
@@ -49,6 +50,7 @@ export default function GalleryPage() {
         </div>
       </Section>
       <Gallery />
+      <CommunityStrip />
     </>
   )
 }

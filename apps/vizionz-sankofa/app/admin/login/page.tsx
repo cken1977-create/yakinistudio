@@ -7,6 +7,7 @@
 
 import { useState, type FormEvent } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { STAFF_LOGIN_PHOTO } from '@/lib/site/public-pages'
 
 type LoginState = 'idle' | 'sending' | 'sent' | 'error'
 
@@ -49,10 +50,15 @@ export default function AdminLoginPage() {
         padding: '24px',
       }}
     >
+      <div style={{ width: '100%', maxWidth: '920px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', alignItems: 'stretch' }}>
+      <img
+        src={STAFF_LOGIN_PHOTO.src}
+        alt={STAFF_LOGIN_PHOTO.alt}
+        style={{ width: '100%', height: '100%', minHeight: 240, objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+      />
       <section
         style={{
           width: '100%',
-          maxWidth: '440px',
           padding: '48px 32px',
           background: '#FFFFFF',
           border: '1px solid rgba(10, 10, 10, 0.08)',
@@ -220,6 +226,7 @@ export default function AdminLoginPage() {
           don&apos;t, contact the operator at hello@yakini.digital.
         </div>
       </section>
+      </div>
     </main>
   )
 }

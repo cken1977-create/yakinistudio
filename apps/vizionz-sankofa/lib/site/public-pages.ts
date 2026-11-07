@@ -1,7 +1,8 @@
-// Public What We Do links and photo slots.
+// Public What We Do links and community photo slots.
 // The homepage used to build /programs/<title-slug>. Those addresses are not
 // the program pages, so Learn More returned 404. The addresses below are the
-// public program slugs. Photos stay empty until the real files are supplied.
+// public program slugs. Card photos are community scenes, not proof of who
+// participates in a program.
 
 import { config } from '@/config/brand'
 
@@ -14,21 +15,54 @@ export type WhatWeDoLink = {
   photoAlt: string
 }
 
-const LINKS: { title: string; slug: string }[] = [
-  { title: 'Unsheltered Outreach & Stabilization', slug: 'unsheltered' },
-  { title: 'Refugee & Immigrant Services', slug: 'refugee-immigrant' },
-  { title: 'Housing Stability', slug: 'housing' },
-  { title: 'Youth Mentorship & Education', slug: 'youth' },
-  { title: 'Family & Caregiver Support', slug: 'family-caregiver' },
-  { title: 'Sankofa Center', slug: 'sankofa-center' },
-  { title: 'Readiness Pilot', slug: 'readiness-pilot' },
+const LINKS: { title: string; slug: string; photo: string; photoAlt: string }[] = [
+  {
+    title: 'Unsheltered Outreach & Stabilization',
+    slug: 'unsheltered',
+    photo: '/community/outdoor-supplies.jpg',
+    photoAlt: 'People organizing supplies on tables outside a community building.',
+  },
+  {
+    title: 'Refugee & Immigrant Services',
+    slug: 'refugee-immigrant',
+    photo: '/community/three-people.jpg',
+    photoAlt: 'People standing together at a community event.',
+  },
+  {
+    title: 'Housing Stability',
+    slug: 'housing',
+    photo: '/community/gathering-room.jpg',
+    photoAlt: 'A community room prepared for a gathering.',
+  },
+  {
+    title: 'Youth Mentorship & Education',
+    slug: 'youth',
+    photo: '/community/seated-panel.jpg',
+    photoAlt: 'People seated together at a community gathering.',
+  },
+  {
+    title: 'Family & Caregiver Support',
+    slug: 'family-caregiver',
+    photo: '/community/large-group.jpg',
+    photoAlt: 'A large group gathered in a community room.',
+  },
+  {
+    title: 'Sankofa Center',
+    slug: 'sankofa-center',
+    photo: '/community/four-people.jpg',
+    photoAlt: 'Four people standing together indoors.',
+  },
+  {
+    title: 'Readiness Pilot',
+    slug: 'readiness-pilot',
+    photo: '/community/meeting-tables.jpg',
+    photoAlt: 'People seated around tables in a community room.',
+  },
 ]
 
 export const WHAT_WE_DO: WhatWeDoLink[] = LINKS.map((item) => ({
   ...item,
   href: `/programs/${item.slug}`,
-  photo: null,
-  photoAlt: '',
 }))
 
 /** Footer program links. Each one is a What We Do page, not a guessed title. */
@@ -105,11 +139,43 @@ export function brandProgramBySlug(slug: string): BrandProgram | null {
   }
 }
 
-/** Family photo behind Our Mission. Null keeps the current white ground. */
+/** Community photo above Our Mission. The type stays on the white section below. */
 export const missionFamilyPhoto: { src: string | null; alt: string } = {
-  src: null,
-  alt: 'Families with Vizionz Sankofa',
+  src: '/community/gathering-celebration.jpg',
+  alt: 'People gathered together at a community celebration.',
 }
+
+/** Shown beside program text, never behind a form. */
+export function programFigure(slug: string): { src: string; alt: string; fit: 'contain' | 'cover' } | null {
+  if (slug === 'unsheltered' || slug === 'sankofa-center') {
+    return {
+      src: '/community/services-flyer.jpg',
+      alt: 'Vizionz Sankofa flyer listing community services.',
+      fit: 'contain',
+    }
+  }
+  const card = WHAT_WE_DO.find((item) => item.slug === slug)
+  if (!card?.photo) return null
+  return { src: card.photo, alt: card.photoAlt, fit: 'cover' }
+}
+
+export const COMMUNITY_GALLERY = [
+  { src: '/community/group-indoors.jpg', alt: 'A group gathered indoors.' },
+  { src: '/community/people-with-bags.jpg', alt: 'People standing together indoors.' },
+  { src: '/community/outdoor-group.jpg', alt: 'A group gathered outside a community building.' },
+  { src: '/community/food-tables.jpg', alt: 'Tables set with food in a community room.' },
+  { src: '/community/meeting-room.jpg', alt: 'People meeting around tables in a community room.' },
+] as const
+
+export const STAFF_BANNER = {
+  src: '/community/food-tables.jpg',
+  alt: 'Tables set with food in a community room.',
+} as const
+
+export const STAFF_LOGIN_PHOTO = {
+  src: '/community/people-with-bags.jpg',
+  alt: 'People standing together indoors.',
+} as const
 
 export function legacyTitleSlug(title: string): string {
   return title.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')

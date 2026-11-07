@@ -26,20 +26,17 @@ export function Mission({ config }: { config: BrandConfig }) {
           position: relative;
           overflow: hidden;
         }
-        .vs-mission-bg {
-          position: absolute;
-          inset: 0;
+        .vs-mission-figure {
           width: 100%;
-          height: 100%;
-          object-fit: cover;
-          object-position: center;
-          z-index: 0;
+          max-height: 420px;
+          overflow: hidden;
         }
-        .vs-mission-scrim {
-          position: absolute;
-          inset: 0;
-          z-index: 1;
-          background: rgba(255, 255, 255, 0.88);
+        .vs-mission-figure img {
+          width: 100%;
+          height: 420px;
+          object-fit: cover;
+          object-position: center 35%;
+          display: block;
         }
         .vs-mission-inner {
           max-width: 72rem;
@@ -105,19 +102,19 @@ export function Mission({ config }: { config: BrandConfig }) {
 
         @media (max-width: 800px) {
           .vs-mission { padding: 4rem 0; }
+          .vs-mission-figure img { height: 220px; }
           .vs-mission-inner { padding: 0 1.5rem; }
           .vs-mission-grid { grid-template-columns: 1fr; gap: 2rem; }
           .vs-mission-pull { font-size: 1.375rem; margin: 2rem 0; }
         }
       `}</style>
 
+      {missionFamilyPhoto.src && (
+        <div className="vs-mission-figure">
+          <img src={missionFamilyPhoto.src} alt={missionFamilyPhoto.alt} />
+        </div>
+      )}
       <section className="vs-mission" aria-labelledby="vs-mission-heading">
-        {missionFamilyPhoto.src && (
-          <>
-            <img className="vs-mission-bg" src={missionFamilyPhoto.src} alt={missionFamilyPhoto.alt} />
-            <span className="vs-mission-scrim" aria-hidden="true" />
-          </>
-        )}
         <div className="vs-mission-inner">
           <div className="vs-mission-grid">
 
