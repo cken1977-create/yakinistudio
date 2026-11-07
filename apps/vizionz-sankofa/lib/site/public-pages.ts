@@ -13,9 +13,23 @@ export type WhatWeDoLink = {
   /** Public image path. Null until a photo is supplied for this box. */
   photo: string | null
   photoAlt: string
+  illustrative?: boolean
+  credit?: string
+  creditHref?: string
 }
 
-const LINKS: { title: string; slug: string; photo: string | null; photoAlt: string }[] = [
+/** Stock photo for Housing Stability. Models, not clients. See housing-illustrative-credit.txt. */
+export const HOUSING_ILLUSTRATION = {
+  src: '/community/housing-illustrative.jpg',
+  alt: 'Illustrative photo of a family together at home.',
+  illustrative: true,
+  credit: 'William Fortunato / Pexels',
+  creditHref: 'https://www.pexels.com/photo/smiling-multiracial-parents-with-little-daughter-on-sofa-6393119/',
+  license: 'Pexels License',
+  licenseHref: 'https://www.pexels.com/license/',
+} as const
+
+const LINKS: { title: string; slug: string; photo: string | null; photoAlt: string; illustrative?: boolean; credit?: string; creditHref?: string }[] = [
   {
     title: 'Unsheltered Outreach & Stabilization',
     slug: 'unsheltered',
@@ -31,8 +45,11 @@ const LINKS: { title: string; slug: string; photo: string | null; photoAlt: stri
   {
     title: 'Housing Stability',
     slug: 'housing',
-    photo: null,
-    photoAlt: '',
+    photo: HOUSING_ILLUSTRATION.src,
+    photoAlt: HOUSING_ILLUSTRATION.alt,
+    illustrative: true,
+    credit: HOUSING_ILLUSTRATION.credit,
+    creditHref: HOUSING_ILLUSTRATION.creditHref,
   },
   {
     title: 'Youth Mentorship & Education',
@@ -113,10 +130,22 @@ export function whatWeDoHref(title: string): string {
   return WHAT_WE_DO.find((item) => item.title === title)?.href ?? '/programs'
 }
 
-export function whatWeDoPhoto(title: string): { src: string; alt: string } | null {
+export function whatWeDoPhoto(title: string): {
+  src: string
+  alt: string
+  illustrative?: boolean
+  credit?: string
+  creditHref?: string
+} | null {
   const item = WHAT_WE_DO.find((entry) => entry.title === title)
   if (!item?.photo) return null
-  return { src: item.photo, alt: item.photoAlt }
+  return {
+    src: item.photo,
+    alt: item.photoAlt,
+    illustrative: item.illustrative,
+    credit: item.credit,
+    creditHref: item.creditHref,
+  }
 }
 
 export type BrandProgram = {
@@ -153,7 +182,14 @@ export const RESERVED_COMMUNITY_PHOTOS = [
   { src: '/community/three-people.jpg' },
 ] as const
 
-export type ProgramFigure = { src: string; alt: string; fit: 'contain' | 'natural' }
+export type ProgramFigure = {
+  src: string
+  alt: string
+  fit: 'contain' | 'natural'
+  illustrative?: boolean
+  credit?: string
+  creditHref?: string
+}
 
 const SERVICES_FLYER: ProgramFigure = {
   src: '/community/services-flyer.jpg',
@@ -165,7 +201,16 @@ const SERVICES_FLYER: ProgramFigure = {
 export function programFigures(slug: string): ProgramFigure[] {
   const figures: ProgramFigure[] = []
   const card = WHAT_WE_DO.find((item) => item.slug === slug)
-  if (card?.photo) figures.push({ src: card.photo, alt: card.photoAlt, fit: 'natural' })
+  if (card?.photo) {
+    figures.push({
+      src: card.photo,
+      alt: card.photoAlt,
+      fit: 'natural',
+      illustrative: card.illustrative,
+      credit: card.credit,
+      creditHref: card.creditHref,
+    })
+  }
   if (slug === 'unsheltered' || slug === 'sankofa-center') figures.push(SERVICES_FLYER)
   return figures
 }

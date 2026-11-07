@@ -259,7 +259,7 @@ export default async function ProgramDetailPage({
   )
 }
 
-function ProgramFigure({ figure }: { figure: { src: string; alt: string; fit: 'contain' | 'natural' } | null }) {
+function ProgramFigure({ figure }: { figure: { src: string; alt: string; fit: 'contain' | 'natural'; illustrative?: boolean; credit?: string; creditHref?: string } | null }) {
   if (!figure) return null
   // The flyer file is stored sideways and has no orientation tag. Rotate it for display; the file itself stays the original.
   if (figure.fit === 'contain') {
@@ -278,6 +278,12 @@ function ProgramFigure({ figure }: { figure: { src: string; alt: string; fit: 'c
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 24px 0' }}>
       <img src={figure.src} alt={figure.alt} style={{ width: '100%', height: 'auto', objectFit: 'contain', background: '#F4F1EA', display: 'block' }} />
+      {figure.illustrative && (
+        <p style={{ margin: '8px 0 0', fontSize: 13, lineHeight: 1.4, color: '#4A4A4A' }}>
+          Illustrative photo, not a Vizionz Sankofa client.{' '}
+          {figure.creditHref ? <a href={figure.creditHref} style={{ color: '#0A2548' }}>{figure.credit}</a> : figure.credit}
+        </p>
+      )}
     </div>
   )
 }

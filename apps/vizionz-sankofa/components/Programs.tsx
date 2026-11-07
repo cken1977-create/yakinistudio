@@ -183,6 +183,16 @@ export function Programs({ config }: { config: BrandConfig }) {
           padding: 1.5rem 1.75rem 1.75rem;
           background: #FFFFFF;
         }
+        .vs-program-note {
+          margin: 0 0 0.75rem;
+          font-family: 'Newsreader', Georgia, serif;
+          font-size: 0.75rem;
+          line-height: 1.4;
+          color: #4A4A4A;
+        }
+        .vs-program-note a {
+          color: #0A2548;
+        }
 
         @media (max-width: 1024px) {
           .vs-programs-grid {
@@ -225,6 +235,12 @@ export function Programs({ config }: { config: BrandConfig }) {
                     </div>
                   )}
                   <div className="vs-program-copy">
+                    {photo?.illustrative && (
+                      <p className="vs-program-note">
+                        Illustrative photo, not a Vizionz Sankofa client.{' '}
+                        {photo.creditHref ? <a href={photo.creditHref}>{photo.credit}</a> : photo.credit}
+                      </p>
+                    )}
                     <span className="vs-program-number">PROGRAM · {num}</span>
                     <h3 className="vs-program-title">{program.title}</h3>
                     <p className="vs-program-desc">{program.description}</p>

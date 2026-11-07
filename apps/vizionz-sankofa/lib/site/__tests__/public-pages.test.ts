@@ -4,7 +4,7 @@ import { config } from '@/config/brand'
 import {
   FOOTER_ABOUT, FOOTER_ENGAGE, FOOTER_PROGRAM_LINKS, HEADER_LINKS, WHAT_WE_DO,
   COMMUNITY_GALLERY, RESERVED_COMMUNITY_PHOTOS, STAFF_BANNER, STAFF_LOGIN_PHOTO,
-  brandProgramBySlug, footerHrefs, legacyTitleSlug, missionFamilyPhoto, programFigure, programFigures, whatWeDoHref, whatWeDoPhoto,
+  HOUSING_ILLUSTRATION, brandProgramBySlug, footerHrefs, legacyTitleSlug, missionFamilyPhoto, programFigure, programFigures, whatWeDoHref, whatWeDoPhoto,
 } from '../public-pages'
 
 const LIVE_SLUGS = [
@@ -73,8 +73,11 @@ test('community photos are real files and do not claim a program from appearance
   assert.equal(whatWeDoPhoto('Refugee & Immigrant Services')?.src, '/community/gathering-room.jpg')
   assert.equal(programFigure('refugee-immigrant')?.src, '/community/gathering-room.jpg')
   assert.equal(programFigure('refugee-immigrant')?.fit, 'natural')
-  assert.equal(whatWeDoPhoto('Housing Stability'), null)
-  assert.equal(programFigure('housing'), null)
+  assert.equal(whatWeDoPhoto('Housing Stability')?.src, HOUSING_ILLUSTRATION.src)
+  assert.equal(whatWeDoPhoto('Housing Stability')?.illustrative, true)
+  assert.match(HOUSING_ILLUSTRATION.licenseHref, /^https:\/\/www\.pexels\.com\/license\/$/)
+  assert.equal(programFigure('housing')?.src, HOUSING_ILLUSTRATION.src)
+  assert.doesNotMatch(whatWeDoPhoto('Housing Stability')?.alt ?? '', /client|recipient|voucher/i)
   assert.equal(programFigures('sankofa-center')[0]?.src, '/community/four-people.jpg')
   assert.equal(programFigures('sankofa-center')[0]?.fit, 'natural')
   assert.equal(programFigures('unsheltered').some((item) => item.src === '/community/services-flyer.jpg'), true)

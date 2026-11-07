@@ -1,0 +1,19 @@
+Housing Stability illustrative photograph
+
+File: housing-illustrative.jpg
+Subject: a family together on a sofa at home
+Use: illustrative only. The people are stock-photo models, not Vizionz Sankofa clients, and the photo is not an endorsement of the program.
+
+Source page: https://www.pexels.com/photo/smiling-multiracial-parents-with-little-daughter-on-sofa-6393119/
+Photographer: William Fortunato
+Publisher: Pexels
+License: Pexels License, https://www.pexels.com/license/
+License terms read from that page on 7 November 2026:
+- Photos on Pexels can be downloaded and used for free, including on a website.
+- Attribution is not required. Credit is still shown.
+- Photos may be modified.
+- Do not imply that people in the photo endorse the organization.
+- Do not show identifiable people in a bad light.
+- Do not sell unaltered copies or redistribute the photo on another stock platform.
+
+Change made: the downloaded file was resized to 1600 pixels on the long side and saved as a progressive JPEG for this website. It is stored in the repository and is not loaded from Pexels at view time.
