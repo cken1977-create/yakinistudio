@@ -10,6 +10,7 @@ import {
   getOperatorDisplayName,
 } from '@/lib/supabase/auth'
 import { createClient } from '@/lib/supabase/server'
+import { withRoster } from '@/lib/participants/roster'
 import { notFound } from 'next/navigation'
 import { EnrollmentsClient } from './EnrollmentsClient'
 import type {
@@ -107,10 +108,14 @@ export default async function CohortDetailPage({
   // Fetch ALL active participants (Option A — client filters in the modal).
   // VS scale is dozens-to-hundreds; one bulk query is cheaper than search-as-
   // you-type round trips. Wave 4 can upgrade if list grows past a few thousand.
-  const { data: participantsData } = await supabase
-    .from('participants')
-    .select('id, first_name, last_name, preferred_name, status, city')
-    .order('last_name', { ascending: true })
+  const { data: participantsData } = await withRoster((hide) => {
+    let query = supabase
+      .from('participants')
+      .select('id, first_name, last_name, preferred_name, status, city')
+      .order('last_name', { ascending: true })
+    if (hide) query = query.is('deleted_at', null)
+    return query
+  })
 
   const allParticipants = (participantsData ??
     []) as unknown as AvailableParticipant[]

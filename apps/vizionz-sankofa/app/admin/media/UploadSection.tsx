@@ -1,171 +1,177 @@
-// VIZIONZ SANKOFA · /admin/media · UploadSection
-// Client component handling the upload flow. Extracted from page.tsx
-// so the page can be a server component that fetches media_items.
-
 'use client'
 
-import { useState, useRef, type ChangeEvent } from 'react'
+// Gallery photo upload. The file control is a real label, not a scripted
+// click on a display:none input, so a laptop browser can open the picker.
+// Status stays visible from the moment files are accepted until each file
+// is saved or refused. Byte percentage is shown only when it is measured;
+// this storage client does not report that, so the status is a spinner.
+
+import { useRef, useState, type CSSProperties } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { UploadStatus } from '@/components/admin/UploadStatus'
+import {
+  GALLERY_ACCEPT,
+  beginUpload,
+  decideGalleryFile,
+  explainHeicFailure,
+  explainStorageError,
+  finishUpload,
+  idleUpload,
+  isUploadActive,
+  markUploadFile,
+  measuredUploadPercent,
+  pathsToRemoveAfterFailure,
+  retryFailedUpload,
+  safeStorageName,
+  selectUploadFiles,
+  uploadStatusText,
+  type UploadSession,
+} from '@/lib/media/picture-upload'
 
-type UploadState =
-  | { kind: 'idle' }
-  | { kind: 'uploading'; current: number; total: number; currentName: string }
-  | { kind: 'complete'; succeeded: number; failed: number }
-  | { kind: 'error'; message: string }
-
-function classifyFile(file: File): 'photo' | 'video' | null {
-  const mime = file.type.toLowerCase()
-  const name = file.name.toLowerCase()
-
-  if (mime.startsWith('image/')) return 'photo'
-  if (mime.startsWith('video/')) return 'video'
-
-  if (
-    name.endsWith('.heic') ||
-    name.endsWith('.heif') ||
-    name.endsWith('.jpg') ||
-    name.endsWith('.jpeg') ||
-    name.endsWith('.png') ||
-    name.endsWith('.webp') ||
-    name.endsWith('.gif')
-  ) {
-    return 'photo'
-  }
-
-  if (
-    name.endsWith('.mp4') ||
-    name.endsWith('.mov') ||
-    name.endsWith('.webm') ||
-    name.endsWith('.m4v')
-  ) {
-    return 'video'
-  }
-
-  return null
-}
-
-function isHeic(file: File): boolean {
-  const mime = file.type.toLowerCase()
-  const name = file.name.toLowerCase()
-  return (
-    mime === 'image/heic' ||
-    mime === 'image/heif' ||
-    name.endsWith('.heic') ||
-    name.endsWith('.heif')
-  )
+const hiddenInput: CSSProperties = {
+  position: 'absolute',
+  width: '1px',
+  height: '1px',
+  padding: 0,
+  margin: '-1px',
+  overflow: 'hidden',
+  clip: 'rect(0 0 0 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
 }
 
 async function convertHeicToJpeg(file: File): Promise<File> {
   const heic2anyModule = await import('heic2any')
   const heic2any = heic2anyModule.default
-
-  const convertedBlob = (await heic2any({
-    blob: file,
-    toType: 'image/jpeg',
-    quality: 0.92,
-  })) as Blob
-
+  const converted = (await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 })) as Blob
   const newName = file.name.replace(/\.(heic|heif)$/i, '.jpg')
-
-  return new File([convertedBlob], newName, {
-    type: 'image/jpeg',
-    lastModified: Date.now(),
-  })
-}
-
-function safeFileName(name: string): string {
-  const base = name.split('/').pop()!.split('\\').pop()!
-  return base
-    .toLowerCase()
-    .replace(/[^a-z0-9.\-_]/g, '-')
-    .replace(/-+/g, '-')
+  return new File([converted], newName, { type: 'image/jpeg', lastModified: Date.now() })
 }
 
 export function UploadSection() {
   const router = useRouter()
-  const [state, setState] = useState<UploadState>({ kind: 'idle' })
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const sessionRef = useRef<UploadSession>(idleUpload())
+  const filesRef = useRef<File[]>([])
+  const [session, setSession] = useState<UploadSession>(idleUpload())
+  const [previews, setPreviews] = useState<{ name: string; url: string }[]>([])
+  const [measured, setMeasured] = useState<number | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  async function handleFileSelection(event: ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(event.target.files ?? [])
-    if (files.length === 0) return
+  function commit(next: UploadSession) {
+    sessionRef.current = next
+    setSession(next)
+  }
 
-    const supabase = createClient()
-    const timestamp = Date.now()
-    let succeeded = 0
-    let failed = 0
-
-    for (let i = 0; i < files.length; i++) {
-      let file = files[i]
-
-      setState({
-        kind: 'uploading',
-        current: i + 1,
-        total: files.length,
-        currentName: file.name,
-      })
-
-      const kind = classifyFile(file)
-      if (!kind) {
-        failed++
+  async function pump(files: File[]) {
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    let current = sessionRef.current
+    for (let index = current.activeIndex ?? 0; index < files.length; index++) {
+      if (current.files[index]?.status === 'done') continue
+      const file = files[index]
+      current = markUploadFile(current, index, 'preparing')
+      commit(current)
+      setMeasured(measuredUploadPercent(null))
+      const decision = decideGalleryFile(file)
+      if (!decision.ok) {
+        current = markUploadFile(current, index, 'failed', decision.reason)
+        commit(current)
         continue
       }
-
-      if (kind === 'photo' && isHeic(file)) {
+      let body: File = file
+      let contentType = decision.contentType
+      if (decision.heic) {
         try {
-          file = await convertHeicToJpeg(file)
-        } catch (err) {
-          console.error('HEIC conversion failed:', err)
-          failed++
+          body = await convertHeicToJpeg(file)
+          contentType = 'image/jpeg'
+        } catch {
+          current = markUploadFile(current, index, 'failed', explainHeicFailure(file.name))
+          commit(current)
           continue
         }
       }
-
-      const storagePath = `${timestamp}-${i}-${safeFileName(file.name)}`
-
-      const { error: uploadError } = await supabase.storage
-        .from('media')
-        .upload(storagePath, file, {
-          cacheControl: '3600',
-          upsert: false,
-        })
-
+      current = markUploadFile(current, index, 'uploading')
+      commit(current)
+      const path = `${Date.now()}-${index}-${safeStorageName(body.name)}`
+      const supabase = createClient()
+      const { error: uploadError } = await supabase.storage.from('media').upload(path, body, {
+        cacheControl: '3600',
+        upsert: false,
+        contentType,
+      })
       if (uploadError) {
-        console.error('Storage upload failed:', uploadError)
-        failed++
+        current = markUploadFile(current, index, 'failed', explainStorageError(uploadError.message))
+        commit(current)
         continue
       }
-
+      current = markUploadFile(current, index, 'saving')
+      commit(current)
       const { error: insertError } = await supabase.from('media_items').insert({
-        storage_path: storagePath,
-        kind,
+        storage_path: path,
+        kind: decision.kind,
         display_order: 0,
       })
-
       if (insertError) {
-        console.error('DB insert failed:', insertError)
-        failed++
+        const cleanup = pathsToRemoveAfterFailure(path, false)
+        if (cleanup.length > 0) await supabase.storage.from('media').remove(cleanup)
+        current = markUploadFile(current, index, 'failed', explainStorageError(insertError.message))
+        commit(current)
         continue
       }
-
-      succeeded++
+      if (decision.kind === 'photo') {
+        const url = URL.createObjectURL(body)
+        setPreviews((prev) => [...prev, { name: file.name, url }])
+      }
+      current = markUploadFile(current, index, 'done')
+      commit(current)
     }
+    current = finishUpload(sessionRef.current)
+    commit(current)
+    if (current.files.some((file) => file.status === 'done')) router.refresh()
+  }
 
-    setState({ kind: 'complete', succeeded, failed })
+  function acceptFiles(list: FileList | File[] | null) {
+    const files = Array.from(list ?? [])
+    if (files.length === 0 || isUploadActive(sessionRef.current.phase)) return
+    filesRef.current = files
+    setPreviews((prev) => {
+      prev.forEach((item) => URL.revokeObjectURL(item.url))
+      return []
+    })
+    const started = beginUpload(selectUploadFiles(idleUpload(), files.map((file) => file.name)))
+    if (!started.accepted) return
+    commit(started.session)
+    void pump(files)
+  }
 
-    // Refresh the server component so the new uploads show in the list below
-    router.refresh()
-
-    if (fileInputRef.current) fileInputRef.current.value = ''
+  function retry() {
+    const next = retryFailedUpload(sessionRef.current)
+    if (!next.accepted) return
+    commit(next.session)
+    void pump(filesRef.current)
   }
 
   function reset() {
-    setState({ kind: 'idle' })
+    setPreviews((prev) => {
+      prev.forEach((item) => URL.revokeObjectURL(item.url))
+      return []
+    })
+    commit(idleUpload())
+    if (inputRef.current) inputRef.current.value = ''
   }
+
+  const active = isUploadActive(session.phase)
+  const status = uploadStatusText(session)
+  const failed = session.files.filter((file) => file.status === 'failed')
 
   return (
     <section
+      data-testid="media-upload"
+      onDragOver={(event) => event.preventDefault()}
+      onDrop={(event) => {
+        event.preventDefault()
+        acceptFiles(event.dataTransfer.files)
+      }}
       style={{
         background: '#FFFFFF',
         border: '1px solid rgba(10, 10, 10, 0.08)',
@@ -177,261 +183,82 @@ export function UploadSection() {
     >
       <div
         style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '3px',
-          background:
-            'linear-gradient(90deg, #CE1126 0%, #CE1126 33.33%, #0A0A0A 33.33%, #0A0A0A 66.66%, #007A33 66.66%, #007A33 100%)',
+          position: 'absolute', top: 0, left: 0, right: 0, height: '3px',
+          background: 'linear-gradient(90deg, #CE1126 0%, #CE1126 33.33%, #0A0A0A 33.33%, #0A0A0A 66.66%, #007A33 66.66%, #007A33 100%)',
         }}
       />
-
-      {state.kind === 'idle' && (
-        <IdleState onClickUpload={() => fileInputRef.current?.click()} />
+      {session.phase === 'idle' && (
+        <div style={{ textAlign: 'center', padding: '24px 0' }}>
+          <label htmlFor="vs-media-files" style={selectBtn}>
+            Select photos &amp; videos
+          </label>
+          <p style={{ marginTop: '16px', fontSize: '13px', color: 'rgba(10, 10, 10, 0.55)' }}>
+            Photos: JPG, PNG, WebP, GIF · Videos: MP4 (H.264) recommended. You can also drop files here.
+          </p>
+        </div>
       )}
-      {state.kind === 'uploading' && <UploadingState state={state} />}
-      {state.kind === 'complete' && <CompleteState state={state} onReset={reset} />}
-      {state.kind === 'error' && <ErrorState message={state.message} onReset={reset} />}
-
+      {session.phase !== 'idle' && (
+        <div style={{ padding: '24px 0', textAlign: 'center' }}>
+          <UploadStatus text={status} active={active} percent={measured} />
+          {previews.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', marginBottom: '16px' }}>
+              {previews.map((preview) => (
+                <figure key={preview.url} style={{ margin: 0, width: '160px' }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={preview.url} alt="" style={{ width: '160px', height: '120px', objectFit: 'cover', display: 'block', background: '#0A0A0A' }} />
+                  <figcaption style={{ fontSize: '12px', marginTop: '6px' }}>Saved · {preview.name}</figcaption>
+                </figure>
+              ))}
+            </div>
+          )}
+          {failed.length > 0 && (
+            <ul style={{ textAlign: 'left', maxWidth: '520px', margin: '0 auto 16px', color: '#CE1126', fontSize: '14px' }}>
+              {failed.map((file) => <li key={file.name}>{file.name}: {file.reason}</li>)}
+            </ul>
+          )}
+          {!active && failed.length > 0 && (
+            <button type="button" onClick={retry} style={selectBtn}>Retry failed</button>
+          )}
+          {!active && session.phase === 'completed' && (
+            <button type="button" onClick={reset} style={{ ...selectBtn, marginTop: '8px' }}>Upload more</button>
+          )}
+          {!active && failed.length > 0 && (
+            <button type="button" onClick={reset} style={{ ...selectBtn, marginTop: '8px', marginLeft: '8px', background: 'transparent', color: '#0A0A0A', border: '1px solid rgba(10,10,10,0.2)' }}>
+              Start over
+            </button>
+          )}
+        </div>
+      )}
       <input
-        ref={fileInputRef}
+        ref={inputRef}
+        id="vs-media-files"
         type="file"
-        accept="image/*,video/*,.heic,.heif"
+        accept={GALLERY_ACCEPT}
         multiple
-        onChange={handleFileSelection}
-        style={{ display: 'none' }}
+        disabled={active}
+        onChange={(event) => {
+          acceptFiles(event.target.files)
+          event.target.value = ''
+        }}
+        style={hiddenInput}
       />
     </section>
   )
 }
 
-function IdleState({ onClickUpload }: { onClickUpload: () => void }) {
-  return (
-    <div style={{ textAlign: 'center', padding: '24px 0' }}>
-      <button
-        type="button"
-        onClick={onClickUpload}
-        style={{
-          padding: '18px 32px',
-          fontSize: '15px',
-          fontWeight: 600,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          color: '#FFFFFF',
-          background: '#0A2548',
-          border: 'none',
-          borderRadius: '2px',
-          cursor: 'pointer',
-          width: '100%',
-          maxWidth: '480px',
-        }}
-      >
-        Select photos &amp; videos
-      </button>
-      <p
-        style={{
-          marginTop: '16px',
-          fontSize: '13px',
-          color: 'rgba(10, 10, 10, 0.55)',
-        }}
-      >
-        Photos: JPG, PNG, HEIC, WebP, GIF · Videos: MP4 (H.264) recommended
-      </p>
-    </div>
-  )
-}
-
-function UploadingState({
-  state,
-}: {
-  state: { kind: 'uploading'; current: number; total: number; currentName: string }
-}) {
-  const percent = Math.round((state.current / state.total) * 100)
-  return (
-    <div style={{ padding: '24px 0' }}>
-      <div
-        style={{
-          fontSize: '14px',
-          fontWeight: 600,
-          color: '#0A0A0A',
-          marginBottom: '12px',
-          textAlign: 'center',
-        }}
-      >
-        Uploading {state.current} of {state.total}…
-      </div>
-      <div
-        style={{
-          fontSize: '12px',
-          color: 'rgba(10, 10, 10, 0.55)',
-          marginBottom: '20px',
-          textAlign: 'center',
-          fontFamily:
-            'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {state.currentName}
-      </div>
-      <div
-        style={{
-          height: '6px',
-          background: 'rgba(10, 10, 10, 0.08)',
-          borderRadius: '3px',
-          overflow: 'hidden',
-          maxWidth: '480px',
-          margin: '0 auto',
-        }}
-      >
-        <div
-          style={{
-            height: '100%',
-            width: `${percent}%`,
-            background: '#007A33',
-            transition: 'width 0.2s ease',
-          }}
-        />
-      </div>
-    </div>
-  )
-}
-
-function CompleteState({
-  state,
-  onReset,
-}: {
-  state: { kind: 'complete'; succeeded: number; failed: number }
-  onReset: () => void
-}) {
-  return (
-    <div style={{ padding: '24px 0', textAlign: 'center' }}>
-      <div
-        style={{
-          fontSize: '11px',
-          fontWeight: 600,
-          letterSpacing: '0.18em',
-          textTransform: 'uppercase',
-          color: '#007A33',
-          marginBottom: '12px',
-          fontFamily:
-            'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
-        }}
-      >
-        Upload Complete
-      </div>
-
-      <div
-        style={{
-          fontSize: '28px',
-          fontWeight: 600,
-          color: '#0A0A0A',
-          marginBottom: '8px',
-          fontFamily: '"DM Serif Display", Georgia, serif',
-        }}
-      >
-        {state.succeeded} {state.succeeded === 1 ? 'file' : 'files'} uploaded
-      </div>
-
-      {state.failed > 0 && (
-        <div
-          style={{
-            fontSize: '14px',
-            color: '#CE1126',
-            marginBottom: '16px',
-          }}
-        >
-          {state.failed} failed — check browser console for details
-        </div>
-      )}
-
-      <p
-        style={{
-          fontSize: '14px',
-          color: 'rgba(10, 10, 10, 0.65)',
-          marginBottom: '24px',
-        }}
-      >
-        Your files appear in the library below. They&apos;ll go live on the
-        public Gallery once the next update ships.
-      </p>
-
-      <button
-        type="button"
-        onClick={onReset}
-        style={{
-          padding: '14px 28px',
-          fontSize: '14px',
-          fontWeight: 600,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          color: '#FFFFFF',
-          background: '#0A2548',
-          border: 'none',
-          borderRadius: '2px',
-          cursor: 'pointer',
-        }}
-      >
-        Upload more
-      </button>
-    </div>
-  )
-}
-
-function ErrorState({
-  message,
-  onReset,
-}: {
-  message: string
-  onReset: () => void
-}) {
-  return (
-    <div style={{ padding: '24px 0', textAlign: 'center' }}>
-      <div
-        style={{
-          fontSize: '11px',
-          fontWeight: 600,
-          letterSpacing: '0.18em',
-          textTransform: 'uppercase',
-          color: '#CE1126',
-          marginBottom: '12px',
-          fontFamily:
-            'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace',
-        }}
-      >
-        Upload Failed
-      </div>
-      <p
-        style={{
-          fontSize: '15px',
-          color: '#0A0A0A',
-          marginBottom: '24px',
-          maxWidth: '480px',
-          margin: '0 auto 24px',
-        }}
-      >
-        {message}
-      </p>
-      <button
-        type="button"
-        onClick={onReset}
-        style={{
-          padding: '14px 28px',
-          fontSize: '14px',
-          fontWeight: 600,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          color: '#0A0A0A',
-          background: 'transparent',
-          border: '1px solid rgba(10, 10, 10, 0.2)',
-          borderRadius: '2px',
-          cursor: 'pointer',
-        }}
-      >
-        Try again
-      </button>
-    </div>
-  )
+const selectBtn: CSSProperties = {
+  display: 'inline-block',
+  padding: '18px 32px',
+  fontSize: '15px',
+  fontWeight: 600,
+  letterSpacing: '0.08em',
+  textTransform: 'uppercase',
+  color: '#FFFFFF',
+  background: '#0A2548',
+  border: 'none',
+  borderRadius: '2px',
+  cursor: 'pointer',
+  width: '100%',
+  maxWidth: '480px',
+  fontFamily: 'inherit',
 }

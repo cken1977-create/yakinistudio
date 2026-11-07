@@ -124,6 +124,10 @@ export function canWriteCrm(role: VsAccessRole | null): boolean {
 export function isExecOrOp(role: VsAccessRole | null): boolean {
   return role === 'executive' || role === 'operator'
 }
+/** Admins (executive or operator). Being signed in to /admin is not enough. */
+export function canDeleteContact(role: VsAccessRole | null): boolean {
+  return isExecOrOp(role)
+}
 /** Can this role write timeline / tasks / files on this kind of record? (UI hint; RLS decides.) */
 export function canWriteSubject(role: VsAccessRole | null, type: SubjectType): boolean {
   if (isExecOrOp(role)) return true

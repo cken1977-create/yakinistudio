@@ -4,6 +4,7 @@
 
 import type { Metadata } from 'next'
 import { GetHelpForm } from './GetHelpForm'
+import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
   title: 'Get Help · Vizionz Sankofa',
@@ -11,7 +12,26 @@ export const metadata: Metadata = {
     'Request support from Vizionz Sankofa — food assistance, family support, refugee and immigrant services, education, housing, and more.',
 }
 
-export default function GetHelpPage() {
+export default async function GetHelpPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ program?: string }>
+}) {
+  const { program: slug } = await searchParams
+  let program = null
+  let programMissing = false
+  if (slug?.trim()) {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('programs')
+      .select('slug, name, public_description, who_we_serve, eligibility_criteria, duration_description')
+      .eq('slug', slug.trim())
+      .eq('is_public', true)
+      .eq('is_active', true)
+      .maybeSingle()
+    if (error || !data) programMissing = true
+    else program = data
+  }
   return (
     <main
       style={{
@@ -83,7 +103,7 @@ export default function GetHelpPage() {
         </header>
 
         {/* Form */}
-        <GetHelpForm />
+        <GetHelpForm program={program} programMissing={programMissing} />
 
         {/* Footer note */}
         <div

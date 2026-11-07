@@ -15,6 +15,7 @@ import { MyDay } from '@/components/admin/MyDay'
 import { StageSummary } from '@/components/admin/StageSummary'
 import { NeedsAttention } from '@/components/admin/crm/NeedsAttention'
 import { formatDateValue } from '@/lib/format/datetime'
+import { withRoster } from '@/lib/participants/roster'
 
 export default async function AdminLandingPage() {
   // Enforce authentication. Redirects to /admin/login if no session.
@@ -95,14 +96,17 @@ export default async function AdminLandingPage() {
     .limit(5)
 
   // Wave 3 counts
-  const { count: participantCount } = await supabase
-    .from('participants')
-    .select('*', { count: 'exact', head: true })
+  const { count: participantCount } = await withRoster((hide) => {
+    let query = supabase.from('participants').select('*', { count: 'exact', head: true })
+    if (hide) query = query.is('deleted_at', null)
+    return query
+  })
 
-  const { count: activeParticipantCount } = await supabase
-    .from('participants')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'active')
+  const { count: activeParticipantCount } = await withRoster((hide) => {
+    let query = supabase.from('participants').select('*', { count: 'exact', head: true }).eq('status', 'active')
+    if (hide) query = query.is('deleted_at', null)
+    return query
+  })
 
   const { count: cohortCount } = await supabase
     .from('cohorts')

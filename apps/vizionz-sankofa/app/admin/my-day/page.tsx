@@ -12,6 +12,7 @@ import { labelTaskSubjects, loadStaff } from '@/lib/crm/load'
 import { ACTIVITY_COLUMNS, TASK_COLUMNS, canWriteCrm, isExecOrOp, type ActivityRow, type TaskRow } from '@/lib/crm/model'
 import type { SubjectOption } from '@/components/admin/crm/QuickLog'
 import { Notice, PageIntro, todayMountain, isMissingTable } from '@/components/admin/ui'
+import { withRoster } from '@/lib/participants/roster'
 
 export const dynamic = 'force-dynamic'
 
@@ -47,7 +48,11 @@ export default async function MyDayPage({ searchParams }: { searchParams: Promis
     role === 'case_manager'
       ? // RLS already limits a case manager to their own caseload; include closed/exited
       // clients too so imported history can be logged against.
-      supabase.from('participants').select('id, first_name, last_name, preferred_name').order('last_name').order('first_name').limit(1000)
+      withRoster((hide) => {
+        let query = supabase.from('participants').select('id, first_name, last_name, preferred_name').order('last_name').order('first_name').limit(1000)
+        if (hide) query = query.is('deleted_at', null)
+        return query
+      })
       : Promise.resolve({ data: [], error: null }),
     focusTaskId && /^[0-9a-f-]{36}$/i.test(focusTaskId)
       ? supabase.from('vs_tasks').select(TASK_COLUMNS).eq('id', focusTaskId).maybeSingle()

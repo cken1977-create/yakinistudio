@@ -22,6 +22,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import type { VsAccessRole } from '@/lib/supabase/auth'
 import { retrieveChunks, type RetrievedChunk } from './retrieve'
 import { formatDateValue } from '@/lib/format/datetime'
+import { withRoster } from '@/lib/participants/roster'
 
 // ─── Per-request context (pilot protection) ──────────────────────────────
 
@@ -412,18 +413,21 @@ async function queryParticipants(input: Record<string, unknown>, ctx: ToolContex
     typeof input.no_contact_days === 'number' && input.no_contact_days > 0 ? Math.floor(input.no_contact_days) : null
   const returningOnly = input.returning_only === true
 
-  let q = ctx.supabase
-    .from('participants')
-    .select('id, first_name, last_name, preferred_name, status, current_stage, stage_changed_at, is_returning, primary_case_manager_id')
-    .order('stage_changed_at', { ascending: true })
-    .limit(noContactDays ? 200 : 25)
-  if (stage) q = q.eq('current_stage', stage)
-  if (returningOnly) q = q.eq('is_returning', true)
-  if (search) {
-    const parts = search.split(/\s+/).filter(Boolean).slice(0, 3)
-    q = q.or(parts.map((p) => `first_name.ilike.%${p}%,last_name.ilike.%${p}%,preferred_name.ilike.%${p}%`).join(','))
-  }
-  const { data, error } = await q
+  const { data, error } = await withRoster((hide) => {
+    let q = ctx.supabase
+      .from('participants')
+      .select('id, first_name, last_name, preferred_name, status, current_stage, stage_changed_at, is_returning, primary_case_manager_id')
+      .order('stage_changed_at', { ascending: true })
+      .limit(noContactDays ? 200 : 25)
+    if (hide) q = q.is('deleted_at', null)
+    if (stage) q = q.eq('current_stage', stage)
+    if (returningOnly) q = q.eq('is_returning', true)
+    if (search) {
+      const parts = search.split(/\s+/).filter(Boolean).slice(0, 3)
+      q = q.or(parts.map((p) => `first_name.ilike.%${p}%,last_name.ilike.%${p}%,preferred_name.ilike.%${p}%`).join(','))
+    }
+    return q
+  })
   if (error) return { content: `Participant query failed: ${error.message}`, citations: [], ok: false, error: error.message }
   type PRow = {
     id: string; first_name: string; last_name: string; preferred_name: string | null; status: string

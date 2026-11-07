@@ -6,6 +6,7 @@ import Link from 'next/link'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { LogContactForm } from './LogContactForm'
 import { todayInMountain } from '@/lib/format/datetime'
+import { withRoster } from '@/lib/participants/roster'
 
 const NO_CONTACT_DAYS = 14
 const STUCK_DAYS = 30
@@ -20,11 +21,15 @@ type P = { id: string; first_name: string; last_name: string; preferred_name: st
 type N = { participant_id: string; occurred_at: string; next_action: string | null; next_action_due: string | null; next_action_completed: boolean | null }
 
 export async function MyDay({ supabase }: { supabase: SupabaseClient }) {
-  const { data: pData } = await supabase
-    .from('participants')
-    .select('id, first_name, last_name, preferred_name, current_stage, stage_changed_at, is_returning')
-    .neq('current_stage', 'exited')
-    .order('last_name')
+  const { data: pData } = await withRoster((hide) => {
+    let query = supabase
+      .from('participants')
+      .select('id, first_name, last_name, preferred_name, current_stage, stage_changed_at, is_returning')
+      .neq('current_stage', 'exited')
+      .order('last_name')
+    if (hide) query = query.is('deleted_at', null)
+    return query
+  })
   const people = (pData ?? []) as P[]
   const ids = people.map((p) => p.id)
   const { data: nData } = ids.length

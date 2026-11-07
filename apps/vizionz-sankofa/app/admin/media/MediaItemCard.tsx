@@ -5,6 +5,7 @@
 
 import { useState, useTransition } from 'react'
 import { updateMediaItem, deleteMediaItem } from '../actions/media'
+import { publicMediaUrl } from '@/lib/media/picture-upload'
 
 export type MediaItem = {
   id: string
@@ -19,7 +20,8 @@ export type MediaItem = {
 const SUPABASE_PUBLIC_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 
 function publicUrlFor(storagePath: string): string {
-  return `${SUPABASE_PUBLIC_URL}/storage/v1/object/public/media/${storagePath}`
+  if (!SUPABASE_PUBLIC_URL) return ''
+  return publicMediaUrl(SUPABASE_PUBLIC_URL, storagePath)
 }
 
 function formatDate(iso: string | null): string {
@@ -35,6 +37,7 @@ export function MediaItemCard({ item }: { item: MediaItem }) {
   const [eventDate, setEventDate] = useState(formatDate(item.event_date))
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [previewFailed, setPreviewFailed] = useState(false)
 
   const url = publicUrlFor(item.storage_path)
 
@@ -93,11 +96,12 @@ export function MediaItemCard({ item }: { item: MediaItem }) {
           overflow: 'hidden',
         }}
       >
-        {item.kind === 'photo' ? (
+        {item.kind === 'photo' && url && !previewFailed ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={url}
             alt={item.caption ?? 'Vizionz Sankofa media'}
+            onError={() => setPreviewFailed(true)}
             style={{
               width: '100%',
               height: '100%',
@@ -105,6 +109,10 @@ export function MediaItemCard({ item }: { item: MediaItem }) {
               display: 'block',
             }}
           />
+        ) : item.kind === 'photo' ? (
+          <div style={{ color: '#FFFFFF', fontSize: '13px', padding: '16px' }}>
+            This photo is saved, but the browser could not display it.
+          </div>
         ) : (
           <video
             src={url}

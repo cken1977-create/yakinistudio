@@ -9,8 +9,11 @@
 //  - Save (Supabase update via browser client)
 //  - Optimistic UI refresh on save
 
-import { useMemo, useState, useTransition } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { useUrlState } from '@/components/admin/nav/useUrlState'
+import { programDetailHref } from '@/lib/programs/detail'
 import { createClient as createBrowserClient } from '@/lib/supabase/client'
 import type { ProgramEditableFields, ProgramRecord } from './types'
 import { useCanEdit } from '@/components/admin/CanEdit'
@@ -26,6 +29,22 @@ export function ProgramsListClient({
   const [search, setSearch] = useUrlState<string>('q', '')
   const [tab, setTab] = useUrlState<TabKey>('tab', 'all')
   const [editing, setEditing] = useState<ProgramRecord | null>(null)
+  const canEdit = useCanEdit()
+  const params = useSearchParams()
+  const editId = params.get('edit')
+
+  useEffect(() => {
+    if (!canEdit || !editId) return
+    const found = programs.find((program) => program.id === editId)
+    if (found) setEditing(found)
+  }, [canEdit, editId, programs])
+
+  function closeEdit() {
+    setEditing(null)
+    const url = new URL(window.location.href)
+    url.searchParams.delete('edit')
+    window.history.replaceState(null, '', url.pathname + url.search + url.hash)
+  }
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -95,7 +114,12 @@ export function ProgramsListClient({
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {filtered.map((p) => (
-            <ProgramRow key={p.id} program={p} onEdit={() => setEditing(p)} />
+            <ProgramRow
+              key={p.id}
+              program={p}
+              href={programDetailHref(p.id, { q: search, tab })}
+              onEdit={() => setEditing(p)}
+            />
           ))}
         </div>
       )}
@@ -104,7 +128,7 @@ export function ProgramsListClient({
       {editing && (
         <EditModal
           program={editing}
-          onClose={() => setEditing(null)}
+          onClose={closeEdit}
           onSaved={(updated) => {
             setPrograms((prev) =>
               prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)),
@@ -148,9 +172,11 @@ function TabButton({
 
 function ProgramRow({
   program,
+  href,
   onEdit,
 }: {
   program: ProgramRecord
+  href: string
   onEdit: () => void
 }) {
   const canEdit = useCanEdit()
@@ -192,24 +218,32 @@ function ProgramRow({
               fontFamily: '"DM Serif Display", Georgia, serif',
             }}
           >
-            {program.name}
+            <Link href={href} style={{ color: 'inherit', textDecoration: 'none' }} aria-label={`View ${program.name}`}>
+              {program.name}
+            </Link>
           </h3>
           <StatusPill isPublic={program.is_public} />
         </div>
-        <div
+        <Link
+          href={href}
+          tabIndex={-1}
+          aria-hidden
           style={{
+            display: 'block',
             fontSize: '13px',
             lineHeight: 1.5,
             color: 'rgba(10, 10, 10, 0.6)',
+            textDecoration: 'none',
           }}
         >
           {hasDescription
             ? program.public_description
-            : 'No public description yet. Click Edit to write one.'}
-        </div>
+            : 'No public description yet.'}
+        </Link>
       </div>
       {canEdit && (
         <button
+          type="button"
           onClick={onEdit}
           style={{
             padding: '8px 16px',

@@ -6,16 +6,17 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { Gallery, type GalleryItem } from './Gallery'
+import { publicMediaUrl } from '@/lib/media/picture-upload'
+import { formatDateValue } from '@/lib/format/datetime'
 
 export const dynamic = 'force-dynamic'
 
 const SUPABASE_PUBLIC_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 
 function publicUrlFor(storagePath: string): string {
-  return `${SUPABASE_PUBLIC_URL}/storage/v1/object/public/media/${storagePath}`
+  if (!SUPABASE_PUBLIC_URL) return ''
+  return publicMediaUrl(SUPABASE_PUBLIC_URL, storagePath)
 }
-import { formatDateValue } from '@/lib/format/datetime'
-
 function formatDateForGallery(eventDate: string | null, createdAt: string): string {
   // Prefer event_date (operator-set, more meaningful), fall back to created_at
   const source = eventDate ?? createdAt

@@ -8,6 +8,7 @@ import { Section, Button } from '@yakini/ui'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { applyHref } from '@/lib/programs/apply'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,7 +38,7 @@ export default async function ProgramDetailPage({
     .select(
       'id, slug, name, public_description, public_long_description, ' +
         'who_we_serve, eligibility_criteria, duration_description, ' +
-        'icon_emoji, apply_cta_label, apply_url',
+        'icon_emoji, apply_cta_label, apply_url, slug',
     )
     .eq('slug', slug)
     .eq('is_public', true)
@@ -49,7 +50,7 @@ export default async function ProgramDetailPage({
   }
 
   const program = data as unknown as ProgramDetail
-  const applyHref = program.apply_url ?? '/get-help'
+  const applicationHref = applyHref(program)
 
   return (
     <>
@@ -246,9 +247,7 @@ export default async function ProgramDetailPage({
             Reach out and a real person will respond. All backgrounds welcome.
             No one turned away.
           </p>
-          <Link href={applyHref}>
-            <Button>{program.apply_cta_label ?? 'Get Help'}</Button>
-          </Link>
+          <Button href={applicationHref}>{program.apply_cta_label ?? 'Apply Now'}</Button>
         </div>
       </Section>
     </>

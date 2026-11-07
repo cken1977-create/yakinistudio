@@ -38,6 +38,7 @@ import { getAccessRole } from '@/lib/supabase/auth'
 import { todayMountain } from '@/components/admin/ui'
 import { formatDateValue } from '@/lib/format/datetime'
 import { CanEditProvider } from '@/components/admin/CanEdit'
+import { DeleteParticipantControl } from '../DeleteParticipantControl'
 
 export const dynamic = 'force-dynamic'
 
@@ -53,24 +54,31 @@ export default async function ParticipantDetailPage({
   const supabase = await createClient()
 
   // Fetch the participant
-  const { data: participantData, error: participantError } = await supabase
+  const participantColumns =
+    'id, first_name, last_name, preferred_name, date_of_birth, ' +
+    'phone_primary, phone_secondary, email, ' +
+    'address_line1, address_line2, city, state, zip, ' +
+    'gender, race_ethnicity, primary_language, ' +
+    'veteran_status, disability_status, household_size, ' +
+    'children_in_household, household_income_range, ' +
+    'intake_date, referral_source, referral_source_detail, ' +
+    'status, primary_case_manager_id, ' +
+    'consent_to_services, consent_to_share_data, consent_to_photos, ' +
+    'consent_signed_at, intake_notes, ' +
+    'legacyline_subject_id, legacyline_pushed_at, legacyline_consent_signed, ' +
+    'created_at, updated_at'
+  let { data: participantData, error: participantError } = await supabase
     .from('participants')
-    .select(
-      'id, first_name, last_name, preferred_name, date_of_birth, ' +
-        'phone_primary, phone_secondary, email, ' +
-        'address_line1, address_line2, city, state, zip, ' +
-        'gender, race_ethnicity, primary_language, ' +
-        'veteran_status, disability_status, household_size, ' +
-        'children_in_household, household_income_range, ' +
-        'intake_date, referral_source, referral_source_detail, ' +
-        'status, primary_case_manager_id, ' +
-        'consent_to_services, consent_to_share_data, consent_to_photos, ' +
-        'consent_signed_at, intake_notes, ' +
-        'legacyline_subject_id, legacyline_pushed_at, legacyline_consent_signed, ' +
-        'created_at, updated_at',
-    )
+    .select(participantColumns + ', deleted_at, deleted_by, delete_reason')
     .eq('id', id)
     .maybeSingle()
+  if (participantError && /deleted_at|deleted_by|delete_reason/.test(participantError.message)) {
+    ;({ data: participantData, error: participantError } = await supabase
+      .from('participants')
+      .select(participantColumns)
+      .eq('id', id)
+      .maybeSingle())
+  }
 
   if (participantError || !participantData) {
     notFound()
@@ -298,7 +306,16 @@ export default async function ParticipantDetailPage({
         </h1>
         <StatusPillServer status={participant.status} />
         {participant.legacyline_subject_id && <LegacylinePillServer />}
+        <DeleteParticipantControl
+          participant={participant}
+          canDelete={isExecOrOp(accessRole)}
+        />
       </div>
+      {participant.deleted_at && (
+        <p role="status" style={{ margin: '0 0 16px', fontSize: '14px', color: '#0A0A0A' }}>
+          {displayName} was removed from the active roster. This was not a permanent delete. Case history is still on this record. Restore puts them back.
+        </p>
+      )}
 
       <SensitiveFields participantId={participant.id} />
 

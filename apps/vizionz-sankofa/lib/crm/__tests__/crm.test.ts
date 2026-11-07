@@ -1,11 +1,19 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
-  addDays, attachmentPath, canWriteSubject, caseNoteMethod, daysBetween, groupTasks, needsAttention,
+  addDays, attachmentPath, canDeleteContact, canWriteSubject, caseNoteMethod, daysBetween, groupTasks, needsAttention,
   safeFileName, slugify, subjectHref, taskBucket,
 } from '../model'
 
 const today = '2026-10-17'
+
+test('only executives and operators can delete a contact', () => {
+  assert.equal(canDeleteContact('executive'), true)
+  assert.equal(canDeleteContact('operator'), true)
+  assert.equal(canDeleteContact('case_manager'), false)
+  assert.equal(canDeleteContact('leadership_readonly'), false)
+  assert.equal(canDeleteContact(null), false)
+})
 
 test('task buckets follow due and reminder dates', () => {
   assert.equal(taskBucket({ due_on: '2026-10-16', remind_on: null }, today), 'overdue')
