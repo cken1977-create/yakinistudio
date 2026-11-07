@@ -7,7 +7,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { Gallery, type GalleryItem } from './Gallery'
 import { publicMediaUrl } from '@/lib/media/picture-upload'
-import { formatDateValue } from '@/lib/format/datetime'
+import { visiblePhotoDate } from '@/lib/media/photo-display'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,15 +17,6 @@ function publicUrlFor(storagePath: string): string {
   if (!SUPABASE_PUBLIC_URL) return ''
   return publicMediaUrl(SUPABASE_PUBLIC_URL, storagePath)
 }
-function formatDateForGallery(eventDate: string | null, createdAt: string): string {
-  // Prefer event_date (operator-set, more meaningful), fall back to created_at
-  const source = eventDate ?? createdAt
-  if (isNaN(new Date(source).getTime())) return ''
-
-  // Format as "May 9, 2026" (event dates are plain calendar dates)
-  return formatDateValue(source, { year: 'numeric', month: 'long', day: 'numeric' })
-}
-
 type MediaRow = {
   id: string
   storage_path: string
@@ -59,7 +50,8 @@ export async function GallerySection() {
   }
 
   const galleryItems: GalleryItem[] = rows.map((row) => ({
-    date: formatDateForGallery(row.event_date, row.created_at),
+    // Event date only. created_at still sorts the row above and is not printed.
+    date: visiblePhotoDate({ eventDate: row.event_date }) ?? '',
     caption: row.caption ?? '',
     imageSrc: publicUrlFor(row.storage_path),
   }))

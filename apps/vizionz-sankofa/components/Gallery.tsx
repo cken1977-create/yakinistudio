@@ -235,7 +235,7 @@ export function Gallery({
                   {...props}
                 >
                   <div className="vs-gallery-tile-content">
-                    <span className="vs-gallery-tile-date">{item.date}</span>
+                    {item.date ? <span className="vs-gallery-tile-date">{item.date}</span> : null}
                     <h3 className="vs-gallery-tile-caption">{item.caption}</h3>
                   </div>
                 </Component>

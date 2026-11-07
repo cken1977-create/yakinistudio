@@ -39,6 +39,42 @@ export const FOOTER_PROGRAM_LINKS = [
   { label: 'Youth & Education', href: '/programs/youth' },
 ] as const
 
+/** Header destinations. Each href is a page that exists in this app. */
+export const HEADER_LINKS = [
+  { label: 'About', href: '/about' },
+  { label: 'Programs', href: '/programs' },
+  { label: 'Events', href: '/gallery' },
+  { label: 'Coalition', href: '/partners' },
+  { label: 'Stories', href: '/voices' },
+  { label: 'Contact', href: '/contact' },
+] as const
+
+/**
+ * Footer labels. An entry without href is text only.
+ * Leadership and Volunteer have no public page, so they are not links.
+ */
+export const FOOTER_ABOUT = [
+  { label: 'Our Story', href: '/about' },
+  { label: 'Leadership' },
+  { label: 'Coalition', href: '/partners' },
+  { label: 'Events', href: '/gallery' },
+] as const
+
+export const FOOTER_ENGAGE = [
+  { label: 'Get Help', href: '/get-help' },
+  { label: 'Donate', href: '/contact' },
+  { label: 'Volunteer' },
+  { label: 'Contact', href: '/contact' },
+] as const
+
+export function footerHrefs(): string[] {
+  const hrefs: string[] = []
+  for (const item of [...FOOTER_ABOUT, ...FOOTER_PROGRAM_LINKS, ...FOOTER_ENGAGE]) {
+    if ('href' in item) hrefs.push(item.href)
+  }
+  return hrefs
+}
+
 export function whatWeDoHref(title: string): string {
   return WHAT_WE_DO.find((item) => item.title === title)?.href ?? '/programs'
 }

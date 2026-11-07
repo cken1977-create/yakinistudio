@@ -2,8 +2,8 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { config } from '@/config/brand'
 import {
-  FOOTER_PROGRAM_LINKS, WHAT_WE_DO, brandProgramBySlug, legacyTitleSlug,
-  missionFamilyPhoto, whatWeDoHref, whatWeDoPhoto,
+  FOOTER_ABOUT, FOOTER_ENGAGE, FOOTER_PROGRAM_LINKS, HEADER_LINKS, WHAT_WE_DO,
+  brandProgramBySlug, footerHrefs, legacyTitleSlug, missionFamilyPhoto, whatWeDoHref, whatWeDoPhoto,
 } from '../public-pages'
 
 const LIVE_SLUGS = [
@@ -39,6 +39,20 @@ test('footer program links are the same pages as What We Do', () => {
   for (const link of FOOTER_PROGRAM_LINKS) {
     assert.equal(pages.has(link.href), true)
   }
+})
+
+test('header and footer links stay on pages that exist, and missing pages are not links', () => {
+  const existing = new Set([
+    '/', '/about', '/programs', '/gallery', '/partners', '/voices', '/contact', '/get-help',
+    ...WHAT_WE_DO.map((item) => item.href),
+  ])
+  for (const link of HEADER_LINKS) assert.equal(existing.has(link.href), true, link.href)
+  for (const href of footerHrefs()) assert.equal(existing.has(href), true, href)
+  const labels = [...FOOTER_ABOUT, ...FOOTER_ENGAGE]
+  assert.equal(labels.find((item) => item.label === 'Leadership' && !('href' in item))?.label, 'Leadership')
+  assert.equal(labels.find((item) => item.label === 'Volunteer' && !('href' in item))?.label, 'Volunteer')
+  assert.equal(footerHrefs().includes('/staff'), false)
+  assert.equal(footerHrefs().includes('/volunteer'), false)
 })
 
 test('a known program still has its written description when the database row is missing', () => {

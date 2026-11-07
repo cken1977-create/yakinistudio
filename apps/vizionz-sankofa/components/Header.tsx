@@ -12,16 +12,8 @@
 
 import { useState } from 'react'
 import type { BrandConfig } from '@yakini/config'
+import { HEADER_LINKS } from '@/lib/site/public-pages'
 import { VS_NAVY, VS_RED, VS_INK } from './TriColorRule'
-
-const NAV_LINKS = [
-  { label: 'About', href: '/about' },
-  { label: 'Programs', href: '/programs' },
-  { label: 'Events', href: '/gallery' },
-  { label: 'Coalition', href: '/partners' },
-  { label: 'Stories', href: '/voices' },
-  { label: 'Contact', href: '/contact' },
-]
 
 export function Header({ config }: { config: BrandConfig }) {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -251,7 +243,7 @@ export function Header({ config }: { config: BrandConfig }) {
 
           <nav aria-label="Primary">
             <ul className="vs-nav-list">
-              {NAV_LINKS.map(link => (
+              {HEADER_LINKS.map(link => (
                 <li key={link.href}>
                   <a href={link.href} className="vs-nav-link">{link.label}</a>
                 </li>
@@ -276,7 +268,7 @@ export function Header({ config }: { config: BrandConfig }) {
 
         <div className="vs-mobile-menu-clip">
         <div className="vs-mobile-menu" aria-hidden={!mobileOpen}>
-          {NAV_LINKS.map(link => (
+          {HEADER_LINKS.map(link => (
             <a
               key={link.href}
               href={link.href}
