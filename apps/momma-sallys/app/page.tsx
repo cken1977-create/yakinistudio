@@ -7,6 +7,7 @@ const CATS: { href: string; title: string; es: string; text: string; cta: string
   { href: '/events', title: 'Events', es: 'Eventos', text: 'Party spreads and homemade desserts, cobbler to banana pudding.', cta: 'See events', photo: 'cobbler' },
 ]
 import { PaymentOptions } from '@/components/PaymentOptions'
+import { ThanksgivingSpecial } from '@/components/ThanksgivingSpecial'
 import { Reveal, RevealStyles } from '@/components/Reveal'
 import { config } from '@/config/brand'
 import { PHONE_DISPLAY, PHONE_TEL, SMS_LINK, HAS_PAY, PUBLIC_EMAIL } from '@/config/site'
@@ -57,11 +58,18 @@ export default function HomePage() {
           </Reveal>
           <Reveal delay={260}>
             <div className="h-ctas">
-              <Link href="/menu" className="ms-btn ms-btn-white">View Menu · Ver Menú</Link>
+              <a href="#thanksgiving" className="ms-btn ms-btn-white">Thanksgiving special · $125</a>
+              <Link href="/menu" className="ms-btn ms-btn-ghost">View Menu · Ver Menú</Link>
               <a href={PHONE_TEL} className="ms-btn ms-btn-red">Call {PHONE_DISPLAY}</a>
               {HAS_PAY && <Link href="/pay" className="ms-btn ms-btn-ghost">Pay · Pagar</Link>}
             </div>
           </Reveal>
+        </div>
+      </section>
+
+      <section className="h-sec" aria-label="Thanksgiving special">
+        <div className="ms-wrap">
+          <ThanksgivingSpecial />
         </div>
       </section>
 

@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { PaymentOptions } from '@/components/PaymentOptions'
+import { ThanksgivingSpecial } from '@/components/ThanksgivingSpecial'
 import { config } from '@/config/brand'
 import { PHONE_DISPLAY, PHONE_TEL, HAS_PAY } from '@/config/site'
 
 export const metadata: Metadata = {
   title: "Menu · Menú — Momma Sally's BBQ, West Texas TX",
-  description: "Momma Sally's full bilingual BBQ menu: meat plates, sides, desserts and drinks.",
+  description: "Momma Sally's bilingual BBQ menu: meat plates, sides, desserts, drinks, and a Thanksgiving half-pan special.",
 }
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-')
@@ -34,6 +35,7 @@ export default function MenuPage() {
         .m-note { margin-top: 12px; font-size: 14px; color: var(--brand-muted); font-style: italic; border-left: 3px solid var(--brand-primary); padding-left: 12px; }
         .m-grid { display: grid; column-gap: 56px; }
         @media (min-width: 900px) { .m-grid { grid-template-columns: 1fr 1fr; } }
+        .m-special-wrap { margin-top: 48px; }
       `}</style>
 
       <section className="m-hero">
@@ -47,6 +49,7 @@ export default function MenuPage() {
 
       <nav className="m-chips" aria-label="Menu sections">
         {menu.categories.map(c => <a key={c.name} href={`#${slug(c.name)}`}>{c.name}</a>)}
+        <a href="#thanksgiving">Thanksgiving</a>
       </nav>
 
       <div className="ms-wrap" style={{ paddingBottom: 48 }}>
@@ -72,6 +75,10 @@ export default function MenuPage() {
               {cat.note && <p className="m-note">{cat.note}</p>}
             </section>
           ))}
+        </div>
+
+        <div className="m-special-wrap">
+          <ThanksgivingSpecial />
         </div>
 
         <div style={{ marginTop: 40 }}>

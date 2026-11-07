@@ -75,6 +75,10 @@ export const CATERING_SIDES: CateringOption[] = [
   { id: 'beans', name: 'Beans', es: 'Frijoles' },
   { id: 'mac', name: 'Mac & Cheese', es: 'Macarrones con queso' },
   { id: 'potato-salad', name: 'Potato Salad', es: 'Ensalada de papa' },
+  { id: 'green-beans', name: 'Green Beans', es: 'Ejotes' },
+  { id: 'white-rice', name: 'White Rice', es: 'Arroz blanco' },
+  { id: 'salad', name: 'Salad', es: 'Ensalada' },
+  { id: 'corn', name: 'Corn', es: 'Maíz' },
 ]
 
 export const CATERING_DESSERTS: CateringOption[] = [
