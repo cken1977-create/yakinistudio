@@ -1,54 +1,32 @@
-// ═════════════════════════════════════════════════════════════════════════
-// GALLERY — Recent events photo grid
-// ═════════════════════════════════════════════════════════════════════════
-// Five-tile asymmetric grid with one large hero tile (spans 2 rows on
-// the left) and four supporting tiles. Each tile shows its caption.
-// The date is not drawn on the photo.
-//
-// Without imageSrc: tiles render as colored gradient blocks (navy, red,
-// green, navy-light, deep-red) that read as intentional design rather
-// than missing images. The Pan-African palette in motion.
-//
-// With imageSrc: tiles render the photo with a subtle dark gradient
-// overlay so caption text remains readable.
-//
-// Section header includes a "View All Events →" link aligned to the
-// right of the section header.
-// ═════════════════════════════════════════════════════════════════════════
+// Gallery of photographs. Captions stay under the picture.
+// A missing photo says so. Dates are not drawn on the image.
 
-import { VS_NAVY, VS_RED, VS_INK, VS_GREEN } from './TriColorRule'
+import { VS_RED, VS_INK } from './TriColorRule'
+import { GalleryPhoto } from './GalleryPhoto'
 
 export interface GalleryItem {
-  date: string           // "May 9, 2026", "Monthly", etc.
-  caption: string        // Short event title
-  imageSrc?: string      // Optional photo path
-  href?: string          // Optional click destination
+  date: string
+  caption: string
+  imageSrc?: string
+  href?: string
 }
 
 interface GalleryProps {
-  items?: GalleryItem[]
+  items: GalleryItem[]
   viewAllHref?: string
+  kicker?: string
+  headline?: string
+  sub?: string
+  headingId?: string
 }
 
-const DEFAULT_ITEMS: GalleryItem[] = [
-  { date: 'May 9, 2026',     caption: 'Spring Community Gathering' },
-  { date: 'Monthly',         caption: 'Community Food Distribution' },
-  { date: 'April 2026',      caption: 'Family Support Workshop' },
-  { date: 'March 2026',      caption: 'Refugee Resource Fair' },
-  { date: 'February 2026',   caption: 'Coalition Partner Summit' },
-]
-
-const TILE_GRADIENTS = [
-  `linear-gradient(135deg, ${VS_NAVY} 0%, #061935 100%)`,
-  `linear-gradient(135deg, ${VS_RED} 0%, #A20D1E 100%)`,
-  `linear-gradient(135deg, ${VS_GREEN} 0%, #005422 100%)`,
-  `linear-gradient(135deg, #1A3A66 0%, ${VS_NAVY} 100%)`,
-  `linear-gradient(135deg, #A20D1E 0%, #061935 100%)`,
-]
-
 export function Gallery({
-  items = DEFAULT_ITEMS,
-  viewAllHref = '/gallery'
+  items,
+  viewAllHref,
+  kicker = 'Recent Events',
+  headline = 'The work, in moments.',
+  sub = 'Photographs from the community. A picture is shown with its own caption only when that caption was saved with it.',
+  headingId = 'vs-gallery-heading',
 }: GalleryProps) {
   return (
     <>
@@ -120,118 +98,98 @@ export function Gallery({
 
         .vs-gallery-grid {
           display: grid;
-          grid-template-columns: 2fr 1fr 1fr;
-          grid-template-rows: 1fr 1fr;
-          gap: 1rem;
-          aspect-ratio: 16 / 9;
+          grid-template-columns: 1fr 1fr;
+          gap: 1.25rem 1rem;
+          align-items: start;
         }
         .vs-gallery-tile {
+          background: #F4F1EA;
           border-radius: 4px;
           overflow: hidden;
-          position: relative;
-          cursor: pointer;
-          transition: transform 250ms ease;
-          background-size: cover;
-          background-position: center;
           text-decoration: none;
-        }
-        .vs-gallery-tile:hover {
-          transform: scale(1.015);
+          color: inherit;
         }
         .vs-gallery-tile.large {
-          grid-row: span 2;
+          grid-column: span 2;
         }
-        .vs-gallery-tile::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(to top,
-            rgba(0, 0, 0, 0.6) 0%,
-            rgba(0, 0, 0, 0.15) 40%,
-            transparent 70%);
-          z-index: 1;
+        .vs-gallery-tile img {
+          width: 100%;
+          height: auto;
+          object-fit: contain;
+          background: #F4F1EA;
+          display: block;
         }
-        .vs-gallery-tile-content {
-          position: absolute;
-          bottom: 1.5rem;
-          left: 1.5rem;
-          right: 1.5rem;
-          color: #FFFFFF;
-          z-index: 2;
+        .vs-gallery-missing {
+          margin: 0;
+          min-height: 160px;
+          display: grid;
+          place-items: center;
+          padding: 1.5rem;
+          font-family: 'Newsreader', Georgia, serif;
+          color: #4A4A4A;
+          text-align: center;
         }
         .vs-gallery-tile-caption {
-          font-family: 'Cormorant Garamond', Georgia, serif;
-          font-size: 1.125rem;
+          font-family: 'Newsreader', Georgia, serif;
+          font-size: 0.9375rem;
           font-weight: 500;
-          line-height: 1.3;
+          line-height: 1.4;
+          color: ${VS_INK};
           margin: 0;
-        }
-        .vs-gallery-tile.large .vs-gallery-tile-caption {
-          font-size: 1.625rem;
+          padding: 0.75rem 0.25rem 0;
         }
 
         @media (max-width: 800px) {
           .vs-gallery { padding: 4rem 0; }
           .vs-gallery-inner { padding: 0 1.5rem; }
           .vs-gallery-grid {
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto;
-            aspect-ratio: auto;
-            gap: 0.75rem;
-          }
-          .vs-gallery-tile {
-            aspect-ratio: 4 / 3;
+            grid-template-columns: 1fr;
           }
           .vs-gallery-tile.large {
-            grid-row: span 1;
-            grid-column: span 2;
-            aspect-ratio: 16 / 9;
+            grid-column: span 1;
           }
         }
       `}</style>
 
-      <section className="vs-gallery" aria-labelledby="vs-gallery-heading">
+      <section className="vs-gallery" aria-labelledby={headingId}>
         <div className="vs-gallery-inner">
           <div className="vs-gallery-header">
             <div className="vs-gallery-header-text">
-              <span className="vs-gallery-kicker">Recent Events</span>
-              <h2 id="vs-gallery-heading" className="vs-gallery-headline">
-                The work, in moments.
-              </h2>
-              <p className="vs-gallery-sub">
-                Monthly food distributions, community gatherings, partnership
-                events, and the daily work of meeting families where they are.
-              </p>
-            </div>
+            <span className="vs-gallery-kicker">{kicker}</span>
+            <h2 id={headingId} className="vs-gallery-headline">
+              {headline}
+            </h2>
+            <p className="vs-gallery-sub">{sub}</p>
+          </div>
+          {viewAllHref && (
             <a href={viewAllHref} className="vs-gallery-cta">
               View All Events
             </a>
-          </div>
+          )}
+        </div>
 
-          <div className="vs-gallery-grid">
-            {items.slice(0, 5).map((item, idx) => {
-              const isLarge = idx === 0
-              const fallbackGradient = TILE_GRADIENTS[idx % TILE_GRADIENTS.length]
-              const tileStyle = item.imageSrc
-                ? { backgroundImage: `url(${item.imageSrc})` }
-                : { background: fallbackGradient }
-              const Component = item.href ? 'a' : 'div'
-              const props = item.href ? { href: item.href } : {}
-
-              return (
-                <Component
-                  key={`${item.date}-${idx}`}
-                  className={`vs-gallery-tile ${isLarge ? 'large' : ''}`}
-                  style={tileStyle}
-                  {...props}
-                >
-                  <div className="vs-gallery-tile-content">
-                    <h3 className="vs-gallery-tile-caption">{item.caption}</h3>
-                  </div>
-                </Component>
-              )
-            })}
-          </div>
+        <div className="vs-gallery-grid">
+          {items.map((item, idx) => {
+            const isLarge = idx === 0
+            const label = item.caption.trim() || 'Community photo'
+            const Component = item.href ? 'a' : 'figure'
+            const props = item.href ? { href: item.href } : {}
+            return (
+              <Component
+                key={`${item.imageSrc ?? 'missing'}-${idx}`}
+                className={`vs-gallery-tile ${isLarge ? 'large' : ''}`}
+                {...props}
+              >
+                {item.imageSrc ? (
+                  <GalleryPhoto src={item.imageSrc} alt={label} />
+                ) : (
+                  <p className="vs-gallery-missing" role="status">This photo could not be loaded.</p>
+                )}
+                {item.caption.trim() && <p className="vs-gallery-tile-caption">{item.caption}</p>}
+              </Component>
+            )
+          })}
+        </div>
         </div>
       </section>
     </>

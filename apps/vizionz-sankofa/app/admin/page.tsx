@@ -16,6 +16,7 @@ import { StageSummary } from '@/components/admin/StageSummary'
 import { NeedsAttention } from '@/components/admin/crm/NeedsAttention'
 import { formatDateValue } from '@/lib/format/datetime'
 import { withRoster } from '@/lib/participants/roster'
+import { STAFF_BANNER } from '@/lib/site/public-pages'
 
 export default async function AdminLandingPage() {
   // Enforce authentication. Redirects to /admin/login if no session.
@@ -38,6 +39,7 @@ export default async function AdminLandingPage() {
   if (accessRole === 'leadership_readonly') {
     return (
       <div>
+        <StaffBanner />
         <AskBar large greeting={`Good to see you, ${firstName}. What would you like to know?`} voiceSettings={voiceSettings} />
         <StageSummary supabase={supabase} large />
         <NeedsAttention supabase={supabase} />
@@ -48,6 +50,7 @@ export default async function AdminLandingPage() {
   if (accessRole === 'case_manager') {
     return (
       <div>
+        <StaffBanner />
         <AskBar greeting={`Welcome back, ${firstName}.`} voiceSettings={voiceSettings} />
         <p style={{ margin: '0 0 20px', fontFamily: 'Georgia, serif' }}>
           <Link href="/admin/my-day" style={{ color: '#0A2548', fontWeight: 600 }}>Open My Day</Link> for your tasks, reminders and quick logging.
@@ -150,6 +153,7 @@ export default async function AdminLandingPage() {
 
   return (
     <div>
+      <StaffBanner />
       {accessRole ? (
         <>
           <AskBar greeting={`Welcome back, ${firstName}. Ask anything.`} voiceSettings={voiceSettings} />
@@ -622,5 +626,13 @@ function SurfaceCard({
     <Link href={href} style={{ textDecoration: 'none', color: 'inherit' }}>
       {cardContent}
     </Link>
+  )
+}
+
+function StaffBanner() {
+  return (
+    <div style={{ margin: '0 0 20px', borderRadius: 2, overflow: 'hidden', background: '#F4F1EA' }}>
+      <img src={STAFF_BANNER.src} alt={STAFF_BANNER.alt} style={{ width: '100%', height: 'auto', objectFit: 'contain', display: 'block' }} />
+    </div>
   )
 }

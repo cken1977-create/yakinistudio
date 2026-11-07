@@ -65,6 +65,7 @@ export function Programs({ config }: { config: BrandConfig }) {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 2rem;
+          align-items: start;
         }
         .vs-program-card {
           background: #FFFFFF;
@@ -144,26 +145,53 @@ export function Programs({ config }: { config: BrandConfig }) {
           color: #A20D1E;
         }
         .vs-program-card.has-photo {
-          min-height: 280px;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
         }
         .vs-program-bg {
-          position: absolute;
-          inset: 0;
           width: 100%;
-          height: 100%;
-          object-fit: cover;
-          object-position: center;
-          z-index: 0;
+          height: auto;
+          max-height: none;
+          flex: 0 0 auto;
+          object-fit: contain;
+          background: #F4F1EA;
+          display: block;
         }
-        .vs-program-scrim {
+        .vs-program-brand {
+          min-height: 148px;
+          background: #F4F1EA;
+          display: grid;
+          place-items: center;
+          position: relative;
+        }
+        .vs-program-brand::before {
+          content: '';
           position: absolute;
-          inset: 0;
-          z-index: 1;
-          background: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.92) 48%, #FFFFFF 100%);
+          top: 0; left: 0; right: 0;
+          height: 3px;
+          background: linear-gradient(90deg,
+            ${VS_RED} 0%, ${VS_RED} 33%,
+            ${VS_INK} 33%, ${VS_INK} 67%,
+            ${VS_GREEN} 67%, ${VS_GREEN} 100%);
+        }
+        .vs-program-brand img {
+          width: 72px;
+          height: auto;
         }
         .vs-program-copy {
-          position: relative;
-          z-index: 2;
+          padding: 1.5rem 1.75rem 1.75rem;
+          background: #FFFFFF;
+        }
+        .vs-program-note {
+          margin: 0 0 0.75rem;
+          font-family: 'Newsreader', Georgia, serif;
+          font-size: 0.75rem;
+          line-height: 1.4;
+          color: #4A4A4A;
+        }
+        .vs-program-note a {
+          color: #0A2548;
         }
 
         @media (max-width: 1024px) {
@@ -198,14 +226,21 @@ export function Programs({ config }: { config: BrandConfig }) {
               const num = String(idx + 1).padStart(2, '0')
               const photo = whatWeDoPhoto(program.title)
               return (
-                <article key={program.title} className={photo ? 'vs-program-card has-photo' : 'vs-program-card'}>
-                  {photo && (
-                    <>
-                      <img className="vs-program-bg" src={photo.src} alt={photo.alt} />
-                      <span className="vs-program-scrim" aria-hidden="true" />
-                    </>
+                <article key={program.title} className="vs-program-card has-photo">
+                  {photo ? (
+                    <img className="vs-program-bg" src={photo.src} alt={photo.alt} />
+                  ) : (
+                    <div className="vs-program-brand">
+                      <img src="/vizionz-sankofa-original-logo-256.png" alt="" />
+                    </div>
                   )}
                   <div className="vs-program-copy">
+                    {photo?.illustrative && (
+                      <p className="vs-program-note">
+                        Illustrative photo, not a Vizionz Sankofa client.{' '}
+                        {photo.creditHref ? <a href={photo.creditHref}>{photo.credit}</a> : photo.credit}
+                      </p>
+                    )}
                     <span className="vs-program-number">PROGRAM · {num}</span>
                     <h3 className="vs-program-title">{program.title}</h3>
                     <p className="vs-program-desc">{program.description}</p>
