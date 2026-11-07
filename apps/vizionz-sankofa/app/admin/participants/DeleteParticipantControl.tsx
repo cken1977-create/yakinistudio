@@ -9,6 +9,7 @@ import {
 } from '../actions/participants'
 import {
   REMOVAL_SEMANTICS,
+  blockerHref,
   blockersFromCounts,
   initialRemoval,
   legalName,
@@ -17,6 +18,7 @@ import {
   preservedFromCounts,
   removalReducer,
   removalStatusText,
+  type RemovalBlocker,
   type RemovalView,
 } from '@/lib/participants/removal'
 import { UploadStatus } from '@/components/admin/UploadStatus'
@@ -175,6 +177,7 @@ export function DeleteParticipantControl({
                   <div role="alert" style={{ background: 'rgba(206, 17, 38, 0.08)', padding: '12px 14px', borderRadius: '8px', fontSize: '14px' }}>
                     <strong>{name} cannot be removed yet.</strong>
                     <ul>{blockers.map((row) => <li key={row.key}>{row.count} {row.label}</li>)}</ul>
+                    <BlockerLinks participantId={participant.id} blockers={view.preview?.blockers ?? []} onGo={() => commit({ type: 'cancel' })} />
                   </div>
                 )}
                 {!already && blockers.length === 0 && view.phase !== 'error' && (
@@ -218,6 +221,32 @@ export function DeleteParticipantControl({
         </div>
       )}
     </>
+  )
+}
+
+function BlockerLinks({
+  participantId,
+  blockers,
+  onGo,
+}: {
+  participantId: string
+  blockers: RemovalBlocker[]
+  onGo: () => void
+}) {
+  if (blockers.length === 0) {
+    return <p style={{ marginBottom: 0 }}>Open Programs on this person’s page to complete or withdraw an enrollment. Open tasks stay open until someone finishes or cancels them.</p>
+  }
+  return (
+    <ul style={{ marginBottom: 0 }}>
+      {blockers.map((blocker) => (
+        <li key={`${blocker.kind}-${blocker.id}`}>
+          <a href={blockerHref(participantId, blocker)} onClick={onGo}>
+            {blocker.kind === 'enrollment' ? `End enrollment: ${blocker.label}` : `Open task: ${blocker.label}`}
+          </a>
+          {blocker.kind === 'task' ? ' Finishing this task is separate. It was not closed.' : ' This does not remove the person.'}
+        </li>
+      ))}
+    </ul>
   )
 }
 

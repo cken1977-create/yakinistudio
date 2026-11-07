@@ -17,7 +17,7 @@ export function ParticipantTasks({
   const open = tasks.filter((t) => t.status === 'open')
   if (!canAdd && open.length === 0) return null
   return (
-    <section data-testid="participant-tasks" style={{ marginBottom: '28px' }}>
+    <section id="participant-tasks" data-testid="participant-tasks" style={{ marginBottom: '28px' }}>
       <SectionLabel right={canAdd ? <AddTaskForm staff={staff} currentUserId={currentUserId} today={today}
         subject={{ type: 'participant', id: participantId }} onDone={() => router.refresh()} /> : null}>
         Tasks and reminders · {open.length}

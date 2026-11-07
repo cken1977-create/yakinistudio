@@ -39,6 +39,7 @@ import { todayMountain } from '@/components/admin/ui'
 import { formatDateValue } from '@/lib/format/datetime'
 import { CanEditProvider } from '@/components/admin/CanEdit'
 import { DeleteParticipantControl } from '../DeleteParticipantControl'
+import { ParticipantPrograms, type EnrollmentCard } from '@/components/admin/EnrollmentEnd'
 
 export const dynamic = 'force-dynamic'
 
@@ -248,6 +249,38 @@ export default async function ParticipantDetailPage({
   // anyone, a case manager on their own caseload, Leadership never.
   const { data: canWriteRpc } = await supabase.rpc('vs_can_write_participant', { p_participant_id: participant.id })
   const canWriteThisParticipant = canWriteRpc === true
+  const { data: enrollmentData } = await supabase
+    .from('enrollments')
+    .select('id, status, enrolled_at, completed_at, withdrew_at, withdrawal_reason, updated_at, cohort:cohorts!enrollments_cohort_id_fkey(name, program:programs!cohorts_program_id_fkey(name))')
+    .eq('participant_id', participant.id)
+    .order('enrolled_at', { ascending: true })
+  const programEnrollments = ((enrollmentData ?? []) as unknown as {
+    id: string
+    status: string
+    enrolled_at: string
+    completed_at: string | null
+    withdrew_at: string | null
+    withdrawal_reason: string | null
+    updated_at: string
+    cohort: { name: string; program: { name: string } | { name: string }[] | null } | { name: string; program: { name: string } | { name: string }[] | null }[] | null
+  }[]).map((row): EnrollmentCard => {
+    const cohort = Array.isArray(row.cohort) ? row.cohort[0] : row.cohort
+    const program = cohort ? (Array.isArray(cohort.program) ? cohort.program[0] : cohort.program) : null
+    return {
+      id: row.id,
+      status: row.status,
+      updatedAt: row.updated_at,
+      enrolledAt: row.enrolled_at,
+      completedAt: row.completed_at,
+      withdrewAt: row.withdrew_at,
+      withdrawalReason: row.withdrawal_reason,
+      programName: program?.name ?? 'Program',
+      cohortName: cohort?.name ?? '',
+      participantId: participant.id,
+      participantName: displayName,
+    }
+  })
+
   const [crmTasks, crmStaff] = await Promise.all([
     supabase.from('vs_tasks').select(TASK_COLUMNS).eq('subject_type', 'participant').eq('subject_id', participant.id)
       .order('due_on', { ascending: true, nullsFirst: false }),
@@ -349,6 +382,8 @@ export default async function ParticipantDetailPage({
           }
         />
       </div>
+
+      <ParticipantPrograms enrollments={programEnrollments} canEnd={canWriteThisParticipant} />
 
       <ParticipantTasks
         participantId={participant.id}
