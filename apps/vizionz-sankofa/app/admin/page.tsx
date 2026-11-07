@@ -631,9 +631,8 @@ function SurfaceCard({
 
 function StaffBanner() {
   return (
-    <div style={{ margin: '0 0 20px', borderRadius: 2, overflow: 'hidden', height: 140, position: 'relative' }}>
-      <img src={STAFF_BANNER.src} alt={STAFF_BANNER.alt} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', display: 'block' }} />
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #F4F1EA 0%, rgba(244,241,234,0.15) 55%)' }} />
+    <div style={{ margin: '0 0 20px', borderRadius: 2, overflow: 'hidden', background: '#F4F1EA' }}>
+      <img src={STAFF_BANNER.src} alt={STAFF_BANNER.alt} style={{ width: '100%', height: 'auto', objectFit: 'contain', display: 'block' }} />
     </div>
   )
 }

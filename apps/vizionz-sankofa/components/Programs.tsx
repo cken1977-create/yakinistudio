@@ -65,6 +65,7 @@ export function Programs({ config }: { config: BrandConfig }) {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 2rem;
+          align-items: start;
         }
         .vs-program-card {
           background: #FFFFFF;
@@ -150,10 +151,33 @@ export function Programs({ config }: { config: BrandConfig }) {
         }
         .vs-program-bg {
           width: 100%;
-          height: 168px;
-          object-fit: cover;
-          object-position: center;
+          height: auto;
+          max-height: none;
+          flex: 0 0 auto;
+          object-fit: contain;
+          background: #F4F1EA;
           display: block;
+        }
+        .vs-program-brand {
+          min-height: 148px;
+          background: #F4F1EA;
+          display: grid;
+          place-items: center;
+          position: relative;
+        }
+        .vs-program-brand::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          height: 3px;
+          background: linear-gradient(90deg,
+            ${VS_RED} 0%, ${VS_RED} 33%,
+            ${VS_INK} 33%, ${VS_INK} 67%,
+            ${VS_GREEN} 67%, ${VS_GREEN} 100%);
+        }
+        .vs-program-brand img {
+          width: 72px;
+          height: auto;
         }
         .vs-program-copy {
           padding: 1.5rem 1.75rem 1.75rem;
@@ -192,11 +216,13 @@ export function Programs({ config }: { config: BrandConfig }) {
               const num = String(idx + 1).padStart(2, '0')
               const photo = whatWeDoPhoto(program.title)
               return (
-                <article key={program.title} className={photo ? 'vs-program-card has-photo' : 'vs-program-card'}>
-                  {photo && (
-                    <>
-                      <img className="vs-program-bg" src={photo.src} alt={photo.alt} />
-                    </>
+                <article key={program.title} className="vs-program-card has-photo">
+                  {photo ? (
+                    <img className="vs-program-bg" src={photo.src} alt={photo.alt} />
+                  ) : (
+                    <div className="vs-program-brand">
+                      <img src="/vizionz-sankofa-original-logo-256.png" alt="" />
+                    </div>
                   )}
                   <div className="vs-program-copy">
                     <span className="vs-program-number">PROGRAM · {num}</span>

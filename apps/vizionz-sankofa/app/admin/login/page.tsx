@@ -54,7 +54,7 @@ export default function AdminLoginPage() {
       <img
         src={STAFF_LOGIN_PHOTO.src}
         alt={STAFF_LOGIN_PHOTO.alt}
-        style={{ width: '100%', height: '100%', minHeight: 240, objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+        style={{ width: '100%', height: 'auto', objectFit: 'contain', background: '#F4F1EA', display: 'block' }}
       />
       <section
         style={{

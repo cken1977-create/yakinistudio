@@ -1,12 +1,11 @@
-'use client'
+import { Section } from '@yakini/ui'
+import { Gallery } from '@/components/Gallery'
+import { communityGalleryItems, loadPublicEventPhotos } from '@/lib/site/event-gallery'
 
 export const dynamic = 'force-dynamic'
 
-import { Section } from '@yakini/ui'
-import { Gallery } from '@/components/Gallery'
-import { CommunityStrip } from '@/components/CommunityStrip'
-
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const events = await loadPublicEventPhotos()
   return (
     <>
       <Section padding="xl">
@@ -49,8 +48,22 @@ export default function GalleryPage() {
           </p>
         </div>
       </Section>
-      <Gallery />
-      <CommunityStrip />
+      {events.length > 0 && (
+        <Gallery
+          items={events}
+          kicker="Saved events"
+          headline="Photographs saved with an event"
+          sub="These are the photos already stored with the site. Their captions are the ones on the record."
+          headingId="vs-saved-events-heading"
+        />
+      )}
+      <Gallery
+        items={communityGalleryItems()}
+        kicker="Community photos"
+        headline="Photographs from the work"
+        sub="These photographs show community gatherings. They are not matched to a named event."
+        headingId="vs-community-gallery-heading"
+      />
     </>
   )
 }

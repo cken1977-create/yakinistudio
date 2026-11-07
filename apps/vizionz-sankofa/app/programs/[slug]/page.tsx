@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { applyHref } from '@/lib/programs/apply'
-import { brandProgramBySlug, programFigure } from '@/lib/site/public-pages'
+import { brandProgramBySlug, programFigures } from '@/lib/site/public-pages'
 
 export const dynamic = 'force-dynamic'
 
@@ -54,11 +54,11 @@ export default async function ProgramDetailPage({
 
   const program = data as unknown as ProgramDetail
   const applicationHref = applyHref(program)
-  const figure = programFigure(program.slug)
+  const figures = programFigures(program.slug)
 
   return (
     <>
-      <ProgramFigure figure={figure} />
+      {figures.map((figure) => <ProgramFigure key={figure.src} figure={figure} />)}
       {/* Hero */}
       <Section padding="xl">
         <div style={{ paddingTop: 80, maxWidth: 920 }}>
@@ -259,7 +259,7 @@ export default async function ProgramDetailPage({
   )
 }
 
-function ProgramFigure({ figure }: { figure: { src: string; alt: string; fit: 'contain' | 'cover' } | null }) {
+function ProgramFigure({ figure }: { figure: { src: string; alt: string; fit: 'contain' | 'natural' } | null }) {
   if (!figure) return null
   // The flyer file is stored sideways and has no orientation tag. Rotate it for display; the file itself stays the original.
   if (figure.fit === 'contain') {
@@ -277,16 +277,16 @@ function ProgramFigure({ figure }: { figure: { src: string; alt: string; fit: 'c
   }
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 24px 0' }}>
-      <img src={figure.src} alt={figure.alt} style={{ width: '100%', maxHeight: 460, objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+      <img src={figure.src} alt={figure.alt} style={{ width: '100%', height: 'auto', objectFit: 'contain', background: '#F4F1EA', display: 'block' }} />
     </div>
   )
 }
 
 function WrittenProgram({ program }: { program: { slug: string; title: string; description: string; features: string[] } }) {
-  const figure = programFigure(program.slug)
+  const figures = programFigures(program.slug)
   return (
     <>
-      <ProgramFigure figure={figure} />
+      {figures.map((figure) => <ProgramFigure key={figure.src} figure={figure} />)}
       <Section padding="xl">
         <div style={{ paddingTop: 80, maxWidth: 920 }}>
           <Link href="/programs" style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--brand-primary)', textDecoration: 'none' }}>

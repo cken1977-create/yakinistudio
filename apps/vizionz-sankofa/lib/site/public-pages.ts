@@ -15,7 +15,7 @@ export type WhatWeDoLink = {
   photoAlt: string
 }
 
-const LINKS: { title: string; slug: string; photo: string; photoAlt: string }[] = [
+const LINKS: { title: string; slug: string; photo: string | null; photoAlt: string }[] = [
   {
     title: 'Unsheltered Outreach & Stabilization',
     slug: 'unsheltered',
@@ -25,14 +25,14 @@ const LINKS: { title: string; slug: string; photo: string; photoAlt: string }[] 
   {
     title: 'Refugee & Immigrant Services',
     slug: 'refugee-immigrant',
-    photo: '/community/three-people.jpg',
-    photoAlt: 'People standing together at a community event.',
+    photo: '/community/gathering-room.jpg',
+    photoAlt: 'People gathered in a community room.',
   },
   {
     title: 'Housing Stability',
     slug: 'housing',
-    photo: '/community/gathering-room.jpg',
-    photoAlt: 'A community room prepared for a gathering.',
+    photo: null,
+    photoAlt: '',
   },
   {
     title: 'Youth Mentorship & Education',
@@ -145,21 +145,44 @@ export const missionFamilyPhoto: { src: string | null; alt: string } = {
   alt: 'People gathered together at a community celebration.',
 }
 
-/** Shown beside program text, never behind a form. */
-export function programFigure(slug: string): { src: string; alt: string; fit: 'contain' | 'cover' } | null {
-  if (slug === 'unsheltered' || slug === 'sankofa-center') {
-    return {
-      src: '/community/services-flyer.jpg',
-      alt: 'Vizionz Sankofa flyer listing community services.',
-      fit: 'contain',
-    }
-  }
+/**
+ * Kept in the project for a later placement. Not shown on a page.
+ * The file stays as supplied. The site does not name anyone in it.
+ */
+export const RESERVED_COMMUNITY_PHOTOS = [
+  { src: '/community/three-people.jpg' },
+] as const
+
+export type ProgramFigure = { src: string; alt: string; fit: 'contain' | 'natural' }
+
+const SERVICES_FLYER: ProgramFigure = {
+  src: '/community/services-flyer.jpg',
+  alt: 'Vizionz Sankofa flyer listing community services.',
+  fit: 'contain',
+}
+
+/** Photos for a program page, in order. Group photos use the whole frame. */
+export function programFigures(slug: string): ProgramFigure[] {
+  const figures: ProgramFigure[] = []
   const card = WHAT_WE_DO.find((item) => item.slug === slug)
-  if (!card?.photo) return null
-  return { src: card.photo, alt: card.photoAlt, fit: 'cover' }
+  if (card?.photo) figures.push({ src: card.photo, alt: card.photoAlt, fit: 'natural' })
+  if (slug === 'unsheltered' || slug === 'sankofa-center') figures.push(SERVICES_FLYER)
+  return figures
+}
+
+/** First program photo, or null when the page has none. */
+export function programFigure(slug: string): ProgramFigure | null {
+  return programFigures(slug)[0] ?? null
 }
 
 export const COMMUNITY_GALLERY = [
+  { src: '/community/gathering-celebration.jpg', alt: 'People gathered together at a community celebration.' },
+  { src: '/community/gathering-room.jpg', alt: 'People gathered in a community room.' },
+  { src: '/community/outdoor-supplies.jpg', alt: 'People organizing supplies on tables outside a community building.' },
+  { src: '/community/large-group.jpg', alt: 'A large group gathered in a community room.' },
+  { src: '/community/four-people.jpg', alt: 'Four people standing together indoors.' },
+  { src: '/community/seated-panel.jpg', alt: 'People seated together at a community gathering.' },
+  { src: '/community/meeting-tables.jpg', alt: 'People seated around tables in a community room.' },
   { src: '/community/group-indoors.jpg', alt: 'A group gathered indoors.' },
   { src: '/community/people-with-bags.jpg', alt: 'People standing together indoors.' },
   { src: '/community/outdoor-group.jpg', alt: 'A group gathered outside a community building.' },

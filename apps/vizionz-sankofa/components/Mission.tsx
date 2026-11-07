@@ -21,22 +21,27 @@ export function Mission({ config }: { config: BrandConfig }) {
     <>
       <style>{`
         .vs-mission {
-          padding: 6rem 0;
+          padding: 0 0 6rem;
           background: #FFFFFF;
           position: relative;
           overflow: hidden;
         }
-        .vs-mission-figure {
-          width: 100%;
-          max-height: 420px;
-          overflow: hidden;
+        .vs-mission-scene {
+          background: #F4F1EA;
+          line-height: 0;
         }
-        .vs-mission-figure img {
+        .vs-mission-photo {
           width: 100%;
-          height: 420px;
-          object-fit: cover;
-          object-position: center 35%;
+          height: auto;
+          object-fit: contain;
           display: block;
+        }
+        .vs-mission-panel {
+          position: relative;
+          z-index: 1;
+          margin-top: 0;
+          padding-top: 4rem;
+          background: #FFFFFF;
         }
         .vs-mission-inner {
           max-width: 72rem;
@@ -101,20 +106,21 @@ export function Mission({ config }: { config: BrandConfig }) {
         }
 
         @media (max-width: 800px) {
-          .vs-mission { padding: 4rem 0; }
-          .vs-mission-figure img { height: 220px; }
+          .vs-mission { padding: 0 0 4rem; }
+          .vs-mission-panel { padding-top: 2.5rem; }
           .vs-mission-inner { padding: 0 1.5rem; }
           .vs-mission-grid { grid-template-columns: 1fr; gap: 2rem; }
           .vs-mission-pull { font-size: 1.375rem; margin: 2rem 0; }
         }
       `}</style>
 
-      {missionFamilyPhoto.src && (
-        <div className="vs-mission-figure">
-          <img src={missionFamilyPhoto.src} alt={missionFamilyPhoto.alt} />
-        </div>
-      )}
       <section className="vs-mission" aria-labelledby="vs-mission-heading">
+        {missionFamilyPhoto.src && (
+          <div className="vs-mission-scene">
+            <img className="vs-mission-photo" src={missionFamilyPhoto.src} alt={missionFamilyPhoto.alt} />
+          </div>
+        )}
+        <div className="vs-mission-panel">
         <div className="vs-mission-inner">
           <div className="vs-mission-grid">
 
@@ -154,6 +160,7 @@ export function Mission({ config }: { config: BrandConfig }) {
             </div>
 
           </div>
+        </div>
         </div>
       </section>
     </>

@@ -113,27 +113,15 @@ export function Voices({ voices = DEFAULT_VOICES }: VoicesProps) {
             ${VS_GREEN} 67%, ${VS_GREEN} 100%);
         }
 
-        .vs-voice-portrait {
-          width: 88px;
-          height: 88px;
-          border-radius: 50%;
-          background: #FFFFFF;
-          display: grid;
-          place-items: center;
+        .vs-voice-mark {
           font-family: 'Cormorant Garamond', Georgia, serif;
-          font-size: 2rem;
-          color: #767676;
-          font-style: italic;
-          margin-bottom: 1.5rem;
-          box-shadow: 0 0 0 2px #FAFAFA, 0 0 0 3px ${VS_RED};
-          background-size: cover;
-          background-position: center;
-          overflow: hidden;
+          font-size: 5.5rem;
+          line-height: 0.7;
+          color: ${VS_RED};
+          margin: 0 0 1.25rem;
         }
-        .vs-voice-card.featured .vs-voice-portrait {
-          background: #FFFFFF;
-          color: #0F0F0F;
-          box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
+        .vs-voice-card.featured .vs-voice-mark {
+          color: #FFFFFF;
         }
 
         .vs-voice-role {
@@ -206,22 +194,12 @@ export function Voices({ voices = DEFAULT_VOICES }: VoicesProps) {
 
           <div className="vs-voices-grid">
             {voices.map((voice, idx) => {
-              const initial = voice.initial || voice.name.charAt(0).toUpperCase()
-              const portraitStyle = voice.imageSrc
-                ? { backgroundImage: `url(${voice.imageSrc})` }
-                : undefined
               return (
                 <article
                   key={`${voice.name}-${idx}`}
                   className={`vs-voice-card ${voice.featured ? 'featured' : ''}`}
                 >
-                  <div
-                    className="vs-voice-portrait"
-                    style={portraitStyle}
-                    aria-label={voice.name}
-                  >
-                    {!voice.imageSrc && initial}
-                  </div>
+                  <div className="vs-voice-mark" aria-hidden="true">“</div>
                   <div className="vs-voice-role">{voice.role}</div>
                   <h3 className="vs-voice-name">{voice.name}</h3>
                   <blockquote className="vs-voice-quote">

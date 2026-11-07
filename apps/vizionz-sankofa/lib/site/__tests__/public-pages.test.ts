@@ -3,7 +3,8 @@ import assert from 'node:assert/strict'
 import { config } from '@/config/brand'
 import {
   FOOTER_ABOUT, FOOTER_ENGAGE, FOOTER_PROGRAM_LINKS, HEADER_LINKS, WHAT_WE_DO,
-  brandProgramBySlug, footerHrefs, legacyTitleSlug, missionFamilyPhoto, programFigure, whatWeDoHref, whatWeDoPhoto,
+  COMMUNITY_GALLERY, RESERVED_COMMUNITY_PHOTOS, STAFF_BANNER, STAFF_LOGIN_PHOTO,
+  brandProgramBySlug, footerHrefs, legacyTitleSlug, missionFamilyPhoto, programFigure, programFigures, whatWeDoHref, whatWeDoPhoto,
 } from '../public-pages'
 
 const LIVE_SLUGS = [
@@ -65,12 +66,26 @@ test('a known program still has its written description when the database row is
 
 test('community photos are real files and do not claim a program from appearance', () => {
   assert.equal(missionFamilyPhoto.src, '/community/gathering-celebration.jpg')
-  assert.equal(WHAT_WE_DO.every((item) => item.photo?.startsWith('/community/')), true)
+  assert.equal(WHAT_WE_DO.filter((item) => item.photo).every((item) => item.photo?.startsWith('/community/')), true)
   for (const item of WHAT_WE_DO) {
     assert.doesNotMatch(item.photoAlt, /patient|diagnos|unsheltered person|refugee status|enrolled/i)
   }
-  assert.equal(whatWeDoPhoto('Housing Stability')?.src, '/community/gathering-room.jpg')
-  assert.equal(programFigure('unsheltered')?.src, '/community/services-flyer.jpg')
-  assert.equal(programFigure('sankofa-center')?.src, '/community/services-flyer.jpg')
+  assert.equal(whatWeDoPhoto('Refugee & Immigrant Services')?.src, '/community/gathering-room.jpg')
+  assert.equal(programFigure('refugee-immigrant')?.src, '/community/gathering-room.jpg')
+  assert.equal(programFigure('refugee-immigrant')?.fit, 'natural')
+  assert.equal(whatWeDoPhoto('Housing Stability'), null)
+  assert.equal(programFigure('housing'), null)
+  assert.equal(programFigures('sankofa-center')[0]?.src, '/community/four-people.jpg')
+  assert.equal(programFigures('sankofa-center')[0]?.fit, 'natural')
+  assert.equal(programFigures('unsheltered').some((item) => item.src === '/community/services-flyer.jpg'), true)
+  assert.equal(programFigures('sankofa-center').some((item) => item.src === '/community/services-flyer.jpg'), true)
   assert.notEqual(whatWeDoPhoto('Refugee & Immigrant Services')?.src, '/community/meeting-room.jpg')
+  const shown = [
+    missionFamilyPhoto.src,
+    ...WHAT_WE_DO.map((item) => item.photo),
+    ...COMMUNITY_GALLERY.map((item) => item.src),
+    STAFF_BANNER.src,
+    STAFF_LOGIN_PHOTO.src,
+  ]
+  assert.equal(shown.includes(RESERVED_COMMUNITY_PHOTOS[0].src), false)
 })

@@ -14,7 +14,7 @@ export function CommunityStrip() {
               key={photo.src}
               src={photo.src}
               alt={photo.alt}
-              style={{ width: '100%', height: '220px', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+              style={{ width: '100%', height: 'auto', objectFit: 'contain', background: '#F4F1EA', display: 'block' }}
             />
           ))}
         </div>
