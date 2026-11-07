@@ -87,6 +87,10 @@ export const config: BrandConfig = {
           { name: 'Beans', nameTranslated: 'Frijoles' },
           { name: 'Mac & Cheese', nameTranslated: 'Macarrones con queso' },
           { name: 'Potato Salad', nameTranslated: 'Ensalada de papa' },
+          { name: 'Green Beans', nameTranslated: 'Ejotes' },
+          { name: 'White Rice', nameTranslated: 'Arroz blanco' },
+          { name: 'Salad', nameTranslated: 'Ensalada' },
+          { name: 'Corn', nameTranslated: 'Maíz' },
         ],
       },
       {
