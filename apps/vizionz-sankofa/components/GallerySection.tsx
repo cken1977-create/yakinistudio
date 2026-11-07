@@ -7,7 +7,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { Gallery, type GalleryItem } from './Gallery'
 import { publicMediaUrl } from '@/lib/media/picture-upload'
-import { visiblePhotoDate } from '@/lib/media/photo-display'
+import { eventsMosaicLabel } from '@/lib/media/photo-display'
 
 export const dynamic = 'force-dynamic'
 
@@ -50,9 +50,8 @@ export async function GallerySection() {
   }
 
   const galleryItems: GalleryItem[] = rows.map((row) => ({
-    // Event date only. created_at still sorts the row above and is not printed.
-    date: visiblePhotoDate({ eventDate: row.event_date }) ?? '',
-    caption: row.caption ?? '',
+    date: '',
+    caption: eventsMosaicLabel({ caption: row.caption, eventDate: row.event_date, createdAt: row.created_at }),
     imageSrc: publicUrlFor(row.storage_path),
   }))
 

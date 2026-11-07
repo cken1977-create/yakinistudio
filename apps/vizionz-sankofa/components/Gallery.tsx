@@ -2,8 +2,8 @@
 // GALLERY — Recent events photo grid
 // ═════════════════════════════════════════════════════════════════════════
 // Five-tile asymmetric grid with one large hero tile (spans 2 rows on
-// the left) and four supporting tiles. Each tile shows date in JetBrains
-// Mono caps and event caption in Cormorant Garamond.
+// the left) and four supporting tiles. Each tile shows its caption.
+// The date is not drawn on the photo.
 //
 // Without imageSrc: tiles render as colored gradient blocks (navy, red,
 // green, navy-light, deep-red) that read as intentional design rather
@@ -159,15 +159,6 @@ export function Gallery({
           color: #FFFFFF;
           z-index: 2;
         }
-        .vs-gallery-tile-date {
-          font-family: 'JetBrains Mono', ui-monospace, monospace;
-          font-size: 0.6875rem;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: rgba(255, 255, 255, 0.85);
-          display: block;
-          margin-bottom: 4px;
-        }
         .vs-gallery-tile-caption {
           font-family: 'Cormorant Garamond', Georgia, serif;
           font-size: 1.125rem;
@@ -235,7 +226,6 @@ export function Gallery({
                   {...props}
                 >
                   <div className="vs-gallery-tile-content">
-                    {item.date ? <span className="vs-gallery-tile-date">{item.date}</span> : null}
                     <h3 className="vs-gallery-tile-caption">{item.caption}</h3>
                   </div>
                 </Component>
