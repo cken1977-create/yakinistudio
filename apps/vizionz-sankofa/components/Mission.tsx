@@ -13,6 +13,7 @@
 // ═════════════════════════════════════════════════════════════════════════
 
 import type { BrandConfig } from '@yakini/config'
+import { missionFamilyPhoto } from '@/lib/site/public-pages'
 import { VS_RED, VS_INK, VS_GREEN } from './TriColorRule'
 
 export function Mission({ config }: { config: BrandConfig }) {
@@ -22,11 +23,30 @@ export function Mission({ config }: { config: BrandConfig }) {
         .vs-mission {
           padding: 6rem 0;
           background: #FFFFFF;
+          position: relative;
+          overflow: hidden;
+        }
+        .vs-mission-bg {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          z-index: 0;
+        }
+        .vs-mission-scrim {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          background: rgba(255, 255, 255, 0.88);
         }
         .vs-mission-inner {
           max-width: 72rem;
           margin: 0 auto;
           padding: 0 2.5rem;
+          position: relative;
+          z-index: 2;
         }
         .vs-mission-grid {
           display: grid;
@@ -92,6 +112,12 @@ export function Mission({ config }: { config: BrandConfig }) {
       `}</style>
 
       <section className="vs-mission" aria-labelledby="vs-mission-heading">
+        {missionFamilyPhoto.src && (
+          <>
+            <img className="vs-mission-bg" src={missionFamilyPhoto.src} alt={missionFamilyPhoto.alt} />
+            <span className="vs-mission-scrim" aria-hidden="true" />
+          </>
+        )}
         <div className="vs-mission-inner">
           <div className="vs-mission-grid">
 

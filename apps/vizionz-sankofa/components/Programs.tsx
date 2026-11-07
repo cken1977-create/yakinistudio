@@ -16,6 +16,7 @@
 // ═════════════════════════════════════════════════════════════════════════
 
 import type { BrandConfig } from '@yakini/config'
+import { whatWeDoHref, whatWeDoPhoto } from '@/lib/site/public-pages'
 import { VS_RED, VS_INK, VS_GREEN } from './TriColorRule'
 
 export function Programs({ config }: { config: BrandConfig }) {
@@ -142,6 +143,28 @@ export function Programs({ config }: { config: BrandConfig }) {
         .vs-program-link:hover {
           color: #A20D1E;
         }
+        .vs-program-card.has-photo {
+          min-height: 280px;
+        }
+        .vs-program-bg {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          z-index: 0;
+        }
+        .vs-program-scrim {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          background: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.92) 48%, #FFFFFF 100%);
+        }
+        .vs-program-copy {
+          position: relative;
+          z-index: 2;
+        }
 
         @media (max-width: 1024px) {
           .vs-programs-grid {
@@ -172,20 +195,24 @@ export function Programs({ config }: { config: BrandConfig }) {
 
           <div className="vs-programs-grid">
             {config.services.items.map((program, idx) => {
-              const slug = program.title
-                .toLowerCase()
-                .replace(/&/g, 'and')
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/^-|-$/g, '')
               const num = String(idx + 1).padStart(2, '0')
+              const photo = whatWeDoPhoto(program.title)
               return (
-                <article key={program.title} className="vs-program-card">
-                  <span className="vs-program-number">PROGRAM · {num}</span>
-                  <h3 className="vs-program-title">{program.title}</h3>
-                  <p className="vs-program-desc">{program.description}</p>
-                  <a href={`/programs/${slug}`} className="vs-program-link">
-                    Learn More
-                  </a>
+                <article key={program.title} className={photo ? 'vs-program-card has-photo' : 'vs-program-card'}>
+                  {photo && (
+                    <>
+                      <img className="vs-program-bg" src={photo.src} alt={photo.alt} />
+                      <span className="vs-program-scrim" aria-hidden="true" />
+                    </>
+                  )}
+                  <div className="vs-program-copy">
+                    <span className="vs-program-number">PROGRAM · {num}</span>
+                    <h3 className="vs-program-title">{program.title}</h3>
+                    <p className="vs-program-desc">{program.description}</p>
+                    <a href={whatWeDoHref(program.title)} className="vs-program-link">
+                      Learn More
+                    </a>
+                  </div>
                 </article>
               )
             })}
