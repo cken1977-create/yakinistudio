@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Gallery, Photo } from '@/components/Photos'
 import { PaymentOptions } from '@/components/PaymentOptions'
 import { ThanksgivingSpecial } from '@/components/ThanksgivingSpecial'
 import { config } from '@/config/brand'
@@ -36,6 +37,9 @@ export default function MenuPage() {
         .m-grid { display: grid; column-gap: 56px; }
         @media (min-width: 900px) { .m-grid { grid-template-columns: 1fr 1fr; } }
         .m-special-wrap { margin-top: 48px; }
+        .m-photos { margin-top: 28px; }
+        .m-photo-pair { display: grid; gap: 12px; margin-top: 12px; }
+        @media (min-width: 700px) { .m-photo-pair { grid-template-columns: 1fr 1fr; } }
       `}</style>
 
       <section className="m-hero">
@@ -76,6 +80,14 @@ export default function MenuPage() {
             </section>
           ))}
         </div>
+
+        <section className="m-photos" aria-label="Food photos">
+          <Gallery items={['sausagePlate', 'brisketPlate', 'brisket']} />
+          <div className="m-photo-pair">
+            <Photo k="takeoutBox" aspect="3 / 4" sizes="(min-width: 700px) 50vw, 100vw" />
+            <Photo k="takeoutClose" aspect="3 / 4" sizes="(min-width: 700px) 50vw, 100vw" />
+          </div>
+        </section>
 
         <div className="m-special-wrap">
           <ThanksgivingSpecial />
