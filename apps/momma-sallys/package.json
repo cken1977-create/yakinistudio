@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "node --experimental-strip-types --test config/menu-offers.test.ts"
+    "test": "node --experimental-strip-types --test config/*.test.ts"
   },
   "dependencies": {
     "@yakini/config": "*",

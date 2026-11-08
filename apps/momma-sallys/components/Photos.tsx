@@ -10,6 +10,8 @@ export const PHOTOS = {
   cobbler: { src: '/photos/peach-cobbler.webp', w: 1600, h: 1452, alt: 'Peach cobbler' },
   pudding: { src: '/photos/banana-pudding.webp', w: 1600, h: 1169, alt: 'Banana pudding' },
   eventSpread: { src: '/photos/event-spread.webp', w: 1600, h: 840, alt: 'Party dessert and food spread' },
+  takeoutBox: { src: '/photos/takeout-box.webp', w: 960, h: 1280, alt: 'Food in an open takeout box with a charred pepper, a lime wedge, and a sauce cup' },
+  takeoutClose: { src: '/photos/takeout-closeup.webp', w: 960, h: 1280, alt: 'Close-up of food in a foil-lined takeout box with a charred pepper and a lime wedge' },
 } as const
 
 export type PhotoKey = keyof typeof PHOTOS
