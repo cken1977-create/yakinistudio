@@ -4,6 +4,7 @@
 // short-circuits the auth check via the children-only render at the
 // bottom of this layout when no session exists AND we're on /admin/login.
 
+import type { Metadata, Viewport } from 'next'
 import { headers } from 'next/headers'
 import Link from 'next/link'
 import { Suspense } from 'react'
@@ -13,11 +14,28 @@ import {
   getAccessRole,
   roleBadgeLabel,
 } from '@/lib/supabase/auth'
+import { InstallAppButton } from '@/components/admin/InstallAppButton'
 import { AdminSectionNav } from '@/components/admin/nav/AdminSectionNav'
 import { NavHistory } from '@/components/admin/nav/NavHistory'
 import { redirect } from 'next/navigation'
 import { signOut } from './actions/auth'
 import { createClient } from '@/lib/supabase/server'
+
+// Installed-app chrome for the staff area only. themeColor lives on the
+// viewport export: Next.js 16 does not emit it from the metadata object.
+// Navy matches the operations header; the public site does not set this.
+export const metadata: Metadata = {
+  applicationName: 'Vizionz',
+  appleWebApp: {
+    capable: true,
+    title: 'Vizionz',
+    statusBarStyle: 'default',
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#0A2548',
+}
 
 export default async function AdminLayout({
   children,
@@ -82,6 +100,13 @@ export default async function AdminLayout({
         flexDirection: 'column',
       }}
     >
+      {/* Catch beforeinstallprompt before React hydrates, then let the header button use it. */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html:
+            "window.addEventListener('beforeinstallprompt',function(event){event.preventDefault();window.__vizionzInstallPrompt=event;window.dispatchEvent(new Event('vizionz-install-prompt'))})",
+        }}
+      />
       {/* Tri-color rule — architectural signature, anchors the operator surface */}
       <div
         style={{
@@ -163,6 +188,8 @@ export default async function AdminLayout({
           style={{
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'flex-end',
+            flexWrap: 'wrap',
             gap: '12px',
           }}
         >
@@ -170,11 +197,13 @@ export default async function AdminLayout({
             .vs-admin-who { display: flex; align-items: center; gap: 10px; text-decoration: none; min-height: 36px; }
             .vs-admin-who:focus-visible { outline: 2px solid #0A2548; outline-offset: 2px; }
             @media (max-width: 900px) { .vs-admin-search { display: none; } }
+            .vs-admin-install:focus-visible { outline: 2px solid #0A2548; outline-offset: 2px; }
             @media (max-width: 640px) {
               .vs-admin-who-name { display: none; }
               .vs-admin-role-badge { padding: 3px 7px !important; letter-spacing: 0.08em !important; }
               .vs-admin-header { padding: 12px 14px !important; gap: 8px !important; }
               .vs-admin-signout { padding: 8px 10px !important; letter-spacing: 0.04em !important; }
+              .vs-admin-install { padding: 8px 8px !important; }
             }
           `}</style>
           {accessRole && (
@@ -208,6 +237,7 @@ export default async function AdminLayout({
               )}
             </Link>
           )}
+          <InstallAppButton />
           <Link
             href="/admin/profile"
             className="vs-admin-who"
