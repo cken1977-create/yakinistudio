@@ -9,6 +9,8 @@
     "test": "node --experimental-strip-types --test config/*.test.ts"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.1.0",
     "@yakini/config": "*",
     "@yakini/ui": "*",
     "@yakini/database": "*",

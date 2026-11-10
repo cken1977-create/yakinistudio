@@ -3,6 +3,8 @@ import { BrandProvider } from '@yakini/ui'
 import { validateBrandConfig } from '@yakini/config'
 import { config } from '@/config/brand'
 import { SiteStyles, SiteNav, SiteFooter, ActionBar } from '@/components/Site'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 // Build-time validation — fails the build if config is invalid
 const validation = validateBrandConfig(config)
@@ -42,6 +44,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SiteFooter />
           <ActionBar />
         </BrandProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
