@@ -4,15 +4,9 @@ import Link from 'next/link'
 import { SiteShell } from '@/components/SiteShell'
 import { SEAT_CSS, SeatMeter, useFoundingSeats } from '@/components/FoundingSeats'
 import {
-  BILLING_NOTE,
-  EXTRA_HELP_NOTE,
-  HELP_HOURS_NOTE,
   AI_LIMIT_NOTE,
   FLAT_PRICING_NOTE,
-  GUIDED_STEPS,
   PARTNER,
-  PASS_THROUGH_NOTE,
-  PITCH,
   PLANS,
   PLAN_MODULES,
   REFUND_RULE,
@@ -21,11 +15,13 @@ import {
   priceLabel,
   setupLabel,
   startUrl,
+  type Plan,
 } from '@/lib/pricing'
 
 export default function PricingPage() {
   const seats = useFoundingSeats()
   const [operate, grow, founding] = PLANS
+  const extraRate = '$150/hour'
 
   return (
     <SiteShell>
@@ -35,14 +31,18 @@ export default function PricingPage() {
         <div className="yk-page-header-inner">
           <div className="yk-eyebrow">
             <span className="yk-eyebrow-dot" />
-            <span>PRICING · GUIDED SETUP</span>
+            <span>PRICING</span>
           </div>
           <h1 className="yk-page-h1">
-            A real person sets it up with you.
+            Simple plans.
             <br />
-            <span className="yk-gold">And stays.</span>
+            <span className="yk-gold">Pick the one that fits.</span>
           </h1>
-          <p className="yk-page-sub">{PITCH}</p>
+          <p className="yk-page-sub">
+            Every plan is a one-time {setupLabel(operate)} setup, then one flat monthly price. A real Yakini person sets it up
+            with you and stays with you after. Need a ready-made system for your industry, or your whole operation in one place? Industry
+            kits and Yakini OS are priced after we talk.
+          </p>
           <div className="pn-hero-ctas">
             <a href="#plans" className="pr-tier-cta pr-cta-featured"><span>See the plans</span><span className="yk-btn-arrow">→</span></a>
             <a href={startUrl(founding.id)} className="pr-tier-cta"><span>{seats.open ? `Founding: ${seats.left} of ${seats.total} spots left` : 'Founding is closed'}</span><span className="yk-btn-arrow">→</span></a>
@@ -50,16 +50,35 @@ export default function PricingPage() {
         </div>
       </header>
 
-      <section className="pn-portal" aria-label="What you get: the Yakini portal">
-        <div className="yk-section-inner pn-portal-inner">
-          <p className="pn-portal-lead">Every plan is the <strong>Yakini portal</strong>, your business workspace, set up with you:</p>
-          <ul className="pn-portal-list">
-            <li><strong>Client rooms</strong><span>One private room per client</span></li>
-            <li><strong>Texting line</strong><span>For customers who opted in</span></li>
-            <li><strong>Help desk</strong><span>With a real Yakini person</span></li>
-            <li><strong>Drafted replies</strong><span>Nothing goes out without your OK</span></li>
+      <section className="pn-guide" aria-label="Which one is for me?">
+        <div className="yk-section-inner">
+          <h2 className="pn-guide-h">Which one is for me?</h2>
+          <ul className="pn-guide-list">
+            <li>
+              <a href="#founding">
+                <span className="pn-guide-who">You want the lowest price, locked for a year</span>
+                <span className="pn-guide-pick">Founding · {monthlyLabel(founding)}{seats.open ? ` · ${seats.left} spots left` : ' · closed'}</span>
+              </a>
+            </li>
+            <li>
+              <a href="#operate">
+                <span className="pn-guide-who">You run it mostly yourself and want a website and one place for customers</span>
+                <span className="pn-guide-pick">Operate · {monthlyLabel(operate)}</span>
+              </a>
+            </li>
+            <li>
+              <a href="#grow">
+                <span className="pn-guide-who">You have a small team and want to get paid online and follow up automatically</span>
+                <span className="pn-guide-pick">Grow · {monthlyLabel(grow)}</span>
+              </a>
+            </li>
+            <li>
+              <a href="#yakini-os">
+                <span className="pn-guide-who">You need a ready-made system for your industry, or your whole operation run in one place</span>
+                <span className="pn-guide-pick">Industry kits &amp; Yakini OS · priced after we talk</span>
+              </a>
+            </li>
           </ul>
-          <Link href="/portal#portal" className="pn-portal-link">Take the portal tour →</Link>
         </div>
       </section>
 
@@ -70,31 +89,36 @@ export default function PricingPage() {
             <span>The plans</span>
           </div>
           <h2 className="yk-section-h2">
-            Done with you,
+            Three plans.
             <br />
-            <span className="yk-gold">not left to you.</span>
+            <span className="yk-gold">Same simple setup.</span>
           </h2>
-          <p className="pr-operate-lead">{BILLING_NOTE} {EXTRA_HELP_NOTE} {HELP_HOURS_NOTE}</p>
+          <p className="pr-operate-lead">
+            Every plan gives you your own <strong>Yakini portal</strong>: your website plus one private place online where you and your
+            customers talk, book and share files. <Link href="/portal#portal" className="yk-gold">Take the portal tour →</Link>
+          </p>
 
           <div className="pn-grid">
             {PLANS.map((plan) => {
+              const copy = PLAN_COPY[plan.id]
               const isFounding = plan.id === 'founding'
               const closed = isFounding && !seats.open
               return (
                 <div key={plan.id} id={plan.id} className={`pr-tier pn-tier ${isFounding ? 'pn-founding' : ''} ${closed ? 'pn-closed' : ''}`}>
                   <div className="pn-tag">{plan.tag}</div>
                   <div className="pr-tier-name">{plan.name}</div>
-                  <div className="pr-tier-tagline">{plan.summary}</div>
                   <div className="pn-price">
                     <span className="pn-price-num">{monthlyLabel(plan).replace('/mo', '')}</span>
                     <span className="pn-price-per">/month</span>
                   </div>
-                  <div className="pn-setup">+ {setupLabel(plan)} one-time guided setup{plan.lockedMonths ? ` · locked ${plan.lockedMonths} months` : ''}</div>
+                  <div className="pn-setup">+ {setupLabel(plan)} one-time setup{plan.lockedMonths ? ` · price locked ${plan.lockedMonths} months` : ''}</div>
+                  <div className="pn-help">{plan.helpHours} {plan.helpHours === 1 ? 'hour' : 'hours'} of help a month from your Yakini person</div>
                   {isFounding ? <SeatMeter seats={seats} /> : null}
+                  <p className="pn-for"><strong>Best for:</strong> {copy.forWho}</p>
+                  {copy.lead ? <p className="pn-list-lead">{copy.lead}</p> : null}
                   <ul className="pr-tier-list pr-list-included pn-list">
-                    <li>{helpLabel(plan)} from your Yakini person (unused hours don’t roll over)</li>
-                    {plan.includes.map((feature) => (
-                      <li key={feature}>{feature}</li>
+                    {copy.gets.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
                   {closed ? (
@@ -110,7 +134,11 @@ export default function PricingPage() {
             })}
           </div>
 
-          <p className="pn-refund"><strong>Refunds:</strong> {REFUND_RULE} Cancel the monthly plan any time.</p>
+          <ul className="pn-facts">
+            <li><strong>Need more help?</strong> Extra hours are {extraRate}, or move up a plan. Included hours don’t roll over.</li>
+            <li><strong>Refunds:</strong> {REFUND_RULE}</li>
+            <li><strong>Cancel any time.</strong> {FLAT_PRICING_NOTE}</li>
+          </ul>
 
           <h3 className="pr-subhead">Side by side</h3>
           <p className="pr-compare-hint">Swipe sideways to compare the plans.</p>
@@ -129,7 +157,7 @@ export default function PricingPage() {
               </thead>
               <tbody>
                 <tr>
-                  <th scope="row">Help each month from your Yakini person (expires at month end)</th>
+                  <th scope="row">Help each month from your Yakini person</th>
                   {PLANS.map((plan) => <td key={plan.id}>{plan.helpHours} hr</td>)}
                 </tr>
                 <tr>
@@ -151,11 +179,56 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <section className="yk-section pr-operate">
+      <section id="yakini-os" className="yk-section pn-os">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
             <span className="yk-num">02</span>
-            <span>How guided setup works</span>
+            <span>Industry kits &amp; Yakini OS</span>
+          </div>
+          <div className="pn-os-card">
+            <div className="pn-tag">Not part of the plans above</div>
+            <h2 className="pn-os-h">
+              Industry kits and Yakini OS:
+              <br />
+              <span className="yk-gold">priced after we talk.</span>
+            </h2>
+            <p className="pn-os-body">
+              The plans above get a business online with a website and customer portal. Industry kits and Yakini OS go further, and
+              every business is different, so both are scoped to yours and priced after a conversation.
+            </p>
+            <div className="pn-os-two">
+              <div>
+                <h3>Industry kits</h3>
+                <p>A ready-made system for your type of business, like a food truck, trucking company or landlord. We set it up and fit it to how you work.</p>
+              </div>
+              <div>
+                <h3>Yakini OS</h3>
+                <p>One system built around your industry and your team, so the way you run jobs, people, customers and money lives in one place.</p>
+              </div>
+            </div>
+            <ol className="pn-os-steps">
+              <li><span>01</span>Book a call and tell us how your business runs today.</li>
+              <li><span>02</span>We map out what your system needs for your industry and your team.</li>
+              <li><span>03</span>You get the scope and the price in writing before any work starts.</li>
+              <li><span>04</span>We build it with you, and stay with you after it goes live.</li>
+            </ol>
+            <div className="pn-os-ctas">
+              <a href={PARTNER.href} className="pr-tier-cta pr-cta-featured"><span>Book a call</span><span className="yk-btn-arrow">→</span></a>
+              <Link href="/contact" className="pr-tier-cta"><span>Contact us</span><span className="yk-btn-arrow">→</span></Link>
+            </div>
+            <p className="pn-os-note">
+              Need just one thing built, like a lead engine or a payment system? Custom builds are also quoted after we talk, in writing.{' '}
+              <Link href="/custom-builds" className="yk-gold">See custom builds →</Link>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="yk-section pr-operate">
+        <div className="yk-section-inner">
+          <div className="yk-section-tag">
+            <span className="yk-num">03</span>
+            <span>How setup works</span>
           </div>
           <h2 className="yk-section-h2">
             Four steps.
@@ -163,7 +236,7 @@ export default function PricingPage() {
             <span className="yk-gold">One real person.</span>
           </h2>
           <ol className="pn-steps">
-            {GUIDED_STEPS.map((step, i) => (
+            {SETUP_STEPS.map((step, i) => (
               <li key={step.title}>
                 <span className="pn-step-num">{String(i + 1).padStart(2, '0')}</span>
                 <span className="pn-step-title">{step.title}</span>
@@ -177,52 +250,65 @@ export default function PricingPage() {
       <section className="yk-section pr-faq">
         <div className="yk-section-inner">
           <div className="yk-section-tag">
-            <span className="yk-num">03</span>
+            <span className="yk-num">04</span>
             <span>Questions</span>
           </div>
           <h2 className="yk-section-h2">
             Pricing
             <br />
-            <span className="yk-gold">FAQ.</span>
+            <span className="yk-gold">questions.</span>
           </h2>
 
           <div className="pr-faq-list">
             <details className="pr-faq-item">
-              <summary className="pr-faq-q">What is the difference between Operate and Grow?<span className="pr-faq-icon">+</span></summary>
+              <summary className="pr-faq-q">What’s the difference between Operate and Grow?<span className="pr-faq-icon">+</span></summary>
               <div className="pr-faq-a">
-                Operate is {priceLabel(operate)} with {helpLabel(operate)}. It is your website and customer portal, help desk, voice notes,
-                drafted replies that wait for your OK, a business texting line, booking you confirm, and incoming texts in one place.
-                Grow is {priceLabel(grow)} with {helpLabel(grow)}, and adds card payments, missed-call text-back, review requests,
-                follow-up campaigns and a monthly owner report. {HELP_HOURS_NOTE} {AI_LIMIT_NOTE}
+                Both give you your website and customer portal, a help desk with a real Yakini person, voice notes, a business texting line,
+                online booking you confirm, and reply drafts that wait for your OK. Grow adds card payments on your invoices, missed-call
+                text-back, review requests, follow-up messages and a monthly owner report. Operate comes with {helpLabel(operate)}; Grow comes
+                with {helpLabel(grow)}.
               </div>
             </details>
             <details className="pr-faq-item">
               <summary className="pr-faq-q">What is the Founding plan?<span className="pr-faq-icon">+</span></summary>
               <div className="pr-faq-a">
-                Founding is everything in Operate for {monthlyLabel(founding)}, with the monthly price locked for {founding.lockedMonths} months, plus
-                the {setupLabel(founding)} guided setup. It is for our first {founding.spots?.total} customers only and closes on its own after the last spot.
+                Founding is everything in Operate for {monthlyLabel(founding)} instead of {monthlyLabel(operate)}, with that price locked for{' '}
+                {founding.lockedMonths} months. Setup is the same {setupLabel(founding)}. It is only for our first {founding.spots?.total} customers
+                and closes after the last spot.
                 {seats.open ? ` Right now ${seats.left} of ${seats.total} spots are left.` : ' All spots are taken.'}
               </div>
             </details>
             <details className="pr-faq-item">
-              <summary className="pr-faq-q">When am I charged?<span className="pr-faq-icon">+</span></summary>
-              <div className="pr-faq-a">{BILLING_NOTE} The first monthly charge is 30 days after you sign up, then monthly. {REFUND_RULE}</div>
+              <summary className="pr-faq-q">Are industry kits and Yakini OS part of these plans?<span className="pr-faq-icon">+</span></summary>
+              <div className="pr-faq-a">
+                No. An industry kit is a ready-made system for your type of business that we set up and fit to how you work. Yakini OS is one
+                system built around your industry and your team. Because every business is different, we price both after we talk, and you get
+                the scope and price in writing before any work starts. <a href={PARTNER.href} className="yk-gold">Book a call →</a>
+              </div>
+            </details>
+            <details className="pr-faq-item">
+              <summary className="pr-faq-q">When do I pay?<span className="pr-faq-icon">+</span></summary>
+              <div className="pr-faq-a">
+                You pay the one-time {setupLabel(operate)} setup by card or bank account when you sign up. Your first monthly payment is 30 days
+                after you sign up, then once a month. {REFUND_RULE}
+              </div>
             </details>
             <details className="pr-faq-item">
               <summary className="pr-faq-q">What if I need more help than my plan includes?<span className="pr-faq-icon">+</span></summary>
-              <div className="pr-faq-a">{HELP_HOURS_NOTE} {EXTRA_HELP_NOTE}</div>
+              <div className="pr-faq-a">
+                Extra hours are {extraRate}, or you can move up a plan. Included hours are for that month only and don’t roll over.
+              </div>
             </details>
             <details className="pr-faq-item">
-              <summary className="pr-faq-q">Is this do-it-yourself?<span className="pr-faq-icon">+</span></summary>
-              <div className="pr-faq-a">No. A real Yakini person sets everything up with you and stays with you after go-live, with a help desk you can reach any time. That is why we price the way we do.</div>
+              <summary className="pr-faq-q">Do I have to set it up myself?<span className="pr-faq-icon">+</span></summary>
+              <div className="pr-faq-a">No. A real Yakini person sets everything up with you and stays with you after you go live, with a help desk you can reach any time.</div>
             </details>
             <details className="pr-faq-item">
-              <summary className="pr-faq-q">Who pays for hosting, the texting line and payment processing?<span className="pr-faq-icon">+</span></summary>
-              <div className="pr-faq-a">{PASS_THROUGH_NOTE} {FLAT_PRICING_NOTE}</div>
-            </details>
-            <details className="pr-faq-item">
-              <summary className="pr-faq-q">I need something custom.<span className="pr-faq-icon">+</span></summary>
-              <div className="pr-faq-a">Custom builds, such as lead engines and payment systems, are priced on the work and agreed in writing before anything starts. <a href="/custom-builds" className="yk-gold">See custom builds</a> or <a href={PARTNER.href} className="yk-gold">book a call →</a></div>
+              <summary className="pr-faq-q">Are there other costs?<span className="pr-faq-icon">+</span></summary>
+              <div className="pr-faq-a">
+                Your hosting, database, email, texting line and card processing are set up in your business’s name, so they stay yours. Those
+                services bill you directly at their own cost and are not part of Yakini’s price. {FLAT_PRICING_NOTE} {AI_LIMIT_NOTE}
+              </div>
             </details>
           </div>
         </div>
@@ -236,7 +322,7 @@ export default function PricingPage() {
               <br />
               <span className="yk-gold yk-italic">you are.</span>
             </h2>
-            <p className="pr-final-sub">Pick a plan and a real Yakini person takes it from there, with you.</p>
+            <p className="pr-final-sub">Pick a plan and a real Yakini person takes it from there, with you. Not sure which one? Talk to us first.</p>
             <div className="pr-final-ctas">
               <a href={startUrl()} className="pr-tier-cta pr-cta-featured">
                 <span>Start your setup</span>
@@ -253,6 +339,46 @@ export default function PricingPage() {
     </SiteShell>
   )
 }
+
+/** Plain-words card copy. Prices, setup and help hours always come from lib/pricing. */
+const PLAN_COPY: Record<Plan['id'], { forWho: string; lead?: string; gets: readonly string[] }> = {
+  operate: {
+    forWho: 'an owner who runs things mostly on their own and wants a real website and one place to handle customers.',
+    gets: [
+      'Your website and customer portal, set up with you',
+      'A private online room for each customer',
+      'A business texting line and online booking you confirm',
+      'A help desk with a real Yakini person',
+      'Reply drafts that wait for your OK before anything goes out',
+    ],
+  },
+  grow: {
+    forWho: 'a small team that wants to get paid online and follow up with customers without chasing them by hand.',
+    lead: 'Everything in Operate, plus:',
+    gets: [
+      'Card payments on your invoices',
+      'Missed-call text-back, sent with your OK',
+      'Review requests',
+      'Follow-up messages to customers who opted in',
+      'A monthly owner report',
+    ],
+  },
+  founding: {
+    forWho: 'one of our first 10 customers who wants Operate at a lower price, locked in for a year.',
+    gets: [
+      'Everything in Operate',
+      'Your monthly price locked for 12 months',
+      'Closes after the 10th customer',
+    ],
+  },
+}
+
+const SETUP_STEPS = [
+  { title: 'Pick a plan and sign up', detail: 'Tell us about your business and pay the one-time setup by card or bank account.' },
+  { title: 'Kickoff call', detail: 'About 30 minutes with your Yakini person. We learn how your business runs today and agree the first thing to fix.' },
+  { title: 'We set it up with you', detail: 'Your website, customer portal and the tools on your plan, in your business’s name. You approve each step.' },
+  { title: 'Go live, and we stay', detail: 'Your Yakini person stays on and the help desk is always open. Your first monthly payment is 30 days after you sign up.' },
+] as const
 
 function Mark({ yes = false }: { yes?: boolean }) {
   return (
@@ -1000,4 +1126,54 @@ const NEW_CSS = `
   .pn-step-num { font-family: var(--font-display); font-size: 36px; color: var(--gold); }
   .pn-step-title { font-size: 19px; color: var(--cream); font-weight: 600; }
   .pn-step-detail { color: rgba(244,247,255,0.74); font-size: 15px; line-height: 1.6; }
+
+  /* rounded, walkthrough-style buttons and cards (matches the site-wide pills) */
+  .pr-tier-cta { border-radius: 999px; background: rgba(6,11,36,0.5); backdrop-filter: blur(6px); }
+  .pr-tier-cta.pr-cta-featured { background: #C6F432; border-color: #C6F432; color: #0B1437; }
+  .pr-tier-cta:hover, .pr-tier-cta.pr-cta-featured:hover { background: #F4F7FF; border-color: #F4F7FF; color: #0B1437; box-shadow: 0 15px 40px rgba(198,244,50,0.22); }
+  .pr-tier-cta.pn-cta-off:hover { background: rgba(6,11,36,0.5); border-color: var(--gold); color: var(--gold); box-shadow: none; }
+  .pn-tier { border-radius: 18px; }
+  .pn-tier .pr-tier-cta { margin-top: auto; margin-bottom: 0; }
+  .pr-compare-wrap, .pn-steps li { border-radius: 16px; }
+
+  /* which one is for me */
+  .pn-guide { padding: 40px 24px; background: var(--black-soft); border-bottom: 1px solid var(--line); }
+  .pn-guide-h { font-family: var(--font-display); font-weight: 500; font-size: clamp(26px, 3vw, 34px); color: var(--cream); margin-bottom: 18px; }
+  .pn-guide-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  @media (max-width: 1100px) { .pn-guide-list { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .pn-guide-list { grid-template-columns: 1fr; } }
+  .pn-guide-list a { display: flex; flex-direction: column; gap: 10px; height: 100%; padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: rgba(244,247,255,0.03); text-decoration: none; transition: border-color .2s, transform .2s; }
+  .pn-guide-list a:hover { border-color: #C6F432; transform: translateY(-2px); }
+  .pn-guide-who { color: var(--cream); font-size: 15px; line-height: 1.5; }
+  .pn-guide-pick { margin-top: auto; color: #C6F432; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; }
+  .pn-guide-pick::after { content: ' →'; }
+  @media (min-width: 900px) { .pn-guide { padding: 48px 32px; } }
+
+  /* plan cards */
+  .pn-help { margin-top: 6px; color: var(--cream); font-size: 14px; }
+  .pn-for { margin-top: 18px; font-size: 15px; line-height: 1.55; color: rgba(244,247,255,0.86); }
+  .pn-for strong { color: #C6F432; font-weight: 600; }
+  .pn-list-lead { margin-top: 16px; color: var(--cream); font-size: 14px; font-weight: 600; }
+  .pn-list-lead + .pn-list { margin-top: 6px; }
+  .pr-operate-lead strong { color: #C6F432; font-weight: 600; }
+  .pn-facts { list-style: none; padding: 0; margin: 8px 0 48px; display: grid; gap: 10px; }
+  .pn-facts li { border-left: 3px solid #C6F432; background: rgba(22,56,232,0.08); padding: 14px 18px; color: var(--cream); font-size: 15px; line-height: 1.6; border-radius: 0 12px 12px 0; }
+
+  /* industry kits + Yakini OS */
+  .pn-os { background: linear-gradient(180deg, var(--black) 0%, var(--navy-deep) 100%); }
+  .pn-os-card { border: 2px solid #C6F432; border-radius: 22px; padding: 44px 40px; background: linear-gradient(160deg, rgba(22,56,232,0.16) 0%, rgba(244,247,255,0.03) 60%); max-width: 980px; }
+  @media (max-width: 700px) { .pn-os-card { padding: 30px 22px; } }
+  .pn-os-h { font-family: var(--font-display); font-weight: 500; font-size: clamp(30px, 4vw, 48px); line-height: 1.12; color: var(--cream); margin-bottom: 18px; letter-spacing: -0.01em; }
+  .pn-os-body { font-size: 17px; line-height: 1.75; color: var(--cream); max-width: 760px; margin-bottom: 22px; }
+  .pn-os-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 22px; }
+  .pn-os-two > div { border: 1px solid var(--line); border-radius: 16px; padding: 20px; background: rgba(6,11,36,0.45); }
+  .pn-os-two h3 { font-family: var(--font-display); font-weight: 500; font-size: 24px; color: #C6F432; margin-bottom: 8px; }
+  .pn-os-two p { font-size: 15px; line-height: 1.6; color: var(--cream); }
+  .pn-os-steps { list-style: none; padding: 0; margin: 0 0 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 700px) { .pn-os-steps, .pn-os-two { grid-template-columns: 1fr; } }
+  .pn-os-steps li { display: flex; gap: 14px; align-items: baseline; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; color: var(--cream); font-size: 15px; line-height: 1.5; background: rgba(6,11,36,0.4); }
+  .pn-os-steps span { font-family: var(--font-mono); color: #C6F432; font-size: 12px; flex-shrink: 0; }
+  .pn-os-ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 22px; }
+  .pn-os-ctas .pr-tier-cta { margin-bottom: 0; }
+  .pn-os-note { font-size: 15px; line-height: 1.6; color: var(--muted); }
 `
