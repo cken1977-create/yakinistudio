@@ -21,7 +21,7 @@ import {
   START_URL,
 } from '@/lib/pricing'
 
-// yakini.digital home, portal first (plan approved by Clarence Kennedy, Oct 22 2026):
+// /portal (was the yakini.digital home until Nov 9 2026, when the immersive walkthrough took over /). Portal first (plan approved by Clarence Kennedy, Oct 22 2026):
 // hero → portal tour → plans + Partner → how guided setup works → custom builds → FAQ → final CTA.
 // Preview (Oct 30 2026): hero shows real demo screens; adds client-portal showcase, kit gallery and founder band.
 
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   title: 'Yakini · Your business, in one portal. Set up with you.',
   description:
     'Every client, text, payment and reply in one place. A real Yakini person sets up your portal with you, and stays.',
-  alternates: { canonical: 'https://yakini.digital' },
+  alternates: { canonical: 'https://yakini.digital/portal' },
 }
 
 const FAQ = [
@@ -118,7 +118,7 @@ const HOME_CSS = `
     background:
       radial-gradient(ellipse at 85% 20%, rgba(22,56,232,0.08), transparent 55%),
       radial-gradient(ellipse at 10% 95%, rgba(198,244,50,0.14), transparent 45%),
-      #FFFFFF;
+      transparent;
     overflow: hidden;
   }
   .hh::after {
@@ -139,11 +139,11 @@ const HOME_CSS = `
     color: var(--cream); max-width: 14ch; margin-bottom: 28px;
   }
   .hh-h1-gold { display: block; color: var(--gold); font-style: italic; font-size: 0.62em; line-height: 1.08; margin-top: 18px; max-width: 18ch; }
-  .hh-sub { font-size: clamp(17px, 1.5vw, 21px); line-height: 1.6; color: rgba(11,20,55,0.8); max-width: 560px; }
+  .hh-sub { font-size: clamp(17px, 1.5vw, 21px); line-height: 1.6; color: rgba(244,247,255,0.8); max-width: 560px; }
   .hh-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
   .hh-primary { padding: 19px 34px; font-size: 15px; }
   .hh-signin { margin-top: 18px; font-size: 14px; color: var(--muted); }
-  .hh-signin a { color: var(--cream); border-bottom: 1px solid rgba(11,20,55,0.74); }
+  .hh-signin a { color: var(--cream); border-bottom: 1px solid rgba(244,247,255,0.74); }
   .hh-signin a:hover { color: var(--gold); border-color: var(--gold); }
   @media (min-width: 1100px) {
     .hh { padding: 140px 32px 96px; }
@@ -162,6 +162,6 @@ const HOME_CSS = `
   .hf-item summary::-webkit-details-marker { display: none; }
   .hf-icon { color: var(--gold); font-family: var(--font-body); font-size: 22px; transition: transform 0.3s; flex-shrink: 0; }
   .hf-item[open] .hf-icon { transform: rotate(45deg); }
-  .hf-item p { padding: 0 0 24px; font-size: 15.5px; line-height: 1.7; color: rgba(11,20,55,0.74); max-width: 680px; }
+  .hf-item p { padding: 0 0 24px; font-size: 15.5px; line-height: 1.7; color: rgba(244,247,255,0.74); max-width: 680px; }
   @media (min-width: 1000px) { .hf-inner { grid-template-columns: 0.9fr 1.1fr; gap: 80px; } }
 `

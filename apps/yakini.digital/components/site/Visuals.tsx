@@ -174,19 +174,19 @@ export const VISUALS_CSS = `
   }
 
   /* kits */
-  .vs-kits { background: #F4F7FF; border-top: 1px solid var(--line); }
+  .vs-kits { background: var(--black-soft); border-top: 1px solid var(--line); }
   .vs-kit-grid { display: grid; grid-template-columns: 1fr; gap: 22px; margin-top: 48px; }
-  .vs-kit { display: grid; border: 1px solid var(--line-strong); border-radius: var(--yk-radius-lg); overflow: hidden; background: rgba(255,255,255,0.9); color: var(--cream); text-decoration: none; transition: border-color .25s, transform .25s; }
+  .vs-kit { display: grid; border: 1px solid var(--line-strong); border-radius: var(--yk-radius-lg); overflow: hidden; background: rgba(6,11,36,0.72); color: var(--cream); text-decoration: none; transition: border-color .25s, transform .25s; }
   .vs-kit:hover, .vs-kit:focus-visible { border-color: rgba(22,56,232,0.6); }
   @media (prefers-reduced-motion: no-preference) { .vs-kit:hover { transform: translateY(-3px); } }
   .vs-kit-shot { display: block; aspect-ratio: 16 / 9.4; overflow: hidden; border-bottom: 1px solid var(--line); }
   .vs-kit-body { display: grid; gap: 6px; padding: 20px 22px 22px; }
   .vs-kit-body strong, .vs-more-card strong { font-family: var(--font-display); font-weight: 500; font-size: 26px; }
-  .vs-kit-body span:not(.vs-kit-tag), .vs-more-card span:not(.vs-kit-tag) { font-size: 15px; line-height: 1.55; color: rgba(11,20,55,0.74); }
+  .vs-kit-body span:not(.vs-kit-tag), .vs-more-card span:not(.vs-kit-tag) { font-size: 15px; line-height: 1.55; color: rgba(244,247,255,0.74); }
   .vs-kit-body em { font-style: normal; color: var(--gold); font-size: 14px; margin-top: 6px; }
   .vs-kit-tag { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
   .vs-more { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 22px; }
-  .vs-more-card { display: grid; gap: 6px; padding: 22px; border: 1px dashed var(--line-strong); border-radius: var(--yk-radius); color: var(--cream); text-decoration: none; background: rgba(255,255,255,0.6); }
+  .vs-more-card { display: grid; gap: 6px; padding: 22px; border: 1px dashed var(--line-strong); border-radius: var(--yk-radius); color: var(--cream); text-decoration: none; background: rgba(6,11,36,0.5); }
   .vs-more-card:hover { border-color: rgba(22,56,232,0.6); }
   @media (min-width: 900px) { .vs-kit-grid { grid-template-columns: 1fr 1fr; } .vs-more { grid-template-columns: repeat(3, 1fr); } }
 
@@ -194,7 +194,7 @@ export const VISUALS_CSS = `
   .vs-portal { background: radial-gradient(ellipse at 80% 30%, rgba(22,56,232,0.1), transparent 55%), var(--navy-deep); }
   .vs-portal-grid { display: grid; grid-template-columns: 1fr; gap: 56px; align-items: center; }
   .vs-points { list-style: none; display: grid; gap: 14px; margin: 28px 0 8px; padding: 0; }
-  .vs-points li { padding-left: 22px; position: relative; font-size: 16px; line-height: 1.6; color: rgba(11,20,55,0.78); max-width: 560px; }
+  .vs-points li { padding-left: 22px; position: relative; font-size: 16px; line-height: 1.6; color: rgba(244,247,255,0.78); max-width: 560px; }
   .vs-points li::before { content: ''; position: absolute; left: 0; top: 0.62em; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
   .vs-points b { color: var(--cream); font-weight: 600; }
   .vs-portal-visual { position: relative; padding-bottom: 40px; }
@@ -202,7 +202,7 @@ export const VISUALS_CSS = `
   @media (min-width: 1000px) { .vs-portal-grid { grid-template-columns: 0.85fr 1.15fr; gap: 72px; } }
 
   /* founder */
-  .vs-founder { padding: 120px 32px; background: #F4F7FF; border-top: 1px solid var(--line); }
+  .vs-founder { padding: 120px 32px; background: var(--black-soft); border-top: 1px solid var(--line); }
   .vs-founder-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 48px; align-items: center; }
   .vs-founder-photo { margin: 0 auto; width: min(340px, 76vw); border-radius: var(--yk-radius-lg); overflow: hidden; box-shadow: var(--yk-shadow-float); border: 1px solid rgba(22,56,232,0.35); }
   .vs-quote { font-family: var(--font-display); font-style: italic; font-size: clamp(26px, 3vw, 40px); line-height: 1.25; color: var(--cream); margin: 0 0 26px; }

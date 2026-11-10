@@ -2,6 +2,7 @@
 
 import { useState, useEffect, ReactNode } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { PORTAL_LOGIN_URL, START_URL } from '@/lib/pricing'
 
 // ═════════════════════════════════════════════════════════════════════════
@@ -10,13 +11,36 @@ import { PORTAL_LOGIN_URL, START_URL } from '@/lib/pricing'
 // custom builds are the second lane (/custom-builds, Book a call = /apply).
 // ═════════════════════════════════════════════════════════════════════════
 
+// Nov 9 2026 home makeover: / is the immersive walkthrough; every other page wears its look
+// (night navy, gold Y mark, lime accents, a photoreal room behind each page header).
 export const NAV_LINKS = [
-  { href: '/#portal', label: 'The portal' },
+  { href: '/portal', label: 'The portal' },
   { href: '/pricing', label: 'Plans' },
   { href: '/how-it-works', label: 'How it works' },
   { href: '/custom-builds', label: 'Custom builds' },
+  { href: '/watch', label: 'Watch' },
   { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
 ] as const
+
+// Photoreal room behind each page header (stills cut from the walkthrough's room panoramas).
+const ROOM_FOR_PATH: [string, string][] = [
+  ['/pricing', 'landlord'], ['/how-it-works', 'trucking'], ['/custom-builds', 'tree'], ['/about', 'nonprofit'],
+  ['/apply', 'foodtruck'], ['/contact', 'foodtruck'], ['/watch', 'realestate'], ['/portal', 'grower'],
+]
+function roomFor(path: string) {
+  const hit = ROOM_FOR_PATH.find(([p]) => path === p || path.startsWith(p + '/'))
+  return `/art/rooms/${hit ? hit[1] : 'landlord'}.jpg`
+}
+
+function YMark({ size = 30 }: { size?: number }) {
+  return (
+    <svg className="yk-y" width={size} height={size * 0.93} viewBox="-30 -30 960 858" aria-hidden="true">
+      <defs><linearGradient id="ykyg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#F3D98B" /><stop offset=".5" stopColor="#C9A14A" /><stop offset="1" stopColor="#8E6A24" /></linearGradient></defs>
+      <g fill="url(#ykyg)"><polygon opacity=".62" points="0,0 298,298 298,432 0,134" /><polygon opacity=".62" points="900,0 900,134 602,432 602,298" /><polygon opacity=".62" points="332,366 432,466 432,798 332,698" /><polygon points="48,0 216,0 426,210 342,294" /><polygon points="684,0 852,0 493,359 568,359 568,554 349,335" /><polygon points="468,502 568,602 568,698 468,798" /></g>
+    </svg>
+  )
+}
 
 export const TAGLINE = 'SET UP WITH YOU · HERE TO STAY'
 
@@ -25,11 +49,10 @@ export function BrandMark() {
     <Link href="/" className="yk-brand" aria-label="Yakini home">
       {/* The Yakini logo, white + blue refresh (/yakini-lockup-blue.svg). The original gold
           lockup (/yakini-lockup.jpg) stays in the repo, unused here. */}
-      <span className="yk-brand-logo">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/yakini-lockup-blue.svg" alt="Yakini" width={520} height={120} />
-      </span>
-      <span className="yk-brand-sub">{TAGLINE}</span>
+      {/* Same gold Y mark and wordmark as the immersive home page. The blue lockup
+          (/yakini-lockup-blue.svg) and gold lockup (/yakini-lockup.jpg) stay in the repo. */}
+      <YMark />
+      <span className="yk-brand-word">YAKINI <b>DIGITAL</b></span>
     </Link>
   )
 }
@@ -46,17 +69,20 @@ export function SiteShell({ children }: { children: ReactNode }) {
   }, [])
 
   const close = () => setMenuOpen(false)
+  const path = usePathname() || '/'
 
   return (
     <>
       <style>{GLOBAL_CSS}</style>
+      <div className="yk-backdrop" aria-hidden="true" style={{ backgroundImage: `url(${roomFor(path)})` }} />
+      <style>{`:root{--yk-room:url(${roomFor(path)})}`}</style>
 
       <nav className={`yk-nav ${scrolled || menuOpen ? 'scrolled' : ''}`}>
         <div className="yk-nav-inner">
           <BrandMark />
           <div className="yk-nav-center">
             {NAV_LINKS.map((l) => (
-              <a key={l.href} href={l.href}>{l.label}</a>
+              <a key={l.href} href={l.href} aria-current={path === l.href ? 'page' : undefined}>{l.label}</a>
             ))}
           </div>
           <div className="yk-nav-right">
@@ -83,14 +109,16 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <a href={START_URL} className="yk-mobile-start" onClick={close}>Start your setup →</a>
             <a href={PORTAL_LOGIN_URL} className="yk-mobile-signin" onClick={close}>Sign in to your portal</a>
           </div>
+          <a href="/" onClick={close}>Walk through Yakini</a>
           {NAV_LINKS.map((l) => (
             <a key={l.href} href={l.href} onClick={close}>{l.label}</a>
           ))}
+          <a href="/class" onClick={close}>Free class</a>
           <a href="/apply" onClick={close}>Book a call</a>
         </div>
       )}
 
-      <main>{children}</main>
+      <main className="yk-main">{children}</main>
 
       <footer className="yk-footer">
         <div className="yk-section-inner">
@@ -104,20 +132,25 @@ export function SiteShell({ children }: { children: ReactNode }) {
               <h6>Portal</h6>
               <a href={START_URL}>Start your setup</a>
               <a href={PORTAL_LOGIN_URL}>Sign in</a>
+              <a href="/portal">The portal</a>
               <a href="/pricing">Plans</a>
               <a href="/how-it-works">How it works</a>
+              <Link href="/watch">Watch it work</Link>
+              <a href="/class">Free class</a>
             </div>
             <div className="yk-footer-col">
               <h6>Custom builds</h6>
               <a href="/custom-builds">What we build</a>
               <a href="/apply?tier=partner">Book a call</a>
               <h6 className="yk-footer-h6-gap">Company</h6>
+              <a href="/">Walk through Yakini</a>
               <a href="/about">About</a>
               <a href="https://brsafoundation.org" target="_blank" rel="noopener">BRSA Foundation</a>
               <a href="https://brsaholdings.org" target="_blank" rel="noopener">BRSA Holdings</a>
             </div>
             <div className="yk-footer-col">
               <h6>Contact</h6>
+              <a href="/contact">Contact us</a>
               <a href="tel:+13466232199">Office · 1 (346) 623-2199</a>
               <a href="tel:+13466264948">Executive · 1 (346) 626-4948</a>
               <a href="mailto:hello@yakini.digital">hello@yakini.digital</a>
@@ -131,6 +164,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           </div>
         </div>
       </footer>
+      <style>{THEME_CSS}</style>
     </>
   )
 }
@@ -532,3 +566,94 @@ const GLOBAL_CSS = `
   }
 `
               
+
+// ═════════════════════════════════════════════════════════════════════════
+// IMMERSIVE THEME (Nov 9 2026). Rendered after the page's own <style>, so it
+// re-skins every SiteShell page to match the walkthrough at /. Layout, copy,
+// links and forms are untouched; only colour, type and backdrop change.
+// ═════════════════════════════════════════════════════════════════════════
+const THEME_CSS = `
+  :root {
+    --navy: rgba(11,20,55,0.55);
+    --navy-deep: #060B24;
+    --black: rgba(6,11,36,0.92);
+    --black-soft: rgba(11,20,55,0.6);
+    --gold: #C6F432;
+    --gold-warm: #C6F432;
+    --gold-soft: rgba(198,244,50,0.12);
+    --cream: #F4F7FF;
+    --warm-white: #F4F7FF;
+    --line: rgba(244,247,255,0.14);
+    --line-strong: rgba(244,247,255,0.28);
+    --muted: rgba(244,247,255,0.72);
+    --yk-ink: #F4F7FF;
+    --yk-gold: #C6F432;
+    --yk-gold-soft: rgba(198,244,50,0.14);
+    --yk-line-dark: rgba(244,247,255,0.14);
+    --brass: #C9A14A;
+  }
+  html, body { background: #060B24 !important; color: var(--cream); }
+  ::selection { background: #C6F432; color: #060B24; }
+  .yk-backdrop {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-size: cover; background-position: center;
+    opacity: 0.22; filter: saturate(0.85) blur(2px);
+  }
+  .yk-backdrop::after { content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 80% 0%, rgba(22,56,232,0.35), transparent 55%), linear-gradient(180deg, rgba(6,11,36,0.4), rgba(6,11,36,0.92) 70%); }
+  .yk-main, .yk-footer, .yk-nav, .yk-mobile-menu { position: relative; z-index: 1; }
+  .yk-nav { position: fixed; z-index: 100; }
+  .yk-mobile-menu { position: fixed; z-index: 99; background: rgba(6,11,36,0.97); }
+
+  /* brand */
+  .yk-brand { gap: 10px; }
+  .yk-y { filter: drop-shadow(0 0 10px rgba(201,161,74,0.55)); flex-shrink: 0; }
+  .yk-brand-word { font-family: var(--font-body); font-weight: 600; font-size: 15px; letter-spacing: 0.22em; white-space: nowrap;
+    background: linear-gradient(100deg,#F3D98B,#C9A14A 45%,#F6E3A8 55%,#A9802F); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .yk-brand-word b { font-weight: 600; }
+
+  /* nav: dark glass, pills like the walkthrough */
+  .yk-nav { background: linear-gradient(rgba(6,11,36,0.85), rgba(6,11,36,0)); }
+  .yk-nav.scrolled { background: rgba(6,11,36,0.82); border-bottom: 1px solid var(--line); }
+  .yk-nav-center { gap: 26px; }
+  .yk-nav-center a { color: rgba(244,247,255,0.78); }
+  .yk-nav-center a[aria-current="page"] { color: #C6F432; }
+  .yk-nav-center a::after { background: #C6F432 !important; }
+  .yk-nav-signin { color: rgba(244,247,255,0.85); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; }
+  .yk-nav-cta { border-radius: 999px; background: #C6F432; color: #0B1437; }
+  .yk-nav-cta:hover { background: #F4F7FF; color: #0B1437; box-shadow: 0 12px 30px rgba(198,244,50,0.25); }
+  .yk-mobile-menu a.yk-mobile-start { border-radius: 999px; background: #C6F432; color: #0B1437; }
+  .yk-mobile-menu a.yk-mobile-signin { border-radius: 999px; }
+  @media (max-width: 1240px) { .yk-nav-center { gap: 18px; } .yk-nav-center a { font-size: 12.5px; } }
+  @media (max-width: 420px) { .yk-brand-word { font-size: 12.5px; letter-spacing: 0.16em; } }
+
+  /* headings + accents: Cormorant display, lime italics (no highlighter bar on dark) */
+  .yk-gold.yk-italic, .hh-h1-gold { background-image: none !important; color: #C6F432 !important; font-style: italic; }
+  .yk-gold { color: #C6F432; }
+  .yk-eyebrow { border-radius: 999px; background: rgba(6,11,36,0.55); backdrop-filter: blur(8px); font-family: var(--font-mono); color: #C6F432; }
+  .yk-eyebrow-dot { background: #C6F432; }
+  .yk-section-tag { font-family: var(--font-mono); color: #C6F432; }
+  .yk-page-sub { color: var(--muted) !important; }
+
+  /* buttons: lime primary pill, glass ghost pill */
+  .yk-btn-primary { border-radius: 999px; background: #C6F432; border-color: #C6F432; color: #0B1437; }
+  .yk-btn-primary:hover { background: #F4F7FF; border-color: #F4F7FF; color: #0B1437; box-shadow: 0 15px 40px rgba(198,244,50,0.25); }
+  .yk-btn-ghost { border-radius: 999px; background: rgba(6,11,36,0.5); backdrop-filter: blur(6px); }
+  .yk-btn-ghost:hover { border-color: #C6F432; color: #C6F432; }
+
+  /* page headers: a photoreal room behind the title */
+  .yk-page-header { background: none !important; border-bottom: 1px solid var(--line); }
+  .yk-page-header::before { content: ''; position: absolute; inset: 0; width: auto; height: auto; left: 0; transform: none;
+    background-image: linear-gradient(90deg, rgba(6,11,36,0.94) 0%, rgba(6,11,36,0.78) 45%, rgba(6,11,36,0.35) 100%), linear-gradient(0deg, #060B24 0%, transparent 40%), var(--yk-room);
+    background-size: cover; background-position: center; opacity: 1; }
+  .yk-page-h1, .yk-section-h2 { text-shadow: 0 2px 30px rgba(6,11,36,0.8); }
+
+  /* shared section buttons (hm-btn) as walkthrough pills */
+  .hm-btn { border-radius: 999px; background: rgba(6,11,36,0.5); backdrop-filter: blur(6px); }
+  .hm-btn-gold { background: #C6F432; border-color: #C6F432; color: #0B1437; }
+  .hm-btn-gold:hover { background: #F4F7FF; border-color: #F4F7FF; color: #0B1437; box-shadow: 0 16px 40px rgba(198,244,50,0.22); }
+
+  .yk-footer { background: rgba(3,6,20,0.92); }
+  .yk-footer-start { border-radius: 999px; }
+  .yk-footer-start:hover { color: #0B1437; }
+`

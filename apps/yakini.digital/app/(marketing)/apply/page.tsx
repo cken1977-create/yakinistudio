@@ -408,11 +408,11 @@ function Field({ label, value, onChange, placeholder, type = 'text' }: FieldProp
 }
 
 const PAGE_CSS = `
-  .ap-plan-note { margin-top: 22px; font-size: 15px; color: rgba(11,20,55,0.74); }
+  .ap-plan-note { margin-top: 22px; font-size: 15px; color: rgba(244,247,255,0.74); }
   .ap-plan-note a { color: var(--gold); border-bottom: 1px solid rgba(22,56,232,0.4); }
   /* ═══ HEADER ═══ */
   .ap-header {
-    background: #F4F7FF;
+    background: var(--black-soft);
     min-height: 600px;
     position: relative;
   }
@@ -440,7 +440,7 @@ const PAGE_CSS = `
   .ap-progress-inner {
     display: flex;
     gap: 0;
-    background: rgba(11,20,55,0.03);
+    background: rgba(244,247,255,0.03);
     border: 1px solid var(--line);
     padding: 8px;
   }
@@ -492,7 +492,7 @@ const PAGE_CSS = `
   /* Form card */
   .ap-form-card {
     padding: 48px;
-    background: rgba(11,20,55,0.03);
+    background: rgba(244,247,255,0.03);
     border: 1px solid var(--line);
   }
 
@@ -560,7 +560,7 @@ const PAGE_CSS = `
   }
   .ap-field input::placeholder,
   .ap-field textarea::placeholder {
-    color: rgba(11,20,55,0.74);
+    color: rgba(244,247,255,0.74);
   }
   .ap-field textarea {
     resize: vertical;
@@ -679,7 +679,7 @@ const PAGE_CSS = `
   }
   .ap-sidebar-card {
     padding: 28px;
-    background: rgba(11,20,55,0.03);
+    background: rgba(244,247,255,0.03);
     border: 1px solid var(--line);
   }
   .ap-sidebar-h {
