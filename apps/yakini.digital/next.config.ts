@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs/config";
 
 // Portal-first site (Oct 22 2026). Retired pages redirect permanently (308).
 // /food-trucks is retired with no redirect: it 404s like any unknown path.
@@ -48,4 +49,13 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG ?? "yakini",
+  project: process.env.SENTRY_PROJECT ?? "yakini-digital",
+  // Only print source-map upload logs in CI
+  silent: !process.env.CI,
+  // Skip source-map upload unless SENTRY_AUTH_TOKEN is present (follow-up)
+  sourcemaps: {
+    disable: !process.env.SENTRY_AUTH_TOKEN,
+  },
+});
