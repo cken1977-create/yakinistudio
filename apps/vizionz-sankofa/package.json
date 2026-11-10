@@ -10,6 +10,8 @@
     "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.1.0",
     "@anthropic-ai/sdk": "^0.32.1",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.45.0",

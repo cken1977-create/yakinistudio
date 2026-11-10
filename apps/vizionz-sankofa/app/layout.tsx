@@ -15,6 +15,8 @@ import { validateBrandConfig } from '@yakini/config'
 import { config } from '@/config/brand'
 import { Topbar, Header, Footer } from '@/components'
 import { PublicOnly } from '@/components/PublicChrome'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 // Build-time validation — fails the build if config is invalid
 const validation = validateBrandConfig(config)
@@ -57,6 +59,8 @@ export default function RootLayout({
             <Footer config={config} />
           </PublicOnly>
         </BrandProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
