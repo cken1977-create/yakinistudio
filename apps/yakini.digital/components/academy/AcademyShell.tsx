@@ -29,6 +29,7 @@ export function AcademyShell({ lang, children, otherLangHref, preview }: { lang:
           <span>© 2026 BRSA Holdings, Inc. · {c.footerNote}</span>
           <nav aria-label={lang === 'es' ? 'Pie de página' : 'Footer'}>
             <a href={PATHS[lang].privacy}>{c.privacy}</a>
+            <a href="/contact">{lang === 'es' ? 'Contacto' : 'Contact'}</a>
             <a href="mailto:hello@yakini.digital">hello@yakini.digital</a>
             <Link href="/">yakini.digital</Link>
           </nav>

@@ -59,7 +59,7 @@ export default function PricingPage() {
             <li><strong>Help desk</strong><span>With a real Yakini person</span></li>
             <li><strong>Drafted replies</strong><span>Nothing goes out without your OK</span></li>
           </ul>
-          <Link href="/#portal" className="pn-portal-link">Take the portal tour →</Link>
+          <Link href="/portal#portal" className="pn-portal-link">Take the portal tour →</Link>
         </div>
       </section>
 
@@ -265,7 +265,7 @@ function Mark({ yes = false }: { yes?: boolean }) {
 const PAGE_CSS = `
   /* ═══ HEADER ═══ */
   .pr-header {
-    background: #F4F7FF;
+    background: var(--black-soft);
     min-height: 520px;
     position: relative;
   }
@@ -289,7 +289,7 @@ const PAGE_CSS = `
     .pr-tiers-grid-2 { grid-template-columns: 1fr; }
   }
   .pr-tier {
-    background: rgba(11,20,55,0.03);
+    background: rgba(244,247,255,0.03);
     border: 1px solid var(--line);
     padding: 40px 32px;
     position: relative;
@@ -298,7 +298,7 @@ const PAGE_CSS = `
   }
   .pr-tier-featured {
     border: 2px solid var(--gold);
-    background: linear-gradient(135deg, rgba(22,56,232,0.05) 0%, rgba(11,20,55,0.03) 100%);
+    background: linear-gradient(135deg, rgba(22,56,232,0.05) 0%, rgba(244,247,255,0.03) 100%);
     transform: translateY(-8px);
   }
   @media (max-width: 900px) {
@@ -465,7 +465,7 @@ const PAGE_CSS = `
   /* ═══ PARTNER ═══ */
   .pr-custom-card {
     padding: 48px;
-    background: linear-gradient(135deg, rgba(22,56,232,0.05) 0%, rgba(11,20,55,0.03) 100%);
+    background: linear-gradient(135deg, rgba(22,56,232,0.05) 0%, rgba(244,247,255,0.03) 100%);
     border: 1px solid var(--gold);
     display: flex;
     flex-direction: column;
@@ -556,7 +556,7 @@ const PAGE_CSS = `
     color: var(--cream);
     margin-bottom: 28px;
     padding: 20px;
-    background: rgba(11,20,55,0.05);
+    background: rgba(244,247,255,0.05);
     border-left: 2px solid var(--gold);
   }
 
@@ -611,7 +611,7 @@ const PAGE_CSS = `
   }
   .pr-invite-card {
     padding: 40px 48px;
-    background: rgba(11,20,55,0.03);
+    background: rgba(244,247,255,0.03);
     border: 1px solid var(--line);
     max-width: 720px;
   }
@@ -652,7 +652,7 @@ const PAGE_CSS = `
   .pr-table-wrapper {
     overflow-x: auto;
     border: 1px solid var(--line);
-    background: rgba(11,20,55,0.03);
+    background: rgba(244,247,255,0.03);
     max-width: 640px;
   }
   .pr-table {
@@ -670,7 +670,7 @@ const PAGE_CSS = `
     font-size: 16px;
     font-weight: 500;
     color: var(--cream);
-    background: rgba(11,20,55,0.04);
+    background: rgba(244,247,255,0.04);
     border-bottom: 2px solid var(--line-strong);
   }
   .pr-feature-cell {
@@ -699,7 +699,7 @@ const PAGE_CSS = `
   }
   .pr-nonprofits-card {
     padding: 48px;
-    background: linear-gradient(135deg, rgba(22,56,232,0.05) 0%, rgba(11,20,55,0.03) 100%);
+    background: linear-gradient(135deg, rgba(22,56,232,0.05) 0%, rgba(244,247,255,0.03) 100%);
     border: 1px solid var(--gold);
     position: relative;
     max-width: 900px;
@@ -841,7 +841,7 @@ const PAGE_CSS = `
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     border: 1px solid var(--line);
-    background: rgba(11,20,55,0.03);
+    background: rgba(244,247,255,0.03);
   }
   .pr-compare {
     width: 100%;
@@ -861,7 +861,7 @@ const PAGE_CSS = `
     font-size: 18px;
     font-weight: 500;
     color: var(--cream);
-    background: rgba(11,20,55,0.04);
+    background: rgba(244,247,255,0.04);
   }
   .pr-compare tbody th {
     color: var(--cream);
@@ -895,7 +895,7 @@ const PAGE_CSS = `
   }
   .pr-know-card {
     border: 1px solid var(--line);
-    background: rgba(11,20,55,0.03);
+    background: rgba(244,247,255,0.03);
     padding: 28px 24px;
   }
   .pr-know-card h3 {
@@ -966,7 +966,7 @@ const PAGE_CSS = `
 const NEW_CSS = `
   .pn-portal { padding: 40px 24px; background: var(--black-soft); border-bottom: 1px solid var(--line); }
   .pn-portal-inner { display: grid; gap: 20px; }
-  .pn-portal-lead { font-size: 17px; color: rgba(11,20,55,0.8); }
+  .pn-portal-lead { font-size: 17px; color: rgba(244,247,255,0.8); }
   .pn-portal-lead strong { color: var(--gold); font-weight: 600; }
   .pn-portal-list { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
   .pn-portal-list li { background: var(--black-soft); padding: 18px 16px; display: flex; flex-direction: column; gap: 4px; }
@@ -981,14 +981,14 @@ const NEW_CSS = `
   @media (max-width: 700px) { .pn-grid { grid-template-columns: 1fr; } }
   .pn-tier { padding: 34px 28px; border-radius: 4px; transition: transform .25s ease, border-color .25s ease; }
   .pn-tier:hover { transform: translateY(-4px); border-color: rgba(22,56,232,0.5); }
-  .pn-founding { border: 2px solid var(--gold); background: linear-gradient(160deg, rgba(22,56,232,0.14) 0%, rgba(11,20,55,0.03) 60%); box-shadow: 0 30px 80px -40px rgba(22,56,232,0.55); }
+  .pn-founding { border: 2px solid var(--gold); background: linear-gradient(160deg, rgba(22,56,232,0.14) 0%, rgba(244,247,255,0.03) 60%); box-shadow: 0 30px 80px -40px rgba(22,56,232,0.55); }
   .pn-closed { opacity: .55; }
   .pn-partner { border-style: dashed; }
   .pn-tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
   .pn-price { display: flex; align-items: baseline; gap: 8px; margin-top: 18px; }
   .pn-price-num { font-family: var(--font-display); font-size: 56px; line-height: 1; color: var(--cream); letter-spacing: -0.02em; }
-  .pn-price-per { color: rgba(11,20,55,0.74); font-size: 16px; }
-  .pn-setup { margin-top: 8px; color: rgba(11,20,55,0.74); font-size: 14px; }
+  .pn-price-per { color: rgba(244,247,255,0.74); font-size: 16px; }
+  .pn-setup { margin-top: 8px; color: rgba(244,247,255,0.74); font-size: 14px; }
   .pn-list { margin: 22px 0 8px; flex: 1; }
   .pn-partner-line { font-family: var(--font-display); font-size: 26px; color: var(--cream); margin: 6px 0 12px; }
   .pn-cta-push { margin-top: auto; }
@@ -999,5 +999,5 @@ const NEW_CSS = `
   .pn-steps li { border: 1px solid var(--line); padding: 26px; display: flex; flex-direction: column; gap: 10px; }
   .pn-step-num { font-family: var(--font-display); font-size: 36px; color: var(--gold); }
   .pn-step-title { font-size: 19px; color: var(--cream); font-weight: 600; }
-  .pn-step-detail { color: rgba(11,20,55,0.74); font-size: 15px; line-height: 1.6; }
+  .pn-step-detail { color: rgba(244,247,255,0.74); font-size: 15px; line-height: 1.6; }
 `
