@@ -10,18 +10,18 @@
   },
   "dependencies": {
     "@sentry/nextjs": "^11.11.0",
-    "@supabase/ssr": "^0.10.2",
+    "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.105.1",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.1.0",
     "clsx": "^2.1.1",
-    "date-fns": "^4.1.0",
-    "lucide-react": "^1.14.0",
-    "next": "16.4.3",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "resend": "^6.12.2",
-    "tailwind-merge": "^3.5.0"
+    "date-fns": "^4.4.0",
+    "lucide-react": "^1.70.0",
+    "next": "16.4.5",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "resend": "^6.37.0",
+    "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -29,9 +29,9 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.4.3",
+    "eslint-config-next": "16.4.5",
     "tailwindcss": "^4",
-    "turbo": "2.9.18",
+    "turbo": "2.11.10",
     "typescript": "^5"
   },
   "overrides": {
@@ -43,7 +43,7 @@
     "js-yaml": "4.3.2",
     "minimatch@10": "11.0.5",
     "source-map-js": "1.2.2",
-    "turbo": "2.9.18",
+    "turbo": "2.11.10",
     "ws": "8.22.2"
   }
 }
