@@ -4,7 +4,9 @@ import { withSentryConfig } from "@sentry/nextjs/config";
 // Portal-first site (Oct 22 2026). Retired pages redirect permanently (308).
 // /food-trucks is retired with no redirect: it 404s like any unknown path.
 const PORTAL_SIGN_IN = "https://portal.yakini.digital/enter";
-const IMMERSIVE_ORIGIN = "https://yakini-immersive-concept.vercel.app";
+// Nov 10 2026 (Clarence approved): v2 immersive site with the valley film opening.
+// Roll back by setting this back to "https://yakini-immersive-concept.vercel.app" (or Instant Rollback in Vercel).
+const IMMERSIVE_ORIGIN = "https://yakini-immersive-v2.vercel.app";
 
 // /watch videos stream from the public video store. This header only limits
 // where video and audio may load from on those pages; nothing else changes.
@@ -20,7 +22,7 @@ const nextConfig: NextConfig = {
   // Home page (Nov 9 2026, Clarence approved): / is the immersive walkthrough, built and deployed
   // from its own project (yakini-immersive-concept) and served here through rewrites so every other
   // yakini.digital path keeps running in this app. Its static files live under /assets, /audio,
-  // /rooms, /ad and /favicon.svg (none of which exist in this app). The old home is now /portal.
+  // /rooms, /ad, /hero, /kit-cards and /favicon.svg (none of which exist in this app). The old home is now /portal.
   async rewrites() {
     return {
       beforeFiles: [
@@ -30,6 +32,8 @@ const nextConfig: NextConfig = {
         { source: "/rooms/:path*", destination: `${IMMERSIVE_ORIGIN}/rooms/:path*` },
         { source: "/ad/:path*", destination: `${IMMERSIVE_ORIGIN}/ad/:path*` },
         { source: "/favicon.svg", destination: `${IMMERSIVE_ORIGIN}/favicon.svg` },
+        { source: "/hero/:path*", destination: `${IMMERSIVE_ORIGIN}/hero/:path*` },
+        { source: "/kit-cards/:path*", destination: `${IMMERSIVE_ORIGIN}/kit-cards/:path*` },
       ],
       afterFiles: [],
       fallback: [],
