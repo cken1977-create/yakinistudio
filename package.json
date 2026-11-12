@@ -18,7 +18,7 @@
     "build:momma-sallys": "turbo build --filter=momma-sallys"
   },
   "devDependencies": {
-    "turbo": "2.9.18"
+    "turbo": "2.11.10"
   },
   "overrides": {
     "@babel/core": "7.29.13",
@@ -32,7 +32,7 @@
     "minimatch@10": "11.0.5",
     "qs": "6.17.1",
     "source-map-js": "1.2.2",
-    "turbo": "2.9.18",
+    "turbo": "2.11.10",
     "ws": "8.22.2",
     "brace-expansion@1.1.14": "1.1.21",
     "brace-expansion@5.0.5": "5.0.12",
