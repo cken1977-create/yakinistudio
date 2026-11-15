@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   CATERING_PACKAGES,
   CATERING_MEATS,
@@ -98,7 +98,10 @@ function StepHead({ n, title, es, hint }: { n: number; title: string; es: string
   )
 }
 
-export function CateringBuilder() {
+export type CateringBuilderState = { headcount: number; meats: string[]; sides: string[]; desserts: string[] }
+
+/** onChange is optional; the catering page renders exactly as before without it. */
+export function CateringBuilder({ onChange }: { onChange?: (s: CateringBuilderState) => void } = {}) {
   const [headcount, setHeadcount] = useState(50)
   const [pkgId, setPkgId] = useState('pitmaster')
   const [meats, setMeats] = useState<string[]>(['brisket', 'sausage'])
@@ -106,6 +109,10 @@ export function CateringBuilder() {
   const [desserts, setDesserts] = useState<string[]>([])
   const [serviceId, setServiceId] = useState('dropoff')
   const [date, setDate] = useState('')
+
+  useEffect(() => {
+    onChange?.({ headcount, meats, sides, desserts })
+  }, [onChange, headcount, meats, sides, desserts])
 
   const pkg = CATERING_PACKAGES.find((p) => p.id === pkgId) ?? CATERING_PACKAGES[1]
   const service = SERVICE_STYLES.find((s) => s.id === serviceId) ?? SERVICE_STYLES[0]

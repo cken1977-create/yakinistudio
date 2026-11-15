@@ -1,272 +1,417 @@
 import Link from 'next/link'
 import { Photo, type PhotoKey } from '@/components/Photos'
+import { PaymentOptions } from '@/components/PaymentOptions'
+import { ThanksgivingSpecial } from '@/components/ThanksgivingSpecial'
+import { Reveal, RevealStyles } from '@/components/Reveal'
+import { TruckVideo, LoopClip } from '@/components/Alive'
+import { StickyBar, Steam, PlateBuilder, CateringChapter, SeasonGate, QuoteReveal, RouteLine, ParkTruck } from '@/components/Chapters'
+import { config } from '@/config/brand'
+import { THANKSGIVING_SHOW_UNTIL } from '@/config/thanksgiving'
+import { PHONE_DISPLAY, PHONE_TEL, SMS_LINK, HAS_PAY } from '@/config/site'
 
 const CATS: { href: string; title: string; es: string; text: string; cta: string; photo: PhotoKey }[] = [
   { href: '/food-truck', title: 'Food Truck', es: 'Camión', text: 'BBQ plates off the pit — brisket, sausage, chicken & pulled pork.', cta: 'Menu & location', photo: 'brisketPlate' },
   { href: '/catering', title: 'Catering', es: 'Banquetes', text: 'Grazing tables, buffets and charcuterie for any crowd.', cta: 'Plan catering', photo: 'grazing' },
   { href: '/events', title: 'Events', es: 'Eventos', text: 'Party spreads and homemade desserts, cobbler to banana pudding.', cta: 'See events', photo: 'cobbler' },
 ]
-import { PaymentOptions } from '@/components/PaymentOptions'
-import { ThanksgivingSpecial } from '@/components/ThanksgivingSpecial'
-import { Reveal, RevealStyles } from '@/components/Reveal'
-import { config } from '@/config/brand'
-import { HeroVideo, LoopClip, ParallaxDriver } from '@/components/Alive'
-import { EmberCanvas } from '@/components/EmberCanvas'
-import { PHONE_DISPLAY, PHONE_TEL, SMS_LINK, HAS_PAY, PUBLIC_EMAIL } from '@/config/site'
 
-const REEL = [
-  { key: 'brisket-bark', title: 'Smoked brisket', text: 'Dark, peppery bark, straight off the pit.', alt: 'Close-up of smoked brisket with dark peppery bark' },
-  { key: 'brisket-plate', title: 'The brisket plate', text: 'Beans, potatoes, green beans, cornbread & sauce.', alt: 'Brisket plate with beans, potatoes, green beans, cornbread and a cup of sauce' },
-  { key: 'peach-cobbler', title: 'Peach cobbler', text: 'Homemade, for events & catering.', alt: 'Cups of peach cobbler with cinnamon sticks' },
-] as const
+/** 01 — the four meats. Real photos only; meats without a photo yet ship as named tiles (SLOT). */
+const MEAT_CARDS: { id: string; clip?: string; poster?: string; alt?: string; line: string; lineEs: string }[] = [
+  { id: 'Brisket', clip: 'brisket-bark', poster: '/photos/enhanced/brisket-closeup.webp', alt: 'Smoked brisket with dark peppery bark', line: 'Dark bark, smoked low and slow.', lineEs: 'Corteza oscura, ahumado lento.' },
+  { id: 'Sausage', clip: 'sausage-plate', poster: '/photos/enhanced/sausage-brisket-plate.webp', alt: 'Sausage and brisket plate with corn, mac & cheese and green beans', line: 'Sliced sausage with snap.', lineEs: 'Salchicha en rodajas.' },
+  { id: 'Chicken', line: 'Off the pit.', lineEs: 'Del asador.' },
+  { id: 'Pulled Pork', line: 'Off the pit.', lineEs: 'Del asador.' },
+]
 
-const TICKER = ['Brisket', 'Sausage', 'Chicken', 'Pulled Pork', 'Mac & Cheese', 'Beans', 'Potato Salad', 'Green Beans', 'Corn', 'Banana Pudding', 'Catering', 'Events']
+/** 04 — sides: crops of her real plates where that side is visible; the rest are named tiles (SLOT). */
+const SIDE_PHOTOS: Record<string, string> = {
+  'Mac & Cheese': '/photos/enhanced/side-mac.webp',
+  Corn: '/photos/enhanced/side-corn.webp',
+  'Green Beans': '/photos/enhanced/side-green-beans.webp',
+  Beans: '/photos/enhanced/side-beans.webp',
+}
+
+function Chapter({ n, en, es, id, children }: { n: string; en: string; es: string; id?: string; children: React.ReactNode }) {
+  return (
+    <section className="h-sec c-ch" id={id} aria-labelledby={`ch-${n}`}>
+      <div className="ms-wrap">
+        <Reveal>
+          <div className="c-ch-head">
+            <span className="c-ch-n">{n}</span>
+            <div>
+              <h2 id={`ch-${n}`}>{en}</h2>
+              <div className="ms-es c-ch-es">{es}</div>
+            </div>
+          </div>
+        </Reveal>
+        {children}
+      </div>
+    </section>
+  )
+}
 
 export default function HomePage() {
   const menu = config.menu!
-  const plates = menu.categories[0]
+  const [plates, sidesCat, desserts] = menu.categories
+  const meats = plates.items.filter(i => !i.price)
+  const plateOffers = plates.items.filter(i => i.price).map((i, idx) => ({ count: (idx + 1) as 1 | 2, name: i.name, es: i.nameTranslated ?? '', price: i.price! }))
+  const meatOptions = meats.map(m => ({ id: m.name.toLowerCase().replace(/\s+/g, '-'), name: m.name, es: m.nameTranslated ?? m.name }))
+  const ticker = [...sidesCat.items, ...desserts.items]
 
   return (
     <>
       <style>{`
+        .h-hero { position: relative; min-height: calc(100svh - 60px); display: flex; align-items: flex-end; padding: 96px 0 56px; overflow: hidden; background: #000; }
+        .h-hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .h-hero-live { transition: opacity 1s ease; }
+        .h-hero-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.55) 45%, rgba(0,0,0,.95) 100%); }
+        .h-hero h1 { font-size: clamp(42px, 11vw, 92px); letter-spacing: -.02em; line-height: 1.02; margin-bottom: 18px; max-width: 14ch; }
+        .h-hero h1 em { color: var(--brand-primary); font-style: italic; }
         .h-ctas { display: grid; gap: 12px; margin-top: 28px; }
         @media (min-width: 640px) { .h-ctas { display: flex; flex-wrap: wrap; } }
         .h-sec { padding: 72px 0; border-top: 1px solid var(--brand-border); }
         .h-sec h2 { font-size: clamp(32px, 7vw, 54px); letter-spacing: -.02em; margin-bottom: 10px; }
         .h-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 32px; }
-        .h-card { border: 1px solid var(--brand-border); border-radius: 18px; padding: 24px; background: #0b0b0b; }
-        .h-card h3 { font-size: 22px; margin-bottom: 8px; }
         .h-price { font-family: var(--font-display); font-size: 22px; color: #fff; white-space: nowrap; }
-        .h-row { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px dotted var(--brand-border); }
-        .h-cat { display: block; border: 1px solid var(--brand-border); border-radius: 20px; padding: 10px; background: #0b0b0b; transition: border-color .15s; }
-        .h-cat:hover { border-color: var(--brand-primary); }
-        .a-hero { position: relative; min-height: calc(100svh - 60px); display: flex; align-items: flex-end; padding: 110px 0 72px; overflow: hidden; background: #0a0503; isolation: isolate; --s: 0; }
-        .a-hero-media { position: absolute; inset: 0; z-index: -3; transform: scale(calc(1.04 + var(--s) * .08)); transform-origin: 50% 60%; }
-        .a-hero-poster, .a-hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-        .a-hero-poster { animation: a-kb 18s ease-in-out infinite alternate; }
-        .a-hero-video { opacity: 0; transition: opacity 1.2s ease; }
-        .a-hero-video.is-ready { opacity: 1; }
-        .a-hero-warm { position: absolute; inset: 0; z-index: -2; pointer-events: none;
-          background:
-            radial-gradient(120% 80% at 70% 35%, rgba(255,140,40,.18) 0%, rgba(0,0,0,0) 55%),
-            radial-gradient(140% 100% at 50% 40%, rgba(0,0,0,0) 35%, rgba(10,4,0,.75) 100%),
-            linear-gradient(180deg, rgba(10,4,0,.35) 0%, rgba(20,6,0,.25) 35%, rgba(5,2,0,.82) 78%, #000 100%); }
-        .a-hero-grain { position: absolute; inset: -50%; z-index: -1; pointer-events: none; opacity: .09; mix-blend-mode: overlay;
-          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-          animation: a-grain 1.2s steps(6) infinite; }
-        .a-hero canvas { z-index: -1; }
-        .a-hero-in { position: relative; width: 100%; transform: translateY(calc(var(--s) * -60px)); opacity: calc(1 - var(--s) * 1.1); }
-        .a-title { font-size: clamp(44px, 10.5vw, 108px); letter-spacing: -.025em; line-height: .98; margin: 0 0 22px; max-width: 13ch; text-shadow: 0 4px 40px rgba(0,0,0,.55); }
-        .a-line { display: block; overflow: hidden; padding-bottom: .06em; }
-        .a-line > * { display: inline-block; animation: a-up 1s cubic-bezier(.22,1,.36,1) both; animation-delay: var(--d, 0s); }
-        .a-title em { color: #ffb347; font-style: italic; background: linear-gradient(92deg, #ffd27a 0%, #ff8a3d 45%, #e2382a 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-        .a-rise { animation: a-fade 1s cubic-bezier(.22,1,.36,1) both; animation-delay: var(--d, 0s); }
-        .a-lede { font-size: clamp(17px, 2.2vw, 20px); color: #f1e6dc; max-width: 560px; line-height: 1.6; text-shadow: 0 2px 18px rgba(0,0,0,.6); }
-        .a-ctas { display: grid; gap: 12px; margin-top: 28px; }
-        @media (min-width: 640px) { .a-ctas { display: flex; flex-wrap: wrap; } }
-        .a-glow { box-shadow: 0 0 0 0 rgba(179,18,27,.6); animation: a-pulse 2.6s ease-out 2s infinite; }
-        .a-sub { display: flex; gap: 22px; margin-top: 18px; font-weight: 700; font-size: 15px; }
-        .a-sub a { color: #ffd9a8; } .a-sub a:hover { color: #fff; }
-        .a-eyebrow { color: #ffc56b; text-shadow: 0 1px 12px rgba(0,0,0,.8); }
-        @media (max-width: 640px) { .a-hero { padding: 72px 0 40px; } .a-ticket { margin-bottom: 16px; font-size: 13px; } .a-title { margin-bottom: 16px; } .a-ctas { margin-top: 20px; gap: 10px; } }
-        .a-ticket { display: inline-flex; align-items: center; gap: 10px; padding: 9px 16px; margin-bottom: 22px; border-radius: 999px; font-size: 14px; font-weight: 600; color: #fff;
-          background: rgba(20,8,2,.55); border: 1px solid rgba(255,170,90,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); animation: a-fade .9s ease both; }
-        .a-ticket strong { color: #ffc56b; font-size: 16px; }
-        .a-ticket:hover { border-color: #ffc56b; }
-        .a-ticket-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff8a3d; box-shadow: 0 0 12px #ff8a3d; animation: a-blink 1.6s ease-in-out infinite; }
-        .a-cue { position: absolute; left: 50%; bottom: 18px; width: 26px; height: 42px; margin-left: -13px; border: 2px solid rgba(255,255,255,.55); border-radius: 14px; }
-        .a-cue span { position: absolute; left: 50%; top: 8px; width: 4px; height: 8px; margin-left: -2px; border-radius: 2px; background: #fff; animation: a-cue 1.8s ease-in-out infinite; }
-        @media (max-width: 899px) { .a-cue { display: none; } }
-        .a-ticker { overflow: hidden; border-top: 1px solid rgba(255,170,90,.25); border-bottom: 1px solid rgba(255,170,90,.25); background: linear-gradient(90deg, #120602, #1d0a03, #120602); padding: 14px 0; }
-        .a-ticker-track { display: flex; width: max-content; animation: a-marquee 38s linear infinite; }
-        .a-ticker-track > span { display: flex; }
-        .a-ticker-track > span > span { font-family: var(--font-display); font-style: italic; font-size: clamp(20px, 3vw, 30px); color: #f6e7d6; white-space: nowrap; padding: 0 18px; }
-        .a-ticker i { font-style: normal; color: var(--brand-primary); padding-left: 36px; font-size: .7em; vertical-align: middle; }
-        .a-reel h2 { max-width: 16ch; }
-        .a-reel-grid { display: grid; gap: 18px; margin-top: 36px; grid-template-columns: 1fr; }
-        @media (min-width: 760px) { .a-reel-grid { grid-template-columns: 1.05fr 1.2fr .95fr; align-items: start; } .a-reel-1 { margin-top: 64px; } .a-reel-2 { margin-top: 18px; } }
-        .a-reel-item { margin: 0; --p: 0; transform: translateY(calc(var(--p) * -40px)); will-change: transform; }
-        .a-reel-1 { transform: translateY(calc(var(--p) * -80px)); }
-        .a-clip { position: relative; border-radius: 22px; overflow: hidden; background: #140802; box-shadow: 0 30px 60px -30px rgba(255,110,30,.35), 0 0 0 1px rgba(255,170,90,.15); }
-        .a-reel-0 .a-clip { aspect-ratio: 3 / 4; } .a-reel-1 .a-clip { aspect-ratio: 4 / 3; } .a-reel-2 .a-clip { aspect-ratio: 1 / 1; }
-        .a-clip img, .a-clip video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-        .a-clip video { opacity: 0; transition: opacity .8s ease; }
-        .a-clip video.is-ready { opacity: 1; }
-        .a-clip::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,.45)); pointer-events: none; }
-        .a-reel figcaption { display: grid; gap: 2px; padding: 14px 4px 0; }
-        .a-reel figcaption strong { font-family: var(--font-display); font-size: 24px; }
-        .a-reel figcaption span { color: var(--brand-muted); font-size: 15px; }
-        @keyframes a-up { from { transform: translateY(105%); } to { transform: none; } }
-        @keyframes a-fade { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
-        @keyframes a-kb { from { transform: scale(1); } to { transform: scale(1.07) translate(-1%, -1%); } }
-        @keyframes a-grain { 0% { transform: translate(0,0); } 20% { transform: translate(-3%,2%); } 40% { transform: translate(2%,-3%); } 60% { transform: translate(-2%,-1%); } 80% { transform: translate(3%,3%); } 100% { transform: translate(0,0); } }
-        @keyframes a-pulse { 0% { box-shadow: 0 0 0 0 rgba(255,80,40,.55); } 70% { box-shadow: 0 0 0 16px rgba(255,80,40,0); } 100% { box-shadow: 0 0 0 0 rgba(255,80,40,0); } }
-        @keyframes a-blink { 50% { opacity: .35; } }
-        @keyframes a-cue { 0% { opacity: 0; transform: translateY(0); } 40% { opacity: 1; } 100% { opacity: 0; transform: translateY(14px); } }
-        @keyframes a-marquee { to { transform: translateX(-50%); } }
-        @media (prefers-reduced-motion: reduce) {
-          .a-hero-media, .a-hero-in, .a-reel-item, .a-reel-1 { transform: none !important; opacity: 1 !important; }
-          .a-hero-poster, .a-hero-grain, .a-line > *, .a-rise, .a-glow, .a-ticket, .a-ticket-dot, .a-cue span, .a-ticker-track { animation: none !important; }
-        }
+        .h-cat { display: block; border: 1px solid var(--brand-border); border-radius: 20px; padding: 10px; background: #0b0b0b; transition: border-color .15s, transform .2s; }
+        .h-cat:hover { border-color: var(--brand-primary); transform: translateY(-3px); }
         .h-plate { background: linear-gradient(180deg, rgba(0,0,0,.6), rgba(0,0,0,.92)), url('/backdrop-platter.png') center / cover no-repeat; }
+
+        /* chapters */
+        .c-ch-head { display: flex; gap: 18px; align-items: flex-start; }
+        .c-ch-n { font-family: var(--font-display); font-style: italic; font-size: clamp(40px, 8vw, 72px); line-height: .9; color: var(--brand-primary); }
+        .c-ch-head h2 { margin: 0; }
+        .c-ch-es { font-size: 16px; margin-top: 2px; }
+
+        /* 01 meat cards */
+        .c-meats { display: grid; gap: 14px; margin-top: 32px; grid-template-columns: repeat(2, 1fr); }
+        @media (min-width: 900px) { .c-meats { grid-template-columns: repeat(4, 1fr); } }
+        .c-meat { position: relative; border: 1px solid var(--brand-border); border-radius: 20px; padding: 8px; background: #0b0b0b; transition: border-color .2s, transform .25s; }
+        .c-meat:hover { border-color: var(--brand-primary); transform: translateY(-4px); }
+        .c-meat .a-clip, .c-tile { aspect-ratio: 3 / 4; border-radius: 14px; }
+        .c-meat h3 { font-size: clamp(20px, 3vw, 26px); margin: 12px 6px 0; }
+        .c-meat p { margin: 2px 6px 8px; color: var(--brand-muted); font-size: 14px; }
+        .c-tile { display: flex; flex-direction: column; justify-content: flex-end; padding: 18px; background: radial-gradient(120% 90% at 30% 20%, #3a0a0d 0%, #120405 60%, #050102 100%); border: 1px dashed rgba(255,255,255,.18); }
+        .c-tile strong { font-family: var(--font-display); font-size: clamp(26px, 4vw, 34px); line-height: 1.05; }
+        .c-tile span { color: var(--brand-muted); font-style: italic; }
+
+        .a-clip { position: relative; overflow: hidden; background: #140802; }
+        .a-clip img, .a-clip video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .a-clip video { opacity: 0; transition: opacity .9s ease; }
+        .a-clip video.is-ready { opacity: 1; }
+        .c-frame { position: relative; }
+        .c-steam { position: absolute; left: 0; right: 0; bottom: 30%; height: 60%; pointer-events: none; z-index: 2; }
+        .c-steam i { position: absolute; bottom: 0; width: 34%; height: 70%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,255,255,.22), rgba(255,255,255,0)); filter: blur(8px); opacity: 0; animation: c-steam 5.5s ease-in infinite; }
+        .c-steam i:nth-child(1) { left: 12%; } .c-steam i:nth-child(2) { left: 38%; animation-delay: 1.8s; } .c-steam i:nth-child(3) { left: 62%; animation-delay: 3.6s; }
+        @keyframes c-steam { 0% { transform: translateY(20%) scaleX(.7); opacity: 0; } 30% { opacity: .9; } 100% { transform: translateY(-70%) scaleX(1.2); opacity: 0; } }
+
+        /* 02 plate builder */
+        .c-pb { display: grid; gap: 28px; margin-top: 32px; align-items: center; }
+        @media (min-width: 900px) { .c-pb { grid-template-columns: 1.1fr 1fr; } }
+        .c-pb-sizes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .c-pb-size { display: grid; gap: 2px; text-align: left; padding: 18px; border-radius: 18px; border: 1px solid var(--brand-border); background: #0b0b0b; color: #fff; cursor: pointer; font-size: 15px; font-weight: 700; transition: border-color .15s, background .15s, transform .15s; }
+        .c-pb-size[aria-pressed="true"] { border-color: var(--brand-primary); background: rgba(179,18,27,.14); transform: scale(1.02); }
+        .c-pb-size .ms-es { font-weight: 400; font-size: 13px; }
+        .c-pb-price { font-family: var(--font-display); font-size: 40px; line-height: 1; color: #fff; }
+        .c-pb-step { margin: 22px 0 10px; font-weight: 700; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--brand-muted); }
+        .c-pb-meats { display: flex; flex-wrap: wrap; gap: 10px; }
+        .c-chip { padding: 10px 16px; border-radius: 999px; border: 1px solid var(--brand-border); background: #0b0b0b; color: #fff; font-size: 15px; cursor: pointer; transition: transform .15s, border-color .15s, background .15s; }
+        .c-chip span { opacity: .6; font-size: 13px; }
+        .c-chip[aria-pressed="true"] { border-color: var(--brand-primary); background: rgba(179,18,27,.2); transform: scale(1.05); }
+        .c-pb-note { margin-top: 14px; color: var(--brand-muted); font-size: 14px; }
+        .c-pb-ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+        .c-pb-plate { display: grid; justify-items: center; gap: 16px; }
+        .c-plate { position: relative; width: min(340px, 82vw); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 50% 45%, #fbf7f1 0%, #e9e2d7 62%, #cfc6b8 100%); box-shadow: 0 30px 60px -20px rgba(255,90,30,.25), inset 0 -10px 30px rgba(0,0,0,.15); }
+        .c-plate-rim { position: absolute; inset: 9%; border-radius: 50%; border: 2px solid rgba(0,0,0,.06); }
+        .c-plate-meat { position: absolute; display: grid; place-items: center; text-align: center; padding: 8px; color: #fff; font-family: var(--font-display); font-size: 20px; line-height: 1.05; border-radius: 46% 54% 50% 50%; background: radial-gradient(circle at 35% 30%, #8a3a1c, #4a1608 70%, #2a0a03); box-shadow: inset 0 3px 8px rgba(255,180,120,.35), 0 8px 18px rgba(0,0,0,.35); animation: c-drop .55s cubic-bezier(.22,1.4,.36,1) both; }
+        .c-plate-meat.has-photo { background-size: cover; background-position: center; align-content: end; padding-bottom: 14px; text-shadow: 0 1px 6px rgba(0,0,0,.8); }
+        .c-plate-meat small { display: block; font-family: var(--font-body); font-size: 12px; opacity: .8; font-style: italic; }
+        .c-plate-meat-solo { left: 18%; top: 16%; width: 64%; height: 46%; }
+        .c-plate-meat-0 { left: 12%; top: 16%; width: 40%; height: 42%; }
+        .c-plate-meat-1 { right: 12%; top: 16%; width: 40%; height: 42%; animation-delay: .05s; }
+        .c-plate-sides { position: absolute; left: 50%; bottom: 17%; transform: translateX(-50%); padding: 8px 14px; border-radius: 999px; background: #f5c542; color: #3a2400; font-weight: 700; font-size: 13px; white-space: nowrap; }
+        .c-plate-empty { position: absolute; inset: 0; display: grid; place-items: center; color: #8a7f70; font-weight: 700; }
+        @keyframes c-drop { from { transform: translateY(-60px) scale(.8); opacity: 0; } to { transform: none; opacity: 1; } }
+        .c-pb-total { display: flex; gap: 14px; align-items: baseline; font-size: 18px; }
+        .c-pb-total strong { font-family: var(--font-display); font-size: 44px; }
+
+        /* 03 catering pans */
+        .c-cat { margin-top: 28px; }
+        .c-pans { position: sticky; top: 64px; z-index: 15; margin-bottom: 20px; padding: 16px 18px; border: 1px solid var(--brand-border); border-radius: 18px; background: rgba(8,8,8,.94); backdrop-filter: blur(8px); }
+        .c-pans-count { font-size: 18px; } .c-pans-count strong { font-family: var(--font-display); font-size: 30px; color: var(--brand-primary); }
+        .c-pans-row { display: flex; gap: 10px; overflow-x: auto; padding: 12px 2px 2px; scrollbar-width: thin; }
+        .c-pan { flex: 0 0 auto; width: 84px; text-align: center; animation: c-pop .35s cubic-bezier(.22,1.4,.36,1) both; }
+        .c-pan-tray { position: relative; height: 46px; border-radius: 8px; border: 2px solid #9a9a9a; background: linear-gradient(180deg, #2a2a2a, #161616); overflow: hidden; }
+        .c-pan-fill { position: absolute; left: 0; right: 0; bottom: 0; transition: height .6s cubic-bezier(.22,1,.36,1); }
+        .c-pan-meat .c-pan-fill { background: linear-gradient(180deg, #8a3a1c, #4a1608); }
+        .c-pan-side .c-pan-fill { background: linear-gradient(180deg, #f5c542, #c98a1c); }
+        .c-pan-dessert .c-pan-fill { background: linear-gradient(180deg, #f8e3b0, #d8a55a); }
+        .c-pan-name { font-size: 12px; margin-top: 6px; line-height: 1.2; }
+        .c-pan-name small { display: block; color: var(--brand-muted); font-size: 10px; font-style: italic; }
+        .c-pan-tray-slot { display: grid; place-items: center; border-style: dashed; color: var(--brand-muted); font-family: var(--font-display); font-size: 22px; background: transparent; }
+        @keyframes c-pop { from { transform: scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }
+
+        /* 04 sides */
+        .c-sides { display: grid; gap: 12px; margin-top: 32px; grid-template-columns: repeat(2, 1fr); }
+        @media (min-width: 760px) { .c-sides { grid-template-columns: repeat(4, 1fr); } }
+        .c-side { position: relative; aspect-ratio: 1; border-radius: 18px; overflow: hidden; border: 1px solid var(--brand-border); background: #0b0b0b; }
+        .c-side img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
+        .c-side:hover img { transform: scale(1.06); }
+        .c-side-label { position: absolute; left: 0; right: 0; bottom: 0; padding: 30px 14px 12px; background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.85)); }
+        .c-side-label strong { display: block; font-family: var(--font-display); font-size: 22px; }
+        .c-side-label span { font-size: 13px; color: #ddd; font-style: italic; }
+        .c-side.c-tile { aspect-ratio: 1; }
+        .c-sweets { display: grid; gap: 16px; margin-top: 28px; align-items: center; }
+        @media (min-width: 760px) { .c-sweets { grid-template-columns: 1fr 1.2fr; } }
+        .c-sweets .a-clip { aspect-ratio: 4 / 3; border-radius: 18px; }
+        .c-marquee { overflow: hidden; margin-top: 36px; border-top: 1px solid var(--brand-border); border-bottom: 1px solid var(--brand-border); padding: 14px 0; }
+        .c-marquee-track { display: flex; width: max-content; animation: c-marq 40s linear infinite; }
+        .c-marquee-track span { font-family: var(--font-display); font-style: italic; font-size: clamp(20px, 3vw, 30px); white-space: nowrap; padding: 0 16px; }
+        .c-marquee-track em { color: var(--brand-muted); font-size: .6em; padding-left: 6px; }
+        .c-marquee-track i { color: var(--brand-primary); font-style: normal; padding-left: 26px; font-size: .6em; }
+        @keyframes c-marq { to { transform: translateX(-50%); } }
+
+        /* spotlight */
+        .c-spot { background: radial-gradient(90% 120% at 10% 0%, rgba(179,18,27,.22), rgba(0,0,0,0) 60%); }
+        .c-spot-tag { display: inline-block; padding: 6px 14px; border-radius: 999px; background: var(--brand-primary); font-weight: 700; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 18px; }
+
+        /* 05 route */
+        .c-route { position: relative; margin-top: 30px; height: 150px; }
+        .c-route-road { position: absolute; left: 0; right: 0; top: 96px; height: 6px; border-radius: 3px; background: repeating-linear-gradient(90deg, #f5c542 0 26px, transparent 26px 46px); opacity: .7; }
+        .c-route-truck { position: absolute; top: 18px; width: 150px; left: 0; transform: translateX(-10%); transition: transform 2.6s cubic-bezier(.33,0,.2,1); }
+        .c-route.is-in .c-route-truck { transform: translateX(min(60vw, 720px)); }
+        .c-route-pins { position: absolute; left: 0; top: 116px; display: flex; flex-wrap: wrap; gap: 8px 18px; font-weight: 700; font-size: 14px; }
+        .c-route-pins a { color: var(--brand-primary); }
+        .c-wheel { transform-box: fill-box; transform-origin: center; }
+        .c-route:not(.is-in) .c-wheel, .c-route.is-in .c-wheel { animation: c-spin .6s linear 4; }
+        .c-truck-puff circle { fill: rgba(255,255,255,.25); }
+        @keyframes c-spin { to { transform: rotate(360deg); } }
+
+        /* 06 quote */
+        .c-quote p { font-family: var(--font-display); font-style: italic; font-size: clamp(26px, 5vw, 44px); line-height: 1.3; }
+        .c-quote .c-w { display: inline-block; opacity: .12; transform: translateY(8px); transition: opacity .5s ease, transform .5s ease; }
+        .c-quote.is-in .c-w { opacity: 1; transform: none; }
+
+        /* 07 park */
+        .c-park { position: relative; height: 140px; margin-top: 28px; overflow: hidden; }
+        .c-park-lot { position: absolute; left: 0; right: 0; bottom: 14px; display: flex; gap: 0; justify-content: center; }
+        .c-park-lot span { width: 90px; height: 50px; border-left: 3px solid rgba(255,255,255,.35); }
+        .c-park-lot span:last-child { border-right: 3px solid rgba(255,255,255,.35); }
+        .c-park-truck { position: absolute; bottom: 8px; left: 50%; width: 220px; margin-left: -110px; transform: translateX(-120vw); transition: transform 2.2s cubic-bezier(.2,.8,.2,1); }
+        .c-park.is-in .c-park-truck { transform: none; }
+
+        /* sticky bar (replaces the site bar on this page only) */
+        body:has(.c-bar) .ms-bar { display: none; }
+        .c-bar { position: fixed; z-index: 60; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 8px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: rgba(0,0,0,.94); border-top: 1px solid var(--brand-border); }
+        .c-bar { transition: transform .35s ease, opacity .35s ease; }
+        .c-bar.is-hidden { transform: translateY(120%); opacity: 0; pointer-events: none; }
+        .c-bar a { min-height: 54px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; line-height: 1.1; }
+        .c-bar small { font-size: 11px; font-weight: 500; opacity: .8; font-style: italic; }
+        .c-bar-red { background: var(--brand-primary); color: #fff; }
+        .c-bar-ghost { border: 2px solid rgba(255,255,255,.6); color: #fff; }
+        .c-bar-white { background: #fff; color: #000; }
+        @media (min-width: 900px) {
+          .c-bar { left: auto; right: 20px; bottom: 20px; grid-template-columns: auto auto auto; padding: 8px; border: 1px solid var(--brand-border); border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,.5); }
+          .c-bar a { min-height: 46px; padding: 0 18px; border-radius: 12px; font-size: 14px; }
+        }
+
+        /* scroll-in (JS adds .is-in; without JS everything is already visible) */
+        .c-inview { }
+        @media (prefers-reduced-motion: reduce) {
+          .c-steam, .h-hero-live { display: none; }
+          .c-marquee-track, .c-plate-meat, .c-pan, .c-wheel { animation: none !important; }
+          .c-route-truck, .c-park-truck, .c-quote .c-w, .c-pan-fill { transition: none !important; }
+          .c-quote .c-w { opacity: 1; transform: none; }
+          .c-park-truck { transform: none; }
+        }
       `}</style>
+      <noscript><style>{`.ms-reveal { opacity: 1 !important; transform: none !important; } .c-quote .c-w { opacity: 1 !important; transform: none !important; } .c-park-truck { transform: none !important; }`}</style></noscript>
 
       <RevealStyles />
-      <noscript><style>{`.ms-reveal { opacity: 1 !important; transform: none !important; }`}</style></noscript>
-      <ParallaxDriver />
-      {/* HERO — living food film (our own clips, made from Momma Sally's real plates) */}
-      <section className="a-hero" aria-labelledby="a-hero-title">
-        <HeroVideo
-          desktop={{ mp4: '/alive/hero-brisket.mp4', webm: '/alive/hero-brisket.webm' }}
-          mobile={{ mp4: '/alive/hero-mobile.mp4', webm: '/alive/hero-mobile.webm' }}
-          poster="/alive/hero-brisket-poster.webp"
-          posterMobile="/alive/hero-mobile-poster.webp"
-          alt=""
-        />
-        <div className="a-hero-warm" aria-hidden="true" />
-        <div className="a-hero-grain" aria-hidden="true" />
-        <EmberCanvas density={26} />
-        <div className="ms-wrap a-hero-in">
-          <a href="#thanksgiving" className="a-ticket">
-            <span className="a-ticket-dot" aria-hidden="true" />
-            Thanksgiving · 5 half pans <strong>$125</strong>
-            <span aria-hidden="true">→</span>
-          </a>
-          <div className="ms-eyebrow a-rise a-eyebrow" style={{ ['--d' as string]: '.15s' }}>Smoked low &amp; slow · West Texas</div>
-          <h1 id="a-hero-title" className="a-title">
-            <span className="a-line"><span style={{ ['--d' as string]: '.25s' }}>More than BBQ,</span></span>
-            <span className="a-line"><em style={{ ['--d' as string]: '.42s' }}>it&rsquo;s a Southern</em></span>
-            <span className="a-line"><em style={{ ['--d' as string]: '.58s' }}>experience.</em></span>
-          </h1>
-          <p className="a-rise a-lede" style={{ ['--d' as string]: '.8s' }}>
-            Cooked with love, served with soul. Brisket, sausage, chicken &amp; pulled pork off the pit — with real sides, sauce and something sweet.
-          </p>
-          <p className="ms-es a-rise" style={{ ['--d' as string]: '.9s', fontSize: 15, marginTop: 6 }}>Más que BBQ, es una experiencia sureña. Cocinado con amor, servido con alma.</p>
-          <div className="a-ctas a-rise" style={{ ['--d' as string]: '1.05s' }}>
-            <a href={PHONE_TEL} className="ms-btn ms-btn-red a-glow">Order · Call {PHONE_DISPLAY}</a>
-            <Link href="/catering" className="ms-btn ms-btn-white">Catering · Banquetes</Link>
-            <Link href="/food-truck" className="ms-btn ms-btn-ghost">Food Truck · Camión</Link>
-          </div>
-          <div className="a-sub a-rise" style={{ ['--d' as string]: '1.2s' }}>
-            <Link href="/menu">View Menu · Ver Menú →</Link>
-            {HAS_PAY && <Link href="/pay">Pay · Pagar →</Link>}
-          </div>
+      <StickyBar />
+
+      {/* HERO — unchanged look; the truck drive-by is now our own file */}
+      <section className="h-hero">
+        <TruckVideo src="/video/truck-pulling.mp4" poster="/photos/truck-pulling-poster.jpg" />
+        <div className="h-hero-shade" />
+        <div className="ms-wrap" style={{ width: '100%', position: 'relative' }}>
+          <Reveal>
+            <div className="ms-eyebrow">Southern Food Truck · West Texas</div>
+            <h1>More than BBQ, <em>it&rsquo;s a Southern experience.</em></h1>
+          </Reveal>
+          <Reveal delay={140}>
+            <p style={{ fontSize: 18, color: '#ddd', maxWidth: 560, lineHeight: 1.6 }}>
+              Cooked with love, served with soul. Brisket, sausage, chicken &amp; pulled pork off the pit — with real sides, sauce and something sweet.
+            </p>
+            <p className="ms-es" style={{ fontSize: 15, marginTop: 6 }}>Más que BBQ, es una experiencia sureña. Cocinado con amor, servido con alma. Menú en inglés y español.</p>
+          </Reveal>
+          <Reveal delay={260}>
+            <div className="h-ctas">
+              <SeasonGate until={THANKSGIVING_SHOW_UNTIL}>
+                <a href="#thanksgiving" className="ms-btn ms-btn-white">Thanksgiving special · $125</a>
+              </SeasonGate>
+              <Link href="/menu" className="ms-btn ms-btn-ghost">View Menu · Ver Menú</Link>
+              <a href={PHONE_TEL} className="ms-btn ms-btn-red">Call {PHONE_DISPLAY}</a>
+              {HAS_PAY && <Link href="/pay" className="ms-btn ms-btn-ghost">Pay · Pagar</Link>}
+            </div>
+          </Reveal>
         </div>
-        <a href="#a-reel" className="a-cue" aria-label="Scroll to see the food"><span /></a>
       </section>
 
-      {/* TICKER */}
-      <div className="a-ticker" aria-hidden="true">
-        <div className="a-ticker-track">
-          {[0, 1].map(n => (
-            <span key={n}>{TICKER.map(t => <span key={t + n}>{t}<i>✦</i></span>)}</span>
+      {/* 01 OFF THE PIT */}
+      <Chapter n="01" en="Off the pit." es="Directo del asador.">
+        <div className="c-meats">
+          {MEAT_CARDS.map((m, i) => {
+            const es = meats.find(x => x.name === m.id)?.nameTranslated ?? m.id
+            return (
+              <Reveal key={m.id} delay={i * 90}>
+                <article className="c-meat">
+                  {m.clip && m.poster ? (
+                    <div className="c-frame">
+                      <LoopClip clip={{ mp4: `/alive/${m.clip}.mp4`, webm: `/alive/${m.clip}.webm` }} poster={m.poster} alt={m.alt ?? m.id} />
+                      <Steam />
+                    </div>
+                  ) : (
+                    /* SLOT: real photo of this meat not on file yet — named tile, no stock photo. */
+                    <div className="c-tile" data-slot={`photo-${m.id.toLowerCase().replace(/\s+/g, '-')}`}>
+                      <strong>{m.id}</strong>
+                      <span>{es}</span>
+                    </div>
+                  )}
+                  <h3>{m.id} <span className="ms-es" style={{ fontSize: 14, fontFamily: 'var(--font-body)' }}>· {es}</span></h3>
+                  <p>{m.line} <span className="ms-es">{m.lineEs}</span></p>
+                </article>
+              </Reveal>
+            )
+          })}
+        </div>
+      </Chapter>
+
+      {/* 02 PLATES */}
+      <Chapter n="02" en={`Build your ${plates.name.toLowerCase().replace(/s$/, '')}.`} es="Arma tu plato.">
+        <PlateBuilder meats={meatOptions} plates={plateOffers} note={plates.note ?? ''} />
+        <div style={{ marginTop: 28, maxWidth: 560 }}><PaymentOptions /></div>
+        <p className="ms-es" style={{ marginTop: 10, fontSize: 13 }}>{menu.paymentNote} · Precios sujetos a cambio.</p>
+      </Chapter>
+
+      {/* 03 CATERING */}
+      <Chapter n="03" en="Feed the whole crowd." es="Alimenta a todos." id="catering">
+        <p style={{ color: 'var(--brand-muted)', maxWidth: 620, marginTop: 14 }}>{config.services.subheadline} <span className="ms-es">Te preparamos el banquete que quieras.</span></p>
+        <CateringChapter />
+      </Chapter>
+
+      {/* 04 SIDES */}
+      <Chapter n="04" en="Real sides, not shortcuts." es="Acompañamientos de verdad.">
+        <div className="c-sides">
+          {sidesCat.items.map((s, i) => (
+            <Reveal key={s.name} delay={(i % 4) * 70}>
+              {SIDE_PHOTOS[s.name] ? (
+                <div className="c-side">
+                  <img src={SIDE_PHOTOS[s.name]} alt={s.name} loading="lazy" decoding="async" />
+                  <div className="c-side-label"><strong>{s.name}</strong><span>{s.nameTranslated}</span></div>
+                </div>
+              ) : (
+                /* SLOT: no real photo of this side yet. */
+                <div className="c-side c-tile" data-slot={`photo-${s.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                  <strong>{s.name}</strong><span>{s.nameTranslated}</span>
+                </div>
+              )}
+            </Reveal>
           ))}
         </div>
-      </div>
-
-      {/* DISH REEL — scroll-triggered living clips */}
-      <section className="h-sec a-reel" id="a-reel" aria-labelledby="a-reel-title">
-        <div className="ms-wrap">
+        <div className="c-sweets">
           <Reveal>
-            <div className="ms-eyebrow">Straight off the pit · Directo del asador</div>
-            <h2 id="a-reel-title">Smoke, bark &amp; <em style={{ color: 'var(--brand-primary)' }}>something sweet.</em></h2>
+            <div className="c-frame">
+              <LoopClip clip={{ mp4: '/alive/peach-cobbler.mp4', webm: '/alive/peach-cobbler.webm' }} poster="/photos/enhanced/peach-cobbler.webp" alt="Cups of peach cobbler with cinnamon sticks" />
+              <Steam />
+            </div>
           </Reveal>
-          <div className="a-reel-grid">
-            {REEL.map((r, i) => (
-              <figure key={r.key} className={`a-reel-item a-reel-${i}`} data-parallax>
-                <Reveal delay={i * 120}>
-                  <LoopClip clip={{ mp4: `/alive/${r.key}.mp4`, webm: `/alive/${r.key}.webm` }} poster={`/alive/${r.key}-poster.webp`} alt={r.alt} />
-                  <figcaption>
-                    <strong>{r.title}</strong>
-                    <span>{r.text}</span>
-                  </figcaption>
-                </Reveal>
-              </figure>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="h-sec" aria-label="Thanksgiving special">
-        <div className="ms-wrap">
-          <ThanksgivingSpecial />
-        </div>
-      </section>
-
-      {/* CATEGORIES */}
-      <section className="h-sec">
-        <div className="ms-wrap">
-          <Reveal>
-            <div className="ms-eyebrow">What We Do · Lo Que Hacemos</div>
-            <h2>Food truck, catering &amp; events.</h2>
-          </Reveal>
-          <div className="h-grid">
-            {CATS.map(c => (
-              <Link key={c.href} href={c.href} className="h-cat">
-                <Photo k={c.photo} aspect="4 / 3" sizes="(min-width: 900px) 33vw, 100vw" />
-                <div style={{ padding: '16px 4px 4px' }}>
-                  <h3 style={{ fontSize: 26 }}>{c.title} <span className="ms-es" style={{ fontSize: 15, fontFamily: 'var(--font-body)' }}>· {c.es}</span></h3>
-                  <p style={{ color: 'var(--brand-muted)', fontSize: 15, marginTop: 4 }}>{c.text}</p>
-                  <span style={{ color: 'var(--brand-primary)', fontWeight: 700, fontSize: 14, display: 'inline-block', marginTop: 8 }}>{c.cta} →</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* MENU PREVIEW */}
-      <section className="h-sec">
-        <div className="ms-wrap">
-          <div className="ms-eyebrow">The Menu · El Menú</div>
-          <h2>{plates.name}</h2>
-          <p style={{ color: 'var(--brand-muted)', maxWidth: 560 }}>{plates.note}</p>
-          <div style={{ maxWidth: 640, marginTop: 24 }}>
-            {plates.items.map(item => (
-              <div className="h-row" key={item.name}>
-                <div>
-                  <div style={{ fontWeight: 700 }}>{item.name}</div>
-                  {item.nameTranslated && <div className="ms-es" style={{ fontSize: 13 }}>{item.nameTranslated}</div>}
-                </div>
-                {item.price && <div className="h-price">{item.price}</div>}
+          <Reveal delay={120}>
+            <div className="ms-eyebrow">{desserts.name} · {desserts.nameTranslated}</div>
+            {desserts.items.map(d => (
+              <div key={d.name} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '12px 0', borderBottom: '1px dotted var(--brand-border)' }}>
+                <div><div style={{ fontWeight: 700 }}>{d.name}</div><div className="ms-es" style={{ fontSize: 13 }}>{d.nameTranslated}</div></div>
+                {d.price && <div className="h-price">{d.price}</div>}
               </div>
             ))}
-          </div>
-          <div style={{ marginTop: 28 }}>
-            <Link href="/menu" className="ms-btn ms-btn-red">See Full Menu · Menú Completo</Link>
+            <p style={{ color: 'var(--brand-muted)', fontSize: 14, marginTop: 12 }}>Peach cobbler for events &amp; catering. <span className="ms-es">Cobbler de durazno para eventos y banquetes.</span></p>
+          </Reveal>
+        </div>
+        <div className="c-marquee" aria-hidden="true">
+          <div className="c-marquee-track">
+            {[0, 1].map(n => ticker.map(t => <span key={t.name + n}>{t.name}{t.nameTranslated && t.nameTranslated !== t.name && <em>{t.nameTranslated}</em>}<i>✦</i></span>))}
           </div>
         </div>
-      </section>
+        <div style={{ marginTop: 28 }}>
+          <Link href="/menu" className="ms-btn ms-btn-red">See Full Menu · Menú Completo</Link>
+        </div>
+      </Chapter>
 
-      {/* FIND US */}
-      <section className="h-sec h-plate" id="find-us">
+      {/* SPOTLIGHT — Thanksgiving (hidden after the holiday) */}
+      <SeasonGate until={THANKSGIVING_SHOW_UNTIL}>
+        <section className="h-sec c-spot" aria-label="Thanksgiving special">
+          <div className="ms-wrap">
+            <span className="c-spot-tag">Spotlight · Especial</span>
+            <ThanksgivingSpecial />
+          </div>
+        </section>
+      </SeasonGate>
+
+      {/* 05 FIND THE TRUCK */}
+      <section className="h-sec h-plate c-ch" id="find-us" aria-labelledby="ch-05">
         <div className="ms-wrap">
-          <div className="ms-eyebrow">Find the Truck · Encuéntranos</div>
-          <h2>Rolling around West Texas.</h2>
-          <p style={{ color: '#ddd', maxWidth: 560, fontSize: 17 }}>
+          <div className="c-ch-head">
+            <span className="c-ch-n">05</span>
+            <div>
+              <h2 id="ch-05">Rolling around West Texas.</h2>
+              <div className="ms-es c-ch-es">Encuéntranos.</div>
+            </div>
+          </div>
+          <p style={{ color: '#ddd', maxWidth: 560, fontSize: 17, marginTop: 14 }}>
             Different stops, same great flavor! Call for our daily location.
           </p>
           <p className="ms-es" style={{ marginTop: 6 }}>Diferentes paradas, ¡el mismo gran sabor! Llámanos para saber nuestra ubicación del día.</p>
+          <RouteLine />
           <div className="h-ctas">
             <a href={PHONE_TEL} className="ms-btn ms-btn-red">Call for Today&rsquo;s Location</a>
             <a href={SMS_LINK} className="ms-btn ms-btn-ghost">Text Us</a>
           </div>
-          <div style={{ marginTop: 32, maxWidth: 560 }}><PaymentOptions /></div>
         </div>
       </section>
 
-      {/* STORY */}
-      <section className="h-sec">
-        <div className="ms-wrap" style={{ maxWidth: 820 }}>
+      {/* 06 SALLY'S WAY */}
+      <Chapter n="06" en="Sally's way." es="A la manera de Sally.">
+        <div style={{ maxWidth: 860, marginTop: 20 }}>
           <div className="ms-eyebrow">{config.about.headline}</div>
-          <p style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 'clamp(24px, 5vw, 38px)', lineHeight: 1.35 }}>
-            &ldquo;{config.about.mission}&rdquo;
-          </p>
+          <QuoteReveal text={config.about.mission} />
+          {/* SLOT: proof strip (reviews / counts) omitted until real numbers are provided. */}
           <div style={{ marginTop: 24 }}>
             <Link href="/about" className="ms-btn ms-btn-ghost">Our Story</Link>
           </div>
         </div>
-      </section>
+      </Chapter>
+
+      {/* 07 YOUR TURN */}
+      <Chapter n="07" en="Your turn." es="Te toca.">
+        <ParkTruck />
+        <div className="h-ctas">
+          <a href={PHONE_TEL} className="ms-btn ms-btn-red">Call {PHONE_DISPLAY}</a>
+          <a href={SMS_LINK} className="ms-btn ms-btn-ghost">Text Us · Envíanos texto</a>
+          <a href="#catering" className="ms-btn ms-btn-white">Build catering · Arma tu banquete</a>
+        </div>
+        <div className="h-grid">
+          {CATS.map(c => (
+            <Link key={c.href} href={c.href} className="h-cat">
+              <Photo k={c.photo} aspect="4 / 3" sizes="(min-width: 900px) 33vw, 100vw" />
+              <div style={{ padding: '16px 4px 4px' }}>
+                <h3 style={{ fontSize: 26 }}>{c.title} <span className="ms-es" style={{ fontSize: 15, fontFamily: 'var(--font-body)' }}>· {c.es}</span></h3>
+                <p style={{ color: 'var(--brand-muted)', fontSize: 15, marginTop: 4 }}>{c.text}</p>
+                <span style={{ color: 'var(--brand-primary)', fontWeight: 700, fontSize: 14, display: 'inline-block', marginTop: 8 }}>{c.cta} →</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </Chapter>
     </>
   )
 }

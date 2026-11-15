@@ -18,43 +18,36 @@ function slowOrSaveData() {
 }
 
 type Clip = { mp4: string; webm: string }
+export type { Clip }
 
-/** Full-bleed hero loop. Desktop clip is 16:9; phones get a light 9:16 clip on fast connections. */
-export function HeroVideo({ desktop, mobile, poster, posterMobile, alt }: { desktop: Clip; mobile: Clip; poster: string; posterMobile: string; alt: string }) {
+/**
+ * The truck driving by, behind the original hero. Poster is a real <img> so the
+ * hero is never empty (JS off, reduced motion, Save-Data). The video only
+ * attaches after mount and fades in once it can play.
+ */
+export function TruckVideo({ src, poster }: { src: string; poster: string }) {
   const ref = useRef<HTMLVideoElement>(null)
-  const [src, setSrc] = useState<Clip | null>(null)
+  const [on, setOn] = useState(false)
   const [ready, setReady] = useState(false)
-
-  useEffect(() => {
-    if (reduced() || slowOrSaveData()) return
-    const small = window.matchMedia('(max-width: 760px)').matches
-    setSrc(small ? mobile : desktop)
-  }, [desktop, mobile])
-
+  useEffect(() => { if (!reduced() && !slowOrSaveData()) setOn(true) }, [])
   useEffect(() => {
     const v = ref.current
-    if (!v || !src) return
+    if (!v || !on) return
     const go = () => { v.play().then(() => setReady(true)).catch(() => {}) }
     v.addEventListener('canplay', go, { once: true })
     v.load()
-    const onVis = () => { if (document.hidden) v.pause(); else if (ready) v.play().catch(() => {}) }
-    document.addEventListener('visibilitychange', onVis)
-    return () => { v.removeEventListener('canplay', go); document.removeEventListener('visibilitychange', onVis) }
-  }, [src]) // eslint-disable-line react-hooks/exhaustive-deps
-
+    return () => v.removeEventListener('canplay', go)
+  }, [on])
   return (
-    <div className="a-hero-media" aria-hidden="true">
-      <picture>
-        <source media="(max-width: 760px)" srcSet={posterMobile} />
-        <img src={poster} alt={alt} className="a-hero-poster" fetchPriority="high" decoding="async" />
-      </picture>
-      {src && (
-        <video ref={ref} className={`a-hero-video${ready ? ' is-ready' : ''}`} muted loop playsInline preload="metadata" disablePictureInPicture>
-          <source src={src.webm} type="video/webm" />
-          <source src={src.mp4} type="video/mp4" />
+    <>
+      <img src={poster} alt="" aria-hidden="true" className="h-hero-video" decoding="async" fetchPriority="high" />
+      {on && (
+        <video ref={ref} className="h-hero-video h-hero-live" style={{ opacity: ready ? 1 : 0 }} muted loop playsInline preload="metadata" aria-hidden="true">
+          <source src={src.replace(/\.mp4$/, '.webm')} type="video/webm" />
+          <source src={src} type="video/mp4" />
         </video>
       )}
-    </div>
+    </>
   )
 }
 
