@@ -171,3 +171,6 @@ export function buildThanksgivingRequestText(input: {
     'Not a paid order. Pickup is not reserved.',
   ].join('\n')
 }
+
+/** Thanksgiving 2026 is Thu Nov 26. The home page hides the special after this date. */
+export const THANKSGIVING_SHOW_UNTIL = '2026-11-26'
