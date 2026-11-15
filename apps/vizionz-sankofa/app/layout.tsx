@@ -29,6 +29,7 @@ export const metadata: Metadata = {
   title: `${config.business.dba || config.business.name} — ${config.business.tagline}`,
   description: config.business.description,
   keywords: config.seo.keywords.join(', '),
+  alternates: { canonical: './' },
   openGraph: {
     title: config.business.name,
     description: config.business.description,

@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   title: `${config.business.name} — Southern Food Truck · West Texas`,
   description: config.business.description,
   keywords: config.seo.keywords,
+  alternates: { canonical: './' },
   openGraph: {
     title: `${config.business.name} — More than BBQ, it's a Southern experience.`,
     description: config.business.description,
