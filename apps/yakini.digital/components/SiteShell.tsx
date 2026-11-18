@@ -26,7 +26,7 @@ export const NAV_LINKS = [
 // Photoreal room behind each page header (stills cut from the walkthrough's room panoramas).
 const ROOM_FOR_PATH: [string, string][] = [
   ['/pricing', 'landlord'], ['/how-it-works', 'trucking'], ['/custom-builds', 'tree'], ['/about', 'nonprofit'],
-  ['/apply', 'foodtruck'], ['/contact', 'foodtruck'], ['/watch', 'realestate'], ['/portal', 'grower'],
+  ['/apply', 'foodtruck'], ['/contact', 'foodtruck'], ['/holiday', 'nonprofit'], ['/watch', 'realestate'], ['/portal', 'grower'],
 ]
 function roomFor(path: string) {
   const hit = ROOM_FOR_PATH.find(([p]) => path === p || path.startsWith(p + '/'))
