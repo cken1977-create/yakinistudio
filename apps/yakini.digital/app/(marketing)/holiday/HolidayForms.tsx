@@ -61,7 +61,13 @@ export function HolidayForms({ initialTab, sent, errorCode, closed }: {
   useEffect(() => {
     if (!enhanced || !fromHash) return
     if (clicked.current) { clicked.current = false; return }
-    formsRef.current?.scrollIntoView({ block: 'start' })
+    // The browser also jumps to the #id on load (sometimes after this runs), so settle on
+    // the tabs again a moment later.
+    const go = () => formsRef.current?.scrollIntoView({ block: 'start' })
+    go()
+    const t1 = setTimeout(go, 150)
+    const t2 = setTimeout(go, 500)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [enhanced, fromHash])
 
   if (closed) {

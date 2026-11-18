@@ -318,7 +318,8 @@ const PAGE_CSS = `
   .hg-tab { display: flex; align-items: center; justify-content: center; text-align: center; min-height: 46px; padding: 10px; border-radius: 13px; font-size: 14.5px; font-weight: 600; line-height: 1.25; color: #6B4A3A !important; text-decoration: none; transition: background .25s ease, color .25s ease, box-shadow .25s ease, transform .2s ease; }
   .hg-tab:hover { color: #7E1426 !important; background: rgba(255,255,255,0.6); }
   .hg-tab.on { background: linear-gradient(135deg, #A61E33, #6E0F1F); color: #FFF6E2 !important; box-shadow: 0 6px 18px rgba(110,15,31,0.3), inset 0 0 0 1px rgba(217,169,74,0.6); }
-  .hg-panel { margin-top: 18px; scroll-margin-top: 96px; }
+  .hg-panel { margin-top: 18px; scroll-margin-top: 290px; }
+  @media (min-width: 620px) { .hg-panel { scroll-margin-top: 180px; } }
   .hg-panel[hidden] { display: none; }
   .hg-panel:not([hidden]) { animation: hx-panel .45s ease both; }
   @keyframes hx-panel { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
