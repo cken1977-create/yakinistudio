@@ -170,7 +170,7 @@ const PAGE_CSS = `
   .hg-forms-h { font-family: var(--font-display); font-weight: 400; font-size: clamp(36px, 5vw, 56px); line-height: 1; color: var(--cream); }
   .hg-forms-p { margin-top: 12px; font-size: 15px; color: var(--muted); }
   .hg-forms-p a { color: var(--gold); }
-  .hg-forms { margin-top: 28px; }
+  .hg-forms { margin-top: 28px; scroll-margin-top: 96px; }
   .hg-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 6px; border: 1px solid var(--line-strong); border-radius: 16px; background: rgba(6,11,36,0.6); }
   .hg-tab { text-align: center; padding: 13px 10px; border-radius: 11px; font-size: 14px; font-weight: 600; line-height: 1.25; color: var(--muted); }
   .hg-tab.on { background: var(--gold); color: var(--navy-deep); }

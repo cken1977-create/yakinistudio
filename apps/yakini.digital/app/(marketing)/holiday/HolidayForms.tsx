@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { ShareInvite } from './ShareInvite'
 import { LIMITS, validateHoliday, type HolidayInput, type HolidayType } from '@/lib/holiday'
 
@@ -15,6 +15,13 @@ const UTM = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'] as const
 
 const noop = () => () => {}
 
+// Deep links: yakini.digital/holiday#nominate and #apply open that form directly.
+const onHash = (cb: () => void) => { window.addEventListener('hashchange', cb); return () => window.removeEventListener('hashchange', cb) }
+const hashTab = (): HolidayType | '' => {
+  const h = window.location.hash.replace('#', '').toLowerCase()
+  return h === 'nominate' || h === 'apply' ? h : ''
+}
+
 const NO_JS_ERRORS: Record<string, string> = {
   missing: 'A required field was empty or didn’t look right. Please check the form and send it again.',
   failed: 'We couldn’t save that just now. Please try again in a minute, or email hello@yakini.digital.',
@@ -27,9 +34,26 @@ export function HolidayForms({ initialTab, sent, errorCode, closed }: {
   errorCode: string | null
   closed: boolean
 }) {
-  const [tab, setTab] = useState<HolidayType>(initialTab)
+  const fromHash = useSyncExternalStore(onHash, hashTab, () => '' as const)
+  const tab: HolidayType = fromHash || initialTab
+  const clicked = useRef(false)
+  const setTab = (t: HolidayType) => {
+    if (t === tab) return
+    clicked.current = true
+    history.replaceState(null, '', `#${t}`)
+    window.dispatchEvent(new HashChangeEvent('hashchange'))
+  }
   // false on the server and the first paint, true once the script is running.
   const enhanced = useSyncExternalStore(noop, () => true, () => false)
+
+  const formsRef = useRef<HTMLDivElement>(null)
+  // Arriving on #nominate / #apply (or following such a link on the page): bring the
+  // selected tab into view once the tabs are live. Tab clicks don't scroll.
+  useEffect(() => {
+    if (!enhanced || !fromHash) return
+    if (clicked.current) { clicked.current = false; return }
+    formsRef.current?.scrollIntoView({ block: 'start' })
+  }, [enhanced, fromHash])
 
   if (closed) {
     return (
@@ -41,7 +65,7 @@ export function HolidayForms({ initialTab, sent, errorCode, closed }: {
   }
 
   return (
-    <div className="hg-forms">
+    <div className="hg-forms" ref={formsRef}>
       <div className="hg-tabs" role={enhanced ? 'tablist' : undefined} aria-label="Choose a form">
         {(['apply', 'nominate'] as const).map((t) => (
           <a
