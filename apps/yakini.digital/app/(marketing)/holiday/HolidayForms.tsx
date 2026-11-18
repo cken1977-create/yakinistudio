@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState, useSyncExternalStore } from 'react'
+import { ShareInvite } from './ShareInvite'
 import { LIMITS, validateHoliday, type HolidayInput, type HolidayType } from '@/lib/holiday'
 
 // Two forms, one page: "Apply for your business" and "Nominate someone".
@@ -143,8 +144,9 @@ function HolidayForm({ type, enhanced, sentNoJs, errorNoJs }: { type: HolidayTyp
           A real person reads every entry. Entries close December 15, 2026, and then BRSA Foundation and Yakini Digital
           choose five. We can’t pick everyone, but if {nom ? 'they are' : 'you are'} chosen, we’ll reach out by email or phone.
         </p>
-        <button type="button" className="hm-btn" onClick={() => { setV(EMPTY(type)); setErrors({}); setStatus('idle') }}>
-          <span>{nom ? 'Nominate someone else' : 'Send another'}</span>
+        <ShareInvite />
+        <button type="button" className="hg-again" onClick={() => { setV(EMPTY(type)); setErrors({}); setStatus('idle') }}>
+          {nom ? 'Nominate someone else' : 'Send another entry'}
         </button>
       </div>
     )

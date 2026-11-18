@@ -12,7 +12,8 @@ import { HolidayForms } from './HolidayForms'
 const TITLE = 'Holiday Giveaway · Yakini Digital & BRSA Foundation'
 const DESCRIPTION =
   'Somebody blessed me, so I want to bless somebody else. BRSA Foundation and Yakini Digital will pick 5 struggling businesses or organizations for free Yakini software and a website revamp. Apply or nominate someone by December 15, 2026.'
-const OG_DESCRIPTION = 'Free Yakini software and a website revamp for 5 struggling businesses or organizations. Apply or nominate someone by Dec 15, 2026.'
+const OG_TITLE = 'Nominate a business for the Yakini Holiday Giveaway'
+const OG_DESCRIPTION = 'Somebody blessed me, so I want to bless somebody else. Free Yakini software + a website revamp for 5 struggling businesses or organizations. Apply or nominate by Dec 15, 2026.'
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
   alternates: { canonical: HOLIDAY_URL },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Holiday Giveaway: we’re blessing 5 businesses',
+    title: OG_TITLE,
     description: OG_DESCRIPTION,
     url: HOLIDAY_URL,
     siteName: 'Yakini Digital',
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Holiday Giveaway: we’re blessing 5 businesses',
+    title: OG_TITLE,
     description: OG_DESCRIPTION,
   },
 }
@@ -202,5 +203,14 @@ const PAGE_CSS = `
   .hg-done { text-align: left; }
   .hg-done-mark { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--gold); color: var(--navy-deep); font-size: 22px; font-weight: 700; margin-bottom: 16px; }
   .hg-done p { margin: 12px 0 20px; color: var(--muted); line-height: 1.6; }
-  .hg-done .hm-btn { cursor: pointer; font: inherit; }
+  .hg-share { margin-top: 4px; padding: 20px; border: 1px solid var(--line-strong); border-radius: 16px; background: rgba(198,244,50,0.06); }
+  .hg-share h4 { font-family: var(--font-display); font-weight: 500; font-size: 24px; color: var(--cream); margin: 0; }
+  .hg-share p { margin: 8px 0 16px; font-size: 14.5px; }
+  .hg-share-native { width: 100%; justify-content: center; cursor: pointer; font: inherit; margin-bottom: 12px; }
+  .hg-share-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @media (min-width: 620px) { .hg-share-row { grid-template-columns: repeat(4, 1fr); } }
+  .hg-share-btn { display: flex; align-items: center; justify-content: center; min-height: 46px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line-strong); background: rgba(244,247,255,0.05); color: var(--cream); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; }
+  .hg-share-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .hg-share-manual span { color: var(--gold); word-break: break-all; }
+  .hg-again { margin-top: 18px; background: none; border: 0; padding: 0; color: var(--muted); font: inherit; font-size: 14px; text-decoration: underline; cursor: pointer; }
 `
