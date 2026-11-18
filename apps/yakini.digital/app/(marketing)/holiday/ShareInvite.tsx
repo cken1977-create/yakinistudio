@@ -32,8 +32,8 @@ export function ShareInvite() {
       <h4 id="hg-share-h">Help us find the next one</h4>
       <p>Know a business, organization or future founder that deserves a blessing? Share this page so they can be nominated too.</p>
       {native && (
-        <button type="button" className="hm-btn hm-btn-gold hg-share-native" onClick={share}>
-          <span>Share this page</span><span className="yk-btn-arrow">→</span>
+        <button type="button" className="hx-btn hx-btn-red hg-share-native" onClick={share}>
+          <span>Share this page</span><span className="hx-arrow" aria-hidden="true">→</span>
         </button>
       )}
       <div className="hg-share-row">

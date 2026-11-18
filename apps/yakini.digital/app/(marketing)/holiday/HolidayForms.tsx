@@ -34,6 +34,7 @@ const NO_JS_ERRORS: Record<string, string> = {
   missing: 'A required field was empty or didn’t look right. Please check the form and send it again.',
   failed: 'We couldn’t save that just now. Please try again in a minute, or email hello@yakini.digital.',
   closed: 'Entries for the Holiday Giveaway are closed.',
+  founder_contact: 'Because you checked “This is me”, please add both your email and your phone number, then send it again.',
 }
 
 export function HolidayForms({ initialTab, sent, errorCode, closed }: {
@@ -189,10 +190,16 @@ function HolidayForm({ type, enhanced, sentNoJs, errorNoJs }: { type: HolidayTyp
           choose {founder ? 'one future founder' : 'five businesses and organizations'}. We can’t pick everyone, but if {theirs ? 'they are' : 'you are'} chosen,
           we’ll reach out by email or phone.
         </p>
+        {enhanced && <Confetti />}
         <ShareInvite />
-        <button type="button" className="hg-again" onClick={() => { setV(EMPTY(type)); setErrors({}); setStatus('idle') }}>
-          {theirs ? 'Nominate someone else' : 'Send another entry'}
-        </button>
+        {enhanced ? (
+          <button type="button" className="hg-again" onClick={() => { setV(EMPTY(type)); setErrors({}); setStatus('idle') }}>
+            {theirs ? 'Nominate someone else' : 'Send another entry'}
+          </button>
+        ) : (
+          // Without JavaScript the button can't reset the form, so link back to a fresh one.
+          <a className="hg-again" href={`/holiday?form=${type}#${type}`}>{theirs ? 'Nominate someone else' : 'Send another entry'}</a>
+        )}
       </div>
     )
   }
@@ -251,7 +258,10 @@ function HolidayForm({ type, enhanced, sentNoJs, errorNoJs }: { type: HolidayTyp
             checked={v.self_nominated}
             onChange={(e) => { const on = e.target.checked; setV((cur) => ({ ...cur, self_nominated: on })); setErrors({}) }}
           />
-          <span><b>This is me.</b> I’m the future founder and I’m nominating myself.</span>
+          <span>
+            <b>This is me.</b> I’m the future founder and I’m nominating myself.
+            <small>If this is you, please add both your email and phone below{enhanced ? '' : ' and skip the “About you (the nominator)” part'}.</small>
+          </span>
         </label>
       )}
 
@@ -262,7 +272,7 @@ function HolidayForm({ type, enhanced, sentNoJs, errorNoJs }: { type: HolidayTyp
         {founder
           ? field('business_name', 'Business name, if there is one', { auto: 'off' })
           : field('business_name', 'Business or organization', { required: true, auto: theirs ? 'off' : 'organization' })}
-        {field('email', who('Their email', 'Email'), { type: 'email', required: !theirs, auto: theirs ? 'off' : 'email', hint: theirs ? 'Their email or phone, whichever you have.' : undefined })}
+        {field('email', who('Their email', 'Email'), { type: 'email', required: !theirs, auto: theirs ? 'off' : 'email', hint: theirs ? (founder && !enhanced ? 'Their email or phone, whichever you have. Nominating yourself? Add both.' : 'Their email or phone, whichever you have.') : undefined })}
         {field('phone', who('Their phone', 'Phone'), { type: 'tel', required: !theirs, auto: theirs ? 'off' : 'tel' })}
         {field('location', 'City and state', { required: true, placeholder: 'Albuquerque, NM' })}
         {field('what_they_do', founder ? 'What’s the business idea?' : who('What do they do?', 'What do you do?'), { required: true, area: true, rows: 3 })}
@@ -289,9 +299,9 @@ function HolidayForm({ type, enhanced, sentNoJs, errorNoJs }: { type: HolidayTyp
       {status === 'error' && msg && <p className="hg-alert" role="alert">{msg}</p>}
 
       <div className="hg-actions">
-        <button type="submit" className="hm-btn hm-btn-gold" disabled={status === 'sending'}>
+        <button type="submit" className="hx-btn hx-btn-red" disabled={status === 'sending'}>
           <span>{status === 'sending' ? 'Sending…' : theirs ? 'Send my nomination' : 'Send my application'}</span>
-          <span className="yk-btn-arrow">→</span>
+          <span className="hx-arrow" aria-hidden="true">→</span>
         </button>
         <p className="hg-fine">
           Entries close December 15, 2026. Sending this doesn’t guarantee selection. We use what you share only to review
@@ -300,4 +310,24 @@ function HolidayForm({ type, enhanced, sentNoJs, errorNoJs }: { type: HolidayTyp
       </div>
     </form>
   )
+}
+
+const CONFETTI_COLORS = ['#D9A94A', '#F7E2A4', '#B4243A', '#1F6B47', '#FFF6E2', '#E8424F']
+
+/** One-time celebratory burst on a successful submit (hidden for reduced motion). */
+function Confetti() {
+  const pieces = Array.from({ length: 34 }, (_, i) => {
+    const a = (i / 34) * Math.PI * 2 + (i % 3) * 0.2
+    const dist = 90 + ((i * 37) % 120)
+    return {
+      ['--x' as string]: `${Math.round(Math.cos(a) * dist + 120)}px`,
+      ['--y' as string]: `${Math.round(Math.sin(a) * dist * 0.8 + 40)}px`,
+      ['--r' as string]: `${(i * 97) % 540 - 270}deg`,
+      ['--c' as string]: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+      ['--w' as string]: `${6 + (i % 3) * 3}px`,
+      ['--h' as string]: `${i % 2 ? 6 : 12}px`,
+      ['--delay' as string]: `${(i % 6) * 0.03}s`,
+    } as React.CSSProperties
+  })
+  return <div className="hx-confetti" aria-hidden="true">{pieces.map((st, i) => <i key={i} style={st} />)}</div>
 }

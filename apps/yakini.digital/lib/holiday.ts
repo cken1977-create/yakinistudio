@@ -53,8 +53,8 @@ export function validateHoliday(v: HolidayInput): Partial<Record<keyof HolidayIn
   const theirs = nom || (founder && !self) // someone else is filling it in
   if (!v.name.trim()) e.name = theirs ? (founder ? 'Add the future founder’s name.' : 'Add the name of the person you are nominating.') : 'Add your name.'
   if (!founder && !v.business_name.trim()) e.business_name = 'Add the business or organization name.'
-  if (!v.location.trim()) e.location = 'Add the city and state.'
-  if (!v.what_they_do.trim()) e.what_they_do = founder ? 'Tell us the business idea.' : theirs ? 'Tell us what they do.' : 'Tell us what you do.'
+  if (v.location.trim().length < 2) e.location = 'Add the city and state.'
+  if (v.what_they_do.trim().length < 2) e.what_they_do = founder ? 'Tell us the business idea.' : theirs ? 'Tell us what they do.' : 'Tell us what you do.'
   if (v.why_help.trim().length < 10) e.why_help = 'A sentence or two about why the help matters.'
   if (v.email.trim() && !EMAIL_RE.test(v.email.trim())) e.email = 'That email doesn’t look right.'
   if (v.phone.trim() && !phoneOk(v.phone.trim())) e.phone = 'That phone number doesn’t look right.'

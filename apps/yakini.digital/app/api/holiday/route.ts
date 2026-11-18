@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     if (isForm) {
       const u = new URL(HOLIDAY_PATH, req.url)
       if (ok && type) u.searchParams.set('sent', type)
-      else u.searchParams.set('error', error === 'closed' ? 'closed' : status === 400 ? 'missing' : 'failed')
+      else u.searchParams.set('error', error === 'closed' ? 'closed' : error === 'founder_contact' ? 'founder_contact' : status === 400 ? 'missing' : 'failed')
       if (type) u.searchParams.set('form', type)
       u.hash = 'forms'
       return NextResponse.redirect(u, 303)
@@ -75,7 +75,12 @@ export async function POST(req: NextRequest) {
   const hasNominator = type === 'nominate' || (type === 'founder' && !input.self_nominated)
   if (!hasNominator) { input.nominator_name = ''; input.nominator_email = ''; input.nominator_phone = '' }
   const problems = validateHoliday(input)
-  if (Object.keys(problems).length) return reply(false, type, 400, 'Please check the highlighted fields.', problems as Record<string, string>)
+  if (Object.keys(problems).length) {
+    // Founder who checked "This is me" without both contact methods: say exactly that
+    // (matters most without JavaScript, where the form can't explain it inline).
+    const founderContact = type === 'founder' && input.self_nominated && (problems.email || problems.phone) && Object.keys(problems).every((k) => k === 'email' || k === 'phone')
+    return reply(false, type, 400, founderContact ? 'founder_contact' : 'Please check the highlighted fields.', problems as Record<string, string>)
+  }
 
   const ip = clientIp(req.headers)
   const row = {
