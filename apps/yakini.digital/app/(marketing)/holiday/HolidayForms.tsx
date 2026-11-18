@@ -318,7 +318,7 @@ function HolidayForm({ type, enhanced, sentNoJs, errorNoJs }: { type: HolidayTyp
   )
 }
 
-const CONFETTI_COLORS = ['#D9A94A', '#F7E2A4', '#B4243A', '#1F6B47', '#FFF6E2', '#E8424F']
+const CONFETTI_COLORS = ['#D8AE5B', '#F1DBA0', '#FFF6E2', '#8E1B2C', '#E2B95C']
 
 /** One-time celebratory burst on a successful submit (hidden for reduced motion). */
 function Confetti() {
