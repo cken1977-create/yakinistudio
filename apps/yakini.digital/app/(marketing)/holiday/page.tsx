@@ -221,7 +221,7 @@ const PAGE_CSS = `
   @media (min-width: 900px) { .hx-hero-inner { grid-template-columns: 1.05fr 0.95fr; gap: 48px; } }
   .hx-eyebrow { display: flex; align-items: center; gap: 14px; color: #E2B95C; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; }
   .hx-eyebrow::before { content: ''; width: 36px; height: 1px; flex-shrink: 0; background: linear-gradient(90deg, transparent, #E2B95C); }
-  @media (max-width: 520px) { .hx-eyebrow { font-size: 10px; letter-spacing: 0.12em; gap: 10px; } .hx-eyebrow::before { width: 18px; } }
+  @media (max-width: 520px) { .hx-eyebrow { font-size: 9.5px; letter-spacing: 0.06em; gap: 8px; white-space: nowrap; } .hx-eyebrow::before { width: 14px; } }
   .hx-h1 { margin: 22px 0 0; font-family: var(--font-display); font-weight: 400; line-height: 0.94; letter-spacing: -0.02em; }
   .hx-h1-a, .hx-h1-row { display: block; }
   .hx-h1-a { font-size: clamp(56px, 8.6vw, 124px); color: #FBF3E4; font-weight: 300; }
