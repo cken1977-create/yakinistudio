@@ -6,7 +6,7 @@ import { HOLIDAY_URL } from '@/lib/holiday'
 // Thank-you screen add-on: invite people to share /holiday so more businesses get nominated.
 // Phones with the Web Share API get the native share sheet; everyone also gets
 // copy link, text message, Facebook and X.
-export const SHARE_TEXT = 'Know a business or organization that deserves a blessing? Nominate them for the Yakini Holiday Giveaway.'
+export const SHARE_TEXT = 'Know a business, organization or future founder that deserves a blessing? Nominate them for the Yakini Holiday Giveaway.'
 const SHARE_TITLE = 'Yakini Holiday Giveaway'
 
 const noop = () => () => {}
@@ -30,7 +30,7 @@ export function ShareInvite() {
   return (
     <div className="hg-share" aria-labelledby="hg-share-h">
       <h4 id="hg-share-h">Help us find the next one</h4>
-      <p>Know a business or organization that deserves a blessing? Share this page so they can be nominated too.</p>
+      <p>Know a business, organization or future founder that deserves a blessing? Share this page so they can be nominated too.</p>
       {native && (
         <button type="button" className="hm-btn hm-btn-gold hg-share-native" onClick={share}>
           <span>Share this page</span><span className="yk-btn-arrow">→</span>
@@ -38,9 +38,9 @@ export function ShareInvite() {
       )}
       <div className="hg-share-row">
         <button type="button" className="hg-share-btn" onClick={copy}>{copied === 'ok' ? 'Link copied ✓' : copied === 'fail' ? 'Copy failed' : 'Copy link'}</button>
-        <a className="hg-share-btn" href={`sms:?&body=${enc(full)}`}>Text it</a>
-        <a className="hg-share-btn" href={`https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`} target="_blank" rel="noopener noreferrer">Facebook</a>
-        <a className="hg-share-btn" href={`https://twitter.com/intent/tweet?text=${enc(SHARE_TEXT)}&url=${enc(url)}`} target="_blank" rel="noopener noreferrer">X</a>
+        <a className="hg-share-btn" aria-label="Share by text message" href={`sms:?&body=${enc(full)}`}>Text it</a>
+        <a className="hg-share-btn" aria-label="Share on Facebook" href={`https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`} target="_blank" rel="noopener noreferrer">Facebook</a>
+        <a className="hg-share-btn" aria-label="Share on X" href={`https://twitter.com/intent/tweet?text=${enc(SHARE_TEXT)}&url=${enc(url)}`} target="_blank" rel="noopener noreferrer">X</a>
       </div>
       {copied === 'fail' && <p className="hg-share-manual">Copy this: <span>{url}</span></p>}
     </div>

@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: 'Holiday Giveaway entries · Dashboar
 export const dynamic = 'force-dynamic'
 
 type Entry = {
-  id: string; created_at: string; type: 'apply' | 'nominate'; name: string; business_name: string
+  id: string; created_at: string; type: 'apply' | 'nominate' | 'founder'; name: string; business_name: string | null; self_nominated: boolean
   email: string | null; phone: string | null; location: string; what_they_do: string; why_help: string
   nominator_name: string | null; nominator_email: string | null; nominator_phone: string | null
   utm_source: string | null; utm_campaign: string | null; status: string
@@ -19,7 +19,7 @@ type Entry = {
 const fmt = (s: string) => new Date(s).toLocaleString('en-US', { timeZone: 'America/Denver', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
 
 async function load(type: string): Promise<{ rows: Entry[]; missing: boolean; error: string | null }> {
-  const filter = type === 'apply' || type === 'nominate' ? `&type=eq.${type}` : ''
+  const filter = type === 'apply' || type === 'nominate' || type === 'founder' ? `&type=eq.${type}` : ''
   try {
     const r = await rest<Entry[]>(`holiday_giveaway_submissions?campaign=eq.${HOLIDAY_CAMPAIGN}${filter}&order=created_at.desc&limit=1000`)
     if (tablesMissing(r)) return { rows: [], missing: true, error: null }
@@ -37,6 +37,7 @@ export default async function HolidayDashboard({ searchParams }: { searchParams:
   const { rows, missing, error } = await load(type)
   const apply = rows.filter((r) => r.type === 'apply').length
   const nominate = rows.filter((r) => r.type === 'nominate').length
+  const founders = rows.filter((r) => r.type === 'founder').length
 
   return (
     <div className="yd">
@@ -44,7 +45,7 @@ export default async function HolidayDashboard({ searchParams }: { searchParams:
       <header className="yd-top">
         <div>
           <div className="yd-eyebrow">Yakini Dashboard</div>
-          <h1>Holiday Giveaway · applications &amp; nominations</h1>
+          <h1>Holiday Giveaway · 5 businesses + 1 future founder</h1>
           <p className="yd-muted">Entries close {HOLIDAY_DEADLINE_LABEL}. Times are Mountain Time. Each entry is also emailed to clarence@yakini.digital.</p>
         </div>
         <nav className="yd-nav">
@@ -59,7 +60,7 @@ export default async function HolidayDashboard({ searchParams }: { searchParams:
       {error && <p className="yd-warn">Couldn&apos;t load entries: {error}</p>}
 
       <section className="yd-cards">
-        {[['Total', rows.length], ['Applications', apply], ['Nominations', nominate]].map(([l, v]) => (
+        {[['Total', rows.length], ['Business applications', apply], ['Business nominations', nominate], ['Future founders', founders]].map(([l, v]) => (
           <div key={String(l)} className="yd-card"><div className="yd-card-l">{l}</div><div className="yd-card-v">{v}</div></div>
         ))}
       </section>
@@ -68,6 +69,7 @@ export default async function HolidayDashboard({ searchParams }: { searchParams:
         <a href="/dashboard/holiday" aria-current={!type ? 'page' : undefined}>All</a>
         <a href="/dashboard/holiday?type=apply" aria-current={type === 'apply' ? 'page' : undefined}>Applications</a>
         <a href="/dashboard/holiday?type=nominate" aria-current={type === 'nominate' ? 'page' : undefined}>Nominations</a>
+        <a href="/dashboard/holiday?type=founder" aria-current={type === 'founder' ? 'page' : undefined}>Future founders</a>
       </nav>
 
       {rows.length === 0 && !missing && !error && <p className="yd-muted">No entries yet.</p>}
@@ -75,15 +77,15 @@ export default async function HolidayDashboard({ searchParams }: { searchParams:
         {rows.map((r) => (
           <article key={r.id} className="yd-panel">
             <div className="yd-row-top">
-              <span className={`yd-tag ${r.type}`}>{r.type === 'apply' ? 'Application' : 'Nomination'}</span>
-              <strong>{r.business_name}</strong>
+              <span className={`yd-tag ${r.type}`}>{r.type === 'apply' ? 'Application' : r.type === 'nominate' ? 'Nomination' : r.self_nominated ? 'Future founder · self' : 'Future founder'}</span>
+              <strong>{r.type === 'founder' ? `${r.name}${r.business_name ? ` · ${r.business_name}` : ''}` : r.business_name}</strong>
               <span className="yd-muted">{r.location} · {fmt(r.created_at)}{r.utm_source ? ` · ${r.utm_source}${r.utm_campaign ? ` / ${r.utm_campaign}` : ''}` : ''}</span>
             </div>
-            <p><b>{r.type === 'apply' ? 'Contact' : 'Nominee'}:</b> {r.name}{r.email ? <> · <a href={`mailto:${r.email}`}>{r.email}</a></> : null}{r.phone ? <> · <a href={`tel:${r.phone}`}>{r.phone}</a></> : null}</p>
-            {r.type === 'nominate' && (
+            <p><b>{r.type === 'apply' ? 'Contact' : r.type === 'founder' ? 'Founder' : 'Nominee'}:</b> {r.name}{r.email ? <> · <a href={`mailto:${r.email}`}>{r.email}</a></> : null}{r.phone ? <> · <a href={`tel:${r.phone}`}>{r.phone}</a></> : null}</p>
+            {r.nominator_name && (
               <p><b>Nominated by:</b> {r.nominator_name}{r.nominator_email ? <> · <a href={`mailto:${r.nominator_email}`}>{r.nominator_email}</a></> : null}{r.nominator_phone ? ` · ${r.nominator_phone}` : ''}</p>
             )}
-            <p><b>What they do:</b> {r.what_they_do}</p>
+            <p><b>{r.type === 'founder' ? 'Business idea' : 'What they do'}:</b> {r.what_they_do}</p>
             <p className="yd-why"><b>Why they need help:</b> {r.why_help}</p>
           </article>
         ))}
@@ -116,4 +118,5 @@ const CSS = `
   .yd-tag { font-size:11px; text-transform:uppercase; letter-spacing:1px; padding:2px 8px; border:1px solid #444; }
   .yd-tag.apply { color:#C8A84B; border-color:#C8A84B; }
   .yd-tag.nominate { color:#8FD3FF; border-color:#8FD3FF; }
+  .yd-tag.founder { color:#C6F432; border-color:#C6F432; }
 `

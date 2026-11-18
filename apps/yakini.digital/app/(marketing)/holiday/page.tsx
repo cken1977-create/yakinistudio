@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { SiteShell } from '@/components/SiteShell'
 import { SECTIONS_CSS } from '@/components/site/content'
-import { HOLIDAY_DEADLINE_LABEL, HOLIDAY_URL, holidayClosed, type HolidayType } from '@/lib/holiday'
+import { HOLIDAY_DEADLINE_LABEL, HOLIDAY_URL, holidayClosed, isHolidayType, type HolidayType } from '@/lib/holiday'
 import { HolidayForms } from './HolidayForms'
 
 // ═════════════════════════════════════════════════════════════════════════
@@ -9,11 +9,11 @@ import { HolidayForms } from './HolidayForms'
 // No prices or dollar amounts on this page (public Yakini site rule).
 // ═════════════════════════════════════════════════════════════════════════
 
-const TITLE = 'Holiday Giveaway · Yakini Digital & BRSA Foundation'
+const TITLE = 'Holiday Giveaway: 5 Businesses + 1 Future Founder · Yakini Digital & BRSA Foundation'
 const DESCRIPTION =
-  'Somebody blessed me, so I want to bless somebody else. BRSA Foundation and Yakini Digital will pick 5 struggling businesses or organizations for free Yakini software and a website revamp. Apply or nominate someone by December 15, 2026.'
-const OG_TITLE = 'Nominate a business for the Yakini Holiday Giveaway'
-const OG_DESCRIPTION = 'Somebody blessed me, so I want to bless somebody else. Free Yakini software + a website revamp for 5 struggling businesses or organizations. Apply or nominate by Dec 15, 2026.'
+  'Somebody blessed me, so I want to bless somebody else. BRSA Foundation and Yakini Digital will pick 5 struggling businesses or organizations for free Yakini software and a website revamp, plus 1 future founder we’ll walk through registration, setup and the full build. Apply or nominate by December 15, 2026.'
+const OG_TITLE = 'Yakini Holiday Giveaway: 5 Businesses + 1 Future Founder'
+const OG_DESCRIPTION = 'Somebody blessed me, so I want to bless somebody else. Free Yakini software + a website revamp for 5 struggling businesses, plus 1 future founder built from the ground up. Apply or nominate by Dec 15, 2026.'
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -42,9 +42,9 @@ const GIFTS = [
 ]
 
 const STEPS = [
-  { h: 'Apply or nominate', p: 'Tell us about your business, or about one you know that could use a lift. It takes a few minutes.' },
+  { h: 'Apply or nominate', p: 'Tell us about your business, one you know that could use a lift, or a future founder with an idea. It takes a few minutes.' },
   { h: 'We read every story', p: `Entries close ${HOLIDAY_DEADLINE_LABEL}. A real person reads each one. No algorithm, no lottery.` },
-  { h: 'Five get blessed', p: 'BRSA Foundation and Yakini Digital choose five and reach out to them directly to get started.' },
+  { h: 'Six get blessed', p: 'BRSA Foundation and Yakini Digital choose five businesses or organizations and one future founder, and reach out to them directly to get started.' },
 ]
 
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? ''
@@ -52,9 +52,9 @@ const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v)
 export default async function HolidayPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const sp = await searchParams
   const sentRaw = pick(sp.sent)
-  const sent: HolidayType | null = sentRaw === 'apply' || sentRaw === 'nominate' ? sentRaw : null
+  const sent: HolidayType | null = isHolidayType(sentRaw) ? sentRaw : null
   const formRaw = pick(sp.form) || sentRaw
-  const initialTab: HolidayType = formRaw === 'nominate' ? 'nominate' : 'apply'
+  const initialTab: HolidayType = isHolidayType(formRaw) ? formRaw : 'apply'
   const errorCode = ['missing', 'failed', 'closed'].includes(pick(sp.error)) ? pick(sp.error) : null
 
   return (
@@ -64,11 +64,12 @@ export default async function HolidayPage({ searchParams }: { searchParams: Prom
         <div className="yk-page-header-inner">
           <div className="yk-eyebrow"><span className="yk-eyebrow-dot" /><span>HOLIDAY GIVEAWAY · 2026</span></div>
           <h1 className="yk-page-h1 hg-h1">
-            We’re blessing <span className="yk-gold yk-italic">five businesses</span> this season.
+            <span className="yk-gold yk-italic">5 Businesses + 1 Future Founder.</span> We’re blessing them this season.
           </h1>
           <p className="yk-page-sub hg-sub">
-            BRSA Foundation and Yakini Digital will pick 5 businesses or organizations that are going through a hard
-            stretch and give them Yakini software plus a website revamp, free. Apply for yours, or nominate someone who deserves it.
+            BRSA Foundation and Yakini Digital will pick 5 existing businesses or organizations that are going through a
+            hard stretch and give them Yakini software plus a website revamp, free. And we’ll pick 1 future founder, someone
+            trying to start a business, and walk them through registration, setup and the full build. Apply, or nominate someone who deserves it.
           </p>
           <div className="hg-hero-cta">
             <a href="#forms" className="hm-btn hm-btn-gold"><span>Apply or nominate</span><span className="yk-btn-arrow">→</span></a>
@@ -87,7 +88,8 @@ export default async function HolidayPage({ searchParams }: { searchParams: Prom
             <p>
               Everybody who has built something knows the season when it gets heavy: the slow months, the client who
               left, the tools that never quite worked. Somebody stepped in for me when I needed it. This holiday season,
-              we want to do the same for five businesses and community organizations.
+              we want to do the same for five businesses and community organizations, and for one person who’s
+              ready to start something of their own.
             </p>
             <p>
               If they like what we build together, they can stay on a monthly plan afterward. If not, no hard feelings.
@@ -99,7 +101,7 @@ export default async function HolidayPage({ searchParams }: { searchParams: Prom
 
       <section className="yk-section hg-gifts-sec">
         <div className="yk-section-inner">
-          <div className="yk-section-tag">WHAT THE FIVE RECEIVE</div>
+          <div className="yk-section-tag">WHAT THE FIVE BUSINESSES RECEIVE</div>
           <div className="hg-gifts">
             {GIFTS.map((g) => (
               <article key={g.k} className="hg-gift">
@@ -112,6 +114,15 @@ export default async function HolidayPage({ searchParams }: { searchParams: Prom
           <p className="hg-who">
             For small businesses, nonprofits, churches, and community organizations that are struggling right now.
           </p>
+          <article className="hg-founder">
+            <div className="yk-section-tag">PLUS ONE FUTURE FOUNDER</div>
+            <h2>Got a business idea but haven’t started yet?</h2>
+            <p>
+              We’ll choose one future founder and walk them through the whole thing: registering the business, getting
+              set up, and the full build, including the website and Yakini software. Nominate someone you believe in, or yourself.
+            </p>
+            <a href="#founder" className="hm-btn"><span>Nominate a future founder</span><span className="yk-btn-arrow">→</span></a>
+          </article>
         </div>
       </section>
 
@@ -160,6 +171,9 @@ const PAGE_CSS = `
   .hg-gift h2 { margin-top: 10px; font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1.1; color: var(--cream); }
   .hg-gift p { margin-top: 10px; font-size: 15px; line-height: 1.6; color: var(--muted); }
   .hg-who { margin-top: 24px; font-size: 16px; color: var(--cream); }
+  .hg-founder { margin-top: 28px; border: 1.5px solid var(--gold); border-radius: 22px; padding: 26px; background: linear-gradient(180deg, rgba(198,244,50,0.08), rgba(6,11,36,0.6)); }
+  .hg-founder h2 { font-family: var(--font-display); font-weight: 400; font-size: clamp(28px, 3.4vw, 40px); line-height: 1.08; color: var(--cream); margin: 4px 0 12px; }
+  .hg-founder p { font-size: 15.5px; line-height: 1.65; color: var(--muted); margin-bottom: 20px; max-width: 760px; }
   .hg-steps { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 14px; }
   @media (min-width: 860px) { .hg-steps { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
   .hg-steps li { display: flex; gap: 16px; align-items: flex-start; border-top: 1px solid var(--gold); padding-top: 18px; }
@@ -171,15 +185,19 @@ const PAGE_CSS = `
   .hg-forms-p { margin-top: 12px; font-size: 15px; color: var(--muted); }
   .hg-forms-p a { color: var(--gold); }
   .hg-forms { margin-top: 28px; scroll-margin-top: 96px; }
-  .hg-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 6px; border: 1px solid var(--line-strong); border-radius: 16px; background: rgba(6,11,36,0.6); }
-  .hg-tab { text-align: center; padding: 13px 10px; border-radius: 11px; font-size: 14px; font-weight: 600; line-height: 1.25; color: var(--muted); }
+  .hg-tabs { display: grid; grid-template-columns: 1fr; gap: 6px; padding: 6px; border: 1px solid var(--line-strong); border-radius: 16px; background: rgba(6,11,36,0.6); }
+  @media (min-width: 620px) { .hg-tabs { grid-template-columns: repeat(3, 1fr); } }
+  .hg-tab { display: flex; align-items: center; justify-content: center; text-align: center; padding: 12px 10px; border-radius: 11px; font-size: 14px; font-weight: 600; line-height: 1.25; color: var(--muted); }
   .hg-tab.on { background: var(--gold); color: var(--navy-deep); }
   .hg-panel { margin-top: 16px; scroll-margin-top: 90px; }
   .hg-panel[hidden] { display: none; }
   .hg-card { border: 1px solid var(--line); border-radius: 22px; padding: 24px 20px; background: rgba(6,11,36,0.78); backdrop-filter: blur(14px); }
   @media (min-width: 620px) { .hg-card { padding: 32px; } }
   .hg-form h3, .hg-done h3 { font-family: var(--font-display); font-weight: 400; font-size: 32px; line-height: 1.05; color: var(--cream); }
-  .hg-form-sub { margin-top: 8px; font-size: 15px; color: var(--muted); }
+  .hg-form-sub { margin-top: 8px; font-size: 15px; line-height: 1.55; color: var(--muted); }
+  .hg-self { margin-top: 20px; display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--line-strong); border-radius: 14px; background: rgba(244,247,255,0.04); cursor: pointer; font-size: 15px; color: var(--cream); line-height: 1.45; }
+  .hg-self input { width: 22px; height: 22px; margin: 0; flex-shrink: 0; accent-color: #C6F432; }
+  .hg-self b { color: var(--gold); }
   .hg-group { margin-top: 26px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
   .hg-grid { display: grid; gap: 16px; margin-top: 16px; }
   @media (min-width: 620px) { .hg-grid { grid-template-columns: 1fr 1fr; } .hg-wide { grid-column: 1 / -1; } }

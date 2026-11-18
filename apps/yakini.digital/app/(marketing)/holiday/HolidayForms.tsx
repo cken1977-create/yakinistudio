@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { ShareInvite } from './ShareInvite'
-import { LIMITS, validateHoliday, type HolidayInput, type HolidayType } from '@/lib/holiday'
+import { HOLIDAY_TYPES, LIMITS, isHolidayType, validateHoliday, type HolidayInput, type HolidayType } from '@/lib/holiday'
 
-// Two forms, one page: "Apply for your business" and "Nominate someone".
-// Works without JavaScript too: both forms post to /api/holiday, which sends the visitor
+// Three forms, one page: "Apply for your business" and "Nominate someone" (existing
+// businesses and organizations) and "Nominate a future founder" (someone starting one;
+// self-nomination allowed with "This is me").
+// Works without JavaScript too: every form posts to /api/holiday, which sends the visitor
 // back to /holiday?sent=… With JavaScript on, they become tabs and post with fetch.
 
 type Status = 'idle' | 'sending' | 'sent' | 'error'
@@ -15,11 +17,17 @@ const UTM = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'] as const
 
 const noop = () => () => {}
 
-// Deep links: yakini.digital/holiday#nominate and #apply open that form directly.
+// Deep links: yakini.digital/holiday#apply, #nominate and #founder open that form directly.
 const onHash = (cb: () => void) => { window.addEventListener('hashchange', cb); return () => window.removeEventListener('hashchange', cb) }
 const hashTab = (): HolidayType | '' => {
   const h = window.location.hash.replace('#', '').toLowerCase()
-  return h === 'nominate' || h === 'apply' ? h : ''
+  return isHolidayType(h) ? h : ''
+}
+
+const TAB_LABEL: Record<HolidayType, string> = {
+  apply: 'Apply for your business',
+  nominate: 'Nominate someone',
+  founder: 'Nominate a future founder',
 }
 
 const NO_JS_ERRORS: Record<string, string> = {
@@ -47,7 +55,7 @@ export function HolidayForms({ initialTab, sent, errorCode, closed }: {
   const enhanced = useSyncExternalStore(noop, () => true, () => false)
 
   const formsRef = useRef<HTMLDivElement>(null)
-  // Arriving on #nominate / #apply (or following such a link on the page): bring the
+  // Arriving on #apply / #nominate / #founder (or following such a link on the page): bring the
   // selected tab into view once the tabs are live. Tab clicks don't scroll.
   useEffect(() => {
     if (!enhanced || !fromHash) return
@@ -67,22 +75,22 @@ export function HolidayForms({ initialTab, sent, errorCode, closed }: {
   return (
     <div className="hg-forms" ref={formsRef}>
       <div className="hg-tabs" role={enhanced ? 'tablist' : undefined} aria-label="Choose a form">
-        {(['apply', 'nominate'] as const).map((t) => (
+        {HOLIDAY_TYPES.map((t) => (
           <a
             key={t}
             href={`#${t}`}
             id={`tab-${t}`}
             role={enhanced ? 'tab' : undefined}
             aria-selected={enhanced ? tab === t : undefined}
-            aria-controls={`panel-${t}`}
+            aria-controls={t}
             className={`hg-tab ${!enhanced || tab === t ? 'on' : ''}`}
             onClick={(e) => { if (enhanced) { e.preventDefault(); setTab(t) } }}
           >
-            {t === 'apply' ? 'Apply for your business' : 'Nominate someone'}
+            {TAB_LABEL[t]}
           </a>
         ))}
       </div>
-      {(['apply', 'nominate'] as const).map((t) => (
+      {HOLIDAY_TYPES.map((t) => (
         <section
           key={t}
           id={t}
@@ -100,19 +108,27 @@ export function HolidayForms({ initialTab, sent, errorCode, closed }: {
 
 const EMPTY = (type: HolidayType): HolidayInput => ({
   type, name: '', business_name: '', email: '', phone: '', location: '', what_they_do: '', why_help: '',
-  nominator_name: '', nominator_email: '', nominator_phone: '',
+  nominator_name: '', nominator_email: '', nominator_phone: '', self_nominated: false,
 })
 
+type TextKey = Exclude<keyof HolidayInput, 'type' | 'self_nominated'>
+
 function HolidayForm({ type, enhanced, sentNoJs, errorNoJs }: { type: HolidayType; enhanced: boolean; sentNoJs: boolean; errorNoJs: string | null }) {
-  const nom = type === 'nominate'
+  const founder = type === 'founder'
   const [v, setV] = useState<HolidayInput>(EMPTY(type))
   const [errors, setErrors] = useState<Errors>({})
   const [status, setStatus] = useState<Status>(sentNoJs ? 'sent' : errorNoJs ? 'error' : 'idle')
   const [msg, setMsg] = useState(errorNoJs ? NO_JS_ERRORS[errorNoJs] ?? NO_JS_ERRORS.failed : '')
   const formRef = useRef<HTMLFormElement>(null)
   const id = (k: string) => `${type}-${k}`
+  const self = founder && v.self_nominated
+  // "theirs": someone else is filling this in (business nomination, or founder nominated by a friend).
+  const theirs = type === 'nominate' || (founder && !self)
+  // Without JavaScript the founder form can't react to "This is me", so it shows the
+  // nominator section with a "skip if this is you" note; the server sorts it out.
+  const showNominator = type === 'nominate' || (founder && (!enhanced || !self))
 
-  const set = (k: keyof HolidayInput) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const set = (k: TextKey) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setV((cur) => ({ ...cur, [k]: e.target.value }))
     if (errors[k]) setErrors((cur) => ({ ...cur, [k]: undefined }))
   }
@@ -137,6 +153,7 @@ function HolidayForm({ type, enhanced, sentNoJs, errorNoJs }: { type: HolidayTyp
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...v,
+          ...(self ? { nominator_name: '', nominator_email: '', nominator_phone: '' } : {}),
           website: fd.get('website') || '',
           ...Object.fromEntries(UTM.map((k) => [k, params.get(k) || ''])),
           referrer: document.referrer || '',
@@ -160,27 +177,31 @@ function HolidayForm({ type, enhanced, sentNoJs, errorNoJs }: { type: HolidayTyp
   }
 
   if (status === 'sent') {
+    const title = founder
+      ? (self ? 'Thank you. We got your story.' : 'Thank you for nominating them.')
+      : type === 'nominate' ? 'Thank you for nominating them.' : 'Thank you. We got your application.'
     return (
       <div className="hg-card hg-done" role="status">
         <div className="hg-done-mark" aria-hidden="true">✓</div>
-        <h3>{nom ? 'Thank you for nominating them.' : 'Thank you. We got your application.'}</h3>
+        <h3>{title}</h3>
         <p>
           A real person reads every entry. Entries close December 15, 2026, and then BRSA Foundation and Yakini Digital
-          choose five. We can’t pick everyone, but if {nom ? 'they are' : 'you are'} chosen, we’ll reach out by email or phone.
+          choose {founder ? 'one future founder' : 'five businesses and organizations'}. We can’t pick everyone, but if {theirs ? 'they are' : 'you are'} chosen,
+          we’ll reach out by email or phone.
         </p>
         <ShareInvite />
         <button type="button" className="hg-again" onClick={() => { setV(EMPTY(type)); setErrors({}); setStatus('idle') }}>
-          {nom ? 'Nominate someone else' : 'Send another entry'}
+          {theirs ? 'Nominate someone else' : 'Send another entry'}
         </button>
       </div>
     )
   }
 
-  const field = (k: keyof HolidayInput, label: string, opts: { type?: string; required?: boolean; area?: boolean; hint?: string; auto?: string; rows?: number; placeholder?: string } = {}) => {
+  const field = (k: TextKey, label: string, opts: { type?: string; required?: boolean; area?: boolean; hint?: string; auto?: string; rows?: number; placeholder?: string } = {}) => {
     const err = errors[k]
     const common = {
       id: id(k), name: k, value: v[k], onChange: set(k),
-      maxLength: LIMITS[k as keyof typeof LIMITS],
+      maxLength: LIMITS[k],
       required: opts.required,
       'aria-invalid': err ? true : undefined,
       'aria-describedby': err ? `${id(k)}-err` : opts.hint ? `${id(k)}-hint` : undefined,
@@ -198,6 +219,14 @@ function HolidayForm({ type, enhanced, sentNoJs, errorNoJs }: { type: HolidayTyp
     )
   }
 
+  const heading = TAB_LABEL[type]
+  const sub = founder
+    ? 'For someone who’s ready to start a business but hasn’t launched yet. We’ll walk the one we choose through registering it, getting set up, and the full build. Nominate a friend, or yourself.'
+    : type === 'nominate'
+      ? 'Know an existing business or organization that could use a lift? Tell us about them.'
+      : 'For existing businesses and organizations. Tell us about yours and what this season has been like.'
+  const who = (them: string, me: string) => (theirs ? them : me)
+
   return (
     <form
       ref={formRef}
@@ -206,33 +235,46 @@ function HolidayForm({ type, enhanced, sentNoJs, errorNoJs }: { type: HolidayTyp
       method="post"
       noValidate={enhanced}
       onSubmit={onSubmit}
-      aria-label={nom ? 'Nominate someone' : 'Apply for your business'}
+      aria-label={heading}
     >
       <input type="hidden" name="type" value={type} />
-      <h3>{nom ? 'Nominate someone' : 'Apply for your business'}</h3>
-      <p className="hg-form-sub">
-        {nom
-          ? 'Know a business or organization that could use a lift? Tell us about them.'
-          : 'Tell us about your business or organization and what this season has been like.'}
-      </p>
+      <h3>{heading}</h3>
+      <p className="hg-form-sub">{sub}</p>
 
-      {nom && <div className="hg-group">Who are you nominating?</div>}
+      {founder && (
+        <label className="hg-self" htmlFor={id('self')}>
+          <input
+            id={id('self')}
+            type="checkbox"
+            name="self_nominated"
+            value="yes"
+            checked={v.self_nominated}
+            onChange={(e) => { const on = e.target.checked; setV((cur) => ({ ...cur, self_nominated: on })); setErrors({}) }}
+          />
+          <span><b>This is me.</b> I’m the future founder and I’m nominating myself.</span>
+        </label>
+      )}
+
+      {theirs && <div className="hg-group">{founder ? 'Who is the future founder?' : 'Who are you nominating?'}</div>}
+      {!theirs && founder && <div className="hg-group">About you</div>}
       <div className="hg-grid">
-        {field('name', nom ? 'Their name' : 'Your name', { required: true, auto: nom ? 'off' : 'name' })}
-        {field('business_name', 'Business or organization', { required: true, auto: nom ? 'off' : 'organization' })}
-        {field('email', nom ? 'Their email' : 'Email', { type: 'email', required: !nom, auto: nom ? 'off' : 'email', hint: nom ? 'Their email or phone, whichever you have.' : undefined })}
-        {field('phone', nom ? 'Their phone' : 'Phone', { type: 'tel', required: !nom, auto: nom ? 'off' : 'tel' })}
+        {field('name', founder ? who('Founder’s name', 'Your name') : who('Their name', 'Your name'), { required: true, auto: theirs ? 'off' : 'name' })}
+        {founder
+          ? field('business_name', 'Business name, if there is one', { auto: 'off' })
+          : field('business_name', 'Business or organization', { required: true, auto: theirs ? 'off' : 'organization' })}
+        {field('email', who('Their email', 'Email'), { type: 'email', required: !theirs, auto: theirs ? 'off' : 'email', hint: theirs ? 'Their email or phone, whichever you have.' : undefined })}
+        {field('phone', who('Their phone', 'Phone'), { type: 'tel', required: !theirs, auto: theirs ? 'off' : 'tel' })}
         {field('location', 'City and state', { required: true, placeholder: 'Albuquerque, NM' })}
-        {field('what_they_do', nom ? 'What do they do?' : 'What do you do?', { required: true, area: true, rows: 3 })}
-        {field('why_help', nom ? 'Why do they need help right now?' : 'Why do you need help right now?', { required: true, area: true, rows: 5, hint: 'A few sentences is plenty. Be as honest as you like.' })}
+        {field('what_they_do', founder ? 'What’s the business idea?' : who('What do they do?', 'What do you do?'), { required: true, area: true, rows: 3 })}
+        {field('why_help', who('Why do they need help right now?', 'Why do you need help right now?'), { required: true, area: true, rows: 5, hint: 'A few sentences is plenty. Be as honest as you like.' })}
       </div>
 
-      {nom && (
+      {showNominator && (
         <>
-          <div className="hg-group">About you</div>
+          <div className="hg-group">About you (the nominator){founder && !enhanced ? ' · skip this if you checked “This is me”' : ''}</div>
           <div className="hg-grid">
-            {field('nominator_name', 'Your name', { required: true, auto: 'name' })}
-            {field('nominator_email', 'Your email', { type: 'email', required: true, auto: 'email' })}
+            {field('nominator_name', 'Your name', { required: enhanced || !founder, auto: 'name' })}
+            {field('nominator_email', 'Your email', { type: 'email', required: enhanced || !founder, auto: 'email' })}
             {field('nominator_phone', 'Your phone', { type: 'tel', auto: 'tel' })}
           </div>
         </>
@@ -248,12 +290,12 @@ function HolidayForm({ type, enhanced, sentNoJs, errorNoJs }: { type: HolidayTyp
 
       <div className="hg-actions">
         <button type="submit" className="hm-btn hm-btn-gold" disabled={status === 'sending'}>
-          <span>{status === 'sending' ? 'Sending…' : nom ? 'Send my nomination' : 'Send my application'}</span>
+          <span>{status === 'sending' ? 'Sending…' : theirs ? 'Send my nomination' : 'Send my application'}</span>
           <span className="yk-btn-arrow">→</span>
         </button>
         <p className="hg-fine">
           Entries close December 15, 2026. Sending this doesn’t guarantee selection. We use what you share only to review
-          {nom ? ' the nomination and to reach out to the person you nominated.' : ' your entry and contact you about the giveaway.'}
+          {theirs ? ' the nomination and to reach out to the person you nominated.' : ' your entry and contact you about the giveaway.'}
         </p>
       </div>
     </form>

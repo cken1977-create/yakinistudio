@@ -1,4 +1,5 @@
--- Holiday Giveaway (yakini.digital/holiday): applications and nominations.
+-- Holiday Giveaway (yakini.digital/holiday): applications, business nominations and
+-- future-founder nominations (5 existing businesses/organizations + 1 future founder).
 -- Target: Supabase project "yakini" (ref mxshsmknfqxwltucgezl) ONLY.
 -- Additive and idempotent. NOT APPLIED. Needs Clarence's OK.
 --
@@ -28,18 +29,23 @@ create table if not exists public.holiday_giveaway_submissions (
   id                uuid primary key default gen_random_uuid(),
   created_at        timestamptz not null default now(),
   campaign          text not null default 'holiday-2026' check (campaign ~ '^[a-z0-9-]{1,60}$'),
-  type              text not null check (type in ('apply','nominate')),
+  type              text not null check (type in ('apply','nominate','founder')),
 
-  -- The business or organization that would receive the help.
+  -- The business or organization (or, for type 'founder', the future founder) that would
+  -- receive the help. For founders, business_name is the working name if they have one and
+  -- what_they_do holds the business idea.
   name              text not null check (char_length(name) between 1 and 120),
-  business_name     text not null check (char_length(business_name) between 1 and 160),
+  business_name     text check (business_name is null or char_length(business_name) between 1 and 160),
   email             text check (email is null or (char_length(email) between 3 and 254 and email = lower(email))),
   phone             text check (phone is null or char_length(phone) between 7 and 40),
   location          text not null check (char_length(location) between 2 and 160),
   what_they_do      text not null check (char_length(what_they_do) between 2 and 2000),
   why_help          text not null check (char_length(why_help) between 10 and 4000),
 
-  -- Only for nominations: the person who nominated them.
+  -- Founder form: true when the future founder filled it in themselves ("This is me").
+  self_nominated    boolean not null default false,
+
+  -- Nominations: the person who nominated them.
   nominator_name    text check (nominator_name is null or char_length(nominator_name) between 1 and 120),
   nominator_email   text check (nominator_email is null or (char_length(nominator_email) between 3 and 254 and nominator_email = lower(nominator_email))),
   nominator_phone   text check (nominator_phone is null or char_length(nominator_phone) between 7 and 40),
@@ -58,14 +64,21 @@ create table if not exists public.holiday_giveaway_submissions (
   notes             text,
 
   constraint holiday_contact_present check (email is not null or phone is not null),
+  constraint holiday_business_name_required check (type = 'founder' or business_name is not null),
   constraint holiday_nominator_fields check (
-    (type = 'apply' and nominator_name is null and nominator_email is null and nominator_phone is null)
-    or (type = 'nominate' and nominator_name is not null and nominator_email is not null)
+    (type = 'apply' and not self_nominated
+       and nominator_name is null and nominator_email is null and nominator_phone is null)
+    or (type = 'nominate' and not self_nominated
+       and nominator_name is not null and nominator_email is not null)
+    or (type = 'founder' and self_nominated
+       and nominator_name is null and nominator_email is null and nominator_phone is null)
+    or (type = 'founder' and not self_nominated
+       and nominator_name is not null and nominator_email is not null)
   )
 );
 
 comment on table public.holiday_giveaway_submissions is
-  'Holiday Giveaway applications and nominations from yakini.digital/holiday. Server-only; RLS on, no policies.';
+  'Holiday Giveaway applications, business nominations and future-founder nominations from yakini.digital/holiday. Server-only; RLS on, no policies.';
 
 create index if not exists holiday_giveaway_submissions_created_idx
   on public.holiday_giveaway_submissions (campaign, created_at desc);

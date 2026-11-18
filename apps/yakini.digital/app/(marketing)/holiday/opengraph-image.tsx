@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 // Share card for the Holiday Giveaway ad traffic (Facebook, Instagram, X, texts).
-export const alt = 'Yakini Digital & BRSA Foundation Holiday Giveaway: free Yakini software and a website revamp for 5 businesses. Apply or nominate by Dec 15, 2026.'
+export const alt = 'Yakini Digital & BRSA Foundation Holiday Giveaway: 5 Businesses + 1 Future Founder. Free Yakini software and a website revamp. Apply or nominate by Dec 15, 2026.'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -15,12 +15,12 @@ export default function OgImage() {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ fontSize: 40, fontStyle: 'italic', color: '#C9D4FF', lineHeight: 1.2 }}>“Somebody blessed me, so I want to bless somebody else.”</div>
-          <div style={{ marginTop: 26, display: 'flex', flexDirection: 'column', fontSize: 84, lineHeight: 1.0, fontWeight: 700 }}>
-            <div style={{ display: 'flex' }}>We’re blessing <span style={{ color: '#C6F432', marginLeft: 22 }}>5 businesses</span></div>
-            <div style={{ display: 'flex' }}>this holiday season.</div>
+          <div style={{ marginTop: 26, display: 'flex', flexDirection: 'column', fontSize: 76, lineHeight: 1.0, fontWeight: 700 }}>
+            <div style={{ display: 'flex' }}><span style={{ color: '#C6F432' }}>5 Businesses</span>&nbsp;+&nbsp;<span style={{ color: '#C6F432' }}>1 Future Founder</span></div>
+            <div style={{ display: 'flex', fontSize: 64, marginTop: 8 }}>blessed this holiday season.</div>
           </div>
           <div style={{ marginTop: 22, fontSize: 30, color: 'rgba(244,247,255,0.8)', fontFamily: 'Arial, sans-serif' }}>
-            Free Yakini software + a website revamp. Apply or nominate someone who deserves it.
+            Free Yakini software + a website revamp. Apply or nominate by Dec 15.
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontFamily: 'Arial, sans-serif', fontSize: 26 }}>
