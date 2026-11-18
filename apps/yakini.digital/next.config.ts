@@ -13,6 +13,8 @@ const IMMERSIVE_ORIGIN = "https://yakini-immersive-v2.vercel.app";
 const WATCH_MEDIA_CSP = "media-src 'self' https://ec22ch0piqcoe7i7.public.blob.vercel-storage.com"
 
 const nextConfig: NextConfig = {
+  // Serve next/image as AVIF where the browser supports it, WebP otherwise.
+  images: { formats: ['image/avif', 'image/webp'] },
   async headers() {
     return [
       { source: '/watch', headers: [{ key: 'Content-Security-Policy', value: WATCH_MEDIA_CSP }] },
