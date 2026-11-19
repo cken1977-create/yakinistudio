@@ -4,22 +4,22 @@
 // Prices, plan contents and policy wording come only from lib/pricing.ts.
 // Customer-facing copy names services, never the companies behind them.
 
-import { SeatMeter, useFoundingSeats } from '@/components/FoundingSeats'
+import Link from 'next/link'
+import { useFoundingSeats } from '@/components/FoundingSeats'
 import { BOOK_CALL_URL, BUILDS, TOUR } from '@/components/site/content'
 import {
   AI_LIMIT_NOTE,
   EXTRA_HELP_NOTE,
   FLAT_PRICING_NOTE,
-  FOUNDING,
   GUIDED_STEPS,
   HELP_HOURS_NOTE,
   PLANS,
   REFUND_RULE,
   START_URL,
+  QUOTE_CTA,
+  QUOTE_NOTE,
+  QUOTE_URL,
   helpLabel,
-  monthlyLabel,
-  priceLabel,
-  setupLabel,
   startUrl,
 } from '@/lib/pricing'
 
@@ -129,12 +129,7 @@ export function PlanGrid({ num = '02' }: { num?: string }) {
                 <div className="hm-plan-tag">{plan.tag}</div>
                 <h3 className="hm-plan-name">{plan.name}</h3>
                 <p className="hm-plan-sum">{plan.summary}</p>
-                <div className="hm-plan-price">
-                  <span className="hm-plan-num">{monthlyLabel(plan).replace('/mo', '')}</span>
-                  <span className="hm-plan-per">/month</span>
-                </div>
-                <div className="hm-plan-setup">+ {setupLabel(plan)} one-time guided setup{plan.lockedMonths ? ` · locked ${plan.lockedMonths} months` : ''}</div>
-                {isFounding ? <SeatMeter seats={seats} /> : null}
+                <div className="hm-plan-setup">{QUOTE_NOTE} <Link href={QUOTE_URL}>{QUOTE_CTA} →</Link></div>
                 <ul className="hm-plan-list">
                   <li>{helpLabel(plan)} from your Yakini person</li>
                   {plan.id === 'grow' ? (
@@ -272,14 +267,13 @@ export function FoundingStrip() {
   const seats = useFoundingSeats()
   if (!seats.open) return null
   return (
-    <a href={startUrl(FOUNDING.id)} className="hm-founding">
+    <Link href={QUOTE_URL} className="hm-founding">
       <span className="hm-founding-dot" aria-hidden />
       <span>
-        <strong>Founding:</strong> {priceLabel(FOUNDING)}, locked {FOUNDING.lockedMonths} months.{' '}
-        <strong>{seats.left} of {seats.total}</strong> spots left
+        <strong>Founding:</strong> spots open for our first customers. {QUOTE_NOTE} {QUOTE_CTA}.
       </span>
       <span className="yk-btn-arrow">→</span>
-    </a>
+    </Link>
   )
 }
 

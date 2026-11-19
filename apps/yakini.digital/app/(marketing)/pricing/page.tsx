@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { SiteShell } from '@/components/SiteShell'
-import { SEAT_CSS, SeatMeter, useFoundingSeats } from '@/components/FoundingSeats'
+import { SEAT_CSS, useFoundingSeats } from '@/components/FoundingSeats'
 import {
   BILLING_NOTE,
   EXTRA_HELP_NOTE,
@@ -16,16 +16,16 @@ import {
   PLANS,
   PLAN_MODULES,
   REFUND_RULE,
+  QUOTE_CTA,
+  QUOTE_NOTE,
+  QUOTE_URL,
   helpLabel,
-  monthlyLabel,
-  priceLabel,
-  setupLabel,
   startUrl,
 } from '@/lib/pricing'
 
 export default function PricingPage() {
   const seats = useFoundingSeats()
-  const [operate, grow, founding] = PLANS
+  const [operate, grow] = PLANS
 
   return (
     <SiteShell>
@@ -45,7 +45,7 @@ export default function PricingPage() {
           <p className="yk-page-sub">{PITCH}</p>
           <div className="pn-hero-ctas">
             <a href="#plans" className="pr-tier-cta pr-cta-featured"><span>See the plans</span><span className="yk-btn-arrow">→</span></a>
-            <a href={startUrl(founding.id)} className="pr-tier-cta"><span>{seats.open ? `Founding: ${seats.left} of ${seats.total} spots left` : 'Founding is closed'}</span><span className="yk-btn-arrow">→</span></a>
+            <Link href={QUOTE_URL} className="pr-tier-cta"><span>{QUOTE_CTA}</span><span className="yk-btn-arrow">→</span></Link>
           </div>
         </div>
       </header>
@@ -85,12 +85,7 @@ export default function PricingPage() {
                   <div className="pn-tag">{plan.tag}</div>
                   <div className="pr-tier-name">{plan.name}</div>
                   <div className="pr-tier-tagline">{plan.summary}</div>
-                  <div className="pn-price">
-                    <span className="pn-price-num">{monthlyLabel(plan).replace('/mo', '')}</span>
-                    <span className="pn-price-per">/month</span>
-                  </div>
-                  <div className="pn-setup">+ {setupLabel(plan)} one-time guided setup{plan.lockedMonths ? ` · locked ${plan.lockedMonths} months` : ''}</div>
-                  {isFounding ? <SeatMeter seats={seats} /> : null}
+                  <div className="pn-setup">{QUOTE_NOTE} <Link href={QUOTE_URL}>{QUOTE_CTA} →</Link></div>
                   <ul className="pr-tier-list pr-list-included pn-list">
                     <li>{helpLabel(plan)} from your Yakini person (unused hours don’t roll over)</li>
                     {plan.includes.map((feature) => (
@@ -122,7 +117,6 @@ export default function PricingPage() {
                   {PLANS.map((plan) => (
                     <th key={plan.id} scope="col">
                       {plan.name}
-                      <span className="pr-compare-price">{priceLabel(plan)}</span>
                     </th>
                   ))}
                 </tr>
@@ -131,10 +125,6 @@ export default function PricingPage() {
                 <tr>
                   <th scope="row">Help each month from your Yakini person (expires at month end)</th>
                   {PLANS.map((plan) => <td key={plan.id}>{plan.helpHours} hr</td>)}
-                </tr>
-                <tr>
-                  <th scope="row">Monthly price locked</th>
-                  {PLANS.map((plan) => <td key={plan.id}>{plan.lockedMonths ? `${plan.lockedMonths} months` : '—'}</td>)}
                 </tr>
                 {PLAN_MODULES.map((module) => (
                   <tr key={module.plain}>
@@ -190,18 +180,17 @@ export default function PricingPage() {
             <details className="pr-faq-item">
               <summary className="pr-faq-q">What is the difference between Operate and Grow?<span className="pr-faq-icon">+</span></summary>
               <div className="pr-faq-a">
-                Operate is {priceLabel(operate)} with {helpLabel(operate)}. It is your website and customer portal, help desk, voice notes,
+                Operate comes with {helpLabel(operate)}. It is your website and customer portal, help desk, voice notes,
                 drafted replies that wait for your OK, a business texting line, booking you confirm, and incoming texts in one place.
-                Grow is {priceLabel(grow)} with {helpLabel(grow)}, and adds card payments, missed-call text-back, review requests,
+                Grow comes with {helpLabel(grow)}, and adds card payments, missed-call text-back, review requests,
                 follow-up campaigns and a monthly owner report. {HELP_HOURS_NOTE} {AI_LIMIT_NOTE}
               </div>
             </details>
             <details className="pr-faq-item">
               <summary className="pr-faq-q">What is the Founding plan?<span className="pr-faq-icon">+</span></summary>
               <div className="pr-faq-a">
-                Founding is everything in Operate for {monthlyLabel(founding)}, with the monthly price locked for {founding.lockedMonths} months, plus
-                the {setupLabel(founding)} guided setup. It is for our first {founding.spots?.total} customers only and closes on its own after the last spot.
-                {seats.open ? ` Right now ${seats.left} of ${seats.total} spots are left.` : ' All spots are taken.'}
+                Founding is everything in Operate, for our first customers only, and closes on its own after the last spot. {QUOTE_NOTE}{' '}
+                <Link href={QUOTE_URL}>{QUOTE_CTA}</Link>.
               </div>
             </details>
             <details className="pr-faq-item">
