@@ -26,7 +26,12 @@ export const BILLING_NOTE =
   'When you sign up, you pay the one-time guided-setup fee by card or bank account. Your monthly plan starts after setup.'
 
 export const EXTRA_HELP_NOTE =
-  'Need more help than your plan includes? Extra hours are $150/hour, or move up a plan.'
+  'Need more help than your plan includes? Extra hours are available, or you can move up a plan.'
+
+/** Public site shows no prices (Nov 19 2026, Clarence). Every spot that used to show an amount shows this and links to /apply. */
+export const QUOTE_NOTE = 'Pricing depends on your business.'
+export const QUOTE_CTA = 'Book a call for a quote'
+export const QUOTE_URL = '/apply'
 
 /** Included help hours don't roll over (Oct 22 2026). */
 export const HELP_HOURS_NOTE =
@@ -163,7 +168,7 @@ export const OFFER_GROUPS: readonly { id: OfferGroup; label: string }[] = [
 ]
 
 export const OFFER_CHOICES: readonly OfferChoice[] = [
-  ...PLANS.map((plan) => ({ val: plan.id, group: 'plan' as const, label: `${plan.name} · ${priceLabel(plan)}${plan.lockedMonths ? ` (locked ${plan.lockedMonths} months)` : ''}` })),
+  ...PLANS.map((plan) => ({ val: plan.id, group: 'plan' as const, label: `${plan.name} plan` })),
   { val: PARTNER.id, group: 'partner' as const, label: 'Custom build, let’s talk' },
   { val: 'unsure', group: 'partner' as const, label: 'Not sure yet — help me decide' },
 ]
@@ -172,5 +177,7 @@ export const OFFER_CHOICES: readonly OfferChoice[] = [
 export function offerLabel(val: string | null | undefined): string {
   if (!val) return 'Not specified'
   if (val === PARTNER.id) return 'Partner · custom build'
+  const plan = PLANS.find((p) => p.id === val)
+  if (plan) return `${plan.name} · ${priceLabel(plan)}${plan.lockedMonths ? ` (locked ${plan.lockedMonths} months)` : ''}`
   return OFFER_CHOICES.find((choice) => choice.val === val)?.label ?? val
 }
