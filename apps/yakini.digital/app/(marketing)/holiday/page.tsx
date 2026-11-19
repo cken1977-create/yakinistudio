@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { SHARE_IMAGE } from '@/lib/share'
 import { SiteShell } from '@/components/SiteShell'
 import { HOLIDAY_DEADLINE_LABEL, HOLIDAY_URL, holidayClosed, isHolidayType, type HolidayType } from '@/lib/holiday'
 import { HolidayForms } from './HolidayForms'
@@ -29,11 +30,13 @@ export const metadata: Metadata = {
     siteName: 'Yakini Digital',
     type: 'website',
     locale: 'en_US',
+    images: [SHARE_IMAGE],
   },
   twitter: {
     card: 'summary_large_image',
     title: OG_TITLE,
     description: OG_DESCRIPTION,
+    images: [SHARE_IMAGE.url],
   },
 }
 
