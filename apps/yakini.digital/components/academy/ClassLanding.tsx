@@ -17,7 +17,6 @@ export function classMetadata(lang: Lang): Metadata {
       title: c.htmlTitle, description: c.metaDescription, url: PATHS[lang].landing, siteName: 'Yakini Academy',
       type: 'website', locale: lang === 'es' ? 'es_US' : 'en_US',
       images: [{ url: v.poster, width: 1080, height: 1920, alt: CLASS_TITLE[lang] }],
-      videos: [{ url: v.src, secureUrl: v.src, type: 'video/mp4', width: 1080, height: 1920 }],
     },
     twitter: { card: 'summary_large_image', title: c.htmlTitle, description: c.metaDescription, images: [v.poster] },
   }

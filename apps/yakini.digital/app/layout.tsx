@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import { SHARE_IMAGE } from '@/lib/share'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
@@ -11,10 +12,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Yakini · Your business, in one portal',
     description: 'Set up with you, not left to you. A real Yakini person sets up your portal with you, and stays.',
-    url: 'https://yakini.digital',
     siteName: 'Yakini',
     type: 'website',
+    images: [SHARE_IMAGE],
   },
+  twitter: { card: 'summary_large_image', images: [SHARE_IMAGE.url] },
   robots: { index: true, follow: true },
 }
 

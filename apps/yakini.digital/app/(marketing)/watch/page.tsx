@@ -20,7 +20,6 @@ export const metadata: Metadata = {
     siteName: 'Yakini',
     type: 'video.other',
     images: [{ url: lead.poster, width: 1280, height: 720, alt: lead.title }],
-    videos: [{ url: lead.src, secureUrl: lead.src, type: 'video/mp4', width: 1920, height: 1080 }],
   },
   twitter: { card: 'summary_large_image', title: 'See Yakini in action', description: DESC, images: [lead.poster] },
 }

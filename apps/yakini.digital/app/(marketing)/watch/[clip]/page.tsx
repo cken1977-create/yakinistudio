@@ -31,7 +31,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: 'Yakini',
       type: 'video.other',
       images: [{ url: v.poster, width: 1280, height: 720, alt: v.title }],
-      videos: [{ url: v.src, secureUrl: v.src, type: 'video/mp4', width: 1920, height: 1080 }],
     },
     twitter: { card: 'summary_large_image', title, description: v.sub, images: [v.poster] },
   }
