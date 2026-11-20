@@ -4,6 +4,8 @@ import { useState, useEffect, ReactNode } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { PORTAL_LOGIN_URL, START_URL } from '@/lib/pricing'
+import { SOCIAL_LINKS } from '@/lib/organization'
+import { OrganizationJsonLd } from '@/components/OrganizationJsonLd'
 
 // ═════════════════════════════════════════════════════════════════════════
 // YAKINI SITE SHELL: header, mobile menu and footer for every page.
@@ -146,7 +148,6 @@ export function SiteShell({ children }: { children: ReactNode }) {
               <a href="/">Walk through Yakini</a>
               <a href="/about">About</a>
               <a href="https://brsafoundation.org" target="_blank" rel="noopener">BRSA Foundation</a>
-              <a href="https://brsaholdings.org" target="_blank" rel="noopener">BRSA Holdings</a>
             </div>
             <div className="yk-footer-col">
               <h6>Contact</h6>
@@ -155,16 +156,22 @@ export function SiteShell({ children }: { children: ReactNode }) {
               <a href="tel:+13466264948">Executive · 1 (346) 626-4948</a>
               <a href="mailto:hello@yakini.digital">hello@yakini.digital</a>
               <a href="mailto:admin@yakini.digital">admin@yakini.digital</a>
-              <a href="https://contracts.yakini.digital">contracts.yakini.digital</a>
+              <h6 className="yk-footer-h6-gap">Follow Yakini</h6>
+              <div className="yk-footer-social">
+                {SOCIAL_LINKS.map((s) => (
+                  <a key={s.id} href={s.href} target="_blank" rel="noopener me" aria-label={`Yakini Digital on ${s.label}`}>{s.label}</a>
+                ))}
+              </div>
             </div>
           </div>
           <div className="yk-footer-bottom">
-            <span>© 2026 BRSA Holdings, Inc. All rights reserved.</span>
+            <span>© 2026 BRSA Holdings, Inc. All rights reserved. · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a></span>
             <span>YAKINI is part of the BRSA ecosystem · Houston, Texas</span>
           </div>
         </div>
       </footer>
       <style>{THEME_CSS}</style>
+      <OrganizationJsonLd />
     </>
   )
 }
@@ -542,6 +549,11 @@ const GLOBAL_CSS = `
   }
   .yk-footer-col a:hover { color: var(--cream); }
   .yk-footer-h6-gap { margin-top: 28px; }
+  .yk-footer-social { display: flex; flex-wrap: wrap; gap: 8px; }
+  .yk-footer-social a { display: inline-block; padding: 7px 14px; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 13px; margin: 0; }
+  .yk-footer-social a:hover { border-color: #C6F432; color: #C6F432; }
+  .yk-footer-bottom a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+  .yk-footer-bottom a:hover { color: var(--cream); }
   .yk-footer-start {
     display: inline-block; margin-top: 22px; padding: 12px 20px;
     border: 1px solid var(--gold); color: var(--gold);
