@@ -47,7 +47,7 @@ export default function ContactPage() {
               <a href={PORTAL_LOGIN_URL} className="hm-btn"><span>Sign in to your portal</span></a>
               <a href="/class" className="hm-btn"><span>Take the free class</span></a>
             </div>
-            <p className="ct-fine">Yakini is part of the BRSA ecosystem · Houston, Texas</p>
+            <p className="ct-fine">Yakini is part of the BRSA ecosystem · Albuquerque, New Mexico</p>
           </div>
           <div className="ct-card">
             <h2>Send us a note</h2>
