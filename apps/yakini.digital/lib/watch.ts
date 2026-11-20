@@ -23,25 +23,17 @@ const clip = (n: number, title: string, sub: string, device: Video['device'], du
   poster: `${BASE}/yakini-demo-y${n}-poster.jpg`,
 })
 
-// Nov 20 2026 (Clarence: the public site shows no prices; sign-up is quote only): videos 1, 2 and 3 were recorded
-// on the old pages and show plan prices and the Founding spot counter on screen, so they are off the site until
-// they are re-recorded. Their links (/watch/y1, /watch/y2, /watch/y3) redirect to /watch (next.config.ts).
-// To bring one back, re-record it on the quote-only pages, upload it under a new dated folder and add it here.
-//   clip(1, 'One place for the whole business', 'A quick look at the portal: clients, texts, payments and replies together.', 'On a computer', '1:06', 66),
-//   clip(2, 'Pick a plan', 'The plans side by side, and what each one includes.', 'On a computer', '1:16', 76),
-//   clip(3, 'Ask for your setup', 'A new owner tells Yakini about the business, and a real person takes it from there.', 'On a computer', '0:44', 44),
 export const CLIPS: Video[] = [
+  clip(1, 'One place for the whole business', 'A quick look at the portal: clients, texts, payments and replies together.', 'On a computer', '1:06', 66),
+  clip(2, 'Pick a plan', 'The plans side by side, and what each one includes.', 'On a computer', '1:16', 76),
+  clip(3, 'Ask for your setup', 'A new owner tells Yakini about the business, and a real person takes it from there.', 'On a computer', '0:44', 44),
   clip(4, 'Ask in your room', 'A customer asks a question in their own room, on a phone.', 'On a phone', '1:02', 62),
   clip(5, 'Help desk with a real person', 'A customer opens a help request and follows its status.', 'On a computer', '0:47', 47),
   clip(6, 'Book a time you confirm', 'A customer picks a time and requests it. You confirm it.', 'On a phone', '0:49', 49),
 ]
 
-/**
- * The full play-through (Kofi's combined cut): shown on top of /watch and at /watch/full. Set to null to hide it.
- * Hidden Nov 20 2026: it contains videos 1-3, which show prices and the Founding spot counter (see CLIPS above).
- * /watch/full redirects to /watch. Restore by pointing this back at FULL_CUT once a quote-only cut is uploaded.
- */
-const FULL_CUT: Video & { chapters: { id: string; at: number }[] } = {
+/** The full play-through (Kofi's combined cut): shown on top of /watch and at /watch/full. Set to null to hide it. */
+export const FULL: (Video & { chapters: { id: string; at: number }[] }) | null = {
   id: 'full',
   title: 'The Yakini portal, start to finish',
   sub: 'All six short videos in one walkthrough: the portal, a customer room, the help desk, booking, plans and setup.',
@@ -59,8 +51,6 @@ const FULL_CUT: Video & { chapters: { id: string; at: number }[] } = {
     { id: 'y3', at: 273.4 },
   ],
 }
-void FULL_CUT
-export const FULL = null as typeof FULL_CUT | null
 
 /** "Jump to a part" list for the full play-through, with titles filled in. */
 export const FULL_CHAPTERS = (FULL?.chapters ?? []).map((c) => {

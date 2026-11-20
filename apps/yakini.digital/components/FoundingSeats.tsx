@@ -12,7 +12,8 @@ export function useFoundingSeats(): Seats {
     fetch(`${FOUNDING_API}${test ? `?founding_test=${encodeURIComponent(test)}` : ''}`, { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => {
-        if (alive && j && typeof j.total === 'number' && typeof j.left === 'number') setSeats({ total: j.total, left: j.left, open: Boolean(j.open) })
+        // The portal sends only { open } now (no amounts or seat count leave it, Nov 20 2026); older builds also sent counts.
+        if (alive && j && typeof j.open === 'boolean') setSeats((s) => ({ ...s, open: j.open }))
       })
       .catch(() => {})
     return () => {

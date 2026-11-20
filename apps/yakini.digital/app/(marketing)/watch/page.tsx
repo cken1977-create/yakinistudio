@@ -7,7 +7,7 @@ import { VideoCard } from './VideoCard'
 import { WATCH_CSS } from './watch-css'
 
 const lead = FULL ?? CLIPS[0]
-const DESC = 'Short videos of the Yakini portal: customer rooms, the help desk and booking. Press play, no sign-in.'
+const DESC = 'Short videos of the Yakini portal: plans, setup, customer rooms, the help desk and booking. Press play, no sign-in.'
 
 export const metadata: Metadata = {
   title: 'Watch · See Yakini in action',
@@ -36,7 +36,7 @@ export default function WatchPage() {
             <br />
             <span className="yk-gold yk-italic">in action.</span>
           </h1>
-          <p className="yk-page-sub">{FULL ? 'The full five-minute walkthrough, or one short video at a time, with captions.' : 'Short videos of the portal, one at a time, with captions.'} Press play. Nothing to download and no sign-in.</p>
+          <p className="yk-page-sub">The full five-minute walkthrough, or one short video at a time, with captions. Press play. Nothing to download and no sign-in.</p>
         </div>
       </header>
 

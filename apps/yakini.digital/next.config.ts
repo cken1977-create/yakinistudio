@@ -46,8 +46,6 @@ const nextConfig: NextConfig = {
       // Nov 20 2026: the Terms of Service live with the portal (one source of truth). Temporary (307)
       // so a dedicated yakini.digital/terms page can replace it later without stale browser caches.
       { source: "/terms", destination: "https://portal.yakini.digital/terms", permanent: false },
-      // Nov 20 2026: these videos show old prices on screen and are off the site until re-recorded (lib/watch.ts).
-      { source: "/watch/:clip(y1|y2|y3|full)", destination: "/watch", permanent: false },
       { source: "/platforms", destination: "/custom-builds", permanent: true },
       { source: "/platforms/:path*", destination: "/custom-builds", permanent: true },
       { source: "/intelligence", destination: "/portal#portal", permanent: true },
