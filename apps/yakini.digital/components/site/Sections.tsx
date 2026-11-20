@@ -270,7 +270,7 @@ export function FoundingStrip() {
     <Link href={QUOTE_URL} className="hm-founding">
       <span className="hm-founding-dot" aria-hidden />
       <span>
-        <strong>Founding:</strong> spots open for our first customers. {QUOTE_NOTE} {QUOTE_CTA}.
+        <strong>Founding:</strong> open to our first customers. {QUOTE_NOTE} {QUOTE_CTA}.
       </span>
       <span className="yk-btn-arrow">→</span>
     </Link>

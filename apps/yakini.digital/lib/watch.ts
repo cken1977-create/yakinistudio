@@ -25,7 +25,7 @@ const clip = (n: number, title: string, sub: string, device: Video['device'], du
 
 export const CLIPS: Video[] = [
   clip(1, 'One place for the whole business', 'A quick look at the portal: clients, texts, payments and replies together.', 'On a computer', '1:06', 66),
-  clip(2, 'Pick a plan', 'The plans side by side, with flat prices in the open.', 'On a computer', '1:16', 76),
+  clip(2, 'Pick a plan', 'The plans side by side, and what each one includes.', 'On a computer', '1:16', 76),
   clip(3, 'Ask for your setup', 'A new owner tells Yakini about the business, and a real person takes it from there.', 'On a computer', '0:44', 44),
   clip(4, 'Ask in your room', 'A customer asks a question in their own room, on a phone.', 'On a phone', '1:02', 62),
   clip(5, 'Help desk with a real person', 'A customer opens a help request and follows its status.', 'On a computer', '0:47', 47),
