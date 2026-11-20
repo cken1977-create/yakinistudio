@@ -4,7 +4,7 @@ import { SiteShell } from '@/components/SiteShell'
 import { FinalCta } from '@/components/site/Sections'
 import { SECTIONS_CSS } from '@/components/site/content'
 import { START_URL } from '@/lib/pricing'
-import { SOCIAL_LINKS } from '@/lib/organization'
+import { FOUNDER_LINKEDIN, SOCIAL_LINKS } from '@/lib/organization'
 
 export const metadata: Metadata = {
   title: 'About Yakini · Set up with you. Here to stay.',
@@ -86,6 +86,7 @@ export default function AboutPage() {
             <div className="yk-section-tag"><span className="yk-num">01</span><span>The founder</span></div>
             <h2 className="hm-h2">Clarence Kennedy</h2>
             <p className="ab-role">Founder &amp; CEO, Yakini · Founder, BRSA Holdings</p>
+            <a className="ab-founder-link" href={FOUNDER_LINKEDIN} target="_blank" rel="noopener me" aria-label="Clarence Kennedy on LinkedIn">Clarence on LinkedIn →</a>
             <div className="ab-story">
               <p>
                 Yakini started with a pattern Clarence kept seeing: owners doing serious work with tools that left them on their own.
@@ -201,6 +202,8 @@ const PAGE_CSS = `
   .ab-founder { background: var(--navy-deep); }
   .ab-founder-grid { display: grid; grid-template-columns: 1fr; gap: 48px; }
   .ab-role { font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin: -8px 0 28px; }
+  .ab-founder-link { display: inline-block; margin: -14px 0 26px; font-size: 14px; color: var(--cream); border-bottom: 1px solid var(--gold); padding-bottom: 2px; }
+  .ab-founder-link:hover { color: var(--gold); }
   .ab-story p { font-size: clamp(17px, 1.5vw, 20px); line-height: 1.7; color: rgba(244,247,255,0.78); margin-bottom: 18px; max-width: 640px; }
   .ab-story-strong { font-family: var(--font-display); font-style: italic; font-size: clamp(24px, 2.4vw, 32px) !important; line-height: 1.3 !important; color: var(--gold) !important; }
   .ab-side { display: grid; gap: 20px; align-self: start; }

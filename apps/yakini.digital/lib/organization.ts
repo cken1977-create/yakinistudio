@@ -14,6 +14,9 @@ export const SOCIAL_LINKS = [
 ] as const
 
 // Portal terms are the site terms; yakini.digital/terms redirects there (next.config.ts).
+// Clarence's personal LinkedIn (founder profile; connected in Buffer).
+export const FOUNDER_LINKEDIN = 'https://www.linkedin.com/in/clarence-kennedy-819a0a5a'
+
 export const TERMS_URL = 'https://portal.yakini.digital/terms'
 
 // Location (Clarence, Nov 20 2026: "Everything Albuquerque"). City-level only; no street
@@ -37,7 +40,7 @@ export function organizationJsonLd() {
     image: `${SITE_URL}/art/founder-clarence.jpg`,
     email: HELLO_EMAIL,
     telephone: OFFICE_PHONE,
-    founder: { '@type': 'Person', name: 'Clarence Kennedy', jobTitle: 'Founder & CEO', url: `${SITE_URL}/about` },
+    founder: { '@type': 'Person', name: 'Clarence Kennedy', jobTitle: 'Founder & CEO', url: `${SITE_URL}/about`, sameAs: [FOUNDER_LINKEDIN] },
     parentOrganization: { '@type': 'Organization', name: 'BRSA Holdings, Inc.' },
     contactPoint: [{ '@type': 'ContactPoint', contactType: 'customer service', telephone: OFFICE_PHONE, email: HELLO_EMAIL, availableLanguage: ['English'] }],
     sameAs: SOCIAL_LINKS.map((s) => s.href),
