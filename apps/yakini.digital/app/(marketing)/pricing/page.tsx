@@ -189,7 +189,7 @@ export default function PricingPage() {
             <details className="pr-faq-item">
               <summary className="pr-faq-q">What is the Founding plan?<span className="pr-faq-icon">+</span></summary>
               <div className="pr-faq-a">
-                Founding is everything in Operate, for our first customers only, and closes on its own after the last spot. {QUOTE_NOTE}{' '}
+                Founding is everything in Operate, with the price locked for 12 months, for our first customers only. {QUOTE_NOTE}{' '}
                 <Link href={QUOTE_URL}>{QUOTE_CTA}</Link>.
               </div>
             </details>

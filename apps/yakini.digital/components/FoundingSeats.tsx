@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { FOUNDING_API, FOUNDING_DEFAULT_SEATS, type Seats } from '@/lib/pricing'
 
-/** Live Founding seat count from the portal (the same count the sign-up enforces). */
+/** Whether Founding is still open, from the portal (the same count the sign-up enforces). Never shown as a number. */
 export function useFoundingSeats(): Seats {
   const [seats, setSeats] = useState<Seats>(FOUNDING_DEFAULT_SEATS)
   useEffect(() => {
@@ -22,26 +22,7 @@ export function useFoundingSeats(): Seats {
   return seats
 }
 
-export function SeatMeter({ seats }: { seats: Seats }) {
-  const taken = seats.total - seats.left
-  return (
-    <div className="yk-seats" aria-label={`${seats.left} of ${seats.total} Founding spots left`}>
-      <div className="yk-seats-bar" aria-hidden>
-        {Array.from({ length: seats.total }, (_, i) => (
-          <span key={i} className={i < taken ? 'yk-seat yk-seat-taken' : 'yk-seat'} />
-        ))}
-      </div>
-      <p className="yk-seats-copy">
-        {seats.open ? (
-          <>
-            <strong>{seats.left} of {seats.total}</strong> Founding spots left
-          </>
-        ) : (
-          <strong>All {seats.total} Founding spots are taken. Founding is closed.</strong>
-        )}
-      </p>
-    </div>
-  )
-}
+// The visible seat counter ("X of 10 Founding spots left") was removed Nov 20 2026: the public site shows no
+// spot counter. useFoundingSeats stays only so a closed Founding plan can be greyed out and its strip hidden.
 
 export { SEAT_CSS } from './seat-css'

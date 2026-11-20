@@ -15,7 +15,7 @@ const BELIEFS = [
   { title: 'Nobody should be left alone with their software.', desc: 'Good tools still fail when the owner is left to set them up alone. A real Yakini person sets yours up with you, step by step, and you approve each one.' },
   { title: 'Yours from day one.', desc: 'Your hosting, email, texting line and payments are set up in your business’s name. If you ever leave, everything stays with you.' },
   { title: 'Nothing goes out without your OK.', desc: 'Replies can be drafted for you, but you decide what is sent. Your customers hear from you, in your voice.' },
-  { title: 'Flat, honest pricing.', desc: 'One price list, published. Yakini never takes a share of your revenue. Custom builds are quoted in writing before anything starts.' },
+  { title: 'Honest pricing, in writing.', desc: 'Every business gets a written quote before anything starts. Yakini never takes a share of your revenue, and custom builds are quoted in writing too.' },
   { title: 'We stay.', desc: 'Go-live is the start, not the end. Your Yakini person stays on, the help desk stays open, and the systems we build, we help you run.' },
 ] as const
 
