@@ -16,10 +16,14 @@ export const SOCIAL_LINKS = [
 // Portal terms are the site terms; yakini.digital/terms redirects there (next.config.ts).
 export const TERMS_URL = 'https://portal.yakini.digital/terms'
 
-// TODO(Clarence): location is undecided. When it is, fill this in with a schema.org
-// PostalAddress, e.g. { '@type': 'PostalAddress', addressLocality: '…', addressRegion: '…',
-// addressCountry: 'US' }. While it is null, no address or location is published in the JSON-LD.
-export const ORGANIZATION_ADDRESS: Record<string, string> | null = null
+// Location (Clarence, Nov 20 2026: "Everything Albuquerque"). City-level only; no street
+// address is published yet. Add streetAddress / postalCode here once one is chosen.
+export const ORGANIZATION_ADDRESS: Record<string, string> | null = {
+  '@type': 'PostalAddress',
+  addressLocality: 'Albuquerque',
+  addressRegion: 'NM',
+  addressCountry: 'US',
+}
 
 export function organizationJsonLd() {
   const org: Record<string, unknown> = {

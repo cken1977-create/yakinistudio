@@ -166,7 +166,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           </div>
           <div className="yk-footer-bottom">
             <span>© 2026 BRSA Holdings, Inc. All rights reserved. · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a></span>
-            <span>YAKINI is part of the BRSA ecosystem · Houston, Texas</span>
+            <span>YAKINI is part of the BRSA ecosystem · Albuquerque, New Mexico</span>
           </div>
         </div>
       </footer>

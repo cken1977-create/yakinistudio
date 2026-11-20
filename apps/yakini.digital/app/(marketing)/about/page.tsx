@@ -106,7 +106,7 @@ export default function AboutPage() {
           <div className="ab-facts">
             <div className="ab-fact"><span>Parent company</span><strong>BRSA Holdings, Inc. · Delaware</strong></div>
             <div className="ab-fact"><span>Nonprofit arm</span><strong>BRSA Foundation · 501(c)(3) · New Mexico</strong></div>
-            <div className="ab-fact"><span>Based in</span><strong>Houston, Texas</strong></div>
+            <div className="ab-fact"><span>Based in</span><strong>Albuquerque, New Mexico</strong></div>
             <div className="ab-fact"><span>Talk to us</span><strong><a href="mailto:hello@yakini.digital">hello@yakini.digital</a></strong></div>
             <div className="ab-fact"><span>Follow Yakini</span>
               <div className="ab-social">
