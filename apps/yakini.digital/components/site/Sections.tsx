@@ -118,7 +118,7 @@ export function PlanGrid({ num = '02' }: { num?: string }) {
           <br />
           <span className="yk-gold yk-italic">not left to you.</span>
         </h2>
-        <p className="hm-lead">One-time guided setup, then a flat monthly plan. A real Yakini person sets it up with you, and the help desk stays open after go-live.</p>
+        <p className="hm-lead">One-time guided setup, then a monthly plan, quoted in writing for your business. A real Yakini person sets it up with you, and the help desk stays open after go-live.</p>
 
         <div className="hm-plan-grid">
           {PLANS.map((plan) => {
@@ -162,7 +162,7 @@ export function PlanGrid({ num = '02' }: { num?: string }) {
         <ul className="hm-policy">
           <li><strong>Refunds.</strong> {REFUND_RULE}</li>
           <li><strong>Help hours.</strong> {HELP_HOURS_NOTE} {EXTRA_HELP_NOTE}</li>
-          <li><strong>Flat.</strong> {FLAT_PRICING_NOTE}</li>
+          <li><strong>In writing.</strong> {FLAT_PRICING_NOTE}</li>
         </ul>
         <a href="/pricing" className="hm-textlink">See everything each plan includes, side by side →</a>
       </div>

@@ -36,7 +36,7 @@ export default function WatchPage() {
             <br />
             <span className="yk-gold yk-italic">in action.</span>
           </h1>
-          <p className="yk-page-sub">The full five-minute walkthrough, or one short video at a time, with captions. Press play. Nothing to download and no sign-in.</p>
+          <p className="yk-page-sub">The full walkthrough, or one short video at a time, with captions. Press play. Nothing to download and no sign-in.</p>
         </div>
       </header>
 

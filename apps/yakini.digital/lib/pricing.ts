@@ -23,7 +23,7 @@ export const REFUND_RULE =
   'The setup fee is refundable in full until your kickoff call or 14 days after you sign up, whichever comes first. After that it is non-refundable.'
 
 export const BILLING_NOTE =
-  'When you sign up, you pay the one-time guided-setup fee by card or bank account. Your monthly plan starts after setup.'
+  'No card is taken when you sign up. A real Yakini person sends you a written quote for the one-time guided setup and your monthly plan, and your monthly plan starts after setup.'
 
 export const EXTRA_HELP_NOTE =
   'Need more help than your plan includes? Extra hours are available, or you can move up a plan.'
@@ -41,13 +41,13 @@ export const HELP_HOURS_NOTE =
 export const AI_LIMIT_NOTE =
   'Drafted replies and voice transcripts have a fixed monthly limit on every plan. We’ll warn you at 80%, and nothing goes out without your OK.'
 
-export const FLAT_PRICING_NOTE = 'Flat pricing. Yakini never takes a share of your revenue.'
+export const FLAT_PRICING_NOTE = 'Your price is set in writing before anything starts. Yakini never takes a share of your revenue.'
 
 export const PASS_THROUGH_NOTE =
   'Your hosting, database, email, texting line and payment processing are set up in your business’s name, so everything stays yours. Those services bill you directly at their own cost; they are not part of Yakini’s price.'
 
 export const GUIDED_STEPS = [
-  { title: 'Pick a plan and sign up', detail: 'Tell us about your business and pay the one-time guided-setup fee by card or bank account. Your monthly plan starts after setup.' },
+  { title: 'Pick a plan and ask for a quote', detail: 'Tell us about your business. No card is taken today: a real Yakini person reviews it and sends you a written quote before anything starts.' },
   { title: 'Kickoff call with your Yakini person', detail: 'About 30 minutes. We learn how your business runs today and agree the first thing to fix.' },
   { title: 'We set it up with you', detail: 'Your website, customer portal and the tools on your plan, in your business’s name. You approve each step.' },
   { title: 'Go live, and we stay', detail: 'Your monthly plan starts. Your Yakini person stays on, and the help desk is always open.' },
@@ -112,13 +112,13 @@ export const PLANS: readonly Plan[] = [
   {
     id: 'founding',
     name: 'Founding',
-    tag: 'First 10 customers only',
+    tag: 'For our first customers',
     setup: 499,
     monthly: 179,
     helpHours: 1,
     lockedMonths: 12,
     spots: { total: 10, takenElsewhere: 1 },
-    summary: 'Everything in Operate at a price locked for 12 months. Closes after the 10th customer.',
+    summary: 'Everything in Operate at a price locked for 12 months, for our first customers.',
     includes: operateIncludes,
   },
 ]
