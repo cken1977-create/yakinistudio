@@ -4,7 +4,7 @@
  * Stills and loops live in /public/helper/.
  */
 export const ASSISTANT = {
-  name: 'Nikki',
+  name: 'Destiny',
   role: "Yakini's virtual assistant",
   /** Always spell the company name Yakini. For speech, use yakiniSaid (yah-KEE-nee). */
   yakiniSpelling: 'Yakini',
@@ -13,7 +13,7 @@ export const ASSISTANT = {
   avatarFallbackSrc: '/helper/nikki.jpg',
   avatarSrcSmall: '/helper/nikki-128.webp',
   avatarFallbackSmall: '/helper/nikki-128.jpg',
-  avatarAlt: "Nikki, Yakini's virtual assistant",
+  avatarAlt: "Destiny, Yakini's virtual assistant",
   loopMp4: '/helper/nikki-loop.mp4',
   loopWebm: '/helper/nikki-loop.webm',
   loopReady: true,
@@ -23,7 +23,7 @@ export const ASSISTANT = {
    */
   elevenLabsVoiceId: '',
   greeting:
-    "Hi — I'm Nikki, Yakini's virtual assistant. I can help with pricing, show you a kit in your brand, or get you to a real person. What can I help with?",
+    "Hi — I'm Destiny, Yakini's virtual assistant. I can help with pricing, show you a kit in your brand, or get you to a real person. What can I help with?",
 } as const
 
 export type AssistantPersona = typeof ASSISTANT

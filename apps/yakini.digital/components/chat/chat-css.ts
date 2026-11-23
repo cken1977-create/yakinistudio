@@ -30,7 +30,7 @@ export const CHAT_CSS = `
   .yk-chat-lead{padding:8px 14px 12px;border-top:1px solid rgba(244,247,255,.1);font-size:13px}
   .yk-chat-lead input{width:100%;margin:6px 0;border-radius:10px;border:1px solid rgba(244,247,255,.16);background:rgba(255,255,255,.06);color:#F4F7FF;padding:8px 10px}
   .yk-chat-lead button{margin-top:4px;border:0;border-radius:999px;background:#C6F432;color:#0B1437;font-weight:700;padding:8px 14px;cursor:pointer}
-  /* Keep kit chips and other demo controls clear of the fixed Ask Nikki launcher. */
+  /* Keep kit chips and other demo controls clear of the fixed Ask Destiny launcher. */
   @media (min-width:761px){
     .db-chips,.db-actions,.db-brand{padding-right:240px}
     .yk-main{padding-bottom:120px}

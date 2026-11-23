@@ -209,7 +209,7 @@ export function ChatWidget() {
         body: JSON.stringify({
           name: lead.name,
           email: lead.email,
-          service: 'Chat with Nikki',
+          service: 'Chat with Destiny',
           message: lead.message || 'Follow up from the site chat.',
           source: 'chat',
         }),
@@ -238,10 +238,10 @@ export function ChatWidget() {
               type="button"
               className="yk-chat-talk"
               aria-pressed={talk}
-              aria-label={talk ? 'Stop talking to Nikki' : 'Talk to Nikki'}
+              aria-label={talk ? 'Stop talking to Destiny' : 'Talk to Destiny'}
               onClick={() => { setTalk((v) => !v); stopVoice() }}
             >
-              {talk ? 'Talking to Nikki' : 'Talk to Nikki'}
+              {talk ? 'Talking to Destiny' : 'Talk to Destiny'}
             </button>
           </header>
           <div className="yk-chat-log" ref={logRef}>
@@ -251,7 +251,7 @@ export function ChatWidget() {
                 {m.role === 'assistant' ? (
                   <div className="yk-chat-links">
                     <button type="button" className="yk-chat-hear" disabled={!tts || !m.text} onClick={() => playText(m.text)} aria-label="Hear this reply">
-                      Hear Nikki
+                      Hear Destiny
                     </button>
                     {m.links?.map((l) => (
                       <a key={l.href} href={l.href}>{l.label}</a>
@@ -269,7 +269,7 @@ export function ChatWidget() {
           </div>
           <form className="yk-chat-form" onSubmit={send}>
             <button type="button" aria-label="Speak" onClick={listen}>🎙</button>
-            <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask Nikki…" aria-label="Ask Nikki a question" maxLength={500} />
+            <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask Destiny…" aria-label="Ask Destiny a question" maxLength={500} />
             <button type="submit" disabled={busy}>Send</button>
           </form>
           <div className="yk-chat-lead">

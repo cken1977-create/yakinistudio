@@ -11,7 +11,7 @@ type Props = {
 }
 
 /**
- * Circular Nikki avatar. Idle: muted looping portrait (still if reduced-motion or the loop fails).
+ * Circular Destiny avatar. Idle: muted looping portrait (still if reduced-motion or the loop fails).
  * Speaking: the same face, with a light jaw motion driven by the live audio analyser (lip-sync).
  */
 export function AssistantAvatar({ size, speaking = false, analyser, className }: Props) {
