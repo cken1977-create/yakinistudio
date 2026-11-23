@@ -5,7 +5,7 @@ export default function StudioLanding() {
   return (
     <main className="mx-auto flex min-h-screen max-w-6xl flex-col px-5 sm:px-8">
       <header className="flex items-center justify-between py-6">
-        <a href="https://yakini.digital" className="font-serif text-xl tracking-wide text-paper">
+        <a href="https://yakini.digital" className="inline-flex min-h-11 items-center font-serif text-xl tracking-wide text-paper">
           Yakini <span className="text-gold">Studio</span>
         </a>
         <a href="https://portal.yakini.digital/enter" className="inline-flex min-h-11 items-center rounded-full border border-paper/25 px-4 text-sm text-paper/90 hover:border-gold">
