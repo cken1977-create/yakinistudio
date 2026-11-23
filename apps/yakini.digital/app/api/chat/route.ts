@@ -5,7 +5,7 @@ import { ASSISTANT } from '@/lib/chat/assistant'
 import { corsHeaders, preflight } from '@/lib/chat/cors'
 import { blocked, cutMessage, sanitizeHistory, type ChatTurn } from '@/lib/chat/guard'
 import { fallbackAnswer } from '@/lib/chat/knowledge'
-import { hasXaiKey, streamChat } from '@/lib/chat/xai'
+import { completeChat, hasXaiKey, streamChat } from '@/lib/chat/xai'
 
 export const runtime = 'nodejs'
 export const maxDuration = 15
@@ -72,7 +72,23 @@ export async function POST(req: NextRequest) {
     })
   }
 
-  // Instant grounded reply when the model key is missing or streaming is off.
+  // Non-streaming clients (and a stream failure) still use the model when a key is present.
+  if (hasXaiKey()) {
+    try {
+      const text = await completeChat(turns)
+      if (text?.trim()) {
+        return json(req, {
+          text: text.trim(),
+          links: fallbackAnswer(message).links,
+          source: 'xai',
+          assistant: ASSISTANT.name,
+        })
+      }
+    } catch {
+      /* use the grounded fallback below */
+    }
+  }
+
   const fb = fallbackAnswer(message)
   return json(req, { text: fb.text, links: fb.links, source: 'fallback', assistant: ASSISTANT.name })
 }
