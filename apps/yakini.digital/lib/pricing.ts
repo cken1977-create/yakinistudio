@@ -23,9 +23,21 @@ export function startUrl(_planId?: string): string {
 export const HEADLINE = 'Setup from $299. Monthly plans from $149.'
 export const PACKAGE_EXAMPLE_TITLE = 'Example: Small food truck package'
 export const PACKAGE_EXAMPLE =
-  'A Small food truck kit with Quick Start, a simple branded website, and online ordering is $997 to set up and $277 a month ($299 + $499 + $199 setup, and $149 + $79 + $49 monthly), plus hosting, texting, and payment processing billed by those providers.'
-export const PACKAGE_EXAMPLE_SETUP = 997
+  'A Small food truck kit with Quick Start, a template website, and online ordering is $597 to set up and $277 a month ($299 + $99 + $199 setup, and $149 + $79 + $49 monthly), plus hosting, texting, and payment processing billed by those providers.'
+export const PACKAGE_EXAMPLE_SETUP = 597
 export const PACKAGE_EXAMPLE_MONTHLY = 277
+
+/** Types for a template website. The customer picks one; we build from that template. */
+export const WEBSITE_TYPES = [
+  { id: 'restaurant-food-truck', name: 'Restaurant or food truck' },
+  { id: 'service', name: 'Service business' },
+  { id: 'real-estate', name: 'Real estate' },
+  { id: 'nonprofit', name: 'Nonprofit' },
+  { id: 'landlord', name: 'Landlord or property' },
+  { id: 'training', name: 'Training school' },
+  { id: 'other', name: 'Something else' },
+] as const
+export type WebsiteTypeId = (typeof WEBSITE_TYPES)[number]['id']
 
 export const BUSINESS_SETUP_PRICE = 495
 export const BUSINESS_SETUP_NOTE =
@@ -151,8 +163,8 @@ export type CatalogItem = {
 }
 
 export const CATALOG: readonly CatalogItem[] = [
-  { id: 'website-simple', name: 'Simple branded website', group: 'website', once: { amount: 499, kind: 'fixed' }, monthly: { amount: 79, kind: 'fixed' }, summary: 'Up to 5 pages, mobile-ready, in your brand, with 30 minutes of content edits each month. Hosting is in your name and billed by the provider. Skip this if you already have a site and only need it linked.', picker: true },
-  { id: 'website-custom', name: 'Full custom website', group: 'website', once: { amount: 4000, kind: 'from' }, monthly: { amount: 149, kind: 'from' }, summary: 'A custom public site, quoted by scope. Monthly care is quoted after launch, often from $149.', picker: true },
+  { id: 'website-simple', name: 'Template website', group: 'website', once: { amount: 99, kind: 'fixed' }, monthly: { amount: 79, kind: 'fixed' }, summary: 'You pick a type (restaurant or food truck, service business, real estate, nonprofit, and others), and we build from that template, in your brand. Up to 5 pages, mobile-ready, with 30 minutes of content edits each month. Hosting is in your name and billed by the host. Skip this if you already have a site and only need it linked.', picker: true },
+  { id: 'website-custom', name: 'Full custom website', group: 'website', once: { amount: 4000, kind: 'from' }, monthly: { amount: 149, kind: 'from' }, summary: 'A fully custom public site, quoted by scope. Written scope, 50% deposit. Monthly care is quoted after launch, often from $149. This is not the template website, and not the kit dashboard.', picker: true },
   { id: 'ordering', name: 'Online ordering and pay-ahead', group: 'addon', once: { amount: 199, kind: 'fixed' }, monthly: { amount: 49, kind: 'fixed' }, summary: 'Menu, order flow, and pay-ahead checkout on your own payment account.', picker: true },
   { id: 'receptionist', name: 'Phone receptionist', group: 'addon', once: { amount: 299, kind: 'fixed' }, monthly: { amount: 99, kind: 'fixed' }, summary: 'Answers calls with your greeting and hours, takes messages, and transfers to a person. Voice minutes appear as a separate, clearly labeled Yakini usage fee on the quote, not as a markup on a provider bill you already paid.', picker: true },
   { id: 'course-portal', name: 'Course and learning portal', group: 'addon', once: { amount: 399, kind: 'fixed' }, monthly: { amount: 49, kind: 'fixed' }, summary: 'Student login, lessons, progress, and class lists.', picker: true },
@@ -203,6 +215,7 @@ export type BuildSelection = {
   extraSeats?: number
   extraLocations?: number
   annual?: boolean
+  websiteType?: WebsiteTypeId | string
 }
 
 export type EstimateLine = {
@@ -335,7 +348,8 @@ export function describeBuild(sel: BuildSelection, estimate: Estimate, contact?:
     estimate.monthly ? `Annual 12-for-11: ${formatUsd(estimate.annual)}` : null,
     sel.annual ? 'Customer is interested in annual prepay (12 for 11).' : 'Customer is looking at monthly billing.',
     contact?.phone ? `Phone: ${contact.phone}` : null,
-    contact?.website ? `Website: ${contact.website}` : null,
+    sel.websiteType ? `Template website type: ${WEBSITE_TYPES.find((t) => t.id === sel.websiteType)?.name ?? sel.websiteType}` : null,
+    contact?.website ? `Existing website: ${contact.website}` : null,
     'Totals are estimates. The written quote is final.',
   ]
   return rows.filter((r): r is string => Boolean(r)).join('\n')

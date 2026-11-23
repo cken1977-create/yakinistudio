@@ -8,6 +8,7 @@ import {
   DASHBOARD_NOTE,
   HEADLINE,
   PACKAGE_EXAMPLE,
+  WEBSITE_TYPES,
   KITS,
   QUOTE_NOTE,
   SETUPS,
@@ -43,14 +44,15 @@ export function BuildPicker() {
   const [phone, setPhone] = useState('')
   const [company, setCompany] = useState('')
   const [website, setWebsite] = useState('')
+  const [websiteType, setWebsiteType] = useState('')
   const [note, setNote] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [sent, setSent] = useState(false)
 
   const sel = useMemo(
-    () => ({ kitId, sizeId, setupId, items, rush, extraSeats, annual }),
-    [kitId, sizeId, setupId, items, rush, extraSeats, annual],
+    () => ({ kitId, sizeId, setupId, items, rush, extraSeats, annual, websiteType: items.includes('website-simple') ? websiteType || undefined : undefined }),
+    [kitId, sizeId, setupId, items, rush, extraSeats, annual, websiteType],
   )
   const estimate = useMemo(() => estimateBuild(sel), [sel])
   const kit = KITS.find((k) => k.id === kitId)
@@ -205,6 +207,19 @@ export function BuildPicker() {
                 </div>
               </div>
             ))}
+            {items.includes('website-simple') ? (
+              <div className="bp-group">
+                <h4>Choose your website type</h4>
+                <p className="bp-hint">We build from a template for that type, in your brand.</p>
+                <div className="bp-chips">
+                  {WEBSITE_TYPES.map((t) => (
+                    <button key={t.id} type="button" className={`bp-chip ${websiteType === t.id ? 'on' : ''}`} onClick={() => setWebsiteType(t.id)}>
+                      <span>{t.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </section>
 
           <section className="bp-card" id="send-quote">
