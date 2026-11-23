@@ -34,6 +34,12 @@
       "cache": false,
       "persistent": true
     },
-    "lint": {}
+    "lint": {},
+    "typecheck": {
+      "dependsOn": []
+    },
+    "test": {
+      "dependsOn": []
+    }
   }
 }

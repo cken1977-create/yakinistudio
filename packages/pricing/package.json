@@ -1,0 +1,11 @@
+{
+  "name": "@yakini/pricing",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Single source of truth for Yakini prices and kit ids. Moved from apps/yakini.digital/lib/pricing.ts.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": { ".": "./src/index.ts", "./products": "./src/products.ts" },
+  "scripts": { "typecheck": "tsc --noEmit -p .", "test": "vitest run" },
+  "devDependencies": { "typescript": "^5", "vitest": "^5.1.0" }
+}

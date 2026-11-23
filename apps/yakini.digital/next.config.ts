@@ -13,6 +13,8 @@ const IMMERSIVE_ORIGIN = "https://yakini-immersive-v2.vercel.app";
 const WATCH_MEDIA_CSP = "media-src 'self' https://ec22ch0piqcoe7i7.public.blob.vercel-storage.com"
 
 const nextConfig: NextConfig = {
+  // Shared code moved out of this app for Yakini Builder (Phase 0): brand reader + pricing.
+  transpilePackages: ["@yakini/brand", "@yakini/pricing"],
   // Serve next/image as AVIF where the browser supports it, WebP otherwise.
   images: { formats: ['image/avif', 'image/webp'] },
   async headers() {

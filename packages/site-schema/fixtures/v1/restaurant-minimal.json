@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "kitId": "restaurant",
+  "locale": "en-US",
+  "business": { "name": "Mama's Kitchen" },
+  "brand": {
+    "colors": { "primary": "#0B1437", "secondary": "#15130F", "accent": "#C9A14A" },
+    "colorsSource": "kit-default",
+    "fontPair": "classic"
+  },
+  "nav": { "items": [] },
+  "pages": [
+    { "id": "home", "slug": "", "title": "Home", "sections": [
+      { "id": "hero", "type": "hero", "variant": "minimal", "hidden": false, "props": { "headline": "Welcome" } }
+    ] }
+  ],
+  "footer": { "showHours": false, "showAddress": false },
+  "seo": { "siteTitle": "Mama's Kitchen", "description": "" },
+  "integrations": { "bookingEnabled": false, "formsEnabled": false }
+}

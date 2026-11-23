@@ -15,7 +15,13 @@
     "dev:chef-jada": "turbo dev --filter=chef-jada",
     "build:chef-jada": "turbo build --filter=chef-jada",
     "dev:momma-sallys": "turbo dev --filter=momma-sallys",
-    "build:momma-sallys": "turbo build --filter=momma-sallys"
+    "build:momma-sallys": "turbo build --filter=momma-sallys",
+    "dev:builder": "turbo dev --filter=builder",
+    "build:builder": "turbo build --filter=builder",
+    "typecheck:builder": "turbo typecheck --filter=builder --filter=@yakini/site-schema --filter=@yakini/kits --filter=@yakini/brand --filter=@yakini/ai --filter=@yakini/pricing --filter=@yakini/abuse --filter=@yakini/visits",
+    "test:builder": "turbo test --filter=builder --filter=@yakini/site-schema --filter=@yakini/kits --filter=@yakini/brand --filter=@yakini/ai --filter=@yakini/pricing --filter=@yakini/abuse --filter=@yakini/visits --filter=yakini.digital",
+    "test:rls": "bash apps/builder/supabase/tests/run.sh",
+    "check:secrets": "node scripts/check-secrets.mjs"
   },
   "devDependencies": {
     "turbo": "2.9.18"
