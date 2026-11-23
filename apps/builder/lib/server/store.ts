@@ -49,7 +49,7 @@ export type StoredDraft = {
 export type AiRunRow = {
   tenantId: string | null
   siteId: string | null
-  kind: 'generate'
+  kind: 'generate' | 'edit' | 'helper'
   model: string
   promptVersion: string
   inputTokens: number
@@ -57,6 +57,51 @@ export type AiRunRow = {
   latencyMs: number
   outcome: 'ok' | 'invalid' | 'fallback' | 'timeout' | 'error' | 'blocked'
   toolCalls: number
+}
+
+export type Role = 'owner' | 'editor' | 'operator'
+export type TenantStatus = 'prospect' | 'trial' | 'active' | 'past_due' | 'canceled'
+
+/** A site as the editor sees it (members only; checked by the caller with memberRole). */
+export type EditorSite = {
+  siteId: string
+  tenantId: string
+  tenantName: string
+  tenantStatus: TenantStatus
+  timezone: string | null
+  slug: string
+  doc: unknown
+  rev: number
+  takenDown: boolean
+}
+
+export type VersionRow = { id: string; number: number; kind: 'checkpoint' | 'published' | 'review'; note: string | null; createdAt: Date }
+export type ClaimResult = 'ok' | 'not_found' | 'expired' | 'already_claimed'
+export type AuditAction = 'restore' | 'brand.colors.change'
+export type SaveResult = { ok: true; rev: number } | { ok: false; conflict: true; rev: number; doc: unknown }
+
+/** Phase 2 additions: claiming, saving the draft, versions, chat, tutorial (spec 5.4, 10.2-10.9). */
+export interface EditorStore {
+  claimDraft(c: { siteId: string; tokenHash: string; userId: string; ipHash: string; timezone: string | null; doc: unknown | null }): Promise<ClaimResult>
+  /** The user's role on the tenant (operators get 'operator' on any tenant), or null. */
+  memberRole(userId: string, tenantId: string): Promise<Role | null>
+  sitesForUser(userId: string): Promise<{ siteId: string; name: string; status: TenantStatus }[]>
+  getEditorSite(siteId: string): Promise<EditorSite | null>
+  /** Compare-and-set on draft_rev: saves only if the stored rev is still `baseRev`. */
+  saveDraft(s: { siteId: string; baseRev: number; doc: unknown }): Promise<SaveResult>
+  logEdit(e: { tenantId: string; siteId: string; userId: string | null; actorKind: 'owner' | 'editor' | 'operator' | 'ai'; source: 'click' | 'chat' | 'system'; ops: unknown; revAfter: number }): Promise<void>
+  editsSinceLastVersion(siteId: string): Promise<{ count: number; lastVersionAt: Date | null }>
+  createVersion(v: { siteId: string; doc: unknown; docSha256: string; userId: string | null; note: string | null }): Promise<{ id: string; number: number }>
+  listVersions(siteId: string): Promise<VersionRow[]>
+  getVersion(siteId: string, versionId: string): Promise<{ number: number; doc: unknown } | null>
+  audit(a: { tenantId: string; userId: string | null; actorKind: 'owner' | 'editor' | 'operator'; action: AuditAction; targetId: string; details: Record<string, unknown> }): Promise<void>
+  tenantAssetIds(tenantId: string): Promise<string[]>
+  /** Chat edits in the last hour and AI tokens today for one tenant (per-tenant limits, 8.7). */
+  tenantAiUsage(tenantId: string): Promise<{ editsLastHour: number; tokensToday: number }>
+  saveChat(m: { tenantId: string; siteId: string; role: 'user' | 'assistant'; content: string; proposal: unknown | null }): Promise<string>
+  recentChat(siteId: string, limit: number): Promise<{ role: 'user' | 'assistant'; content: string }[]>
+  tutorialDone(userId: string, siteId: string): Promise<string[]>
+  markTutorial(userId: string, siteId: string, step: string): Promise<void>
 }
 
 export interface DraftStore {
@@ -79,7 +124,7 @@ const BUCKET = 'site-assets'
 const extFor = (mime: string) => (mime === 'image/png' ? 'png' : 'webp')
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- schema types are not generated for the builder schema yet
-export function createSupabaseStore(db: SupabaseClient<any, any, any>): DraftStore {
+export function createSupabaseStore(db: SupabaseClient<any, any, any>): DraftStore & EditorStore {
   const fail = (what: string, error: { message?: string } | null): never => {
     // Only the operation name goes to logs/Sentry: never row contents (14.2).
     throw new Error(`Database ${what} failed${error?.message ? `: ${error.message.slice(0, 120)}` : ''}`)
@@ -172,25 +217,151 @@ export function createSupabaseStore(db: SupabaseClient<any, any, any>): DraftSto
       if (tenants.error) fail('tenant expiry', tenants.error)
       return expired.length
     },
+    async claimDraft(c) {
+      const { data, error } = await db.rpc('claim_draft', { p_site: c.siteId, p_token_hash: c.tokenHash, p_user: c.userId, p_ip_hash: c.ipHash, p_timezone: c.timezone, p_doc: c.doc })
+      if (error) fail('claim', error)
+      return data as ClaimResult
+    },
+    async memberRole(userId, tenantId) {
+      const op = await db.from('operators').select('user_id').eq('user_id', userId).maybeSingle()
+      if (op.error) fail('operator read', op.error)
+      if (op.data) return 'operator'
+      const { data, error } = await db.from('memberships').select('role').eq('tenant_id', tenantId).eq('user_id', userId).is('deleted_at', null).maybeSingle()
+      if (error) fail('membership read', error)
+      return (data?.role as Role | undefined) ?? null
+    },
+    async sitesForUser(userId) {
+      const { data, error } = await db.from('memberships')
+        .select('tenant_id, tenants!inner(name, status, deleted_at, sites(id, deleted_at))').eq('user_id', userId).is('deleted_at', null)
+      if (error) fail('sites read', error)
+      const rows = (data ?? []) as unknown as { tenants: { name: string; status: TenantStatus; deleted_at: string | null; sites: { id: string; deleted_at: string | null }[] } }[]
+      return rows.filter((r) => !r.tenants.deleted_at).flatMap((r) => r.tenants.sites.filter((x) => !x.deleted_at).map((x) => ({ siteId: x.id, name: r.tenants.name, status: r.tenants.status })))
+    },
+    async getEditorSite(siteId) {
+      const { data, error } = await db.from('sites')
+        .select('id, tenant_id, slug, draft_doc, draft_rev, takedown_at, deleted_at, tenants!inner(name, status, timezone, deleted_at)')
+        .eq('id', siteId).maybeSingle()
+      if (error) fail('site read', error)
+      const r = data as unknown as { id: string; tenant_id: string; slug: string; draft_doc: unknown; draft_rev: number; takedown_at: string | null; deleted_at: string | null; tenants: { name: string; status: TenantStatus; timezone: string | null; deleted_at: string | null } } | null
+      if (!r || r.deleted_at || r.tenants.deleted_at) return null
+      return { siteId: r.id, tenantId: r.tenant_id, tenantName: r.tenants.name, tenantStatus: r.tenants.status, timezone: r.tenants.timezone, slug: r.slug, doc: r.draft_doc, rev: r.draft_rev, takenDown: Boolean(r.takedown_at) }
+    },
+    async saveDraft(sv) {
+      const { data, error } = await db.from('sites').update({ draft_doc: sv.doc, draft_rev: sv.baseRev + 1 })
+        .eq('id', sv.siteId).eq('draft_rev', sv.baseRev).is('deleted_at', null).select('draft_rev')
+      if (error) fail('draft save', error)
+      if (data && data.length === 1) return { ok: true, rev: data[0].draft_rev as number }
+      const cur = await db.from('sites').select('draft_doc, draft_rev').eq('id', sv.siteId).maybeSingle()
+      if (cur.error || !cur.data) fail('draft read', cur.error)
+      return { ok: false, conflict: true, rev: cur.data!.draft_rev as number, doc: cur.data!.draft_doc }
+    },
+    async logEdit(e) {
+      const { error } = await db.from('site_edits').insert({ tenant_id: e.tenantId, site_id: e.siteId, actor_user_id: e.userId, actor_kind: e.actorKind, source: e.source, ops: e.ops, draft_rev_after: e.revAfter })
+      if (error) fail('edit log', error)
+    },
+    async editsSinceLastVersion(siteId) {
+      const last = await db.from('site_versions').select('created_at').eq('site_id', siteId).order('number', { ascending: false }).limit(1).maybeSingle()
+      if (last.error) fail('version read', last.error)
+      const since = last.data?.created_at ?? '1970-01-01T00:00:00Z'
+      const { count, error } = await db.from('site_edits').select('id', { count: 'exact', head: true }).eq('site_id', siteId).gt('created_at', since)
+      if (error) fail('edit count', error)
+      return { count: count ?? 0, lastVersionAt: last.data ? new Date(last.data.created_at) : null }
+    },
+    async createVersion(v) {
+      const { data, error } = await db.rpc('create_version', { p_site: v.siteId, p_kind: 'checkpoint', p_doc: v.doc, p_sha: v.docSha256, p_user: v.userId, p_note: v.note ?? '' })
+      if (error) fail('version create', error)
+      const row = (Array.isArray(data) ? data[0] : data) as { id: string; number: number }
+      return { id: row.id, number: row.number }
+    },
+    async listVersions(siteId) {
+      const { data, error } = await db.from('site_versions').select('id, number, kind, note, created_at').eq('site_id', siteId).order('number', { ascending: false }).limit(100)
+      if (error) fail('versions read', error)
+      return (data ?? []).map((r) => ({ id: r.id, number: r.number, kind: r.kind, note: r.note, createdAt: new Date(r.created_at) }))
+    },
+    async getVersion(siteId, versionId) {
+      const { data, error } = await db.from('site_versions').select('number, doc').eq('site_id', siteId).eq('id', versionId).maybeSingle()
+      if (error) fail('version read', error)
+      return data ? { number: data.number, doc: data.doc } : null
+    },
+    async audit(a) {
+      const { error } = await db.from('audit_log').insert({ tenant_id: a.tenantId, actor_user_id: a.userId, actor_kind: a.actorKind, action: a.action, target_id: a.targetId, details: a.details })
+      if (error) fail('audit insert', error)
+    },
+    async tenantAssetIds(tenantId) {
+      const { data, error } = await db.from('assets').select('id').eq('tenant_id', tenantId).is('deleted_at', null).limit(500)
+      if (error) fail('assets read', error)
+      return (data ?? []).map((r) => r.id as string)
+    },
+    async tenantAiUsage(tenantId) {
+      const hourAgo = new Date(Date.now() - 3600_000).toISOString()
+      const dayStart = new Date(); dayStart.setUTCHours(0, 0, 0, 0)
+      const edits = await db.from('ai_runs').select('id', { count: 'exact', head: true }).eq('tenant_id', tenantId).eq('kind', 'edit').gt('created_at', hourAgo)
+      if (edits.error) fail('ai runs count', edits.error)
+      const runs = await db.from('ai_runs').select('input_tokens, output_tokens').eq('tenant_id', tenantId).gte('created_at', dayStart.toISOString()).limit(5000)
+      if (runs.error) fail('ai runs read', runs.error)
+      return { editsLastHour: edits.count ?? 0, tokensToday: (runs.data ?? []).reduce((n, r) => n + r.input_tokens + r.output_tokens, 0) }
+    },
+    async saveChat(m) {
+      const { data, error } = await db.from('chat_messages').insert({ tenant_id: m.tenantId, site_id: m.siteId, role: m.role, content: m.content.slice(0, 2000), proposal: m.proposal }).select('id').single()
+      if (error) fail('chat insert', error)
+      return data!.id as string
+    },
+    async recentChat(siteId, limit) {
+      const { data, error } = await db.from('chat_messages').select('role, content').eq('site_id', siteId).order('created_at', { ascending: false }).limit(limit)
+      if (error) fail('chat read', error)
+      return (data ?? []).reverse() as { role: 'user' | 'assistant'; content: string }[]
+    },
+    async tutorialDone(userId, siteId) {
+      const { data, error } = await db.from('tutorial_progress').select('step').eq('user_id', userId).eq('site_id', siteId)
+      if (error) fail('tutorial read', error)
+      return (data ?? []).map((r) => r.step as string)
+    },
+    async markTutorial(userId, siteId, step) {
+      const { error } = await db.from('tutorial_progress').upsert({ user_id: userId, site_id: siteId, step }, { onConflict: 'user_id,site_id,step', ignoreDuplicates: true })
+      if (error) fail('tutorial save', error)
+    },
   }
 }
 
 // ------------------------------------------------------------------------------------------ memory
 
+type MemSite = StoredDraft & { slug: string; rev: number; takenDown: boolean }
+type MemTenant = { id: string; name: string; kitId: string; status: TenantStatus; timezone: string | null; attestedIpHash: string | null; attestedAt: Date | null }
+type MemState = {
+  tenants: Map<string, MemTenant>
+  sites: Map<string, MemSite>
+  assets: Map<string, AssetInput>
+  runs: (AiRunRow & { at: number })[]
+  limits: Map<string, number>
+  members: { tenantId: string; userId: string; role: 'owner' | 'editor' }[]
+  operators: Set<string>
+  versions: (VersionRow & { siteId: string; doc: unknown })[]
+  edits: { siteId: string; at: number; source: string; ops: unknown; revAfter: number; actorKind: string }[]
+  audit: { tenantId: string; action: string; targetId: string; details: Record<string, unknown> }[]
+  chat: { id: string; siteId: string; role: 'user' | 'assistant'; content: string; at: number }[]
+  tutorial: Set<string>
+}
+
 /** In-memory store for unit tests and the CI end-to-end run. Never used on Vercel. */
-export function createMemoryStore(): DraftStore & { _state: { tenants: Map<string, unknown>; sites: Map<string, StoredDraft & { slug: string }>; assets: Map<string, AssetInput>; runs: AiRunRow[]; limits: Map<string, number> } } {
-  const state = { tenants: new Map<string, unknown>(), sites: new Map<string, StoredDraft & { slug: string }>(), assets: new Map<string, AssetInput>(), runs: [] as AiRunRow[], limits: new Map<string, number>() }
+export function createMemoryStore(): DraftStore & EditorStore & { _state: MemState } {
+  const state: MemState = {
+    tenants: new Map(), sites: new Map(), assets: new Map(), runs: [], limits: new Map(), members: [], operators: new Set(),
+    versions: [], edits: [], audit: [], chat: [], tutorial: new Set(),
+  }
+  const clone = <T>(v: T): T => structuredClone(v)
+  const isClaimed = (tenantId: string) => state.members.some((m) => m.tenantId === tenantId)
   return {
     _state: state,
-    async createTenant(t) { state.tenants.set(t.id, { ...t, status: 'prospect' }) },
+    async createTenant(t) { state.tenants.set(t.id, { ...t, status: 'prospect', timezone: null, attestedIpHash: null, attestedAt: null }) },
     async saveAsset(a) { state.assets.set(a.id, a) },
     async createDraft(d) {
       if ([...state.sites.values()].some((s) => s.slug === d.slug)) throw new Error('slug taken')
-      state.sites.set(d.siteId, { siteId: d.siteId, tenantId: d.tenantId, doc: structuredClone(d.doc), tokenHash: d.tokenHash, expiresAt: d.expiresAt, deleted: false, claimed: false, slug: d.slug })
+      state.sites.set(d.siteId, { siteId: d.siteId, tenantId: d.tenantId, doc: clone(d.doc), tokenHash: d.tokenHash, expiresAt: d.expiresAt, deleted: false, claimed: false, slug: d.slug, rev: 0, takenDown: false })
+      state.versions.push({ id: crypto.randomUUID(), siteId: d.siteId, number: 1, kind: 'checkpoint', note: 'First draft', createdAt: new Date(), doc: clone(d.doc) })
     },
     async getDraft(siteId) {
       const s = state.sites.get(siteId)
-      return s ? { ...s, doc: structuredClone(s.doc) } : null
+      return s ? { siteId: s.siteId, tenantId: s.tenantId, doc: clone(s.doc), tokenHash: s.tokenHash, expiresAt: s.expiresAt, deleted: s.deleted, claimed: s.claimed || isClaimed(s.tenantId) } : null
     },
     async getAsset(tenantId, assetId) {
       const a = state.assets.get(assetId)
@@ -205,11 +376,78 @@ export function createMemoryStore(): DraftStore & { _state: { tenants: Map<strin
     async aiUsageToday() {
       return state.runs.reduce((u, r) => ({ inputTokens: u.inputTokens + r.inputTokens, outputTokens: u.outputTokens + r.outputTokens }), { inputTokens: 0, outputTokens: 0 })
     },
-    async logAiRun(r) { state.runs.push(r) },
+    async logAiRun(r) { state.runs.push({ ...r, at: Date.now() }) },
     async expireDrafts(now) {
       let n = 0
-      for (const s of state.sites.values()) if (!s.deleted && !s.claimed && s.expiresAt && s.expiresAt < now) { s.deleted = true; n++ }
+      for (const s of state.sites.values()) if (!s.deleted && !s.claimed && !isClaimed(s.tenantId) && s.expiresAt && s.expiresAt < now) { s.deleted = true; n++ }
       return n
     },
+
+    async claimDraft(c) {
+      const s = state.sites.get(c.siteId)
+      if (!s || s.deleted) return 'not_found'
+      if (s.tokenHash === null) return 'already_claimed'
+      if (s.tokenHash !== c.tokenHash) return 'not_found'
+      if (s.expiresAt && s.expiresAt.getTime() < Date.now()) return 'expired'
+      if (!state.members.some((m) => m.tenantId === s.tenantId && m.userId === c.userId)) state.members.push({ tenantId: s.tenantId, userId: c.userId, role: 'owner' })
+      const t = state.tenants.get(s.tenantId)!
+      if (t.status === 'prospect') Object.assign(t, { status: 'trial', attestedAt: new Date(), attestedIpHash: c.ipHash, timezone: c.timezone || t.timezone })
+      s.tokenHash = null
+      s.expiresAt = null
+      s.claimed = true
+      if (c.doc !== null) { s.doc = clone(c.doc); s.rev++ }
+      return 'ok'
+    },
+    async memberRole(userId, tenantId) {
+      if (state.operators.has(userId)) return 'operator'
+      return state.members.find((m) => m.tenantId === tenantId && m.userId === userId)?.role ?? null
+    },
+    async sitesForUser(userId) {
+      return [...state.sites.values()].filter((s) => !s.deleted && state.members.some((m) => m.tenantId === s.tenantId && m.userId === userId))
+        .map((s) => ({ siteId: s.siteId, name: state.tenants.get(s.tenantId)!.name, status: state.tenants.get(s.tenantId)!.status }))
+    },
+    async getEditorSite(siteId) {
+      const s = state.sites.get(siteId)
+      if (!s || s.deleted) return null
+      const t = state.tenants.get(s.tenantId)!
+      return { siteId, tenantId: s.tenantId, tenantName: t.name, tenantStatus: t.status, timezone: t.timezone, slug: s.slug, doc: clone(s.doc), rev: s.rev, takenDown: s.takenDown }
+    },
+    async saveDraft(sv) {
+      const s = state.sites.get(sv.siteId)
+      if (!s || s.deleted) throw new Error('site not found')
+      if (s.rev !== sv.baseRev) return { ok: false, conflict: true, rev: s.rev, doc: clone(s.doc) }
+      s.doc = clone(sv.doc)
+      s.rev++
+      return { ok: true, rev: s.rev }
+    },
+    async logEdit(e) { state.edits.push({ siteId: e.siteId, at: Date.now(), source: e.source, ops: clone(e.ops), revAfter: e.revAfter, actorKind: e.actorKind }) },
+    async editsSinceLastVersion(siteId) {
+      const last = state.versions.filter((v) => v.siteId === siteId).sort((a, b) => b.number - a.number)[0]
+      const since = last?.createdAt.getTime() ?? 0
+      return { count: state.edits.filter((e) => e.siteId === siteId && e.at > since).length, lastVersionAt: last?.createdAt ?? null }
+    },
+    async createVersion(v) {
+      const number = Math.max(0, ...state.versions.filter((x) => x.siteId === v.siteId).map((x) => x.number)) + 1
+      const id = crypto.randomUUID()
+      state.versions.push({ id, siteId: v.siteId, number, kind: 'checkpoint', note: v.note, createdAt: new Date(), doc: clone(v.doc) })
+      return { id, number }
+    },
+    async listVersions(siteId) {
+      return state.versions.filter((v) => v.siteId === siteId).sort((a, b) => b.number - a.number).map(({ id, number, kind, note, createdAt }) => ({ id, number, kind, note, createdAt }))
+    },
+    async getVersion(siteId, versionId) {
+      const v = state.versions.find((x) => x.siteId === siteId && x.id === versionId)
+      return v ? { number: v.number, doc: clone(v.doc) } : null
+    },
+    async audit(a) { state.audit.push({ tenantId: a.tenantId, action: a.action, targetId: a.targetId, details: clone(a.details) }) },
+    async tenantAssetIds(tenantId) { return [...state.assets.values()].filter((a) => a.tenantId === tenantId).map((a) => a.id) },
+    async tenantAiUsage(tenantId) {
+      const runs = state.runs.filter((r) => r.tenantId === tenantId)
+      return { editsLastHour: runs.filter((r) => r.kind === 'edit' && r.at > Date.now() - 3600_000).length, tokensToday: runs.reduce((n, r) => n + r.inputTokens + r.outputTokens, 0) }
+    },
+    async saveChat(m) { const id = crypto.randomUUID(); state.chat.push({ id, siteId: m.siteId, role: m.role, content: m.content.slice(0, 2000), at: Date.now() }); return id },
+    async recentChat(siteId, limit) { return state.chat.filter((c) => c.siteId === siteId).slice(-limit).map(({ role, content }) => ({ role, content })) },
+    async tutorialDone(userId, siteId) { return [...state.tutorial].filter((k) => k.startsWith(`${userId}|${siteId}|`)).map((k) => k.split('|')[2]) },
+    async markTutorial(userId, siteId, step) { state.tutorial.add(`${userId}|${siteId}|${step}`) },
   }
 }
