@@ -40,3 +40,21 @@ export function originAllowed(headers: Headers, allowed: readonly string[]): boo
 export function requestOrigin(url: string): string {
   return new URL(url).origin
 }
+
+/**
+ * Bot protection for /new without a third-party captcha (spec 14.4, R2): the form carries a signed
+ * time it was shown; a submit sooner than 3 seconds or older than 2 hours is refused.
+ */
+export function signFormTime(now: number, pepper: string): string {
+  return `${now}.${createHmac('sha256', pepper).update(`form-time:${now}`).digest('hex').slice(0, 32)}`
+}
+
+export function checkFormTime(value: string | null, pepper: string, now: number): 'ok' | 'too_fast' | 'expired' | 'bad' {
+  const m = /^(\d{13})\.([0-9a-f]{32})$/.exec(value ?? '')
+  if (!m) return 'bad'
+  if (signFormTime(Number(m[1]), pepper) !== value) return 'bad'
+  const age = now - Number(m[1])
+  if (age < 3_000) return 'too_fast'
+  if (age > 2 * 60 * 60 * 1000) return 'expired'
+  return 'ok'
+}

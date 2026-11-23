@@ -66,7 +66,16 @@ async function chooseKit(text: string, chat: GenerateChat): Promise<KitDefinitio
 
 const sha256 = (s: string) => createHash('sha256').update(s).digest('hex')
 
-export async function createDraft(req: DraftRequest, rt: Runtime, progress: (s: ProgressStep) => void = () => {}): Promise<DraftResult> {
+/**
+ * `ids` lets the caller set the cookie before the work starts (the progress page streams while the
+ * draft is built), so the site id and token are chosen up front.
+ */
+export async function createDraft(
+  req: DraftRequest,
+  rt: Runtime,
+  progress: (s: ProgressStep) => void = () => {},
+  ids: { siteId: string; token: string } = { siteId: randomUUID(), token: newDraftToken() },
+): Promise<DraftResult> {
   const started = Date.now()
   const deadline = started + DRAFT_BUDGET_MS
   const blocked = blockedFromEnv(process.env.BLOCKED_CATEGORIES)
@@ -90,7 +99,7 @@ export async function createDraft(req: DraftRequest, rt: Runtime, progress: (s: 
     : await chooseKit(`${name}. ${req.description ?? ''} ${site?.pages[0]?.title ?? ''}`, rt.chat)
 
   const tenantId = randomUUID()
-  const siteId = randomUUID()
+  const { siteId, token } = ids
   await rt.store.createTenant({ id: tenantId, name, kitId: kit.id })
 
   // 3. Photos and logo in the background while the model writes (they finish well inside its time).
@@ -171,7 +180,6 @@ export async function createDraft(req: DraftRequest, rt: Runtime, progress: (s: 
   }
 
   // 6. Store the anonymous draft. Only a hash of the access token is kept.
-  const token = newDraftToken()
   const json = JSON.stringify(doc)
   await rt.store.createDraft({
     tenantId, siteId, slug: `draft-${randomBytes(6).toString('hex')}`, kitId: kit.id, doc, docSha256: sha256(json),
