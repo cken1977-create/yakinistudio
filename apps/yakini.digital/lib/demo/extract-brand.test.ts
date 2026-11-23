@@ -48,3 +48,29 @@ describe('asKitId and pageExcerpt', () => {
     assert.doesNotMatch(text, /secret/)
   })
 })
+
+describe('business name cleaning', () => {
+  it('decodes hex HTML entities and drops a · tagline', () => {
+    const html = `<html><head><title>Momma Sally&#x27;s BBQ · your new system, step by step</title></head><body></body></html>`
+    const brand = extractBrand(html, new URL('https://mommasallys-demo.vercel.app/'))
+    assert.equal(brand.name, "Momma Sally's BBQ")
+  })
+
+  it('decodes decimal entities and drops taglines after |, -, or :', () => {
+    const pipe = extractBrand(
+      `<html><head><title>Adobe Court Apartments | Albuquerque rentals</title></head><body></body></html>`,
+      new URL('https://adobecourt.example/'),
+    )
+    assert.equal(pipe.name, 'Adobe Court Apartments')
+    const dash = extractBrand(
+      `<html><head><title>Pine &amp; Mesa Realty - Homes for sale in Santa Fe</title></head><body></body></html>`,
+      new URL('https://pinemesa.example/'),
+    )
+    assert.equal(dash.name, 'Pine & Mesa Realty')
+    const colon = extractBrand(
+      `<html><head><title>North Valley Tree: official site</title></head><body></body></html>`,
+      new URL('https://nvtree.example/'),
+    )
+    assert.equal(colon.name, 'North Valley Tree')
+  })
+})

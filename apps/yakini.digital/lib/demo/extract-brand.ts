@@ -36,12 +36,14 @@ function allMatches(html: string, re: RegExp): string[] {
 
 function decode(value: string): string {
   return value
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCharCode(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
     .replace(/&amp;/g, '&')
     .replace(/&quot;/g, '"')
     .replace(/&#39;|&apos;/g, "'")
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
-    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
     .replace(/\s+/g, ' ')
     .trim()
 }
@@ -65,15 +67,10 @@ function titleTag(html: string): string | null {
 }
 
 function cleanName(raw: string): string {
-  let name = raw
-  name = name.replace(/\s+[|\-–—•:]\s+(home|official site|welcome|website).*$/i, '')
-  name = name.replace(/\s+[|\-–—•]\s+.*$/, (tail, offset, whole) => {
-    // Keep short tails that are likely still the name; drop long slogan tails.
-    return tail.length > 40 ? '' : (offset > 0 ? whole.slice(offset) : tail)
-  })
-  // If the first segment before a separator is a solid name, prefer it.
-  const parts = name.split(/\s+[|\-–—•]\s+/)
-  if (parts[0] && parts[0].length >= 3 && parts[0].length <= 60) name = parts[0]
+  let name = raw.replace(/\s+/g, ' ').trim()
+  // Prefer the business name before a tagline separator (· | - – — • :).
+  const parts = name.split(/\s+[|·•–—]\s+|\s+-\s+|\s*:\s+/)
+  if (parts[0] && parts[0].length >= 2 && parts[0].length <= 60) name = parts[0]
   name = name.replace(/^\s*welcome to\s+/i, '')
   return name.trim().slice(0, 80)
 }
