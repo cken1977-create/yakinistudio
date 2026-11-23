@@ -12,7 +12,7 @@ export function hasElevenLabsKey(): boolean {
 }
 
 export function voiceId(): string {
-  return (process.env.ELEVENLABS_VOICE_ID || ASSISTANT.elevenLabsVoiceId || 'EXAVITQu4vr4xnSDxMaL').trim()
+  return (process.env.ELEVENLABS_VOICE_ID || ASSISTANT.elevenLabsVoiceId || 'XrExE9yKIg1WjnnlVkGX').trim()
 }
 
 /** Warm, low-latency spoken audio for a reply. Returns raw mp3 bytes, or null if no key / failure. */

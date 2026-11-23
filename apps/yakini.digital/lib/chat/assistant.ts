@@ -18,10 +18,10 @@ export const ASSISTANT = {
   loopWebm: '/helper/nikki-loop.webm',
   loopReady: true,
   /**
-   * ElevenLabs voice id, overridable with ELEVENLABS_VOICE_ID.
-   * Left empty until Clarence picks a sample; the speak route uses the env id, then this, then a warm female default.
+   * ElevenLabs voice id (Matilda), overridable with ELEVENLABS_VOICE_ID.
+   * The speak route uses the env id, then this, then the same Matilda id as a last resort.
    */
-  elevenLabsVoiceId: '',
+  elevenLabsVoiceId: 'XrExE9yKIg1WjnnlVkGX',
   greeting:
     "Hi — I'm Destiny, Yakini's virtual assistant. I can help with pricing, show you a kit in your brand, or get you to a real person. What can I help with?",
 } as const

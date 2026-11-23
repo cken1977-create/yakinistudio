@@ -1,7 +1,7 @@
 import { SYSTEM_PROMPT, PUBLIC_FACTS } from './knowledge'
 import type { ChatTurn } from './guard'
 
-const DEFAULT_MODEL = 'grok-3-mini'
+const DEFAULT_MODEL = 'grok-4.20-0309-non-reasoning'
 const CHAT_URL = 'https://api.x.ai/v1/chat/completions'
 
 export function xaiKey(): string {
