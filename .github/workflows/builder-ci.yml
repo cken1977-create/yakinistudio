@@ -1,0 +1,81 @@
+name: builder-ci
+# TO ENABLE: copy this file to .github/workflows/builder-ci.yml (the agent token cannot write workflow files).
+# Yakini Builder Phase 0 CI (spec 14). Runs on PRs and on pushes to feat/** branches. Never deploys.
+on:
+  pull_request:
+  push:
+    branches: ['feat/**']
+permissions:
+  contents: read
+concurrency:
+  group: builder-ci-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Secret check (no secret values in the repo)
+        run: npm run check:secrets
+      - name: Client env check (client code reads only NEXT_PUBLIC_*)
+        run: node apps/builder/scripts/check-client-env.mjs
+      - name: Typecheck builder + packages
+        run: npm run typecheck:builder
+      - name: Lint builder
+        run: npx turbo lint --filter=builder
+      - name: Unit tests (packages, builder, yakini.digital)
+        run: npm run test:builder
+      - name: Dependency audit (high+ in production deps)
+        run: npm audit --omit=dev --audit-level=high
+        continue-on-error: true
+  rls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install psql client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Migrations + RLS suite (local throwaway database)
+        run: bash apps/builder/supabase/tests/run.sh
+  builds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Build yakini.digital (live site must keep building)
+        run: npx turbo build --filter=yakini.digital
+      - name: Build builder
+        run: npx turbo build --filter=builder
+      - name: Playwright smoke (390 + 1280)
+        working-directory: apps/builder
+        run: |
+          npx playwright install --with-deps chromium
+          SHOTS_DIR=$GITHUB_WORKSPACE/qa-shots npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: builder-screenshots
+          path: qa-shots
+          if-no-files-found: ignore
