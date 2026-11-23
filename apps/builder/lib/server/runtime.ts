@@ -37,12 +37,13 @@ export function isTestMode(): boolean {
 // Test-mode peppers are fixed so tests are repeatable; they guard nothing real.
 const TEST_PEPPER = 'test-mode-pepper-not-a-secret-0001'
 
-let memory: DraftStore | null = null
+// Route handlers and pages are separate bundles; keep one test-mode store per server process.
+const shared = globalThis as typeof globalThis & { __yakiniMemoryStore?: DraftStore }
 let real: Runtime | null = null
 
 export function getRuntime(): Runtime {
   if (isTestMode()) {
-    memory ??= createMemoryStore()
+    const memory = (shared.__yakiniMemoryStore ??= createMemoryStore())
     return {
       testMode: true, store: memory, fetchDeps: mockFetchDeps(), chat: mockGenerateChat,
       draftPepper: TEST_PEPPER, ipPepper: TEST_PEPPER, demoOrigin: process.env.DEMO_ORIGIN || 'https://yakini.digital',

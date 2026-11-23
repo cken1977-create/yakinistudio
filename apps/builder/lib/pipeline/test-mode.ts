@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { Readable } from 'node:stream'
+import sharp from 'sharp'
 import type { ChatResult } from '@yakini/ai'
 import type { SafeFetchDeps } from '@yakini/brand/safe-fetch'
 import type { GenerateChat } from './generate'
@@ -23,13 +24,25 @@ export function mockFetchDeps(dir = SITES_DIR): SafeFetchDeps {
       let body: Buffer
       let status = 200
       let type = 'text/html; charset=utf-8'
+      const photo = /^\/photos\/([a-z0-9-]{1,40})\.png$/.exec(url.pathname)
       if (url.pathname === '/robots.txt') { status = 404; body = Buffer.from('not found'); type = 'text/plain' }
+      else if (photo) { body = await testPhoto(`${slug}/${photo[1]}`); type = 'image/png' }
       else {
         try { body = readFileSync(join(dir, `${slug}.html`)) } catch { status = 404; body = Buffer.from('not found') }
       }
       return { status, headers: { 'content-type': type }, body: Readable.from([body]) }
     },
   }
+}
+
+/** A plain, deterministic stand-in photo (a soft two-color gradient) for test-mode sites. */
+async function testPhoto(key: string): Promise<Buffer> {
+  let h = 0
+  for (const c of key) h = (h * 31 + c.charCodeAt(0)) >>> 0
+  const a = `hsl(${h % 360} 45% 42%)`
+  const b = `hsl(${(h >> 9) % 360} 50% 68%)`
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="1200" height="800" fill="url(#g)"/><circle cx="840" cy="300" r="180" fill="#fff" fill-opacity=".18"/></svg>`
+  return sharp(Buffer.from(svg)).png().toBuffer()
 }
 
 function between(text: string, start: string, end: string): string {
