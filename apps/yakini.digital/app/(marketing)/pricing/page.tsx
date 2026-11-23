@@ -55,7 +55,7 @@ export default function PricingPage() {
         <div className="yk-section-inner">
           <div className="yk-section-tag"><span className="yk-num">01</span><span>Build your estimate</span></div>
           <h2 className="yk-section-h2">Choose a kit, a size, and the services you want.</h2>
-          <p className="pr-lead">{QUOTE_NOTE} Approved extra work is ${HOURLY_RATE} an hour.</p>
+          <p className="pr-lead">{QUOTE_NOTE} Work beyond the included time is ${HOURLY_RATE} an hour, and must be approved first.</p>
           <BuildPicker />
         </div>
       </section>
@@ -129,7 +129,7 @@ export default function PricingPage() {
                 <tr>
                   <td>Support</td>
                   {SIZES.map((s) => <td key={s.id}>{s.support}</td>)}
-                  <td>Approved extra work is ${HOURLY_RATE}/hour</td>
+                  <td>Beyond included time: ${HOURLY_RATE}/hr, approved first</td>
                 </tr>
                 <tr>
                   <td>Texting volume the plan is sized for</td>

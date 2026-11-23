@@ -41,7 +41,7 @@ export type WebsiteTypeId = (typeof WEBSITE_TYPES)[number]['id']
 
 export const BUSINESS_SETUP_PRICE = 495
 export const BUSINESS_SETUP_NOTE =
-  'Business Setup is $495 plus the state filing fee. The $495 covers LLC formation setup, and setting up the domain, business email, and business phone line, all in your name. The first year of the domain is included. The only extra cost at sign-up is the state filing fee. Ongoing monthly email and phone service is billed later, in your name, by those providers.'
+  'Business Setup is $495 plus the state filing fees. You pay only those two amounts at sign-up. The $495 covers LLC formation setup, and setting up the domain, business email, and business phone line, all in your name. Yakini covers the first year of the domain and any phone or email activation fees. Ongoing monthly email and phone service is billed later, in your name, by those providers.'
 
 export const PITCH_HEAD = 'A real person sets it up with you. And stays.'
 export const PITCH =
@@ -54,10 +54,10 @@ export const BILLING_NOTE =
   'No card is taken on this page. You send your build, a real Yakini person confirms the setup level in a written quote, and your monthly plan starts at go-live. Any setup can be split into three payments.'
 
 export const EXTRA_HELP_NOTE =
-  'Need more help than your plan includes? Approved extra work is $125 an hour.'
+  'Work beyond the included time is $125 an hour, and must be approved first.'
 
 export const HELP_HOURS_NOTE =
-  'Support is included with your size: Small is email with a reply within 2 business days; Growing is email and text with a reply within 1 business day, plus a quarterly 30-minute check-in; Larger is same-day priority support, phone, and a monthly check-in.'
+  'Included support is 30 minutes a month of changes or training on Small; 1 hour a month plus a quarterly 30-minute check-in on Growing; and 2 hours a month plus a monthly 30-minute check-in on Larger. Support hours are Monday–Friday, 9 a.m.–5 p.m. Mountain Time. Response times are for the first response: Small, email within 2 business days; Growing, email and text within 1 business day; Larger, same-day first response and phone. Unused time does not roll over.'
 
 export const AI_LIMIT_NOTE =
   'Drafted replies and voice transcripts have a courtesy monthly cap on every plan. We will warn you at 80%, and nothing goes out without your OK. If usage goes past the cap, any Yakini usage fee is listed as its own line on the quote, not added as a percentage on top of a provider bill you already paid.'
@@ -113,9 +113,9 @@ export type PriceKind = 'fixed' | 'from' | 'quote' | 'usage' | 'pass-through' | 
 export type Money = { amount: number; kind: PriceKind }
 
 export const SIZES: readonly { id: SizeId; name: string; seats: number; locations: number; units: number; capacity: string; support: string; texts: number }[] = [
-  { id: 'small', name: 'Small', seats: 3, locations: 1, units: 10, capacity: '1 location, truck, or crew, or up to 10 units', support: 'Email support, reply within 2 business days', texts: 500 },
-  { id: 'growing', name: 'Growing', seats: 8, locations: 3, units: 25, capacity: 'Up to 3 locations, trucks, or crews, or up to 25 units', support: 'Email and text, reply within 1 business day, plus a quarterly 30-minute check-in', texts: 1500 },
-  { id: 'larger', name: 'Larger', seats: 20, locations: 10, units: 50, capacity: 'Up to 10 locations, trucks, or crews, or up to 50 units', support: 'Same-day priority support, phone, and a monthly check-in', texts: 3000 },
+  { id: 'small', name: 'Small', seats: 3, locations: 1, units: 10, capacity: '1 location, truck, or crew, or up to 10 units', support: '30 minutes a month of changes or training. Email; first response within 2 business days. Monday–Friday, 9 a.m.–5 p.m. Mountain Time. Unused time does not roll over.', texts: 500 },
+  { id: 'growing', name: 'Growing', seats: 8, locations: 3, units: 25, capacity: 'Up to 3 locations, trucks, or crews, or up to 25 units', support: '1 hour a month of changes or training, plus a quarterly 30-minute check-in. Email and text; first response within 1 business day. Monday–Friday, 9 a.m.–5 p.m. Mountain Time. Unused time does not roll over.', texts: 1500 },
+  { id: 'larger', name: 'Larger', seats: 20, locations: 10, units: 50, capacity: 'Up to 10 locations, trucks, or crews, or up to 50 units', support: '2 hours a month of changes or training, plus a monthly 30-minute check-in. Same-day first response and phone. Monday–Friday, 9 a.m.–5 p.m. Mountain Time. Unused time does not roll over.', texts: 3000 },
 ]
 
 export const SETUPS: readonly { id: SetupId; name: string; price: Money; hours: string; summary: string }[] = [
@@ -172,7 +172,7 @@ export const CATALOG: readonly CatalogItem[] = [
   { id: 'ecommerce', name: 'E-commerce store, simple catalog', group: 'addon', once: { amount: 499, kind: 'fixed' }, monthly: { amount: 99, kind: 'fixed' }, summary: 'A small catalog and checkout on your payment account. Larger stores are quoted.', picker: true },
   { id: 'social-schedule', name: 'Social posting, schedule only', group: 'marketing', monthly: { amount: 99, kind: 'fixed' }, summary: 'Up to four posts a month scheduled from posts you supply, with your approval.', picker: true },
   { id: 'social-created', name: 'Social posting, four created posts', group: 'marketing', monthly: { amount: 199, kind: 'fixed' }, summary: 'We draft four posts a month, one revision round, your approval, then scheduling.', picker: true },
-  { id: 'business-setup', name: 'Business Setup package', group: 'service', once: { amount: 495, kind: 'fixed' }, summary: '$495 plus the state filing fee. The $495 covers LLC formation setup, and setting up the domain, business email, and business phone line, all in your name. The first year of the domain is included. The only extra cost at sign-up is the state filing fee. Ongoing monthly email and phone service is billed later, in your name, by those providers.', picker: true },
+  { id: 'business-setup', name: 'Business Setup package', group: 'service', once: { amount: 495, kind: 'fixed' }, summary: '$495 plus the state filing fees. You pay only those two amounts at sign-up. The $495 covers LLC formation setup, and setting up the domain, business email, and business phone line, all in your name. Yakini covers the first year of the domain and any phone or email activation fees. Ongoing monthly email and phone service is billed later, in your name, by those providers.', picker: true },
   { id: 'domain-email', name: 'Custom domain and business email', group: 'addon', once: { amount: 99, kind: 'fixed' }, monthly: { amount: 0, kind: 'pass-through' }, summary: 'Register or connect a domain, set up email, and create one mailbox. You pay the domain and email providers directly. Skip this if it is already in Business Setup.', picker: true },
   { id: 'multi-location', name: 'Extra location', group: 'addon', once: { amount: 0, kind: 'quote' }, summary: 'If you need more capacity than your size includes, move up a size, or ask for a custom quote past Larger. Extra locations are not a standard add-on.', picker: false },
   { id: 'data-migration', name: 'Data migration', group: 'addon', once: { amount: 125, kind: 'from' }, summary: 'Import of customers, jobs, or files, billed at $125 an hour. A clean spreadsheet is usually 1–3 hours.', picker: true },
