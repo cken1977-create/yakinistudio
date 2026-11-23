@@ -39,7 +39,7 @@ export const CHAT_CSS = `
     .yk-chat-launch{right:12px;bottom:max(12px, env(safe-area-inset-bottom))}
     .yk-chat-panel{right:0;left:0;bottom:0;width:100%;height:min(92svh, 720px);border-radius:24px 24px 0 0}
     .yk-chat-talk{min-height:52px;font-size:17px}
-    .db{padding-bottom:120px}
+    .db,.db-chips{padding-bottom:140px}
   }
   @media (prefers-reduced-motion:reduce){
     .yk-av video{display:none}
