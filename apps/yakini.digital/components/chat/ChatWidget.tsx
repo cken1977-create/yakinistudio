@@ -233,16 +233,16 @@ export function ChatWidget() {
               <h2>{ASSISTANT.name}</h2>
               <p>{ASSISTANT.role}</p>
             </div>
+            <button type="button" className="yk-chat-x" aria-label="Close chat" onClick={() => { setOpen(false); stopVoice() }}>✕</button>
             <button
               type="button"
-              className="yk-chat-icon"
+              className="yk-chat-talk"
               aria-pressed={talk}
-              title={talk ? 'Voice conversation on' : 'Talk with Nikki'}
+              aria-label={talk ? 'Stop talking to Nikki' : 'Talk to Nikki'}
               onClick={() => { setTalk((v) => !v); stopVoice() }}
             >
-              {talk ? '🎙' : '○'}
+              {talk ? 'Talking to Nikki' : 'Talk to Nikki'}
             </button>
-            <button type="button" className="yk-chat-x" aria-label="Close chat" onClick={() => { setOpen(false); stopVoice() }}>✕</button>
           </header>
           <div className="yk-chat-log" ref={logRef}>
             {messages.map((m, i) => (

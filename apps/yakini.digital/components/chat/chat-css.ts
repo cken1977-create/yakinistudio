@@ -9,12 +9,12 @@ export const CHAT_CSS = `
   .yk-chat-launch-txt b{font-size:14px}
   .yk-chat-launch-txt span{font-size:11px;font-weight:500;color:rgba(244,247,255,.7)}
   .yk-chat-panel{position:fixed;z-index:41;right:16px;bottom:16px;width:min(400px,calc(100vw - 20px));height:min(640px,calc(100svh - 24px));display:flex;flex-direction:column;border-radius:24px;background:rgba(6,11,36,.96);color:#F4F7FF;border:1px solid rgba(244,247,255,.14);box-shadow:0 20px 60px rgba(0,0,0,.5);overflow:hidden}
-  .yk-chat-head{display:flex;align-items:center;gap:12px;padding:14px 14px 12px;border-bottom:1px solid rgba(244,247,255,.1)}
+  .yk-chat-head{display:flex;align-items:center;flex-wrap:wrap;gap:10px 12px;padding:14px 14px 12px;border-bottom:1px solid rgba(244,247,255,.1)}
   .yk-chat-head h2{margin:0;font-size:18px;line-height:1.1}
   .yk-chat-head p{margin:2px 0 0;font-size:12px;color:rgba(244,247,255,.7)}
-  .yk-chat-x,.yk-chat-icon{margin-left:auto;border:0;background:transparent;color:#F4F7FF;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer}
-  .yk-chat-icon{margin-left:0;font-size:16px}
-  .yk-chat-icon[aria-pressed="true"]{color:#C6F432}
+  .yk-chat-x{margin-left:auto;border:0;background:transparent;color:#F4F7FF;width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer}
+  .yk-chat-talk{flex:1 1 100%;display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 18px;border-radius:999px;border:1px solid rgba(198,244,50,.7);background:transparent;color:#C6F432;font:700 16px/1 Inter,system-ui,sans-serif;cursor:pointer}
+  .yk-chat-talk[aria-pressed="true"]{background:#C6F432;color:#0B1437;border-color:#C6F432}
   .yk-chat-log{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
   .yk-chat-msg{max-width:92%;padding:10px 12px;border-radius:16px;font-size:15px;line-height:1.45}
   .yk-chat-msg.user{align-self:flex-end;background:#C6F432;color:#0B1437}
@@ -30,9 +30,16 @@ export const CHAT_CSS = `
   .yk-chat-lead{padding:8px 14px 12px;border-top:1px solid rgba(244,247,255,.1);font-size:13px}
   .yk-chat-lead input{width:100%;margin:6px 0;border-radius:10px;border:1px solid rgba(244,247,255,.16);background:rgba(255,255,255,.06);color:#F4F7FF;padding:8px 10px}
   .yk-chat-lead button{margin-top:4px;border:0;border-radius:999px;background:#C6F432;color:#0B1437;font-weight:700;padding:8px 14px;cursor:pointer}
+  /* Keep kit chips and other demo controls clear of the fixed Ask Nikki launcher. */
+  @media (min-width:761px){
+    .db-chips,.db-actions,.db-brand{padding-right:240px}
+    .yk-main{padding-bottom:120px}
+  }
   @media (max-width:760px){
     .yk-chat-launch{right:12px;bottom:max(12px, env(safe-area-inset-bottom))}
     .yk-chat-panel{right:0;left:0;bottom:0;width:100%;height:min(92svh, 720px);border-radius:24px 24px 0 0}
+    .yk-chat-talk{min-height:52px;font-size:17px}
+    .db{padding-bottom:120px}
   }
   @media (prefers-reduced-motion:reduce){
     .yk-av video{display:none}
