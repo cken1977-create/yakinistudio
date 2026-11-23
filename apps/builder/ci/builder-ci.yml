@@ -1,4 +1,5 @@
 name: builder-ci
+# TO ENABLE: copy this file to .github/workflows/builder-ci.yml (the agent token cannot write workflow files).
 # Yakini Builder Phase 0 CI (spec 14). Runs on PRs and on pushes to feat/** branches. Never deploys.
 on:
   pull_request:
