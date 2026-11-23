@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" role="img" aria-label="Illustration of a food truck with its service window open"><title>Illustration of a food truck with its service window open</title>
+<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6C46A"/><stop offset="1" stop-color="#F2A93B"/></linearGradient></defs>
+<rect width="1600" height="1000" fill="url(#sky)"/>
+<circle cx="1280" cy="250" r="120" fill="#FCE3A6"/>
+<rect y="780" width="1600" height="220" fill="#3A2C24"/>
+<rect y="770" width="1600" height="18" fill="#2A1F19"/>
+<g transform="translate(330 330)">
+<rect x="0" y="40" width="760" height="380" rx="36" fill="#B4361B"/>
+<path d="M760 140h170c40 0 70 22 86 60l64 150v70H760z" fill="#B4361B"/>
+<path d="M790 170h120c22 0 36 10 46 32l44 102H790z" fill="#BFE0E6"/>
+<rect x="80" y="120" width="460" height="170" rx="12" fill="#1F1A17"/>
+<rect x="96" y="136" width="428" height="138" rx="8" fill="#FCE3A6"/>
+<path d="M60 110h500l-26-60H86z" fill="#F2A93B"/>
+<path d="M60 110h50v26c0 14-50 14-50 0zm100 0h50v26c0 14-50 14-50 0zm100 0h50v26c0 14-50 14-50 0zm100 0h50v26c0 14-50 14-50 0zm100 0h50v26c0 14-50 14-50 0z" fill="#fff" opacity=".85"/>
+<rect x="70" y="300" width="480" height="20" rx="6" fill="#7A2412"/>
+<rect x="590" y="130" width="110" height="250" rx="10" fill="#9C2C15"/>
+<circle cx="190" cy="430" r="78" fill="#1F1A17"/><circle cx="190" cy="430" r="34" fill="#9AA0A6"/>
+<circle cx="860" cy="430" r="78" fill="#1F1A17"/><circle cx="860" cy="430" r="34" fill="#9AA0A6"/>
+<rect x="1000" y="360" width="80" height="34" rx="10" fill="#FCE3A6"/>
+</g></svg>
