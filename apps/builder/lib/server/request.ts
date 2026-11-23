@@ -36,6 +36,15 @@ export function originAllowed(headers: Headers, allowed: readonly string[]): boo
   return o !== null && allowed.includes(o)
 }
 
+/** An https origin and its www. twin (yakini.digital may be reached either way). */
+export function withWww(origin: string): string[] {
+  try {
+    const u = new URL(origin)
+    const host = u.hostname.startsWith('www.') ? u.hostname.slice(4) : u.hostname
+    return [`${u.protocol}//${host}${u.port ? `:${u.port}` : ''}`, `${u.protocol}//www.${host}${u.port ? `:${u.port}` : ''}`]
+  } catch { return [] }
+}
+
 /** The studio's own origin for this request (preview deployments use their own host). */
 export function requestOrigin(url: string): string {
   return new URL(url).origin

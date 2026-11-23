@@ -60,6 +60,9 @@ describe('POST /start (demo hand-off)', () => {
     expect((await POST(demoPost({ businessName: 'X', kitId: 'food-truck' }, { origin: 'https://evil.example' }))).status).toBe(403)
     expect((await POST(demoPost({ businessName: 'X', kitId: 'food-truck' }, { origin: 'null', referer: '' }))).status).toBe(403)
     expect((await POST(demoPost({ businessName: 'X', kitId: 'spaceship' }))).status).toBe(400)
+    const www = await POST(demoPost({ businessName: 'Www Cafe', kitId: 'restaurant' }, { origin: 'https://www.yakini.digital' }))
+    expect(www.status).toBe(200)
+    await www.text()
     expect((await POST(demoPost({ kitId: 'food-truck' }))).status).toBe(400)
     const other = (await import('@yakini/pricing')).KITS.find((k) => k.id !== 'food-truck' && k.id !== 'restaurant')
     if (other) {

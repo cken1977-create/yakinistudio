@@ -1,7 +1,7 @@
 import { isBuilderKit } from '@yakini/kits'
 import type { KitId } from '@yakini/pricing'
 import { errorPage, readHandoff, streamDraft, underRateLimit, withRuntime } from '@/lib/server/draft-flow'
-import { originAllowed, requestOrigin } from '@/lib/server/request'
+import { originAllowed, requestOrigin, withWww } from '@/lib/server/request'
 
 /**
  * POST /start: the /demo "Start my setup" hand-off (spec 5.2). A normal top-level form POST from
@@ -18,7 +18,7 @@ export function GET(request: Request): Response {
 
 export async function POST(request: Request): Promise<Response> {
   return withRuntime(async (rt) => {
-    if (!originAllowed(request.headers, [rt.demoOrigin, requestOrigin(request.url)])) return errorPage('origin')
+    if (!originAllowed(request.headers, [...withWww(rt.demoOrigin), requestOrigin(request.url)])) return errorPage('origin')
     const type = request.headers.get('content-type') ?? ''
     if (!type.startsWith('application/x-www-form-urlencoded') && !type.startsWith('multipart/form-data')) return errorPage('bad')
     if (Number(request.headers.get('content-length') ?? 0) > 16_384) return errorPage('bad')
