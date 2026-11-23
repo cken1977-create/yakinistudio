@@ -80,7 +80,8 @@ function stylesheetHidden(html: string): { classes: Set<string>; ids: Set<string
   const classes = new Set<string>()
   const ids = new Set<string>()
   const blocks = html.match(/<style[^>]*>[\s\S]{0,60000}?<\/style>/gi) ?? []
-  for (const block of blocks.slice(0, 10)) {
+  for (const raw of blocks.slice(0, 10)) {
+    const block = raw.replace(/^<style[^>]*>/i, '').replace(/<\/style>$/i, '').replace(/\/\*[\s\S]*?\*\//g, '')
     for (const m of block.matchAll(/([^{}]{1,300})\{([^}]{0,2000})\}/g)) {
       if (!/display\s*:\s*none|visibility\s*:\s*hidden|font-size\s*:\s*0(?:px)?\s*(?:;|$)|opacity\s*:\s*0\s*(?:;|$)/i.test(m[2])) continue
       for (const sel of m[1].split(',')) {

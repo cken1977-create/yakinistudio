@@ -2,14 +2,18 @@
   "name": "@yakini/brand",
   "version": "0.1.0",
   "private": true,
-  "description": "Safe public-page fetcher and brand reader (name, logo, colors). Moved from apps/yakini.digital/lib/demo.",
+  "description": "Safe public-page fetcher, website reader (facts, robots.txt) and brand reader (name, logo, colors).",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
     "./safe-url": "./src/safe-url.ts",
     "./fetch-page": "./src/fetch-page.ts",
-    "./extract-brand": "./src/extract-brand.ts"
+    "./extract-brand": "./src/extract-brand.ts",
+    "./safe-fetch": "./src/safe-fetch.ts",
+    "./facts": "./src/facts.ts",
+    "./robots": "./src/robots.ts",
+    "./read-site": "./src/read-site.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p .",
