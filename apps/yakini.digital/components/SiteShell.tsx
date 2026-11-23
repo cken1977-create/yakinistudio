@@ -3,7 +3,7 @@
 import { useState, useEffect, ReactNode } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BUILD_URL, PORTAL_LOGIN_URL } from '@/lib/pricing'
+import { BUILD_URL, DEMO_URL, PORTAL_LOGIN_URL } from '@/lib/pricing'
 import { SOCIAL_LINKS } from '@/lib/organization'
 import { OrganizationJsonLd } from '@/components/OrganizationJsonLd'
 
@@ -18,6 +18,7 @@ import { OrganizationJsonLd } from '@/components/OrganizationJsonLd'
 export const NAV_LINKS = [
   { href: '/portal', label: 'The portal' },
   { href: '/pricing', label: 'Pricing' },
+  { href: DEMO_URL, label: 'See your kit' },
   { href: '/how-it-works', label: 'How it works' },
   { href: '/custom-builds', label: 'Custom builds' },
   { href: '/watch', label: 'Watch' },
@@ -27,7 +28,7 @@ export const NAV_LINKS = [
 
 // Photoreal room behind each page header (stills cut from the walkthrough's room panoramas).
 const ROOM_FOR_PATH: [string, string][] = [
-  ['/pricing', 'landlord'], ['/how-it-works', 'trucking'], ['/custom-builds', 'tree'], ['/about', 'nonprofit'],
+  ['/demo', 'foodtruck'], ['/pricing', 'landlord'], ['/how-it-works', 'trucking'], ['/custom-builds', 'tree'], ['/about', 'nonprofit'],
   ['/apply', 'foodtruck'], ['/contact', 'foodtruck'], ['/watch', 'realestate'], ['/portal', 'grower'],
 ]
 function roomFor(path: string) {
@@ -109,6 +110,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
         <div className="yk-mobile-menu">
           <div className="yk-mobile-actions">
             <a href={BUILD_URL} className="yk-mobile-start" onClick={close}>Start your setup →</a>
+            <a href={DEMO_URL} className="yk-mobile-signin" onClick={close}>See your kit, free</a>
             <a href={PORTAL_LOGIN_URL} className="yk-mobile-signin" onClick={close}>Sign in to your portal</a>
           </div>
           <a href="/" onClick={close}>Walk through Yakini</a>
@@ -133,6 +135,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <div className="yk-footer-col">
               <h6>Portal</h6>
               <a href={BUILD_URL}>Start your setup</a>
+              <a href={DEMO_URL}>See your kit</a>
               <a href={PORTAL_LOGIN_URL}>Sign in</a>
               <a href="/portal">The portal</a>
               <a href="/pricing">Plans</a>

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { SiteShell } from '@/components/SiteShell'
 import { BuildPicker } from '@/components/pricing/BuildPicker'
 import {
+  DEMO_URL,
   ANNUAL_NOTE,
   DASHBOARD_NOTE,
   EXTRA_HELP_NOTE,
@@ -46,7 +47,7 @@ export default function PricingPage() {
           <p className="pr-lead">{PACKAGE_EXAMPLE}</p>
           <div className="pn-hero-ctas">
             <a href="#build" className="pr-tier-cta pr-cta-featured"><span>Build my estimate</span><span className="yk-btn-arrow">→</span></a>
-            <a href="#includes" className="pr-tier-cta"><span>See what a kit includes</span></a>
+            <a href={DEMO_URL} className="pr-tier-cta"><span>See a free demo of your kit</span></a>
           </div>
         </div>
       </header>
@@ -173,7 +174,7 @@ export default function PricingPage() {
           </ol>
           <p className="pr-lead">{PASS_THROUGH_NOTE}</p>
           <p className="pr-lead">{REFUND_RULE} You can cancel the monthly plan any time.</p>
-          <p className="pr-lead"><Link href="#build">Build your estimate and send it for a quote →</Link></p>
+          <p className="pr-lead"><Link href="#build">Build your estimate and send it for a quote →</Link> Or <Link href={DEMO_URL}>see a free demo in your brand →</Link></p>
         </div>
       </section>
     </SiteShell>
