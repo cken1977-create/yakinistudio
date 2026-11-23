@@ -11,7 +11,19 @@
     "./fetch-page": "./src/fetch-page.ts",
     "./extract-brand": "./src/extract-brand.ts"
   },
-  "scripts": { "typecheck": "tsc --noEmit -p .", "test": "tsx --test src/*.test.ts" },
-  "dependencies": { "@yakini/pricing": "*" },
-  "devDependencies": { "typescript": "^5", "tsx": "^4", "@types/node": "^20" }
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "test": "tsx --test src/*.test.ts"
+  },
+  "dependencies": {
+    "@yakini/pricing": "*",
+    "domhandler": "^6.0.1",
+    "domutils": "^4.0.2",
+    "htmlparser2": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4",
+    "typescript": "^5"
+  }
 }

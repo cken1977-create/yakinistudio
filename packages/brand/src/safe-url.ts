@@ -33,34 +33,79 @@ function normalizeInput(raw: string): string {
 export function isBlockedIpv4(ip: string): boolean {
   const parts = ip.split('.').map((p) => Number(p))
   if (parts.length !== 4 || parts.some((n) => !Number.isInteger(n) || n < 0 || n > 255)) return true
-  const [a, b] = parts
+  const [a, b, c] = parts
   if (a === 0 || a === 10 || a === 127) return true
   if (a === 169 && b === 254) return true
   if (a === 172 && b >= 16 && b <= 31) return true
   if (a === 192 && b === 168) return true
+  if (a === 192 && b === 0 && (c === 0 || c === 2)) return true // IETF protocol assignments, TEST-NET-1
+  if (a === 192 && b === 88 && c === 99) return true // 6to4 relay anycast
+  if (a === 198 && b === 51 && c === 100) return true // TEST-NET-2
+  if (a === 203 && b === 0 && c === 113) return true // TEST-NET-3
   if (a === 100 && b >= 64 && b <= 127) return true // carrier-grade NAT
   if (a === 198 && (b === 18 || b === 19)) return true
   if (a >= 224) return true // multicast / reserved
   return false
 }
 
-function ipv4FromMapped(ip: string): string | null {
-  const v4 = ip.match(/(?:^::ffff:|^:ffff:|:ffff:0*:)?((?:\d{1,3}\.){3}\d{1,3})$/i)
-  return v4 ? v4[1] : null
+/**
+ * Parse an IPv6 literal into 8 hextets, or null. Handles "::" compression and a trailing dotted
+ * IPv4 part (e.g. ::ffff:127.0.0.1). Zone ids ("%eth0") are refused.
+ */
+export function parseIpv6(raw: string): number[] | null {
+  const ip = raw.toLowerCase()
+  if (!ip.includes(':') || ip.includes('%') || !/^[0-9a-f:.]+$/.test(ip)) return null
+  let tail: number[] = []
+  let body = ip
+  const dotted = ip.match(/^(.*:)(\d{1,3}(?:\.\d{1,3}){3})$/)
+  if (dotted) {
+    const v4 = dotted[2].split('.').map(Number)
+    if (v4.some((n) => n > 255)) return null
+    tail = [(v4[0] << 8) | v4[1], (v4[2] << 8) | v4[3]]
+    body = dotted[1].endsWith('::') ? dotted[1] : dotted[1].slice(0, -1)
+  }
+  const halves = body.split('::')
+  if (halves.length > 2) return null
+  const toNums = (s: string) => (s === '' ? [] : s.split(':').map((h) => (/^[0-9a-f]{1,4}$/.test(h) ? parseInt(h, 16) : NaN)))
+  const head = toNums(halves[0])
+  const rest = halves.length === 2 ? toNums(halves[1]) : []
+  if ([...head, ...rest].some((n) => Number.isNaN(n))) return null
+  const known = head.length + rest.length + tail.length
+  if (halves.length === 1 && known !== 8) return null
+  if (halves.length === 2 && known > 7) return null
+  return [...head, ...Array(8 - known).fill(0), ...rest, ...tail]
+}
+
+function v4From(h: number[], i: number): string {
+  return [h[i] >> 8, h[i] & 255, h[i + 1] >> 8, h[i + 1] & 255].join('.')
+}
+
+/** Is this IPv6 address (as hextets) private, internal, or a wrapper around such an IPv4? */
+function isBlockedIpv6(h: number[]): boolean {
+  const zeros = (from: number, to: number) => h.slice(from, to).every((x) => x === 0)
+  if (zeros(0, 8)) return true // ::
+  if (zeros(0, 7) && h[7] === 1) return true // ::1
+  if (zeros(0, 5) && h[5] === 0xffff) return isBlockedIpv4(v4From(h, 6)) // IPv4-mapped (any spelling)
+  if (zeros(0, 6)) return true // IPv4-compatible (deprecated), never a real public target
+  if (h[0] === 0x64 && h[1] === 0xff9b && zeros(2, 6)) return isBlockedIpv4(v4From(h, 6)) // NAT64
+  if (h[0] === 0x2002) return isBlockedIpv4(v4From(h, 1)) // 6to4 carries an IPv4 inside
+  if (h[0] === 0x2001 && h[1] === 0) return true // Teredo
+  if (h[0] === 0x2001 && h[1] === 0xdb8) return true // documentation
+  if (h[0] === 0x100 && zeros(1, 4)) return true // discard-only
+  if ((h[0] & 0xfe00) === 0xfc00) return true // unique local fc00::/7
+  if ((h[0] & 0xffc0) === 0xfe80) return true // link-local fe80::/10
+  if ((h[0] & 0xffc0) === 0xfec0) return true // site-local fec0::/10 (deprecated)
+  if ((h[0] & 0xff00) === 0xff00) return true // multicast
+  return false
 }
 
 export function isBlockedIp(ip: string): boolean {
   const value = ip.trim().toLowerCase().replace(/^\[|\]$/g, '')
-  const mapped = ipv4FromMapped(value)
-  if (mapped) return isBlockedIpv4(mapped)
   if (/^\d{1,3}(?:\.\d{1,3}){3}$/.test(value)) return isBlockedIpv4(value)
-
-  // IPv6: loopback, unicast/link-local, unique-local, IPv4-mapped already handled,
-  // multicast, and documentation ranges.
-  if (value === '::' || value === '::1') return true
-  if (value.startsWith('fe80:') || value.startsWith('ff')) return true
-  if (value.startsWith('fc') || value.startsWith('fd')) return true
-  if (value.startsWith('2001:db8:')) return true
+  if (value.includes(':')) {
+    const h = parseIpv6(value)
+    return h ? isBlockedIpv6(h) : true // anything we cannot parse is refused
+  }
   return false
 }
 
