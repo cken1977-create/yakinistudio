@@ -64,6 +64,7 @@ describe('POST /start (demo hand-off)', () => {
     expect(www.status).toBe(200)
     await www.text()
     expect((await POST(demoPost({ kitId: 'food-truck' }))).status).toBe(400)
+    expect((await POST(demoPost({ businessName: 'x'.repeat(20_000), kitId: 'food-truck' }))).status).toBe(400)
     const other = (await import('@yakini/pricing')).KITS.find((k) => k.id !== 'food-truck' && k.id !== 'restaurant')
     if (other) {
       const res = await POST(demoPost({ businessName: 'X', kitId: other.id }))
@@ -133,6 +134,8 @@ describe('POST /api/drafts (describe your business)', () => {
     expect((await POST(await promptPost(ok, { origin: DEMO }))).status).toBe(403)
     expect((await POST(await promptPost({ businessName: 'Bot Bistro', description: '' }))).status).toBe(400)
     expect((await POST(await promptPost(ok, { logo: new Blob(['<html></html>'], { type: 'text/html' }) }))).status).toBe(400)
+    // A body over the cap is refused even when no Content-Length is sent (chunked upload).
+    expect((await POST(await promptPost(ok, { logo: new Blob([new Uint8Array(3 * 1024 * 1024)], { type: 'image/png' }) }))).status).toBe(413)
   })
 })
 

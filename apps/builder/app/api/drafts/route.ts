@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { HexColor } from '@yakini/site-schema'
 import { asKit, errorPage, plainPage, streamDraft, underRateLimit, withRuntime } from '@/lib/server/draft-flow'
-import { checkFormTime, originAllowed, requestOrigin } from '@/lib/server/request'
+import { checkFormTime, originAllowed, readCappedForm, requestOrigin } from '@/lib/server/request'
 
 /**
  * POST /api/drafts: "Describe your business" from /new (spec 5.3, 18). Same pipeline as /start,
@@ -34,11 +34,10 @@ export async function POST(request: Request): Promise<Response> {
   return withRuntime(async (rt) => {
     if (!originAllowed(request.headers, [requestOrigin(request.url)])) return errorPage('origin')
     if (!(request.headers.get('content-type') ?? '').startsWith('multipart/form-data')) return errorPage('bad')
-    if (Number(request.headers.get('content-length') ?? 0) > LOGO_MAX + 64 * 1024) {
+    const form = await readCappedForm(request, LOGO_MAX + 64 * 1024)
+    if (!form) {
       return plainPage('Logo too large', '<h1>That logo file is too large.</h1><p>Please use a PNG, JPG or SVG under 2 MB.</p><p><a class="btn" href="/new">Try again</a></p>', 413)
     }
-    let form: FormData
-    try { form = await request.formData() } catch { return errorPage('bad') }
 
     // Honeypot and minimum time (spec 14.4). Bots get the same plain answer as a typo would.
     if (field(form, 'website')) return errorPage('bad')

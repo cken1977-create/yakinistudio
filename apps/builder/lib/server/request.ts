@@ -1,5 +1,5 @@
 import 'server-only'
-import { createHmac } from 'node:crypto'
+import { createHmac, timingSafeEqual } from 'node:crypto'
 
 /**
  * Request helpers: client IP (hashed before it is stored or used as a key, spec 14.7) and the
@@ -61,9 +61,34 @@ export function signFormTime(now: number, pepper: string): string {
 export function checkFormTime(value: string | null, pepper: string, now: number): 'ok' | 'too_fast' | 'expired' | 'bad' {
   const m = /^(\d{13})\.([0-9a-f]{32})$/.exec(value ?? '')
   if (!m) return 'bad'
-  if (signFormTime(Number(m[1]), pepper) !== value) return 'bad'
+  const want = Buffer.from(signFormTime(Number(m[1]), pepper))
+  const got = Buffer.from(value!)
+  if (want.length !== got.length || !timingSafeEqual(want, got)) return 'bad'
   const age = now - Number(m[1])
   if (age < 3_000) return 'too_fast'
   if (age > 2 * 60 * 60 * 1000) return 'expired'
   return 'ok'
+}
+
+/**
+ * Read a form body with a hard size cap that holds even when Content-Length is missing or wrong
+ * (chunked uploads). Returns null when the body is too large or not a form.
+ */
+export async function readCappedForm(request: Request, maxBytes: number): Promise<FormData | null> {
+  const declared = Number(request.headers.get('content-length') ?? '')
+  if (Number.isFinite(declared) && declared > maxBytes) return null
+  if (!request.body) return null
+  const reader = request.body.getReader()
+  const chunks: Uint8Array[] = []
+  let total = 0
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    total += value.byteLength
+    if (total > maxBytes) { await reader.cancel().catch(() => {}); return null }
+    chunks.push(value)
+  }
+  try {
+    return await new Response(Buffer.concat(chunks), { headers: { 'content-type': request.headers.get('content-type') ?? '' } }).formData()
+  } catch { return null }
 }
