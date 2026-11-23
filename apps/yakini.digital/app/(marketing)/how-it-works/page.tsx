@@ -30,7 +30,7 @@ const PROVIDE = [
 const FINE_PRINT = [
   { h: 'Paying', p: BILLING_NOTE },
   { h: 'Refunds', p: REFUND_RULE },
-  { h: 'Help hours', p: `${HELP_HOURS_NOTE} ${EXTRA_HELP_NOTE}` },
+  { h: 'Support', p: `${HELP_HOURS_NOTE} ${EXTRA_HELP_NOTE}` },
   { h: 'Drafted replies', p: AI_LIMIT_NOTE },
   { h: 'Your accounts', p: `${PASS_THROUGH_NOTE} ${FLAT_PRICING_NOTE}` },
 ] as const

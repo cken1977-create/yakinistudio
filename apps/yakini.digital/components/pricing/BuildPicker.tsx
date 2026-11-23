@@ -7,6 +7,7 @@ import {
   CATALOG,
   DASHBOARD_NOTE,
   HEADLINE,
+  PACKAGE_EXAMPLE,
   KITS,
   QUOTE_NOTE,
   SETUPS,
@@ -36,7 +37,6 @@ export function BuildPicker() {
   const [items, setItems] = useState<string[]>([])
   const [rush, setRush] = useState(false)
   const [extraSeats, setExtraSeats] = useState(0)
-  const [extraLocations, setExtraLocations] = useState(0)
   const [annual, setAnnual] = useState(false)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -49,8 +49,8 @@ export function BuildPicker() {
   const [sent, setSent] = useState(false)
 
   const sel = useMemo(
-    () => ({ kitId, sizeId, setupId, items, rush, extraSeats, extraLocations, annual }),
-    [kitId, sizeId, setupId, items, rush, extraSeats, extraLocations, annual],
+    () => ({ kitId, sizeId, setupId, items, rush, extraSeats, annual }),
+    [kitId, sizeId, setupId, items, rush, extraSeats, annual],
   )
   const estimate = useMemo(() => estimateBuild(sel), [sel])
   const kit = KITS.find((k) => k.id === kitId)
@@ -141,16 +141,16 @@ export function BuildPicker() {
                   <small>
                     {kit && kit.group !== 'quote' ? moneyLabel(kit.monthly[s.id], '/mo') : kit ? 'Quote' : 'Pick a kit'}
                   </small>
-                  <small>{s.seats} seats · {s.locations} location{s.locations === 1 ? '' : 's'} · {s.help} help</small>
+                  <small>{s.seats} logins · {s.capacity}</small>
                 </button>
               ))}
             </div>
             {kit ? (
               <p className="bp-hint">
-                {size.name} capacity for {kit.name}: {kit.capacity[size.id]}. {size.texts.toLocaleString('en-US')} text segments included. Extra seats are $15/month. Extra locations are $125 to add, then $49/month.
+                {size.name} for {kit.name}: {kit.capacity[size.id]}. {size.support}. {size.seats} staff logins; extra logins are $15/month. The plan is sized for {size.texts.toLocaleString('en-US')} text segments; you pay your texting provider directly for every text. If you need more than this size includes, move up a size, or ask for a custom quote past Larger.
               </p>
             ) : (
-              <p className="bp-hint">Staff seats, locations, help time, and texting limits come with the size you pick. Industry capacity depends on the kit.</p>
+              <p className="bp-hint">Staff logins, capacity, and support come with the size you pick. If you need more than Larger includes, that is a custom quote.</p>
             )}
             {!kit?.ready && kit ? (
               <p className="bp-warn">This kit is not sold as a published plan until it is built. You can still send a quote request.</p>
@@ -180,12 +180,8 @@ export function BuildPicker() {
             <p className="bp-hint">{DASHBOARD_NOTE} {TUTORIAL_NOTE}</p>
             <div className="bp-extras">
               <label>
-                Extra staff seats
+                Extra staff logins ($15/month each)
                 <input type="number" min={0} max={40} value={extraSeats} onChange={(e) => setExtraSeats(Math.max(0, Number(e.target.value) || 0))} />
-              </label>
-              <label>
-                Extra locations
-                <input type="number" min={0} max={20} value={extraLocations} onChange={(e) => setExtraLocations(Math.max(0, Number(e.target.value) || 0))} />
               </label>
             </div>
             {ITEM_GROUPS.map((group) => (
@@ -231,6 +227,7 @@ export function BuildPicker() {
           <div className="bp-summary-inner">
             <p className="bp-kicker">Your estimate</p>
             <p className="bp-head">{HEADLINE}</p>
+            <p className="bp-hint">{PACKAGE_EXAMPLE}</p>
             <div className="bp-totals">
               <div>
                 <span>Estimated setup</span>

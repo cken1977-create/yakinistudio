@@ -125,7 +125,7 @@ export function PlanGrid({ num = '02' }: { num?: string }) {
         <ul className="hm-policy">
           <li><strong>Estimates.</strong> Totals on the pricing page are estimates. The written quote is final.</li>
           <li><strong>Refunds.</strong> {REFUND_RULE}</li>
-          <li><strong>Help hours.</strong> {HELP_HOURS_NOTE} {EXTRA_HELP_NOTE}</li>
+          <li><strong>Support.</strong> {HELP_HOURS_NOTE} {EXTRA_HELP_NOTE}</li>
           <li><strong>In writing.</strong> {FLAT_PRICING_NOTE}</li>
         </ul>
         <a href="/pricing" className="hm-textlink">Build your estimate and see every price →</a>

@@ -36,7 +36,7 @@ const FAQ = [
   { q: 'Is this do-it-yourself?', a: 'No. A real Yakini person sets everything up with you and stays with you after go-live, with a help desk you can reach any time.' },
   { q: 'When am I charged?', a: `${BILLING_NOTE} The first monthly charge is 30 days after you sign up, then monthly. Cancel the monthly plan any time.` },
   { q: 'Can I get a refund?', a: REFUND_RULE },
-  { q: 'What happens to help hours I don’t use?', a: `${HELP_HOURS_NOTE} ${EXTRA_HELP_NOTE}` },
+  { q: 'What support is included?', a: `${HELP_HOURS_NOTE} ${EXTRA_HELP_NOTE}` },
   { q: 'Who owns the accounts?', a: `You do. ${PASS_THROUGH_NOTE} ${FLAT_PRICING_NOTE}` },
 ] as const
 

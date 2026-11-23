@@ -10,6 +10,7 @@ import {
   EXTRA_HELP_NOTE,
   GUIDED_STEPS,
   HEADLINE,
+  PACKAGE_EXAMPLE,
   HELP_HOURS_NOTE,
   HOURLY_RATE,
   KITS,
@@ -42,6 +43,7 @@ export default function PricingPage() {
             <span className="yk-gold">{HEADLINE.split('. ')[1]}</span>
           </h1>
           <p className="yk-page-sub">{PITCH}</p>
+          <p className="pr-lead">{PACKAGE_EXAMPLE}</p>
           <div className="pn-hero-ctas">
             <a href="#build" className="pr-tier-cta pr-cta-featured"><span>Build my estimate</span><span className="yk-btn-arrow">→</span></a>
             <a href="#includes" className="pr-tier-cta"><span>See what a kit includes</span></a>
@@ -103,7 +105,7 @@ export default function PricingPage() {
       <section id="limits" className="yk-section">
         <div className="yk-section-inner">
           <div className="yk-section-tag"><span className="yk-num">04</span><span>Size limits</span></div>
-          <h2 className="yk-section-h2">Staff, locations, help, and texting for each size.</h2>
+          <h2 className="yk-section-h2">Staff logins, capacity, and support for each size.</h2>
           <div className="pr-table-wrap">
             <table className="pr-table">
               <thead>
@@ -115,24 +117,24 @@ export default function PricingPage() {
               </thead>
               <tbody>
                 <tr>
-                  <td>Staff seats</td>
+                  <td>Staff logins</td>
                   {SIZES.map((s) => <td key={s.id}>{s.seats}</td>)}
-                  <td>$15 per seat, per month</td>
+                  <td>$15 per extra login, per month</td>
                 </tr>
                 <tr>
-                  <td>Locations</td>
-                  {SIZES.map((s) => <td key={s.id}>{s.locations}</td>)}
-                  <td>$125 to add, then $49/month each</td>
+                  <td>Capacity</td>
+                  {SIZES.map((s) => <td key={s.id}>{s.capacity}</td>)}
+                  <td>Past Larger is a custom quote</td>
                 </tr>
                 <tr>
-                  <td>Help each month</td>
-                  {SIZES.map((s) => <td key={s.id}>{s.help}</td>)}
-                  <td>${HOURLY_RATE}/hour</td>
+                  <td>Support</td>
+                  {SIZES.map((s) => <td key={s.id}>{s.support}</td>)}
+                  <td>Approved extra work is ${HOURLY_RATE}/hour</td>
                 </tr>
                 <tr>
-                  <td>Texting allowance</td>
+                  <td>Texting volume the plan is sized for</td>
                   {SIZES.map((s) => <td key={s.id}>{s.texts.toLocaleString('en-US')} segments</td>)}
-                  <td>Cost plus 15% on the overage; you still pay the provider for every text</td>
+                  <td>You pay your texting provider directly for every text. If you regularly need more volume, a separate Yakini texting management fee can be quoted. Yakini does not mark up the provider bill.</td>
                 </tr>
               </tbody>
             </table>
