@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { isBlockedIp, isBlockedIpv4, isSafePublicLogoUrl, sanitizePublicHttpUrl } from './safe-url.ts'
+import { isBlockedIp, isBlockedIpv4, isSafePublicLogoUrl, sanitizePublicHttpUrl } from './safe-url'
 
 describe('sanitizePublicHttpUrl', () => {
   it('accepts a normal public https URL and adds https when missing', () => {
