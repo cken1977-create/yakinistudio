@@ -45,7 +45,10 @@ async function checkPage(page: Page, label: string, project: string) {
   expect(broken, `${label}: broken images`).toEqual([])
   const site = await page.locator('.ys-site').innerText()
   expect(lintCopy(site), `${label}: banned words`).toEqual([])
-  expect(strayPrices(site), `${label}: stray prices`).toEqual([])
+  // The business's own menu prices are expected on its site. The studio's own words around the
+  // draft must never quote a Yakini price other than the one public line.
+  const chrome = await page.locator('body > div > header, body header.sticky').allInnerTexts()
+  expect(strayPrices(chrome.join(' ')), `${label}: stray Yakini prices`).toEqual([])
   if (SHOTS) await page.screenshot({ path: `${SHOTS}/${label}-${project}.png`, fullPage: true })
 }
 
