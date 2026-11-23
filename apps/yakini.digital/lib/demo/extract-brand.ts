@@ -1,4 +1,4 @@
-import type { KitId } from '@/lib/pricing'
+import type { KitId, SizeId } from '@/lib/pricing'
 import { isSafePublicLogoUrl } from './safe-url'
 
 export type BrandColors = {
@@ -14,6 +14,8 @@ export type BrandProfile = {
   sourceUrl: string | null
   fetched: boolean
   suggestedKit?: KitId
+  suggestedSize?: SizeId
+  intro?: string
 }
 
 export const FALLBACK_COLORS: BrandColors = {
@@ -236,4 +238,56 @@ export function withAlpha(hex: string, alpha: number): string {
     .toString(16)
     .padStart(2, '0')
   return `#${n}${a}`
+}
+
+const KIT_IDS = new Set<KitId>([
+  'food-truck',
+  'landlord',
+  'real-estate',
+  'restaurant',
+  'tree-lawn',
+  'nonprofit',
+  'training-school',
+  'trucking',
+  'oilfield',
+  'specialized',
+  'cannabis',
+  'home-healthcare',
+  'reentry',
+])
+
+/** Map a model or free-text kit id onto a known catalog id. */
+export function asKitId(value: string | undefined): KitId | undefined {
+  if (!value) return undefined
+  const raw = value.trim().toLowerCase().replace(/[\s_]+/g, '-')
+  const mapped = raw === 'training' || raw === 'school' ? 'training-school' : raw
+  return KIT_IDS.has(mapped as KitId) ? (mapped as KitId) : undefined
+}
+
+export function asSizeId(value: string | undefined): SizeId | undefined {
+  if (value === 'small' || value === 'growing' || value === 'larger') return value
+  return undefined
+}
+
+/** Visible text from a page, kept only for the current request. Never store this. */
+export function pageExcerpt(html: string, max = 1600): string {
+  return String(html || '')
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, max)
+}
+
+export function looksLikeHostName(name: string): boolean {
+  return /^[a-z0-9.-]+\.[a-z]{2,}$/i.test(name.trim())
+}
+
+export function colorsLookWeak(colors: BrandColors): boolean {
+  return colors.primary === FALLBACK_COLORS.primary && colors.accent === FALLBACK_COLORS.accent
 }
