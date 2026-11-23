@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { blocked, cutMessage, MAX_MESSAGE, sanitizeHistory } from './guard.ts'
+import { blocked, cutMessage, MAX_MESSAGE, sanitizeHistory } from './guard'
 
 describe('chat guard', () => {
   it('trims and caps message length', () => {

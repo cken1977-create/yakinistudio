@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   if (!text) return NextResponse.json({ error: 'Nothing to say.' }, { status: 400, headers: corsHeaders(req) })
   const audio = await speakReply(text)
   if (!audio) return NextResponse.json({ error: 'Voice did not come through. Please try again.' }, { status: 502, headers: corsHeaders(req) })
-  return new Response(audio, {
+  return new Response(new Uint8Array(audio), {
     headers: corsHeaders(req, { 'Content-Type': 'audio/mpeg', 'Cache-Control': 'no-store' }),
   })
 }

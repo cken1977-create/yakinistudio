@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { fallbackAnswer, looksLikeInjection } from './knowledge.ts'
+import { fallbackAnswer, looksLikeInjection } from './knowledge'
 
 describe('fallbackAnswer', () => {
   it('gives locked public pricing, not invented numbers', () => {

@@ -30,7 +30,7 @@ export function ChatWidget() {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const ctxRef = useRef<AudioContext | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
-  const recRef = useRef<SpeechRecognition | null>(null)
+  const recRef = useRef<Rec | null>(null)
   const barge = useRef(0)
 
   useEffect(() => {
@@ -175,8 +175,8 @@ export function ChatWidget() {
   }
 
   const listen = () => {
-    const SR = (window as unknown as { SpeechRecognition?: { new (): SpeechRecognition }; webkitSpeechRecognition?: { new (): SpeechRecognition } }).SpeechRecognition
-      || (window as unknown as { webkitSpeechRecognition?: { new (): SpeechRecognition } }).webkitSpeechRecognition
+    const w = window as unknown as { SpeechRecognition?: new () => Rec; webkitSpeechRecognition?: new () => Rec }
+    const SR = w.SpeechRecognition || w.webkitSpeechRecognition
     if (!SR) return
     stopVoice()
     const rec = new SR()
@@ -184,8 +184,10 @@ export function ChatWidget() {
     rec.interimResults = true
     rec.continuous = false
     recRef.current = rec
-    rec.onresult = (e: SpeechRecognitionEvent) => {
-      const text = [...e.results].map((r) => r[0].transcript).join(' ').trim()
+    rec.onresult = (e) => {
+      let text = ''
+      for (let i = 0; i < e.results.length; i++) text += e.results[i][0].transcript
+      text = text.trim()
       setInput(text)
       if (e.results[e.results.length - 1].isFinal) ask(text)
     }
@@ -298,12 +300,11 @@ export function ChatWidget() {
   )
 }
 
-type SpeechRecognition = {
+type Rec = {
   lang: string
   interimResults: boolean
   continuous: boolean
-  onresult: ((e: SpeechRecognitionEvent) => void) | null
+  onresult: ((e: { results: { length: number; [i: number]: { 0: { transcript: string }; isFinal?: boolean } } }) => void) | null
   start: () => void
   abort: () => void
 }
-type SpeechRecognitionEvent = { results: { length: number; [i: number]: { 0: { transcript: string } } } & { [i: number]: { isFinal?: boolean } } & ArrayLike<{ 0: { transcript: string }; isFinal?: boolean }> }

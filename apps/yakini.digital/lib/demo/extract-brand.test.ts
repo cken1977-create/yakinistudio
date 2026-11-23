@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { asKitId, extractBrand, pageExcerpt, suggestKitFromText } from './extract-brand.ts'
+import { asKitId, extractBrand, pageExcerpt, suggestKitFromText } from './extract-brand'
 
 const HTML = `
 <!doctype html>
