@@ -4,6 +4,7 @@ import { FormEvent, useMemo, useState } from 'react'
 import type { BrandProfile } from '@/lib/demo/extract-brand'
 import { FALLBACK_COLORS } from '@/lib/demo/extract-brand'
 import { DashboardPreview } from '@/components/demo/DashboardPreview'
+import { startSetupUrl } from '@/lib/demo/start-url'
 import {
   ANNUAL_NOTE,
   CATALOG,
@@ -75,6 +76,7 @@ export function DemoBuilder() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [sent, setSent] = useState(false)
+  const [showQuote, setShowQuote] = useState(false)
 
   const sel = useMemo(
     () => ({
@@ -214,7 +216,7 @@ export function DemoBuilder() {
       {step === 0 ? (
         <section className="db-card">
           <h3>Start with your website.</h3>
-          <p className="db-hint">We read the public page only — logo, name, and colors — and build a sample dashboard in your brand. You can also start with just a business name.</p>
+          <p className="db-hint">We read the public page only — logo, name, and colors — then you walk through a sample kit in your brand. It is free, and you do not need to leave a name, email, or phone number to see it. You can also start with just a business name.</p>
           <div className="db-fields">
             <label>
               Your website
@@ -389,21 +391,44 @@ export function DemoBuilder() {
         <div className="db-stage">
           <div>
             <DashboardPreview brand={{ ...brand, name: name.trim() || brand.name || 'Your business' }} kitId={kitId} items={items} />
-            <section className="db-card" id="send-quote" style={{ marginTop: 16 }}>
-              <h3>Send my build for a quote</h3>
-              <p className="db-hint">{QUOTE_NOTE} We will not send an automatic email. A Yakini person will follow up with a written quote.</p>
-              <form className="db-form" onSubmit={submit}>
-                <label>Name<input value={contactName} onChange={(e) => setContactName(e.target.value)} autoComplete="name" required /></label>
-                <label>Email<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required /></label>
-                <label>Phone<input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" /></label>
-                <label>Business name<input value={name || brand.name} onChange={(e) => setName(e.target.value)} autoComplete="organization" /></label>
-                <label className="wide">Anything we should know<textarea value={note} onChange={(e) => setNote(e.target.value)} rows={4} /></label>
-                {error ? <p className="db-error" role="alert">{error}</p> : null}
-                <button type="submit" className="db-btn" disabled={submitting}>{submitting ? 'Sending…' : 'Send my build for a quote'}</button>
-              </form>
+            <section className="db-card db-after" id="send-quote" style={{ marginTop: 16 }}>
+              <h3>Ready when you are.</h3>
+              <p className="db-hint">
+                You already have a walkable sample in your brand. Start setup when you want a real kit. A written quote is optional, and we will not send an automatic email.
+              </p>
+              <div className="db-cta">
+                <a
+                  className="db-btn"
+                  href={startSetupUrl({ name: name || brand.name, website: url || brand.sourceUrl || undefined, kitId, sizeId })}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Start my setup
+                </a>
+                {!showQuote ? (
+                  <button type="button" className="db-btn-secondary" onClick={() => setShowQuote(true)}>
+                    Get a written quote
+                  </button>
+                ) : null}
+              </div>
+              {showQuote ? (
+                <div>
+                  <h4 className="db-quote-head">Get a written quote</h4>
+                  <p className="db-hint">{QUOTE_NOTE} This form is optional. We will not send an automatic email. A Yakini person will follow up with a written quote.</p>
+                  <form className="db-form" onSubmit={submit}>
+                    <label>Name<input value={contactName} onChange={(e) => setContactName(e.target.value)} autoComplete="name" required /></label>
+                    <label>Email<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required /></label>
+                    <label>Phone<input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" /></label>
+                    <label>Business name<input value={name || brand.name} onChange={(e) => setName(e.target.value)} autoComplete="organization" /></label>
+                    <label className="wide">Anything we should know<textarea value={note} onChange={(e) => setNote(e.target.value)} rows={4} /></label>
+                    {error ? <p className="db-error" role="alert">{error}</p> : null}
+                    <button type="submit" className="db-btn" disabled={submitting}>{submitting ? 'Sending…' : 'Send my build for a quote'}</button>
+                  </form>
+                </div>
+              ) : null}
             </section>
             <div className="db-actions">
-              <button type="button" className="db-btn-ghost" onClick={() => setStep(1)}>Change my kit</button>
+              <button type="button" className="db-btn-ghost" onClick={() => { setShowQuote(false); setStep(1) }}>Change my kit</button>
             </div>
           </div>
           <aside className="db-estimate" aria-live="polite">
@@ -443,7 +468,26 @@ export function DemoBuilder() {
               </ul>
               <p className="db-hint">{QUOTE_NOTE} Hosting, texting, and payment processing are billed by those providers, in your name.</p>
               <p className="db-hint">{PACKAGE_EXAMPLE}</p>
-              <a className="db-btn" href="#send-quote">Send this build for a quote</a>
+              <div className="db-cta">
+                <a
+                  className="db-btn"
+                  href={startSetupUrl({ name: name || brand.name, website: url || brand.sourceUrl || undefined, kitId, sizeId })}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Start my setup
+                </a>
+                <button
+                  type="button"
+                  className="db-btn-secondary"
+                  onClick={() => {
+                    setShowQuote(true)
+                    document.getElementById('send-quote')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  }}
+                >
+                  Get a written quote
+                </button>
+              </div>
             </div>
           </aside>
         </div>
