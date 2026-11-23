@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next'
 import { ALL } from '@/lib/watch'
 
 // Bump this date whenever public page content changes, so search engines re-crawl.
-const LAST_MODIFIED = new Date('2026-11-20T00:00:00-07:00')
+const LAST_MODIFIED = new Date('2026-11-22T00:00:00-07:00')
 
-const PAGES = ['', '/portal', '/contact', '/pricing', '/how-it-works', '/custom-builds', '/about', '/apply', '/watch', '/class', '/clase', '/privacy'] as const
+const PAGES = ['', '/portal', '/contact', '/pricing', '/demo', '/how-it-works', '/custom-builds', '/about', '/apply', '/watch', '/class', '/clase', '/privacy'] as const
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

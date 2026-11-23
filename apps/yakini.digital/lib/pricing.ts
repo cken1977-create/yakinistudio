@@ -12,6 +12,7 @@ export const PORTAL_LOGIN_URL = `${PORTAL_URL}/enter`
 
 /** Public buying path: the pricing build picker, not the older portal sign-up offers. */
 export const BUILD_URL = '/pricing#build'
+export const DEMO_URL = '/demo'
 export const QUOTE_URL = BUILD_URL
 export const QUOTE_CTA = 'Get my quote'
 export const QUOTE_NOTE = 'Totals on this page are estimates. The written quote is final.'
