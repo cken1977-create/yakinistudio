@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" role="img" aria-label="Illustration of a warm dining room with set tables"><title>Illustration of a warm dining room with set tables</title>
+<rect width="1600" height="1000" fill="#2A211C"/>
+<rect x="0" y="0" width="1600" height="560" fill="#3B2C24"/>
+<g fill="#4A382E"><rect x="140" y="120" width="220" height="300" rx="110"/><rect x="520" y="120" width="220" height="300" rx="110"/><rect x="900" y="120" width="220" height="300" rx="110"/><rect x="1280" y="120" width="220" height="300" rx="110"/></g>
+<g fill="#C9A14A" opacity=".9"><path d="M420 0v140"  stroke="#C9A14A" stroke-width="4"/><path d="M370 190q50-70 100 0z"/><ellipse cx="420" cy="200" rx="90" ry="26" fill="#FCE3A6" opacity=".25"/><path d="M800 0v140"  stroke="#C9A14A" stroke-width="4"/><path d="M750 190q50-70 100 0z"/><ellipse cx="800" cy="200" rx="90" ry="26" fill="#FCE3A6" opacity=".25"/><path d="M1180 0v140"  stroke="#C9A14A" stroke-width="4"/><path d="M1130 190q50-70 100 0z"/><ellipse cx="1180" cy="200" rx="90" ry="26" fill="#FCE3A6" opacity=".25"/></g>
+<rect y="560" width="1600" height="440" fill="#1B1714"/>
+<g transform="translate(160 640)">
+<ellipse cx="160" cy="70" rx="200" ry="56" fill="#7A2E2A"/><ellipse cx="160" cy="60" rx="200" ry="56" fill="#F2E6D0"/>
+<rect x="150" y="100" width="20" height="220" fill="#7A2E2A"/>
+<circle cx="90" cy="56" r="34" fill="#fff"/><circle cx="230" cy="56" r="34" fill="#fff"/>
+<rect x="152" y="-10" width="16" height="60" rx="6" fill="#C9A14A"/>
+</g><g transform="translate(640 640)">
+<ellipse cx="160" cy="70" rx="200" ry="56" fill="#7A2E2A"/><ellipse cx="160" cy="60" rx="200" ry="56" fill="#F2E6D0"/>
+<rect x="150" y="100" width="20" height="220" fill="#7A2E2A"/>
+<circle cx="90" cy="56" r="34" fill="#fff"/><circle cx="230" cy="56" r="34" fill="#fff"/>
+<rect x="152" y="-10" width="16" height="60" rx="6" fill="#C9A14A"/>
+</g><g transform="translate(1120 640)">
+<ellipse cx="160" cy="70" rx="200" ry="56" fill="#7A2E2A"/><ellipse cx="160" cy="60" rx="200" ry="56" fill="#F2E6D0"/>
+<rect x="150" y="100" width="20" height="220" fill="#7A2E2A"/>
+<circle cx="90" cy="56" r="34" fill="#fff"/><circle cx="230" cy="56" r="34" fill="#fff"/>
+<rect x="152" y="-10" width="16" height="60" rx="6" fill="#C9A14A"/>
+</g></svg>

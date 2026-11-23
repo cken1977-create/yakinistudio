@@ -4,7 +4,8 @@ import { FormEvent, useMemo, useState } from 'react'
 import type { BrandProfile } from '@/lib/demo/extract-brand'
 import { FALLBACK_COLORS } from '@/lib/demo/extract-brand'
 import { DashboardPreview } from '@/components/demo/DashboardPreview'
-import { startSetupUrl } from '@/lib/demo/start-url'
+import { StartSetup } from '@/components/demo/StartSetup'
+import type { Handoff } from '@/lib/demo/handoff'
 import {
   ANNUAL_NOTE,
   CATALOG,
@@ -50,7 +51,7 @@ function monogram(name: string) {
   return ((parts[0]?.[0] || 'Y') + (parts[1]?.[0] || '')).toUpperCase()
 }
 
-export function DemoBuilder() {
+export function DemoBuilder({ handoff = null }: { handoff?: Handoff }) {
   const [step, setStep] = useState<Step>(0)
   const [url, setUrl] = useState('')
   const [name, setName] = useState('')
@@ -252,6 +253,11 @@ export function DemoBuilder() {
               {loading ? 'Reading your site…' : 'Build my demo'}
             </button>
           </div>
+          {handoff ? (
+            <p className="db-hint">
+              No website? <a href={handoff.describeUrl}>Describe your business</a> and we&rsquo;ll build a draft from that.
+            </p>
+          ) : null}
         </section>
       ) : null}
 
@@ -402,14 +408,7 @@ export function DemoBuilder() {
                 You already have a walkable sample in your brand. Start setup when you want a real kit. A written quote is optional, and we will not send an automatic email.
               </p>
               <div className="db-cta">
-                <a
-                  className="db-btn"
-                  href={startSetupUrl({ name: name || brand.name, website: url || brand.sourceUrl || undefined, kitId, sizeId })}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Start my setup
-                </a>
+                <StartSetup handoff={handoff} name={name || brand.name} website={url || brand.sourceUrl || undefined} kitId={kitId} sizeId={sizeId} items={items} />
                 {!showQuote ? (
                   <button type="button" className="db-btn-secondary" onClick={() => setShowQuote(true)}>
                     Get a written quote
@@ -474,14 +473,7 @@ export function DemoBuilder() {
               <p className="db-hint">{QUOTE_NOTE} Hosting, texting, and payment processing are billed by those providers, in your name.</p>
               <p className="db-hint">{PACKAGE_EXAMPLE}</p>
               <div className="db-cta">
-                <a
-                  className="db-btn"
-                  href={startSetupUrl({ name: name || brand.name, website: url || brand.sourceUrl || undefined, kitId, sizeId })}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Start my setup
-                </a>
+                <StartSetup handoff={handoff} name={name || brand.name} website={url || brand.sourceUrl || undefined} kitId={kitId} sizeId={sizeId} items={items} />
                 <button
                   type="button"
                   className="db-btn-secondary"

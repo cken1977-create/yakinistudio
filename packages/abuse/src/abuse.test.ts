@@ -28,6 +28,8 @@ describe('slugs (13.3)', () => {
     expect(slugProblem('Mamas')).not.toBeNull()
     expect(slugProblem('mamas-kitchen', 'mamas-kitchen')).toMatch(/reserved/)
     expect(slugProblem('mamas-kitchen')).toBeNull()
+    expect(slugProblem('draft-1a2b3c4d5e6f')).toMatch(/reserved/)
+    expect(slugProblem('drafthouse-grill')).toBeNull()
   })
 })
 

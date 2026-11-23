@@ -7,7 +7,8 @@
 export const DEFAULT_XAI_MODEL = 'grok-4.20-0309-non-reasoning'
 export const XAI_BASE_URL = 'https://api.x.ai/v1'
 
-export type ChatMessage = { role: 'system' | 'user' | 'assistant' | 'tool'; content: string; tool_call_id?: string }
+export type RawToolCall = { id: string; type: 'function'; function: { name: string; arguments: string } }
+export type ChatMessage = { role: 'system' | 'user' | 'assistant' | 'tool'; content: string; tool_call_id?: string; tool_calls?: RawToolCall[] }
 export type ToolDef = { type: 'function'; function: { name: string; description: string; parameters: Record<string, unknown> } }
 export type ToolCall = { id: string; name: string; arguments: unknown }
 
@@ -27,6 +28,7 @@ export class AiError extends Error {
 }
 
 export type ChatOptions = {
+  temperature?: number
   apiKey: string
   model?: string
   messages: ChatMessage[]
@@ -67,6 +69,7 @@ export async function chat(o: ChatOptions): Promise<ChatResult> {
         messages: o.messages,
         ...(o.tools ? { tools: o.tools, tool_choice: o.toolChoice ?? 'auto' } : {}),
         ...(o.maxTokens ? { max_tokens: o.maxTokens } : {}),
+        ...(o.temperature !== undefined ? { temperature: o.temperature } : {}),
       }),
     })
     if (!res.ok) throw new AiError('http', `AI request failed (${res.status})`, res.status)

@@ -1,0 +1,38 @@
+import type { RichText, Section, SectionOf, SectionType } from '@yakini/site-schema'
+import type { SampleImage, TemplateContext } from './types'
+
+/** Plain paragraphs as RichText. */
+export function paragraphs(...texts: string[]): RichText {
+  return texts.map((text) => ({ type: 'p' as const, children: [{ text }] }))
+}
+
+/** Builds a section with the right literal type, so templates stay type-checked. */
+export function section<T extends SectionType>(type: T, id: string, variant: SectionOf<T>['variant'], props: SectionOf<T>['props'], hidden = false): Section {
+  return { id, type, variant, hidden, props } as Section
+}
+
+export const header = (variant: 'bar' | 'centered', ctx: TemplateContext, ctaLabel: string) =>
+  section('header', 'header', variant, { showPhone: Boolean(ctx.phone), ctaLabel })
+export const footer = () => section('footer', 'footer', 'simple', {})
+
+export function consentText(name: string): string {
+  return `By sending this form you agree that ${name} may contact you about your request. Your details are never sold.`
+}
+
+/** The kit sample image used when the business has no photo of its own. */
+export function imageOr(ctx: TemplateContext, sample: SampleImage | undefined): { assetId: string; alt: string } | undefined {
+  if (ctx.heroImage) return ctx.heroImage
+  return sample ? { assetId: sample.assetId, alt: sample.alt } : undefined
+}
+
+/** "in Albuquerque" when we know the city, otherwise nothing. */
+export function inCity(ctx: TemplateContext): string {
+  return ctx.city ? ` in ${ctx.city}` : ''
+}
+
+export function trimTo(s: string, max: number): string {
+  if (s.length <= max) return s
+  const cut = s.slice(0, max - 1)
+  const space = cut.lastIndexOf(' ')
+  return `${(space > max * 0.6 ? cut.slice(0, space) : cut).trimEnd()}…`
+}

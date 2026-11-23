@@ -1,0 +1,112 @@
+[
+  {
+    "slug": "mesa-street-tacos",
+    "name": "Mesa Street Tacos",
+    "kitId": "food-truck",
+    "colors": {
+      "primary": "#9A3412",
+      "secondary": "#15130F",
+      "accent": "#F59E0B"
+    },
+    "city": "Albuquerque"
+  },
+  {
+    "slug": "smoke-and-spoke-bbq",
+    "name": "Smoke & Spoke BBQ",
+    "kitId": "food-truck",
+    "colors": {
+      "primary": "#7C2D12",
+      "secondary": "#1C1917",
+      "accent": "#EAB308"
+    },
+    "city": "Abilene"
+  },
+  {
+    "slug": "bao-down",
+    "name": "Bao Down",
+    "kitId": "food-truck",
+    "colors": {
+      "primary": "#0F766E",
+      "secondary": "#111827",
+      "accent": "#F472B6"
+    },
+    "city": "Denver"
+  },
+  {
+    "slug": "la-cocina-de-rosa",
+    "name": "La Cocina de Rosa",
+    "kitId": "restaurant",
+    "colors": {
+      "primary": "#B91C1C",
+      "secondary": "#1F1A17",
+      "accent": "#FBBF24"
+    },
+    "city": "El Paso"
+  },
+  {
+    "slug": "casa-verde-kitchen",
+    "name": "Casa Verde Kitchen",
+    "kitId": "restaurant",
+    "colors": {
+      "primary": "#1E3A34",
+      "secondary": "#16130F",
+      "accent": "#E8C07A"
+    },
+    "city": "Santa Fe"
+  },
+  {
+    "slug": "harbor-room",
+    "name": "The Harbor Room",
+    "kitId": "restaurant",
+    "colors": {
+      "primary": "#1D4ED8",
+      "secondary": "#0F172A",
+      "accent": "#F59E0B"
+    },
+    "city": "Galveston"
+  },
+  {
+    "slug": "nonnas-table",
+    "name": "Nonna's Table",
+    "kitId": "restaurant",
+    "colors": {
+      "primary": "#7F1D1D",
+      "secondary": "#1C1917",
+      "accent": "#D4A373"
+    },
+    "city": "Houston"
+  },
+  {
+    "slug": "sunrise-diner",
+    "name": "Sunrise Diner",
+    "kitId": "restaurant",
+    "colors": {
+      "primary": "#C2410C",
+      "secondary": "#292524",
+      "accent": "#FDE68A"
+    },
+    "city": "Odessa"
+  },
+  {
+    "slug": "curbside-crepes",
+    "name": "Curbside Crepes",
+    "kitId": "food-truck",
+    "colors": {
+      "primary": "#6D28D9",
+      "secondary": "#1E1B4B",
+      "accent": "#FCD34D"
+    },
+    "city": "Austin"
+  },
+  {
+    "slug": "pho-real",
+    "name": "Pho Real",
+    "kitId": "restaurant",
+    "colors": {
+      "primary": "#047857",
+      "secondary": "#0F172A",
+      "accent": "#FB923C"
+    },
+    "city": "Albuquerque"
+  }
+]

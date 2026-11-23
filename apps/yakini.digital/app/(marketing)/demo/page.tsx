@@ -1,9 +1,11 @@
-'use client'
-
 import { SiteShell } from '@/components/SiteShell'
 import { DemoBuilder } from '@/components/demo/DemoBuilder'
 import { DEMO_CSS } from '@/components/demo/demo-css'
+import { handoffFromEnv } from '@/lib/demo/handoff'
 import { HEADLINE } from '@/lib/pricing'
+
+// BUILDER_HANDOFF_ENABLED is read when the page is built, so the page stays static and fast.
+// Vercel ties env values to a deployment anyway: flip the flag, then redeploy.
 
 export default function DemoPage() {
   return (
@@ -29,7 +31,7 @@ export default function DemoPage() {
         <div className="yk-section-inner">
           <div className="yk-section-tag"><span className="yk-num">01</span><span>Build a free demo</span></div>
           <h2 className="yk-section-h2">Walk through your kit. Sample data, clearly labeled.</h2>
-          <DemoBuilder />
+          <DemoBuilder handoff={handoffFromEnv()} />
         </div>
       </section>
     </SiteShell>

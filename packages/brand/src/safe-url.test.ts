@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { isBlockedIp, isBlockedIpv4, isSafePublicLogoUrl, sanitizePublicHttpUrl } from './safe-url'
+import { isBlockedIp, isBlockedIpv4, isSafePublicLogoUrl, parseIpv6, sanitizePublicHttpUrl } from './safe-url'
 
 describe('sanitizePublicHttpUrl', () => {
   it('accepts a normal public https URL and adds https when missing', () => {
@@ -86,5 +86,30 @@ describe('isSafePublicLogoUrl', () => {
     assert.equal(isSafePublicLogoUrl('http://127.0.0.1/logo.png', page), false)
     assert.equal(isSafePublicLogoUrl('data:image/png;base64,aaa', page), false)
     assert.equal(isSafePublicLogoUrl('javascript:alert(1)', page), false)
+  })
+})
+
+describe('IPv6 tricks (spec 16.4 SSRF)', () => {
+  it('refuses IPv4-mapped, NAT64, 6to4, Teredo and other wrappers around private addresses', () => {
+    for (const ip of [
+      '::ffff:7f00:1', '::ffff:127.0.0.1', '0:0:0:0:0:ffff:7f00:0001', '::ffff:a9fe:a9fe', '::ffff:10.0.0.5',
+      '::127.0.0.1', '64:ff9b::a9fe:a9fe', '64:ff9b::10.0.0.5', '2002:7f00:1::', '2002:c0a8:101::1', '2001:0:4136:e378::1',
+      '::', '0::0', 'fec0::1', 'ff02::1', '2001:db8::1', '100::1', 'fe80::1%eth0', 'not:an:ip', '1:2:3:4:5:6:7:8:9',
+    ]) assert.equal(isBlockedIp(ip), true, ip)
+  })
+  it('allows ordinary public IPv6 addresses', () => {
+    for (const ip of ['2606:4700:4700::1111', '2001:4860:4860::8888', '2a00:1450:4001:80b::200e', '::ffff:8.8.8.8', '64:ff9b::808:808']) {
+      assert.equal(isBlockedIp(ip), false, ip)
+    }
+  })
+  it('refuses bracketed IPv6 URLs that point inside, however they are spelled', () => {
+    for (const raw of ['https://[::ffff:127.0.0.1]/', 'http://[::ffff:7f00:1]/', 'http://[0:0:0:0:0:ffff:a9fe:a9fe]/latest', 'https://[64:ff9b::a9fe:a9fe]/', 'https://[2002:7f00:1::]/']) {
+      assert.equal(sanitizePublicHttpUrl(raw).ok, false, raw)
+    }
+  })
+  it('parses IPv6 into hextets', () => {
+    assert.deepEqual(parseIpv6('::1'), [0, 0, 0, 0, 0, 0, 0, 1])
+    assert.deepEqual(parseIpv6('::ffff:1.2.3.4'), [0, 0, 0, 0, 0, 0xffff, 0x102, 0x304])
+    assert.equal(parseIpv6('1::2::3'), null)
   })
 })
