@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "kitId": "food-truck",
+  "locale": "en-US",
+  "business": {
+    "name": "Mesa Street Tacos",
+    "tagline": "Street tacos, made fresh",
+    "phone": "+15055550142",
+    "hours": [{ "day": "fri", "open": "11:00", "close": "21:00" }, { "day": "sun", "closed": true }]
+  },
+  "brand": {
+    "colors": { "primary": "#9A3412", "secondary": "#15130F", "accent": "#F59E0B" },
+    "colorsSource": "extracted",
+    "fontPair": "friendly"
+  },
+  "nav": { "items": [{ "label": "Home", "pageId": "home" }, { "label": "Menu", "pageId": "menu" }] },
+  "pages": [
+    { "id": "home", "slug": "", "title": "Home", "sections": [
+      { "id": "hero", "type": "hero", "variant": "split", "hidden": false, "props": { "headline": "Tacos on wheels" } },
+      { "id": "today", "type": "today", "variant": "banner", "hidden": false, "props": { "emptyBehavior": "hide" } }
+    ] },
+    { "id": "menu", "slug": "menu", "title": "Menu", "sections": [
+      { "id": "menu", "type": "menu", "variant": "columns", "hidden": false, "props": { "heading": "Menu", "categories": [] } }
+    ] }
+  ],
+  "footer": { "showHours": true, "showAddress": false, "showSiteByYakini": true },
+  "seo": { "siteTitle": "Mesa Street Tacos", "description": "Street tacos in Albuquerque." },
+  "integrations": { "bookingEnabled": false, "formsEnabled": true }
+}
