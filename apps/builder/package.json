@@ -1,0 +1,44 @@
+{
+  "name": "builder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Yakini Builder: studio (studio.yakini.digital) + multi-tenant site renderer.",
+  "scripts": {
+    "dev": "next dev -p 3100",
+    "build": "next build",
+    "start": "next start -p 3100",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit -p .",
+    "test": "vitest run",
+    "test:rls": "bash supabase/tests/run.sh",
+    "test:e2e": "playwright test",
+    "check:client-env": "node scripts/check-client-env.mjs"
+  },
+  "dependencies": {
+    "@sentry/nextjs": "^11.11.0",
+    "@yakini/abuse": "*",
+    "@yakini/ai": "*",
+    "@yakini/brand": "*",
+    "@yakini/kits": "*",
+    "@yakini/pricing": "*",
+    "@yakini/site-schema": "*",
+    "@yakini/visits": "*",
+    "next": "16.4.3",
+    "posthog-js": "^1.454.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.3",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^5.1.0"
+  }
+}
