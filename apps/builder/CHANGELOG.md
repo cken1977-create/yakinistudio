@@ -1,5 +1,33 @@
 # Changelog: Yakini Builder
 
+## Phase 1: demo or description → branded 5-page draft (2026-11-23, branch `feat/builder-phase1`)
+
+### Added
+- `@yakini/site-schema`: strict props for all 17 section types, doc integrity checks (unique ids, links that resolve, a home page), the `submit_site` JSON Schema, an outbound-link policy, and two every-section fixtures (`fixtures/v1/*-every-section.json`).
+- `@yakini/kits`: `food-truck` and `restaurant` kits (5 pages each, allowed sections, variants, fonts, copy tone, Today kinds, licensed sample images), the fallback template, and `assembleDoc` (brand and integrations always set by the server).
+- `@yakini/sections` (new): the site renderer and section library. Server components only, no JavaScript needed, container-query CSS so the phone preview lays out like a phone, self-hosted open-licence fonts, WCAG text colors without changing the stored brand hex.
+- `@yakini/brand`: a pinned-DNS safe fetcher (redirects re-checked, size caps after decompression), robots.txt, a fact extractor that drops hidden text before anything reaches the model, and `readSite` (home + up to 4 pages + photos).
+- `@yakini/ai`: the generate prompt (`gen-1.0`), the `submit_site` tool, retry messages, more banned phrases, an injection-phrase check, and 10 sample business sites + an injection site for tests and evals.
+- `apps/builder`:
+  - Draft pipeline: read the site → photos re-encoded with sharp → model with up to 2 retries → server clean-up (links, images, forms, name) → validation → kit fallback. Never ends on an error page.
+  - `POST /start` (from /demo) and `POST /api/drafts` (from `/new`): streamed progress page that works with JavaScript off, 5 per hour / 30 per day per IP (hashed), Origin checks, honeypot + signed form time on `/new`.
+  - `/new`: "Describe your business" form (no contact info).
+  - `/d/[siteId]`: private draft preview with a phone/desktop switch, noindex by header and meta.
+  - Private draft photo route, anonymous draft cookie (`__Host-`, httpOnly, Secure, SameSite=Lax, 14 days; only an HMAC of the token is stored).
+  - `GET /api/cron/cleanup` + `vercel.json` cron: unclaimed drafts older than 14 days are soft-deleted.
+  - Test mode (`BUILDER_TEST_MODE=1`, refused on Vercel): stand-in model, mock websites, in-memory store, fixture pages for browser tests.
+  - `npm run eval -w builder`: manual real-model eval on the 10 sample businesses + injection site.
+  - Yakini-drawn kit sample illustrations in `public/kit-samples/`.
+- `apps/yakini.digital`: "Start my setup" posts to the studio for food truck and restaurant when `BUILDER_HANDOFF_ENABLED` is on, plus a "No website? Describe your business" link. Off by default, so nothing changes on the live site until the flag is set.
+- Tests: 56 builder unit tests (pipeline, routes, access, cleanup), 59 renderer tests, browser tests for the acceptance list at 390 and 1280 with JavaScript on and off.
+
+### Fixed
+- `@yakini/brand` address checker: IPv6 spellings of private addresses (for example `[::ffff:127.0.0.1]`, NAT64, 6to4, Teredo) and a few reserved IPv4 ranges were not refused. This also protects the live /demo brand reader.
+
+### Changed
+- `@yakini/abuse`: the `draft-` slug prefix is reserved for anonymous drafts.
+- `/api/health` reports `phase: 1`.
+
 ## Phase 0: foundations (2026-11-23, branch `feat/builder-phase0`)
 
 ### Added

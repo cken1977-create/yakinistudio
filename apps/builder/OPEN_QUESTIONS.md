@@ -34,6 +34,18 @@ Source of truth: `00-core-v1.1.md` and `phase-0-v1.1.md`. Clarence approved "use
 6. **CI workflow file.** The agent's GitHub token can't write `.github/workflows`. The workflow is at `apps/builder/ci/builder-ci.yml`; copy it to `.github/workflows/builder-ci.yml` to turn it on.
 7. **Studio CSP.** Phase 0 allows `'unsafe-inline'` for scripts and styles (Next inline bootstrap). Nonce-based CSP is planned for Phase 1.
 
+## New questions from Phase 1
+
+1. **Settings to turn the studio on** (names only; values are yours to add in Vercel): `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `DRAFT_TOKEN_PEPPER` and `IP_HASH_PEPPER` (long random strings), `XAI_API_KEY`, `CRON_SECRET`, `DEMO_ORIGIN` (default `https://yakini.digital`). Without them the studio shows "The studio isn’t open yet" instead of failing. On yakini.digital: `BUILDER_HANDOFF_ENABLED=1` (and `BUILDER_STUDIO_ORIGIN` only for a preview).
+2. **Kit sample pictures.** The kits ship Yakini-drawn illustrations (owned, redistributable). Licensed food photos would look richer; that's a cost and licence choice.
+3. **Photos read from a client's own site** are stored as not redistributable until the owner confirms them (matters for the Phase 4 export).
+4. **Draft screen buttons.** "Keep editing" and "Make it mine" are visible but disabled ("Opens soon") until Phase 2 builds editing and sign-in. Alternative: hide them until then.
+5. **Report link on drafts.** Private drafts don't show "Report this site"; `/report` arrives with publishing in Phase 3.
+6. **Studio landing.** `/` still says the studio is opening soon. Spec §12 wants "Your website, ready in minutes." with two buttons; switch it when you're ready to open the studio.
+7. **First draft snapshot kind.** The Phase 0 table has no `draft` kind, so the first draft is saved as a `checkpoint` (no migration needed).
+8. **Nonce-based CSP (Phase 0 item 7)** is not in this PR. It makes every studio page dynamic, so it's better as its own small PR with its own checks.
+9. **Visual snapshot baselines.** Browser tests save screenshots as a CI artifact; pixel-diff baselines can be locked in after you've looked at the first run.
+
 ## Spec deviations (forced by Next 16)
 
 - `middleware.ts` is deprecated in Next 16, so this uses `proxy.ts` (same behavior).

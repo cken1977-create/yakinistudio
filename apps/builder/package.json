@@ -12,7 +12,8 @@
     "test": "vitest run",
     "test:rls": "bash supabase/tests/run.sh",
     "test:e2e": "playwright test",
-    "check:client-env": "node scripts/check-client-env.mjs"
+    "check:client-env": "node scripts/check-client-env.mjs",
+    "eval": "tsx --conditions=react-server --tsconfig tsconfig.json scripts/eval-generate.ts"
   },
   "dependencies": {
     "@sentry/nextjs": "^11.11.0",

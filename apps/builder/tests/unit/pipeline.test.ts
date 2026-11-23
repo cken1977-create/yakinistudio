@@ -252,3 +252,14 @@ describe('architecture rule: stored SiteDocs are read only through loadSiteDoc (
     expect(offenders).toEqual([])
   })
 })
+
+describe('kit sample images ship with the studio', () => {
+  it('every sample image has a licence and a file in public/', async () => {
+    const { existsSync } = await import('node:fs')
+    const { unlicensedSamples } = await import('@yakini/kits')
+    expect(unlicensedSamples()).toEqual([])
+    for (const kit of Object.values(BUILDER_KITS)) for (const s of kit!.sampleImages) {
+      expect(existsSync(join(__dirname, '..', '..', 'public', s.storagePath)), s.storagePath).toBe(true)
+    }
+  })
+})

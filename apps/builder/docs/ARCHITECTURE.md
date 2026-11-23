@@ -1,4 +1,4 @@
-# Yakini Builder: architecture (Phase 0)
+# Yakini Builder: architecture (Phases 0–1)
 
 ## Shape
 - **Studio** (`studio.yakini.digital`, pending DNS) and **client sites** (`<slug>.yakini.digital`, custom domains) are served by the same app, `apps/builder`.
@@ -21,6 +21,13 @@
 - **Domain limit**: `domainCapacity()` refuses a new custom domain when the project is within `headroom` of `VERCEL_PROJECT_DOMAIN_LIMIT`.
 - **Abuse**: blocked categories (adult, weapons, gambling), reserved subdomains, impersonation names, and a risk check that sends flagged sites to `publish_reviews`.
 - **Secrets**: only env var names appear in code. `check-secrets` runs in CI, and `check-client-env` keeps non-`NEXT_PUBLIC_*` names out of client code.
+
+## Draft pipeline (Phase 1)
+- **Entry points**: `POST /start` (top-level form POST from yakini.digital/demo; Origin must be the demo or the studio) and `POST /api/drafts` (the `/new` form; studio Origin, honeypot, signed form time). Both share `lib/server/draft-flow.ts`: IP-hash rate limits, then a streamed progress page that ends in a meta refresh, so it works with JavaScript off.
+- **Pipeline** (`lib/pipeline/draft.ts`): `readSite` (pinned-DNS safe fetch, robots.txt, hidden text removed) → content policy → kit → photos and logo re-encoded by sharp (in parallel) → model call (`generate.ts`, up to 2 retries with the validation errors) → `sanitize.ts` (links, images, forms, name and kit can't be changed by the model) → `validateNewDoc` → stored. Any failure falls back to the kit template with name, logo and colors. Brand colors are never touched by the model.
+- **Anonymous drafts**: a random 32-byte token in a `__Host-` cookie; only `HMAC(DRAFT_TOKEN_PEPPER, token)` is stored. `/d/[siteId]` and the photo route answer 404 for anything but the right cookie, and for expired, deleted or claimed drafts.
+- **Rendering**: `@yakini/sections` `SiteView`, server components only. Pages read docs only through `loadSiteDoc` (a unit test enforces this).
+- **Test mode** (`BUILDER_TEST_MODE=1`): stand-in model, mock websites from `packages/ai/evals/sites`, in-memory store. `runtime.ts` refuses it when `VERCEL` or `VERCEL_ENV` is set.
 
 ## Client export button (Phase 4)
 - The policy is already in `lib/exports.ts`: the Q13 rules and 24-hour signed links in the private `site-exports` bucket. Only owners and operators can read their tenant's exports.
