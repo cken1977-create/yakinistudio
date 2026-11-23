@@ -1,0 +1,8 @@
+/* Self-hosted fonts for the four font pairs (R2: no font CDNs). All are SIL Open Font License 1.1.
+   unicode-range in each file means a browser downloads only the scripts a page actually uses. */
+@import '@fontsource-variable/fraunces/wght.css';
+@import '@fontsource-variable/source-sans-3/wght.css';
+@import '@fontsource-variable/inter/wght.css';
+@import '@fontsource-variable/nunito/wght.css';
+@import '@fontsource-variable/playfair-display/wght.css';
+@import '@fontsource-variable/lora/wght.css';
