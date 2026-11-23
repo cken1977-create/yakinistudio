@@ -155,6 +155,34 @@ export const DEMO_CSS = `
   .kd-addons { display: grid; gap: 8px; }
   .kd-note { margin: 0; font-size: 13px; opacity: .8; line-height: 1.45; }
 
+
+  .db-cta { display: flex; flex-direction: column; align-items: stretch; gap: 8px; margin-top: 4px; }
+  .db-cta .db-btn { flex: 0 0 auto; width: 100%; }
+  .db-btn-secondary {
+    display: inline-flex; align-items: center; justify-content: center;
+    align-self: flex-start;
+    min-height: 40px; padding: 8px 14px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    background: transparent; color: inherit;
+    border: 1px solid var(--line-strong);
+    text-decoration: none;
+  }
+  .db-quote-head { margin: 18px 0 8px; font-size: 16px; }
+  .kd-row-btn {
+    width: 100%; background: transparent; color: inherit; border: 0;
+    text-align: left; cursor: pointer; min-height: 44px;
+    font: inherit;
+  }
+  .kd-row-btn.on { background: var(--kd-accent-soft, rgba(201,161,74,.18)); }
+  .kd-row-detail {
+    margin: 0 0 8px; padding: 0 4px 8px;
+    font-size: 13px; opacity: .85; line-height: 1.45;
+  }
+  .kd-flash { margin: 0; font-size: 13px; line-height: 1.45; }
+  .kd-tour { margin: 0; font-size: 14px; line-height: 1.45; }
+  .kd-tour a { color: inherit; font-weight: 700; text-decoration: underline; min-height: 44px; display: inline-flex; align-items: center; }
+  .kd-tour span { opacity: .8; }
+
   @media (max-width: 980px) {
     .db-stage { grid-template-columns: 1fr; }
     .db-estimate { position: static; }
@@ -174,5 +202,6 @@ export const DEMO_CSS = `
       padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
       margin: 0 -20px -20px;
     }
+    .db-sticky .db-cta .db-btn-secondary { min-height: 40px; font-size: 13px; }
   }
 `
