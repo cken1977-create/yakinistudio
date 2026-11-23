@@ -3,13 +3,13 @@
 import { useState, useEffect, ReactNode } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { PORTAL_LOGIN_URL, START_URL } from '@/lib/pricing'
+import { BUILD_URL, PORTAL_LOGIN_URL } from '@/lib/pricing'
 import { SOCIAL_LINKS } from '@/lib/organization'
 import { OrganizationJsonLd } from '@/components/OrganizationJsonLd'
 
 // ═════════════════════════════════════════════════════════════════════════
 // YAKINI SITE SHELL: header, mobile menu and footer for every page.
-// The site's one job is to lead people into the portal (START_URL);
+// The site's one job is to lead people to a written quote (BUILD_URL);
 // custom builds are the second lane (/custom-builds, Book a call = /apply).
 // ═════════════════════════════════════════════════════════════════════════
 
@@ -17,7 +17,7 @@ import { OrganizationJsonLd } from '@/components/OrganizationJsonLd'
 // (night navy, gold Y mark, lime accents, a photoreal room behind each page header).
 export const NAV_LINKS = [
   { href: '/portal', label: 'The portal' },
-  { href: '/pricing', label: 'Plans' },
+  { href: '/pricing', label: 'Pricing' },
   { href: '/how-it-works', label: 'How it works' },
   { href: '/custom-builds', label: 'Custom builds' },
   { href: '/watch', label: 'Watch' },
@@ -89,7 +89,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           </div>
           <div className="yk-nav-right">
             <a href={PORTAL_LOGIN_URL} className="yk-nav-signin">Sign in</a>
-            <a href={START_URL} className="yk-nav-cta">
+            <a href={BUILD_URL} className="yk-nav-cta">
               <span>Start</span>
               <span className="yk-nav-cta-arrow">→</span>
             </a>
@@ -108,7 +108,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       {menuOpen && (
         <div className="yk-mobile-menu">
           <div className="yk-mobile-actions">
-            <a href={START_URL} className="yk-mobile-start" onClick={close}>Start your setup →</a>
+            <a href={BUILD_URL} className="yk-mobile-start" onClick={close}>Start your setup →</a>
             <a href={PORTAL_LOGIN_URL} className="yk-mobile-signin" onClick={close}>Sign in to your portal</a>
           </div>
           <a href="/" onClick={close}>Walk through Yakini</a>
@@ -128,11 +128,11 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <div className="yk-footer-brand">
               <BrandMark />
               <p className="yk-footer-tag">Your business portal, set up with you. And we stay.</p>
-              <a href={START_URL} className="yk-footer-start">Start your setup →</a>
+              <a href={BUILD_URL} className="yk-footer-start">Start your setup →</a>
             </div>
             <div className="yk-footer-col">
               <h6>Portal</h6>
-              <a href={START_URL}>Start your setup</a>
+              <a href={BUILD_URL}>Start your setup</a>
               <a href={PORTAL_LOGIN_URL}>Sign in</a>
               <a href="/portal">The portal</a>
               <a href="/pricing">Plans</a>

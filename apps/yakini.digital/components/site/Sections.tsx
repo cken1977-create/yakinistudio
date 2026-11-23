@@ -5,22 +5,19 @@
 // Customer-facing copy names services, never the companies behind them.
 
 import Link from 'next/link'
-import { useFoundingSeats } from '@/components/FoundingSeats'
 import { BOOK_CALL_URL, BUILDS, TOUR } from '@/components/site/content'
 import {
   AI_LIMIT_NOTE,
+  BUILD_URL,
+  DASHBOARD_NOTE,
   EXTRA_HELP_NOTE,
   FLAT_PRICING_NOTE,
   GUIDED_STEPS,
+  HEADLINE,
   HELP_HOURS_NOTE,
-  PLANS,
+  KIT_INCLUDES,
   REFUND_RULE,
-  START_URL,
-  QUOTE_CTA,
-  QUOTE_NOTE,
-  QUOTE_URL,
-  helpLabel,
-  startUrl,
+  TUTORIAL_NOTE,
 } from '@/lib/pricing'
 
 
@@ -97,8 +94,8 @@ export function PortalTour({ num = '01' }: { num?: string }) {
         </div>
         <p className="hm-fine">{AI_LIMIT_NOTE}</p>
         <div className="hm-ctas">
-          <a href={START_URL} className="hm-btn hm-btn-gold"><span>Start your setup</span><span className="yk-btn-arrow">→</span></a>
-          <a href="/pricing" className="hm-btn hm-btn-ghost"><span>Compare plans</span></a>
+          <a href={BUILD_URL} className="hm-btn hm-btn-gold"><span>Build my estimate</span><span className="yk-btn-arrow">→</span></a>
+          <a href="/pricing" className="hm-btn hm-btn-ghost"><span>See pricing</span></a>
         </div>
       </div>
     </section>
@@ -108,63 +105,30 @@ export function PortalTour({ num = '01' }: { num?: string }) {
 /* ───────────────────────── Plans (from lib/pricing.ts) ───────────────────────── */
 
 export function PlanGrid({ num = '02' }: { num?: string }) {
-  const seats = useFoundingSeats()
   return (
     <section id="plans" className="yk-section hm-plans">
       <div className="yk-section-inner">
-        <div className="yk-section-tag"><span className="yk-num">{num}</span><span>Plans</span></div>
+        <div className="yk-section-tag"><span className="yk-num">{num}</span><span>Pricing</span></div>
         <h2 className="hm-h2">
-          Done with you,
+          {HEADLINE.split('.')[0]}.
           <br />
-          <span className="yk-gold yk-italic">not left to you.</span>
+          <span className="yk-gold yk-italic">{HEADLINE.split('. ')[1]}</span>
         </h2>
-        <p className="hm-lead">One-time guided setup, then a monthly plan, quoted in writing for your business. A real Yakini person sets it up with you, and the help desk stays open after go-live.</p>
-
-        <div className="hm-plan-grid">
-          {PLANS.map((plan) => {
-            const isFounding = plan.id === 'founding'
-            const closed = isFounding && !seats.open
-            return (
-              <article key={plan.id} className={`hm-plan ${isFounding ? 'hm-plan-founding' : ''} ${plan.id === 'grow' ? 'hm-plan-grow' : ''}`}>
-                <div className="hm-plan-tag">{plan.tag}</div>
-                <h3 className="hm-plan-name">{plan.name}</h3>
-                <p className="hm-plan-sum">{plan.summary}</p>
-                <div className="hm-plan-setup">{QUOTE_NOTE} <Link href={QUOTE_URL}>{QUOTE_CTA} →</Link></div>
-                <ul className="hm-plan-list">
-                  <li>{helpLabel(plan)} from your Yakini person</li>
-                  {plan.id === 'grow' ? (
-                    <>
-                      <li>Everything in Operate</li>
-                      <li>Card payments on your invoices</li>
-                      <li>Missed-call text-back, review requests and follow-up campaigns</li>
-                      <li>Monthly owner report</li>
-                    </>
-                  ) : (
-                    <>
-                      <li>Your website and customer portal</li>
-                      <li>Help desk, texting line and booking you confirm</li>
-                      <li>Drafted replies, checked by you before anything goes out</li>
-                    </>
-                  )}
-                </ul>
-                {closed ? (
-                  <span className="hm-btn hm-btn-off">Founding is closed</span>
-                ) : (
-                  <a href={startUrl(plan.id)} className={`hm-btn ${isFounding || plan.id === 'grow' ? 'hm-btn-gold' : 'hm-btn-ghost'}`}>
-                    <span>Start with {plan.name}</span><span className="yk-btn-arrow">→</span>
-                  </a>
-                )}
-              </article>
-            )
-          })}
+        <p className="hm-lead">{DASHBOARD_NOTE} {TUTORIAL_NOTE}</p>
+        <ul className="hm-plan-list" style={{ maxWidth: 720, margin: '20px 0 28px' }}>
+          {KIT_INCLUDES.map((item) => <li key={item}>{item}</li>)}
+        </ul>
+        <div className="hm-ctas">
+          <a href={BUILD_URL} className="hm-btn hm-btn-gold"><span>Build my estimate</span><span className="yk-btn-arrow">→</span></a>
+          <a href="/pricing" className="hm-btn hm-btn-ghost"><span>See all prices</span></a>
         </div>
-
         <ul className="hm-policy">
+          <li><strong>Estimates.</strong> Totals on the pricing page are estimates. The written quote is final.</li>
           <li><strong>Refunds.</strong> {REFUND_RULE}</li>
           <li><strong>Help hours.</strong> {HELP_HOURS_NOTE} {EXTRA_HELP_NOTE}</li>
           <li><strong>In writing.</strong> {FLAT_PRICING_NOTE}</li>
         </ul>
-        <a href="/pricing" className="hm-textlink">See everything each plan includes, side by side →</a>
+        <a href="/pricing" className="hm-textlink">Build your estimate and see every price →</a>
       </div>
     </section>
   )
@@ -230,7 +194,7 @@ export function CustomBuildsBand({ num = '04', showPageLink = true }: { num?: st
             </article>
           ))}
         </div>
-        <p className="hm-builds-note">Quoted in writing before anything starts. Custom builds are never priced on a page, because every one is built around your business.</p>
+        <p className="hm-builds-note">Custom system builds start from $7,500 and are quoted in writing before anything starts, because every one is built around your business.</p>
         <div className="hm-ctas">
           <a href={BOOK_CALL_URL} className="hm-btn hm-btn-gold"><span>Book a call</span><span className="yk-btn-arrow">→</span></a>
           {showPageLink ? <a href="/custom-builds" className="hm-btn hm-btn-ghost"><span>See custom builds</span></a> : null}
@@ -253,7 +217,7 @@ export function FinalCta({ line = 'Start your setup and a real Yakini person tak
         </h2>
         <p className="hm-final-sub">{line}</p>
         <div className="hm-ctas hm-ctas-center">
-          <a href={START_URL} className="hm-btn hm-btn-gold"><span>Start your setup</span><span className="yk-btn-arrow">→</span></a>
+          <a href={BUILD_URL} className="hm-btn hm-btn-gold"><span>Build my estimate</span><span className="yk-btn-arrow">→</span></a>
           <a href={BOOK_CALL_URL} className="hm-btn hm-btn-ghost"><span>Book a call about a custom build</span></a>
         </div>
       </div>
@@ -261,20 +225,16 @@ export function FinalCta({ line = 'Start your setup and a real Yakini person tak
   )
 }
 
-/* ───────────────────────── Founding strip (hero) ───────────────────────── */
+/* ───────────────────────── Pricing strip (hero) ───────────────────────── */
 
 export function FoundingStrip() {
-  const seats = useFoundingSeats()
-  if (!seats.open) return null
   return (
-    <Link href={QUOTE_URL} className="hm-founding">
+    <Link href={BUILD_URL} className="hm-founding">
       <span className="hm-founding-dot" aria-hidden />
       <span>
-        <strong>Founding:</strong> open to our first customers. {QUOTE_NOTE} {QUOTE_CTA}.
+        <strong>{HEADLINE}</strong> Build an estimate and send it for a written quote.
       </span>
       <span className="yk-btn-arrow">→</span>
     </Link>
   )
 }
-
-

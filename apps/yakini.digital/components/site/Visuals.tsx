@@ -4,7 +4,7 @@
 
 import Image from 'next/image'
 import { BOOK_CALL_URL } from '@/components/site/content'
-import { START_URL } from '@/lib/pricing'
+import { BUILD_URL } from '@/lib/pricing'
 
 /* ───────────────────────── Hero stage: real demo screens, floating ───────────────────────── */
 
@@ -111,7 +111,7 @@ export function PortalShowcase({ num = '01' }: { num?: string }) {
             <li><b>Yours to keep.</b> You own your website, system and data. Hosting and running costs are covered in the monthly fee. Texting, calls and transcription are billed monthly by usage, with a monthly cap you control.</li>
           </ul>
           <div className="hm-ctas">
-            <a href={START_URL} className="hm-btn hm-btn-gold"><span>Start your setup</span><span className="yk-btn-arrow">→</span></a>
+            <a href={BUILD_URL} className="hm-btn hm-btn-gold"><span>Build my estimate</span><span className="yk-btn-arrow">→</span></a>
           </div>
         </div>
         <div className="vs-portal-visual">

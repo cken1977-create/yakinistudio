@@ -12,7 +12,7 @@ export const TOUR = [
   { k: '01', title: 'Client rooms', body: 'Every client gets a private room: messages, files, requests and updates in one thread instead of scattered across your phone.' },
   { k: '02', title: 'Your business texting line', body: 'One number for the business. Text customers who have opted in, and their replies land in the right room.' },
   { k: '03', title: 'A help desk with a real person', body: 'Customers send requests and follow the status. When you need help, your Yakini person is right there in the help desk too.' },
-  { k: '04', title: 'Payments on your invoices', body: 'Send an invoice and get paid by card, right from the portal.', tag: 'Grow plan' },
+  { k: '04', title: 'Payments on your invoices', body: 'Send an invoice and get paid by card, right from the portal.', tag: 'Included in every kit' },
   { k: '05', title: 'Replies drafted for you', body: 'Replies and voice-note transcripts are drafted for you to check. Nothing goes out without your OK.' },
   { k: '06', title: 'Booking you confirm', body: 'Customers ask for a time and you confirm each one, so your calendar stays yours.' },
 ] as const

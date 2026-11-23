@@ -18,9 +18,10 @@ export async function POST(req: NextRequest) {
     if (rateLimited(`leads:${clientIp(req.headers) ?? 'unknown'}`, 5, 60 * 60_000)) return tooMany()
     const raw = await req.json()
     const cut = (v: unknown, n: number) => (v == null ? null : String(v).trim().slice(0, n))
+    const source = cut(raw.source, 60)
     const body = {
       name: cut(raw.name, 120), email: cut(raw.email, 254), company: cut(raw.company, 160),
-      service: cut(raw.service, 120), budget: cut(raw.budget, 60), message: cut(raw.message, 5000),
+      service: cut(raw.service, 160), budget: cut(raw.budget, 200), message: cut(raw.message, 5000),
     } as Lead
 
     if (!body.name || !body.email || !body.service || !body.message || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) {
@@ -44,10 +45,13 @@ export async function POST(req: NextRequest) {
       from: LEADS_FROM,
       to: 'cken1977@gmail.com',
       subject: ('New Lead: ' + body.name + ' — ' + body.service).replace(/[\r\n]+/g, ' ').slice(0, 200),
-      html: '<div style="font-family:sans-serif;padding:32px"><h2>New Inquiry</h2><p><strong>Name:</strong> ' + esc(body.name) + '</p><p><strong>Email:</strong> ' + esc(body.email) + '</p><p><strong>Service:</strong> ' + esc(body.service) + '</p><p><strong>Budget:</strong> ' + esc(body.budget ?? 'Not specified') + '</p><p><strong>Message:</strong> ' + esc(body.message) + '</p></div>',
+      html: '<div style="font-family:sans-serif;padding:32px"><h2>New Inquiry</h2><p><strong>Name:</strong> ' + esc(body.name) + '</p><p><strong>Email:</strong> ' + esc(body.email) + '</p><p><strong>Service:</strong> ' + esc(body.service) + '</p><p><strong>Budget:</strong> ' + esc(body.budget ?? 'Not specified') + '</p><p><strong>Message:</strong> ' + esc(body.message) + '</p>' + (source ? '<p><strong>Source:</strong> ' + esc(source) + '</p>' : '') + '</div>',
     })
 
-    if (resend && !isTestRecipient(body.email)) await resend.emails.send({
+    // Prospects never get an automatic email. Pricing-build leads are confirmed on screen only.
+    // Other lead sources keep the same on-screen confirmation path here: no applicant auto-reply.
+    const notifyApplicant = false
+    if (notifyApplicant && resend && !isTestRecipient(body.email) && source !== 'pricing-build') await resend.emails.send({
       from: LEADS_FROM,
       to: body.email,
       subject: 'We received your inquiry.',

@@ -11,7 +11,7 @@ import {
   HELP_HOURS_NOTE,
   PASS_THROUGH_NOTE,
   REFUND_RULE,
-  START_URL,
+  BUILD_URL,
 } from '@/lib/pricing'
 
 export const metadata: Metadata = {
@@ -54,7 +54,7 @@ export default function HowItWorksPage() {
             in your business&apos;s name, and stays on after go-live.
           </p>
           <div className="hm-ctas">
-            <a href={START_URL} className="hm-btn hm-btn-gold"><span>Start your setup</span><span className="yk-btn-arrow">→</span></a>
+            <a href={BUILD_URL} className="hm-btn hm-btn-gold"><span>Build my estimate</span><span className="yk-btn-arrow">→</span></a>
             <a href="/pricing" className="hm-btn hm-btn-ghost"><span>See plans</span></a>
           </div>
         </div>
