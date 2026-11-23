@@ -19,7 +19,15 @@ function deepFreezeCopy<T>(v: T): T {
  * to CURRENT_SCHEMA_VERSION, then validates. A doc newer than this code knows is
  * refused, never guessed down. The input is never mutated.
  */
-export function loadSiteDoc(raw: unknown, migrations: readonly Migration[] = MIGRATIONS, current: number = CURRENT_SCHEMA_VERSION): LoadResult {
+/** What the final shape is checked against; the shipped SiteDoc schema unless a test swaps it. */
+export type DocValidator = { safeParse: (v: unknown) => { success: true; data: SiteDoc } | { success: false } }
+
+export function loadSiteDoc(
+  raw: unknown,
+  migrations: readonly Migration[] = MIGRATIONS,
+  current: number = CURRENT_SCHEMA_VERSION,
+  schema: DocValidator = SiteDoc as unknown as DocValidator,
+): LoadResult {
   if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) {
     throw new SiteDocError('not_object', 'This site file could not be read.')
   }
@@ -42,7 +50,7 @@ export function loadSiteDoc(raw: unknown, migrations: readonly Migration[] = MIG
     v = step.to
     doc = { ...doc, schemaVersion: v }
   }
-  const parsed = SiteDoc.safeParse(doc)
+  const parsed = schema.safeParse(doc)
   if (!parsed.success) {
     throw new SiteDocError('invalid', 'This site file does not match the expected format.')
   }

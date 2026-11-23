@@ -34,6 +34,7 @@ export default async function DraftPreview({ params, searchParams }: Props) {
   try {
     doc = loadSiteDoc(draft.doc).doc
   } catch (e) {
+    if (e instanceof SiteDocError && e.code === 'too_new') return <DocTooNew message={e.message} />
     if (e instanceof SiteDocError) notFound() // a stored draft that cannot be read is never half-shown
     throw e
   }
@@ -82,5 +83,17 @@ export default async function DraftPreview({ params, searchParams }: Props) {
         </div>
       </div>
     </div>
+  )
+}
+
+/** A draft saved by a newer editor is never guessed at or half-rendered (spec 7.4). */
+function DocTooNew({ message }: { message: string }) {
+  return (
+    <main className="flex min-h-screen items-center justify-center px-6 text-center">
+      <div className="max-w-md">
+        <h1 className="font-serif text-3xl">Please refresh</h1>
+        <p className="mt-3 text-paper/80">{message}</p>
+      </div>
+    </main>
   )
 }
