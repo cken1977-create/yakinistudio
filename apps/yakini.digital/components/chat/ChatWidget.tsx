@@ -253,9 +253,19 @@ export function ChatWidget() {
                     <button type="button" className="yk-chat-hear" disabled={!tts || !m.text} onClick={() => playText(m.text)} aria-label="Hear this reply">
                       Hear Destiny
                     </button>
-                    {m.links?.map((l) => (
-                      <a key={l.href} href={l.href}>{l.label}</a>
-                    ))}
+                    {m.links?.map((l) => {
+                      const external = /^https?:/i.test(l.href)
+                      return (
+                        <a
+                          key={l.href}
+                          href={l.href}
+                          className="yk-chat-link"
+                          {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                        >
+                          {l.label}
+                        </a>
+                      )
+                    })}
                   </div>
                 ) : null}
               </div>

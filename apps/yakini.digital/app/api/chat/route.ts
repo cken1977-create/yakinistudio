@@ -4,7 +4,7 @@ import { rateLimited, tooMany } from '@/lib/server/guard'
 import { ASSISTANT } from '@/lib/chat/assistant'
 import { corsHeaders, preflight } from '@/lib/chat/cors'
 import { blocked, cutMessage, sanitizeHistory, type ChatTurn } from '@/lib/chat/guard'
-import { fallbackAnswer } from '@/lib/chat/knowledge'
+import { fallbackAnswer, publicOnlyLinks, scrubVisitorText, shouldUseGroundedReply } from '@/lib/chat/knowledge'
 import { completeChat, hasXaiKey, streamChat } from '@/lib/chat/xai'
 
 export const runtime = 'nodejs'
@@ -30,7 +30,13 @@ export async function POST(req: NextRequest) {
   if (!message) return json(req, { error: 'Please type a short question.' }, 400)
   if (blocked(message)) {
     const reply = fallbackAnswer(message)
-    return json(req, { text: reply.text, links: reply.links, source: 'guard', assistant: ASSISTANT.name })
+    return json(req, { text: reply.text, links: publicOnlyLinks(reply.links), source: 'guard', assistant: ASSISTANT.name })
+  }
+
+  // Kits and "see a demo" must stay on the public no-login map, not a model guess.
+  if (shouldUseGroundedReply(message)) {
+    const reply = fallbackAnswer(message)
+    return json(req, { text: reply.text, links: publicOnlyLinks(reply.links), source: 'fallback', assistant: ASSISTANT.name })
   }
 
   const history = sanitizeHistory(raw.history)
@@ -54,14 +60,14 @@ export async function POST(req: NextRequest) {
             }
           }
           if (full.trim()) {
-            send({ type: 'done', text: full.trim(), links: fallbackAnswer(message).links.filter((l) => /demo|apply|start|pricing|contact/i.test(l.href)), source: 'xai' })
+            send({ type: 'done', text: scrubVisitorText(full.trim()), links: publicOnlyLinks(fallbackAnswer(message).links), source: 'xai' })
           } else {
             const fb = fallbackAnswer(message)
-            send({ type: 'done', text: fb.text, links: fb.links, source: 'fallback' })
+            send({ type: 'done', text: fb.text, links: publicOnlyLinks(fb.links), source: 'fallback' })
           }
         } catch {
           const fb = fallbackAnswer(message)
-          send({ type: 'done', text: fb.text, links: fb.links, source: 'fallback' })
+          send({ type: 'done', text: fb.text, links: publicOnlyLinks(fb.links), source: 'fallback' })
         } finally {
           controller.close()
         }
@@ -78,8 +84,8 @@ export async function POST(req: NextRequest) {
       const text = await completeChat(turns)
       if (text?.trim()) {
         return json(req, {
-          text: text.trim(),
-          links: fallbackAnswer(message).links,
+          text: scrubVisitorText(text.trim()),
+          links: publicOnlyLinks(fallbackAnswer(message).links),
           source: 'xai',
           assistant: ASSISTANT.name,
         })
@@ -90,5 +96,5 @@ export async function POST(req: NextRequest) {
   }
 
   const fb = fallbackAnswer(message)
-  return json(req, { text: fb.text, links: fb.links, source: 'fallback', assistant: ASSISTANT.name })
+  return json(req, { text: fb.text, links: publicOnlyLinks(fb.links), source: 'fallback', assistant: ASSISTANT.name })
 }

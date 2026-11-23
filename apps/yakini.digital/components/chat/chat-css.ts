@@ -20,7 +20,7 @@ export const CHAT_CSS = `
   .yk-chat-msg.user{align-self:flex-end;background:#C6F432;color:#0B1437}
   .yk-chat-msg.assistant{align-self:flex-start;background:rgba(255,255,255,.07)}
   .yk-chat-msg .yk-chat-links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-  .yk-chat-msg .yk-chat-links a,.yk-chat-hear{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(198,244,50,.5);color:#C6F432;text-decoration:none;font-size:12px;font-weight:600;background:transparent;cursor:pointer}
+  .yk-chat-msg .yk-chat-links a,.yk-chat-hear{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;min-height:40px;border-radius:999px;border:1px solid rgba(198,244,50,.5);color:#C6F432;text-decoration:none;font-size:12px;font-weight:600;background:transparent;cursor:pointer}
   .yk-chat-hear[disabled]{opacity:.4;cursor:not-allowed}
   .yk-chat-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 8px}
   .yk-chat-chips button{border:1px solid rgba(244,247,255,.16);background:transparent;color:#F4F7FF;border-radius:999px;padding:7px 11px;font-size:12px;cursor:pointer}
@@ -36,6 +36,7 @@ export const CHAT_CSS = `
     .yk-main{padding-bottom:120px}
   }
   @media (max-width:760px){
+    .yk-chat-msg .yk-chat-links a,.yk-chat-hear{min-height:44px;padding:10px 14px}
     .yk-chat-launch{right:12px;bottom:max(12px, env(safe-area-inset-bottom))}
     .yk-chat-panel{right:0;left:0;bottom:0;width:100%;height:min(92svh, 720px);border-radius:24px 24px 0 0}
     .yk-chat-talk{min-height:52px;font-size:17px}
