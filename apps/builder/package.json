@@ -16,18 +16,21 @@
   },
   "dependencies": {
     "@sentry/nextjs": "^11.11.0",
+    "@supabase/supabase-js": "2.105.4",
     "@yakini/abuse": "*",
     "@yakini/ai": "*",
     "@yakini/brand": "*",
     "@yakini/kits": "*",
     "@yakini/pricing": "*",
+    "@yakini/sections": "*",
     "@yakini/site-schema": "*",
     "@yakini/visits": "*",
     "next": "16.4.6",
     "posthog-js": "^1.454.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.65.1",
