@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { BUILD_URL, DEMO_URL, PORTAL_LOGIN_URL } from '@/lib/pricing'
 import { SOCIAL_LINKS } from '@/lib/organization'
 import { OrganizationJsonLd } from '@/components/OrganizationJsonLd'
+import { ChatWidget } from '@/components/chat/ChatWidget'
 
 // ═════════════════════════════════════════════════════════════════════════
 // YAKINI SITE SHELL: header, mobile menu and footer for every page.
@@ -175,6 +176,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       </footer>
       <style>{THEME_CSS}</style>
       <OrganizationJsonLd />
+      <ChatWidget />
     </>
   )
 }

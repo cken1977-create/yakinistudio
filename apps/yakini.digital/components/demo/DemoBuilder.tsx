@@ -125,6 +125,7 @@ export function DemoBuilder() {
       if (!kitId && (next.suggestedKit || industry)) {
         setKitId((next.suggestedKit || industry) as KitId)
       }
+      if (next.suggestedSize) setSizeId(next.suggestedSize)
       if (data.warning) setWarning(data.warning)
       setStep(1)
     } catch (err) {
@@ -258,6 +259,7 @@ export function DemoBuilder() {
         <div>
           <section className="db-card">
             <h3>Is this your brand?</h3>
+            {brand.intro ? <p className="db-hint">{brand.intro}</p> : null}
             {warning ? <p className="db-warn">{warning} You can still build the demo with the name you entered.</p> : null}
             <div className="db-brand">
               {brand.logoUrl && !logoFailed ? (
@@ -302,6 +304,9 @@ export function DemoBuilder() {
             </div>
             <div className="db-group">
               <h4>Size</h4>
+              {brand.suggestedSize ? (
+                <p className="db-hint">A {brand.suggestedSize} plan often fits a business like this. You can change it.</p>
+              ) : null}
               <div className="db-chips">
                 {SIZES.map((s) => (
                   <button key={s.id} type="button" className={`db-chip ${sizeId === s.id ? 'on' : ''}`} onClick={() => setSizeId(s.id)}>

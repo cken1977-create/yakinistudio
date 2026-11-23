@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { extractBrand, suggestKitFromText } from './extract-brand'
+import { asKitId, extractBrand, pageExcerpt, suggestKitFromText } from './extract-brand'
 
 const HTML = `
 <!doctype html>
@@ -32,6 +32,20 @@ describe('suggestKitFromText', () => {
     assert.equal(suggestKitFromText('We are a property management company'), 'landlord')
     assert.equal(suggestKitFromText('Tree service and lawn care'), 'tree-lawn')
     assert.equal(suggestKitFromText('Nothing relevant here'), undefined)
+  })
+})
+
+describe('asKitId and pageExcerpt', () => {
+  it('maps training to the catalog id and drops unknown kits', () => {
+    assert.equal(asKitId('training'), 'training-school')
+    assert.equal(asKitId('food truck'), 'food-truck')
+    assert.equal(asKitId('mystery-kit'), undefined)
+  })
+
+  it('strips tags from a page excerpt without keeping scripts', () => {
+    const text = pageExcerpt('<html><script>secret()</script><p>Pinkbox catering in Albuquerque</p></html>')
+    assert.match(text, /Pinkbox catering/)
+    assert.doesNotMatch(text, /secret/)
   })
 })
 
