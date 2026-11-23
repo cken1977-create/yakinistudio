@@ -4,8 +4,8 @@ import { DEMO_CSS } from '@/components/demo/demo-css'
 import { handoffFromEnv } from '@/lib/demo/handoff'
 import { HEADLINE } from '@/lib/pricing'
 
-// Read per request so flipping BUILDER_HANDOFF_ENABLED needs no rebuild.
-export const dynamic = 'force-dynamic'
+// BUILDER_HANDOFF_ENABLED is read when the page is built, so the page stays static and fast.
+// Vercel ties env values to a deployment anyway: flip the flag, then redeploy.
 
 export default function DemoPage() {
   return (
