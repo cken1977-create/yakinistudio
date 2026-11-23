@@ -20,3 +20,6 @@ echo "$out" | sed -n 's/^psql:[^ ]* NOTICE:  //p'
 pass=$(echo "$out" | grep -c 'NOTICE:  PASS:' || true)
 echo "RLS checks passed: $pass"
 echo "$out" | grep -q 'ALL RLS TESTS PASSED'
+out2=$(psql -X -q -v ON_ERROR_STOP=1 -d "$DB" -f phase2-tests.sql 2>&1) || { echo "$out2" | sed -n 's/^psql:[^ ]* NOTICE:  //p; /FAIL\|ERROR/p'; exit 1; }
+echo "$out2" | sed -n 's/^psql:[^ ]* NOTICE:  //p'
+echo "$out2" | grep -q 'ALL PHASE 2 TESTS PASSED'

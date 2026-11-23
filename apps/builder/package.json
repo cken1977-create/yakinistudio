@@ -17,10 +17,12 @@
   },
   "dependencies": {
     "@sentry/nextjs": "^11.11.0",
+    "@supabase/ssr": "0.10.3",
     "@supabase/supabase-js": "2.105.4",
     "@yakini/abuse": "*",
     "@yakini/ai": "*",
     "@yakini/brand": "*",
+    "@yakini/edits": "*",
     "@yakini/kits": "*",
     "@yakini/pricing": "*",
     "@yakini/sections": "*",
@@ -32,8 +34,7 @@
     "react-dom": "19.2.4",
     "server-only": "^0.0.1",
     "sharp": "^0.35.5",
-    "zod": "^4.1.0",
-    "@yakini/edits": "*"
+    "zod": "^4.1.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.65.1",
