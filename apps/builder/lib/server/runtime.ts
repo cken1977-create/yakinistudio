@@ -2,7 +2,7 @@ import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 import { DEFAULT_DEPS, type SafeFetchDeps } from '@yakini/brand/safe-fetch'
 import type { GenerateChat } from '@/lib/pipeline/generate'
-import { mockFetchDeps, mockGenerateChat } from '@/lib/pipeline/test-mode'
+import { mockChat, mockFetchDeps } from '@/lib/pipeline/test-mode'
 import { runAi } from './ai'
 import { serverEnv } from './env'
 import { createMemoryStore, createSupabaseStore, type DraftStore } from './store'
@@ -45,7 +45,7 @@ export function getRuntime(): Runtime {
   if (isTestMode()) {
     const memory = (shared.__yakiniMemoryStore ??= createMemoryStore())
     return {
-      testMode: true, store: memory, fetchDeps: mockFetchDeps(), chat: mockGenerateChat,
+      testMode: true, store: memory, fetchDeps: mockFetchDeps(), chat: mockChat,
       draftPepper: TEST_PEPPER, ipPepper: TEST_PEPPER, demoOrigin: process.env.DEMO_ORIGIN || 'https://yakini.digital',
     }
   }

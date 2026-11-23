@@ -92,3 +92,22 @@ export const mockGenerateChat: GenerateChat = async (opts) => {
   }
   return result
 }
+
+/**
+ * Stand-in for chat edits: answers each of the 20 scripted eval requests (packages/ai/evals)
+ * the way a correct model would, and anything else with a polite reply. Proves the pipeline in
+ * tests and browser runs; the real model is measured by `npm run eval -w builder`.
+ */
+export const mockEditChat: GenerateChat = async (opts) => {
+  const { EDIT_CASES } = await import('@yakini/ai/evals/edit-cases')
+  const user = [...opts.messages].reverse().find((m) => m.role === 'user')?.content ?? ''
+  const request = /OWNER_REQUEST: (.*)$/m.exec(user)?.[1]?.trim() ?? ''
+  const site = JSON.parse(between(user, '<CURRENT_SITE>\n', '\n</CURRENT_SITE>') || '{}')
+  const c = EDIT_CASES.find((x) => x.request.toLowerCase() === request.toLowerCase())
+  const calls = c ? c.script(site) : [{ name: 'reply', arguments: { message: 'I can help with that. Try clicking the text you want to change.' } }]
+  return { content: null, toolCalls: calls.map((call, i) => ({ id: `mock-e${i}`, ...call })), usage: { inputTokens: 400, outputTokens: 60 }, model: 'mock', latencyMs: 1 }
+}
+
+/** One stand-in for every model call in test mode, routed by the tools offered. */
+export const mockChat: GenerateChat = (opts) =>
+  opts.tools?.some((t) => t.function.name === 'update_field') ? mockEditChat(opts) : mockGenerateChat(opts)

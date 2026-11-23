@@ -5,8 +5,18 @@
   "description": "xAI client, prompts, tools, copy lint and spend guards (spec 8).",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
-  "exports": { ".": "./src/index.ts" },
-  "scripts": { "typecheck": "tsc --noEmit -p .", "test": "vitest run" },
+  "exports": {
+    ".": "./src/index.ts",
+    "./evals/edit-cases": "./evals/edit-cases.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "test": "vitest run"
+  },
   "dependencies": {},
-  "devDependencies": { "typescript": "^5", "vitest": "^5.1.0", "@types/node": "^20" }
+  "devDependencies": {
+    "typescript": "^5",
+    "vitest": "^5.1.0",
+    "@types/node": "^20"
+  }
 }
