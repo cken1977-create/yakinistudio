@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Plans and pricing · Yakini guided setup',
+  title: 'Plans and pricing · Yakini',
   description:
-    'Operate, Grow and Founding: a one-time guided setup, then a monthly plan, quoted in writing for your business. A real Yakini person sets up your portal with you, and stays.',
+    'Setup from $299. Monthly plans from $149. Build a kit estimate, add the services you want, and send it for a written quote. Every kit includes the owner and staff dashboard.',
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {

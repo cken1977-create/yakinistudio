@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { SiteShell } from '@/components/SiteShell'
 import { FinalCta } from '@/components/site/Sections'
 import { SECTIONS_CSS } from '@/components/site/content'
-import { START_URL } from '@/lib/pricing'
+import { BUILD_URL } from '@/lib/pricing'
 import { FOUNDER_LINKEDIN, SOCIAL_LINKS } from '@/lib/organization'
 
 export const metadata: Metadata = {
@@ -74,7 +74,7 @@ export default function AboutPage() {
             Most businesses start with the Yakini portal. When a business needs something bigger, we build it and stay to run it with them.
           </p>
           <div className="hm-ctas">
-            <a href={START_URL} className="hm-btn hm-btn-gold"><span>Start your setup</span><span className="yk-btn-arrow">→</span></a>
+            <a href={BUILD_URL} className="hm-btn hm-btn-gold"><span>Build my estimate</span><span className="yk-btn-arrow">→</span></a>
             <a href="/custom-builds" className="hm-btn hm-btn-ghost"><span>Custom builds</span></a>
           </div>
         </div>

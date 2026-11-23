@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { SiteShell } from '@/components/SiteShell'
 import { SECTIONS_CSS } from '@/components/site/content'
-import { PORTAL_LOGIN_URL, START_URL } from '@/lib/pricing'
+import { BUILD_URL, PORTAL_LOGIN_URL } from '@/lib/pricing'
 import { ContactForm } from './ContactForm'
 
 export const metadata: Metadata = {
@@ -43,7 +43,7 @@ export default function ContactPage() {
             <div className="yk-section-tag ct-gap">OR GO STRAIGHT TO IT</div>
             <div className="ct-routes">
               <a href="/apply" className="hm-btn hm-btn-gold"><span>Book a call</span><span className="yk-btn-arrow">→</span></a>
-              <a href={START_URL} className="hm-btn"><span>Start your setup</span></a>
+              <a href={BUILD_URL} className="hm-btn"><span>Build my estimate</span></a>
               <a href={PORTAL_LOGIN_URL} className="hm-btn"><span>Sign in to your portal</span></a>
               <a href="/class" className="hm-btn"><span>Take the free class</span></a>
             </div>

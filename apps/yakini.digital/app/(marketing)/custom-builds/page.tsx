@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { SiteShell } from '@/components/SiteShell'
 import { BOOK_CALL_URL, BUILDS, BUILD_STEPS, SECTIONS_CSS } from '@/components/site/content'
-import { START_URL } from '@/lib/pricing'
+import { BUILD_URL } from '@/lib/pricing'
 import { KitGallery, VISUALS_CSS } from '@/components/site/Visuals'
 
 // Custom builds: Yakini's premium second lane. Outcomes only: no client names, no demo numbers, never priced.
@@ -134,7 +134,7 @@ export default function CustomBuildsPage() {
             <a href={BOOK_CALL_URL} className="hm-btn hm-btn-gold"><span>Book a call</span><span className="yk-btn-arrow">→</span></a>
             <a href="mailto:hello@yakini.digital" className="hm-btn hm-btn-ghost"><span>Email hello@yakini.digital</span></a>
           </div>
-          <p className="cb-portal-note">Looking for the portal instead? <a href={START_URL}>Start your setup →</a></p>
+          <p className="cb-portal-note">Looking for the portal instead? <a href={BUILD_URL}>Build my estimate →</a></p>
         </div>
       </section>
     </SiteShell>

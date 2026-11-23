@@ -4,12 +4,12 @@ import { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { SiteShell } from '@/components/SiteShell'
-import { OFFER_CHOICES, OFFER_GROUPS, START_URL, startUrl } from '@/lib/pricing'
+import { BUILD_URL, OFFER_CHOICES, OFFER_GROUPS } from '@/lib/pricing'
 
 // ═════════════════════════════════════════════════════════════════════════
 // BOOK A CALL: custom-build intake (/apply, kept so ?tier=partner links keep working).
 // Saves through /api/apply and notifies admin@yakini.digital.
-// Plan buyers are pointed to the portal sign-up (START_URL) instead.
+// Kit buyers are pointed to the pricing build picker (BUILD_URL) instead.
 // ═════════════════════════════════════════════════════════════════════════
 
 const BUILD_TYPES = [
@@ -75,7 +75,7 @@ function ApplyForm() {
     setAppliedPreset(presetTier)
     if (presetTier) setForm(current => ({ ...current, tier_interest: current.tier_interest || presetTier }))
   }
-  const planPicked = ['operate', 'grow', 'founding'].includes(form.tier_interest)
+  const planPicked = false
 
   const validateStep = (s: number): boolean => {
     setError('')
@@ -156,7 +156,7 @@ function ApplyForm() {
             Every custom build is quoted in writing before anything starts.
           </p>
           <p className="ap-plan-note">
-            Looking for the Yakini portal? You don&apos;t need a call. <a href={START_URL}>Start your setup →</a>
+            Looking for a kit? You don&apos;t need a call. <a href={BUILD_URL}>Build my estimate →</a>
           </p>
         </div>
       </header>
@@ -264,7 +264,7 @@ function ApplyForm() {
                       </select>
                       {planPicked ? (
                         <span className="ap-field-hint">
-                          Plans don&apos;t need a call. You can <a href={startUrl(form.tier_interest)} className="yk-gold">start your setup here</a>, or send this and we&apos;ll talk it through.
+                          Plans don&apos;t need a call. You can <a href={BUILD_URL} className="yk-gold">build your estimate here</a>, or send this and we&apos;ll talk it through.
                         </span>
                       ) : null}
                     </div>
@@ -367,7 +367,7 @@ function ApplyForm() {
                 <div className="ap-sidebar-card">
                   <div className="ap-sidebar-h">WANT THE PORTAL?</div>
                   <p>Plans start with a guided setup, no call needed.</p>
-                  <a href={START_URL} className="ap-sidebar-email">Start your setup →</a>
+                  <a href={BUILD_URL} className="ap-sidebar-email">Build my estimate →</a>
                 </div>
 
                 <div className="ap-sidebar-card">

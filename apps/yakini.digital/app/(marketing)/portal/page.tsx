@@ -18,7 +18,7 @@ import {
   PASS_THROUGH_NOTE,
   PORTAL_LOGIN_URL,
   REFUND_RULE,
-  START_URL,
+  BUILD_URL,
 } from '@/lib/pricing'
 
 // /portal (was the yakini.digital home until Nov 9 2026, when the immersive walkthrough took over /). Portal first (plan approved by Clarence Kennedy, Oct 22 2026):
@@ -36,7 +36,7 @@ const FAQ = [
   { q: 'Is this do-it-yourself?', a: 'No. A real Yakini person sets everything up with you and stays with you after go-live, with a help desk you can reach any time.' },
   { q: 'When am I charged?', a: `${BILLING_NOTE} The first monthly charge is 30 days after you sign up, then monthly. Cancel the monthly plan any time.` },
   { q: 'Can I get a refund?', a: REFUND_RULE },
-  { q: 'What happens to help hours I don’t use?', a: `${HELP_HOURS_NOTE} ${EXTRA_HELP_NOTE}` },
+  { q: 'What support is included?', a: `${HELP_HOURS_NOTE} ${EXTRA_HELP_NOTE}` },
   { q: 'Who owns the accounts?', a: `You do. ${PASS_THROUGH_NOTE} ${FLAT_PRICING_NOTE}` },
 ] as const
 
@@ -60,8 +60,8 @@ export default function HomePage() {
               Every client, text, payment and reply in one place. A real Yakini person sets it up with you, and stays.
             </p>
             <div className="hh-ctas">
-              <a href={START_URL} className="hm-btn hm-btn-gold hh-primary">
-                <span>Start your setup</span>
+              <a href={BUILD_URL} className="hm-btn hm-btn-gold hh-primary">
+                <span>Build my estimate</span>
                 <span className="yk-btn-arrow">→</span>
               </a>
               <a href="#plans" className="hm-btn hm-btn-ghost">

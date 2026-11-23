@@ -11,7 +11,7 @@ import {
   HELP_HOURS_NOTE,
   PASS_THROUGH_NOTE,
   REFUND_RULE,
-  START_URL,
+  BUILD_URL,
 } from '@/lib/pricing'
 
 export const metadata: Metadata = {
@@ -30,7 +30,7 @@ const PROVIDE = [
 const FINE_PRINT = [
   { h: 'Paying', p: BILLING_NOTE },
   { h: 'Refunds', p: REFUND_RULE },
-  { h: 'Help hours', p: `${HELP_HOURS_NOTE} ${EXTRA_HELP_NOTE}` },
+  { h: 'Support', p: `${HELP_HOURS_NOTE} ${EXTRA_HELP_NOTE}` },
   { h: 'Drafted replies', p: AI_LIMIT_NOTE },
   { h: 'Your accounts', p: `${PASS_THROUGH_NOTE} ${FLAT_PRICING_NOTE}` },
 ] as const
@@ -54,7 +54,7 @@ export default function HowItWorksPage() {
             in your business&apos;s name, and stays on after go-live.
           </p>
           <div className="hm-ctas">
-            <a href={START_URL} className="hm-btn hm-btn-gold"><span>Start your setup</span><span className="yk-btn-arrow">→</span></a>
+            <a href={BUILD_URL} className="hm-btn hm-btn-gold"><span>Build my estimate</span><span className="yk-btn-arrow">→</span></a>
             <a href="/pricing" className="hm-btn hm-btn-ghost"><span>See plans</span></a>
           </div>
         </div>
