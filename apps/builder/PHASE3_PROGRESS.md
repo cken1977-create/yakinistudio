@@ -24,12 +24,23 @@ If a session ends, read this file first, then `git log --oneline main..HEAD`.
 - **Forms:** honeypot `company_website`, signed render time field, 5/10 min per IP per site, 200/day per site.
 
 ## Steps (✓ = committed and pushed)
-1. [ ] Progress note + branch
-2. [ ] Migration (repo only) + store methods (Supabase + memory) + DB tests
-3. [ ] Checklist, slug check, publish / rollback / unpublish, review gate, subdomain registration
-4. [ ] Renderer: host routing, caching, neutral pages, sitemap/robots/JSON-LD/canonical, client-site CSP
+1. [✓] Progress note + branch
+2. [✓] Migration (repo only) + store methods (Supabase + memory) + DB tests (313 DB checks pass locally)
+3. [✓] Checklist, slug check, publish / rollback / unpublish, review gate, subdomain registration
+4. [✓] Renderer: host routing, caching, neutral pages, sitemap/robots/JSON-LD/canonical, client-site CSP (/p previews move to step 6)
 5. [ ] Forms endpoint, thanks page, owner alert, booking request mode, /sites/[id]/forms
 6. [ ] Share links + /p previews; /report + abuse_reports + auto-hold; takedown/restore; /ops, /ops/reports, /ops/reviews; Check stored sites
 7. [ ] Studio screens: /sites/[id]/publish, rollback in versions, takedown banner
 8. [ ] Evidence: unit + DB + e2e at 390/1280, Lighthouse, link crawl, screenshots
 9. [ ] Self-review, security review, CHANGELOG, PR
+
+## How to try it locally (test mode)
+`npm run build` in apps/builder, then `BUILDER_TEST_MODE=1 npx next start -p 3110`.
+Seed `POST /api/dev/seed?fixture=kit-ready` (or `impersonation`), sign in with code 246810, claim,
+`POST /api/dev/state {"action":"plan","siteId":...,"plan":true}`, publish, then request the site with
+`Host: <slug>.yakini.digital`. Local DB tests: see supabase/tests/run.sh (Postgres in /var/tmp/ys-pg).
+
+## Notes for review
+- Copy lint at publish checks vendor names and "AI-built" (R7/R8). It does not check "$" amounts: a
+  business's own menu prices are its content; R9 is Yakini's own price line.
+- Outside links count as working when the server answers, including 401/403/405/429 bot walls.
