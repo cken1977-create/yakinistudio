@@ -1,3 +1,4 @@
+import { BOOKING_FORM_KEY } from '@yakini/sections'
 import type { SiteDoc } from '@yakini/site-schema'
 
 /**
@@ -8,7 +9,7 @@ import type { SiteDoc } from '@yakini/site-schema'
 export type FormKind = 'contact' | 'catering' | 'booking_request'
 export type SiteForm = { formKey: string; kind: FormKind; fields: string[] }
 
-export const BOOKING_FORM_KEY = 'booking-request'
+export { BOOKING_FORM_KEY }
 export const BOOKING_FIELDS = ['name', 'email', 'phone', 'event_date', 'message'] as const
 
 export function formsOf(doc: SiteDoc): SiteForm[] {

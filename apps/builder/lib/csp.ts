@@ -31,3 +31,26 @@ export function buildStudioCsp(nonce: string, opts: StudioCspOptions = {}): stri
     "object-src 'none'",
   ].join('; ')
 }
+
+/**
+ * Client-site CSP (spec 13.5): nothing loads from outside the site. Same nonce scheme as the
+ * studio so the page's own scripts run, but no analytics or error-reporting hosts, and style
+ * attributes are allowed only for the brand color variables on the site wrapper.
+ */
+export function buildSiteCsp(nonce: string, opts: { isDev?: boolean } = {}): string {
+  if (!NONCE_RE.test(nonce)) throw new Error('invalid csp nonce')
+  const script = ["'self'", `'nonce-${nonce}'`, "'strict-dynamic'", opts.isDev ? "'unsafe-eval'" : ''].filter(Boolean).join(' ')
+  return [
+    "default-src 'self'",
+    `script-src ${script}`,
+    `style-src 'self' 'nonce-${nonce}'`,
+    "style-src-attr 'unsafe-inline'",
+    "img-src 'self' data:",
+    "font-src 'self'",
+    "connect-src 'self'",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "object-src 'none'",
+  ].join('; ')
+}

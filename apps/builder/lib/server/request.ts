@@ -58,7 +58,7 @@ export function signFormTime(now: number, pepper: string): string {
   return `${now}.${createHmac('sha256', pepper).update(`form-time:${now}`).digest('hex').slice(0, 32)}`
 }
 
-export function checkFormTime(value: string | null, pepper: string, now: number): 'ok' | 'too_fast' | 'expired' | 'bad' {
+export function checkFormTime(value: string | null, pepper: string, now: number, maxAgeMs = 2 * 60 * 60 * 1000): 'ok' | 'too_fast' | 'expired' | 'bad' {
   const m = /^(\d{13})\.([0-9a-f]{32})$/.exec(value ?? '')
   if (!m) return 'bad'
   const want = Buffer.from(signFormTime(Number(m[1]), pepper))
@@ -66,7 +66,7 @@ export function checkFormTime(value: string | null, pepper: string, now: number)
   if (want.length !== got.length || !timingSafeEqual(want, got)) return 'bad'
   const age = now - Number(m[1])
   if (age < 3_000) return 'too_fast'
-  if (age > 2 * 60 * 60 * 1000) return 'expired'
+  if (age > maxAgeMs) return 'expired'
   return 'ok'
 }
 

@@ -32,6 +32,8 @@ export type RenderContext = {
   image: (assetId: string) => ResolvedImage | null
   /** Where a site form posts. Null means forms cannot submit here (drafts, Phase 1). */
   formAction: (formKey: string) => string | null
+  /** Signed "form shown at" value for live forms (spam check, spec 11.3). */
+  formStamp?: string | null
   /** The "Report this site" link (7.3), or null where it is not shown. */
   reportUrl: string | null
   today: TodayUpdate
