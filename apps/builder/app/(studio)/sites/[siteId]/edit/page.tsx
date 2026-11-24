@@ -36,7 +36,10 @@ export default async function EditPage({ params, searchParams }: Props) {
     }
     throw e
   }
-  const photos = await rt.store.tenantPhotos(a.tenantId)
+  const [photos, tutorialDone] = await Promise.all([
+    rt.store.tenantPhotos(a.tenantId),
+    a.kind === 'member' ? rt.store.tutorialDone(a.user.id, siteId) : Promise.resolve([]),
+  ])
   const kit = kitDefinition(doc.kitId)
 
   return (
@@ -46,6 +49,7 @@ export default async function EditPage({ params, searchParams }: Props) {
       anonymous={a.kind === 'anonymous'} canManageVersions={canManageVersions(a)}
       welcome={q.welcome === '1'}
       initialPageId={typeof q.page === 'string' ? q.page : undefined}
+      tutorialDone={tutorialDone} tourStep={typeof q.tour === 'string' ? q.tour : undefined}
     />
   )
 }

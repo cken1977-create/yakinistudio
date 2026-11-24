@@ -42,6 +42,18 @@ async function pick(page: Page, sectionId: string) {
 async function closeSheet(page: Page) {
   if (isPhone(page)) await page.locator('[role="dialog"][aria-label="edit"]').getByRole('button', { name: 'Close' }).first().click()
 }
+/** The tour starts on a first visit; these tests skip it (Escape), which is remembered. */
+async function skipTour(page: Page) {
+  const card = page.locator('[data-tour-step]')
+  if (await card.waitFor({ state: 'visible', timeout: 2500 }).then(() => true, () => false)) {
+    await page.keyboard.press('Escape')
+    await expect(card).toHaveCount(0)
+  }
+}
+async function openEditor(page: Page, url: string) {
+  await page.goto(url)
+  await skipTour(page)
+}
 const nextSave = (page: Page) => page.waitForResponse((r) => r.url().includes('/draft') && r.request().method() === 'PATCH' && r.status() === 200)
 
 async function signInAndClaim(page: Page, siteId: string, email: string) {
@@ -56,6 +68,7 @@ async function signInAndClaim(page: Page, siteId: string, email: string) {
   await page.getByLabel(/This is my business/).check()
   await page.getByRole('button', { name: 'Make it mine' }).click()
   await page.waitForURL(new RegExp(`/sites/${siteId}/edit`))
+  await skipTour(page)
 }
 
 test('claim → editor → click edit headline → autosave → reload keeps it', async ({ page }, info) => {
@@ -89,7 +102,7 @@ test('every section on every page can be picked and changed by click', async ({ 
   const before = await saved(page, siteId)
   const touched: string[] = []
   for (const p of before.pages) {
-    await page.goto(`/sites/${siteId}/edit?page=${p.id}`)
+    await openEditor(page, `/sites/${siteId}/edit?page=${p.id}`)
     for (const s of p.sections.filter((x) => !x.hidden)) {
       await pick(page, s.id)
       const panel = inspector(page)
@@ -133,7 +146,7 @@ test('photos, lists and section tools work by click', async ({ page }) => {
   const before = await saved(page, siteId)
   const menuPage = before.pages.find((p) => p.sections.some((s) => s.type === 'menu'))!
   const menu = menuPage.sections.find((s) => s.type === 'menu')!
-  await page.goto(`/sites/${siteId}/edit?page=${menuPage.id}`)
+  await openEditor(page, `/sites/${siteId}/edit?page=${menuPage.id}`)
   await pick(page, menu.id)
   const panel = inspector(page)
   const dishes = panel.getByRole('group', { name: /^Dishes/ }).first()
@@ -154,7 +167,7 @@ test('photos, lists and section tools work by click', async ({ page }) => {
   await expect(page.locator(`[data-ys-section="${menu.id}"]`)).toHaveCount(1)
 
   // A photo from the kit, with its description.
-  await page.goto(`/sites/${siteId}/edit`)
+  await openEditor(page, `/sites/${siteId}/edit`)
   const heroId = before.pages[0].sections.find((s) => s.type === 'hero')!.id
   await pick(page, heroId)
   await inspector(page).getByRole('button', { name: /Change photo|Add a photo/ }).first().click()
@@ -170,9 +183,9 @@ test('photos, lists and section tools work by click', async ({ page }) => {
 
 test('with two windows open, the second save gets the conflict message and nothing is lost', async ({ page, context }) => {
   const siteId = await seed(page, 'kit-food-truck')
-  await page.goto(`/sites/${siteId}/edit`)
+  await openEditor(page, `/sites/${siteId}/edit`)
   const other = await context.newPage()
-  await other.goto(`/sites/${siteId}/edit`)
+  await openEditor(other, `/sites/${siteId}/edit`)
 
   await pick(page, 'hero')
   let save = nextSave(page)
@@ -198,7 +211,7 @@ test('with two windows open, the second save gets the conflict message and nothi
 
 test('chat proposes a change, Apply saves it, and brand colors stay as they are', async ({ page }) => {
   const siteId = await seed(page, 'kit-food-truck')
-  await page.goto(`/sites/${siteId}/edit`)
+  await openEditor(page, `/sites/${siteId}/edit`)
   if (isPhone(page)) await page.getByRole('navigation', { name: 'Editor' }).getByRole('button', { name: 'Chat' }).click()
   else await page.getByRole('tab', { name: 'Chat' }).click()
 
@@ -230,7 +243,7 @@ test('saving a version and restoring it brings the old page back', async ({ page
   await page.getByRole('button', { name: 'Save a version' }).click()
   await expect(page.getByText('Spring', { exact: false }).first()).toBeVisible()
 
-  await page.goto(`/sites/${siteId}/edit`)
+  await openEditor(page, `/sites/${siteId}/edit`)
   await pick(page, 'hero')
   save = nextSave(page)
   await inspector(page).getByLabel('Headline', { exact: true }).fill('Summer menu is here')

@@ -109,5 +109,23 @@ export const mockEditChat: GenerateChat = async (opts) => {
 }
 
 /** One stand-in for every model call in test mode, routed by the tools offered. */
+/**
+ * Stand-in Destiny for the Help tab: short answers keyed on the question, in the real prompt's
+ * style. A question containing "leak-test" answers with a stack name, so tests can check the
+ * route's safety net replaces it.
+ */
+export const mockHelperChat: GenerateChat = async (opts) => {
+  const q = String(opts.messages[opts.messages.length - 1]?.content ?? '').toLowerCase()
+  const say = (content: string) => ({ content, toolCalls: [], usage: { inputTokens: 300, outputTokens: 40 }, model: 'test-helper', latencyMs: 5 })
+  if (q.includes('leak-test')) return say('This runs on Vercel and Supabase.')
+  if (/photo|picture|image/.test(q)) return say('Tap the section with the photo, then Change photo in its fields. Pick one of yours, a kit photo, or upload one, and describe it in a few words. Tutorial step 3: Change a photo.')
+  if (/hide|move|section/.test(q)) return say('Tap the section, then use the arrows to move it or Hide to take it off the page for now. Tutorial step 4: Move or hide a section.')
+  if (/publish|live|domain/.test(q)) return say('Publishing opens soon. Your draft is saved and private until then. Tutorial step 7: Publish.')
+  if (/change .* (headline|words)|my headline/.test(q)) return say('I’ll put that in the Chat tab for you.')
+  return say('Tap any part of the page to change it; it saves on its own. Tutorial step 2: Change any words.')
+}
+
 export const mockChat: GenerateChat = (opts) =>
-  opts.tools?.some((t) => t.function.name === 'update_field') ? mockEditChat(opts) : mockGenerateChat(opts)
+  opts.tools?.some((t) => t.function.name === 'update_field') ? mockEditChat(opts)
+    : opts.tools?.length ? mockGenerateChat(opts)
+    : mockHelperChat(opts)

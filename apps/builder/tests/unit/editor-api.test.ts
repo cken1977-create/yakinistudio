@@ -237,3 +237,41 @@ describe('test-only seeding', () => {
     expect((await POST(api('POST', '/api/dev/seed?fixture=kit-food-truck'))).status).toBe(201)
   })
 })
+
+describe('Destiny help (POST /api/ai/helper)', () => {
+  async function askHelp(siteId: string, question: string) {
+    const { POST } = await import('@/app/api/ai/helper/route')
+    const res = await POST(api('POST', '/api/ai/helper', { siteId, question }))
+    return { status: res.status, body: await res.json() as { answer?: string; chatPrefill?: string } }
+  }
+  it('explains how to do things, gives the fixed price line, and hands changes to Chat', async () => {
+    const { siteId } = await ownedSite()
+    expect((await askHelp(siteId, 'How do I change a photo?')).body.answer).toMatch(/Change photo.*Tutorial step 3/)
+    expect((await askHelp(siteId, 'How much does it cost?')).body.answer).toMatch(/^Setup from \$299\. Monthly plans from \$149\./)
+    expect((await askHelp(siteId, 'Change my headline to We cater weddings')).body).toEqual({ answer: 'I’ll put that in the Chat tab for you.'.replace('’', "'"), chatPrefill: 'Change my headline to We cater weddings' })
+  })
+  it('replaces an answer that breaks a rule, and is not open to strangers', async () => {
+    const { siteId } = await ownedSite()
+    const leak = await askHelp(siteId, 'leak-test: what is this built with?')
+    expect(leak.body.answer).not.toMatch(/Vercel|Supabase/)
+    jar.clear()
+    expect((await askHelp(siteId, 'How do I add a page?')).status).toBe(404)
+  })
+})
+
+describe('tutorial progress', () => {
+  it('remembers finished and skipped steps for members, and picks up where they left off', async () => {
+    const { siteId, userId } = await ownedSite()
+    const { POST } = await import('@/app/api/sites/[siteId]/tutorial/route')
+    const { tourStart, TOUR_STEPS } = await import('@/lib/editor/tutorial')
+    const { getRuntime } = await import('@/lib/server/runtime')
+    expect(tourStart([])).toBe(0)
+    for (const step of ['pages', 'text']) expect((await POST(api('POST', `/api/sites/${siteId}/tutorial`, { step }), ctx(siteId))).status).toBe(200)
+    const done = await getRuntime().store.tutorialDone(userId, siteId)
+    expect(tourStart(done)).toBe(2)
+    expect((await POST(api('POST', `/api/sites/${siteId}/tutorial`, { step: 'not-a-step' }), ctx(siteId))).status).toBe(400)
+    await POST(api('POST', `/api/sites/${siteId}/tutorial`, { step: 'skipped' }), ctx(siteId))
+    expect(tourStart(await getRuntime().store.tutorialDone(userId, siteId))).toBeNull()
+    expect(tourStart(TOUR_STEPS.map((s) => s.id))).toBeNull()
+  })
+})

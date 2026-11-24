@@ -10,6 +10,8 @@ import { EditorContext, panel, type EditorApi, type Photo } from './context'
 import { Inspector } from './Inspector'
 import { PagesPanel } from './PagesPanel'
 import { HelpPanel, KitPanel } from './SidePanels'
+import { Tour } from './Tour'
+import { TOUR_STEPS, tourStart, type TourStep } from '@/lib/editor/tutorial'
 
 /**
  * The editor (spec 10.2). Desktop (≥ 1024 px): pages on the left, the live page in the middle, and
@@ -29,6 +31,10 @@ export type EditorProps = {
   welcome: boolean
   /** Open on this page (links from the tutorial and tests). */
   initialPageId?: string
+  /** Tour steps this person has finished on this site (members; drafts keep theirs in the browser). */
+  tutorialDone: string[]
+  /** Start the tour at this step ("Show me" on the written tutorial). */
+  tourStep?: string
 }
 
 type Tab = 'edit' | 'chat' | 'kit' | 'help'
@@ -65,7 +71,27 @@ export function Editor(props: EditorProps) {
   const [announce, setAnnounce] = useState('')
   const [chatPrefill, setChatPrefill] = useState<string | undefined>()
 
+  const [tourAt, setTourAt] = useState<number | null>(null)
   const page = doc.pages.find((p) => p.id === pageId) ?? doc.pages[0]
+
+  // The tour: first visit, a half-finished tour, or "Show me" from the written tutorial.
+  const tourKey = `yk-tour-${props.siteId}`
+  useEffect(() => {
+    let done = props.tutorialDone
+    if (props.anonymous) { try { done = JSON.parse(localStorage.getItem(tourKey) ?? '[]') as string[] } catch { done = [] } }
+    const asked = TOUR_STEPS.findIndex((s) => s.id === props.tourStep)
+    const at = asked >= 0 ? asked : tourStart(done)
+    if (at === null) return
+    const t = setTimeout(() => setTourAt(at), 400) // let the page settle first
+    return () => clearTimeout(t)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  const stepDone = useCallback((id: string) => {
+    if (props.anonymous) {
+      try { const d = new Set(JSON.parse(localStorage.getItem(tourKey) ?? '[]') as string[]); d.add(id); localStorage.setItem(tourKey, JSON.stringify([...d])) } catch { /* private mode: the tour just starts again next time */ }
+      return
+    }
+    void fetch(`/api/sites/${props.siteId}/tutorial`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ step: id }) }).catch(() => {})
+  }, [props.anonymous, props.siteId, tourKey])
   useEffect(() => () => session.dispose(), [session])
 
   // Save before leaving; warn only if something truly couldn't be saved yet.
@@ -120,13 +146,20 @@ export function Editor(props: EditorProps) {
     photos, refreshPhotos, imageUrl, canManageVersions: props.canManageVersions, anonymous: props.anonymous,
   }
 
+  const prepare = (p: TourStep['prepare']) => {
+    if (p === 'select-first-section') {
+      const first = page.sections.find((x) => !x.hidden && x.type !== 'header' && x.type !== 'footer')
+      if (first) { setSelected(first.id); setTab('edit'); if (window.matchMedia('(max-width: 1023px)').matches) setSheet('edit') }
+    } else { setSelected(null); setSheet(null); setTab('edit') }
+  }
+
   const shown = proposal ? proposal.doc : doc
   const shownPage = shown.pages.find((p) => p.id === page.id) ?? shown.pages[0]
   const changed = proposal ? proposal.changed : snap.changed
   const status = { saved: 'Saved', unsaved: 'Saving soon…', saving: 'Saving…', offline: 'Offline, will save' }[snap.save]
 
   const chat = <ChatPanel proposal={proposal} setProposal={setProposal} prefill={chatPrefill} />
-  const panelFor = (t: Tab) => t === 'edit' ? <Inspector /> : t === 'chat' ? chat : t === 'kit' ? <KitPanel /> : <HelpPanel onAskChat={(q) => { setChatPrefill(q); setTab('chat'); setSheet('chat') }} />
+  const panelFor = (t: Tab) => t === 'edit' ? <Inspector /> : t === 'chat' ? chat : t === 'kit' ? <KitPanel /> : <HelpPanel onAskChat={(q) => { setChatPrefill(q); setTab('chat'); if (window.matchMedia('(max-width: 1023px)').matches) setSheet('chat') }} onStartTour={() => { setSheet(null); setTourAt(0) }} />
 
   return (
     <EditorContext.Provider value={api}>
@@ -138,14 +171,14 @@ export function Editor(props: EditorProps) {
           <span className={`hidden text-sm sm:inline ${snap.save === 'offline' ? 'text-[#F2B8A8]' : 'text-muted'}`} role="status">{status}</span>
           <button type="button" className={panel.icon} disabled={!snap.canUndo} onClick={() => undoRedo('undo')} aria-label="Undo" title="Undo (Ctrl+Z)">↶</button>
           <button type="button" className={panel.icon} disabled={!snap.canRedo} onClick={() => undoRedo('redo')} aria-label="Redo" title="Redo (Ctrl+Shift+Z)">↷</button>
-          <nav aria-label="Preview size" className="hidden rounded-full border border-paper/20 p-1 text-sm lg:flex">
+          <nav aria-label="Preview size" data-tour="view" className="hidden rounded-full border border-paper/20 p-1 text-sm lg:flex">
             {(['desktop', 'phone'] as const).map((v) => (
               <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)} className={`min-h-9 rounded-full px-3 ${view === v ? 'bg-paper text-ink' : 'text-paper/85'}`}>{v === 'desktop' ? 'Desktop' : 'Phone'}</button>
             ))}
           </nav>
           <a href={`/d/${props.siteId}${page.slug ? `/${page.slug}` : ''}`} target="_blank" rel="noopener" className={`${panel.btn} hidden lg:inline-flex`} onClick={() => void session.flush()}>Preview</a>
           {props.canManageVersions && <a href={`/sites/${props.siteId}/versions`} className={`${panel.btn} hidden lg:inline-flex`} onClick={() => void session.flush()}>Versions</a>}
-          <button type="button" className={`${panel.primary} hidden lg:inline-flex`} disabled title="Publishing opens soon">Publish</button>
+          <button type="button" data-tour="publish" className={`${panel.primary} hidden lg:inline-flex`} disabled title="Publishing opens soon">Publish</button>
         </header>
 
         {props.anonymous && (
@@ -159,10 +192,11 @@ export function Editor(props: EditorProps) {
             <button type="button" className="underline underline-offset-4" onClick={() => session.dismissNotice()}>OK</button>
           </div>
         )}
-        {props.welcome && <Welcome />}
+        {props.welcome && tourAt === null && <Welcome />}
+        {tourAt !== null && <Tour start={tourAt} onPrepare={prepare} onStepDone={stepDone} onClose={() => setTourAt(null)} />}
 
         <div className="lg:grid lg:grid-cols-[16rem_minmax(0,1fr)_24rem]">
-          <aside className="hidden max-h-[calc(100vh-3.5rem)] overflow-y-auto border-r border-paper/10 lg:sticky lg:top-14 lg:block" aria-label="Pages">
+          <aside data-tour="pages" className="hidden max-h-[calc(100vh-3.5rem)] overflow-y-auto border-r border-paper/10 lg:sticky lg:top-14 lg:block" aria-label="Pages">
             <PagesPanel />
           </aside>
           <main className="min-w-0 pb-24 lg:pb-0">
@@ -171,7 +205,7 @@ export function Editor(props: EditorProps) {
           <aside className="hidden max-h-[calc(100vh-3.5rem)] flex-col border-l border-paper/10 lg:sticky lg:top-14 lg:flex" aria-label="Editing tools">
             <div role="tablist" aria-label="Editing tools" className="flex gap-1 border-b border-paper/10 p-2">
               {(['edit', 'chat', 'kit', 'help'] as const).map((t) => (
-                <button key={t} role="tab" type="button" aria-selected={tab === t} onClick={() => setTab(t)}
+                <button key={t} role="tab" type="button" aria-selected={tab === t} onClick={() => setTab(t)} data-tour={t === 'chat' ? 'chat' : undefined}
                   className={`min-h-10 flex-1 rounded-full text-sm font-semibold ${tab === t ? 'bg-paper text-ink' : 'text-paper/85 hover:text-paper'}`}>{{ edit: 'Edit', chat: 'Chat', kit: 'Kit', help: 'Help' }[t]}</button>
               ))}
             </div>
@@ -182,7 +216,7 @@ export function Editor(props: EditorProps) {
         {/* Phone: bottom bar and sheets */}
         <nav aria-label="Editor" className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-paper/10 bg-ink/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
           {([['pages', 'Pages'], ['edit', 'Edit'], ['chat', 'Chat'], ['publish', 'Publish']] as const).map(([k, l]) => (
-            <button key={k} type="button" aria-pressed={sheet === k} onClick={() => setSheet(sheet === k ? null : k)} className={`min-h-14 text-sm font-semibold ${sheet === k ? 'text-gold' : 'text-paper'}`}>{l}</button>
+            <button key={k} type="button" data-tour={`${k}-phone`} aria-pressed={sheet === k} onClick={() => setSheet(sheet === k ? null : k)} className={`min-h-14 text-sm font-semibold ${sheet === k ? 'text-gold' : 'text-paper'}`}>{l}</button>
           ))}
         </nav>
         {sheet && (
