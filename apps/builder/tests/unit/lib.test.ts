@@ -59,8 +59,11 @@ describe('Vercel domain-limit check (v1.1)', () => {
     expect(domainCapacity(50, 50).ok).toBe(false)
     expect(domainCapacity(49, 50, 2).ok).toBe(false)
     expect(domainCapacity(NaN, 50).ok).toBe(false)
-    expect(domainLimitFromEnv('abc')).toBe(50)
+    expect(domainLimitFromEnv('abc')).toBe(100_000)
+    expect(domainLimitFromEnv(undefined)).toBe(100_000)
     expect(domainLimitFromEnv('100')).toBe(100)
+    expect(domainCapacity(10)).toEqual({ ok: true, remaining: 99_990, warn: false })
+    expect(domainCapacity(99_996)).toEqual({ ok: true, remaining: 4, warn: true })
   })
 })
 
