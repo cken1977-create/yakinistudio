@@ -90,7 +90,7 @@ describe('addresses (13.2, 13.3)', () => {
     expect(suggestSlug('Al')).toBe('al-site')
   })
   it('rejects reserved, brand and badly shaped addresses', () => {
-    for (const s of ['www', 'portal', 'studio', 'ops', 'admin', 'draft-abc123', 'paypal', 'wells-fargo']) expect(slugError(s, undefined, false)).toMatch(/reserved/)
+    for (const s of ['www', 'portal', 'studio', 'ops', 'admin', 'composer', 'mission', 'sign', 'send', 'draft-abc123', 'paypal', 'wells-fargo']) expect(slugError(s, undefined, false)).toMatch(/reserved/)
     expect(slugError('extra-one', 'extra-one,extra-two', false)).toMatch(/reserved/)
     for (const s of ['ab', '-abc', 'abc-', 'a--b', 'Has Caps', 'x'.repeat(41)]) expect(slugError(s, undefined, false)).not.toBeNull()
     expect(slugError('mesa-street-tacos', undefined, true)).toMatch(/taken/)
