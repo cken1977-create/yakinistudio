@@ -43,7 +43,7 @@ Source of truth: `00-core-v1.1.md` and `phase-0-v1.1.md`. Clarence approved "use
 5. **Report link on drafts.** Private drafts don't show "Report this site"; `/report` arrives with publishing in Phase 3.
 6. **Studio landing.** `/` still says the studio is opening soon. Spec §12 wants "Your website, ready in minutes." with two buttons; switch it when you're ready to open the studio.
 7. **First draft snapshot kind.** The Phase 0 table has no `draft` kind, so the first draft is saved as a `checkpoint` (no migration needed).
-8. **Nonce-based CSP (Phase 0 item 7)** is in its own PR (`proxy.ts` + `lib/csp.ts`). Every studio page is dynamic because the nonce changes per request.
+8. **Nonce-based CSP (Phase 0 item 7)** is in its own PR (`proxy.ts` + `lib/csp.ts`). Every studio page renders per request: the studio layout awaits `connection()` (from `next/server`), because a prerendered page can't carry the request's nonce and its scripts would be blocked.
 9. **Visual snapshot baselines.** Browser tests save screenshots as a CI artifact; pixel-diff baselines can be locked in after you've looked at the first run.
 
 ## Spec deviations (forced by Next 16)
