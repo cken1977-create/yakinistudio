@@ -32,8 +32,8 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@yakini/ai": "*",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "typescript": "^5",
     "vitest": "^5.1.0",
     "@yakini/kits": "*"
