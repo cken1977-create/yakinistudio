@@ -26,7 +26,7 @@ export function draftImage(siteId: string, assetId: string, known: ReadonlySet<s
     const dir = `/${sample.storagePath.slice(0, sample.storagePath.lastIndexOf('/') + 1)}`
     return {
       src: `/${sample.storagePath}`, width: sample.width, height: sample.height,
-      sources: [{ type: 'image/webp', srcSet: `${dir}${sample.webp.small} ${sample.webp.smallWidth}w, ${dir}${sample.webp.large} ${sample.width}w` }],
+      sources: [{ type: 'image/webp', srcSet: [`${dir}${sample.webp.small} ${sample.webp.smallWidth}w`, sample.webp.medium ? `${dir}${sample.webp.medium} ${sample.webp.mediumWidth}w` : null, `${dir}${sample.webp.large} ${sample.width}w`].filter(Boolean).join(', ') }],
     }
   }
   // Only ids the stored draft itself references are linked (a doc cannot point at another tenant's file;

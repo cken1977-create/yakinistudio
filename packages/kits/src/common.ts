@@ -38,7 +38,7 @@ export function trimTo(s: string, max: number): string {
 }
 
 /**
- * A photo sample shipped as a JPEG (every browser) plus full-size and 640-wide WebP copies, all in
+ * A photo sample shipped as a JPEG (every browser) plus full-size, 960-wide and 640-wide WebP copies, all in
  * public/kit-samples/<kit>/. Photos are made for Yakini's kits and contain no people's faces,
  * logos or readable text.
  */
@@ -47,7 +47,7 @@ export function photoSample(kit: string, key: string, assetId: string, alt: stri
     key, assetId, alt,
     storagePath: `kit-samples/${kit}/${key}.jpg`,
     mime: 'image/jpeg', width: 1280, height: 720,
-    webp: { large: `${key}.webp`, small: `${key}-sm.webp`, smallWidth: 640 },
+    webp: { large: `${key}.webp`, small: `${key}-sm.webp`, smallWidth: 640, medium: `${key}-md.webp`, mediumWidth: 960 },
     license: { kind: 'yakini-owned', source: `Sample photo made for Yakini Digital's ${kit} kit, Nov 2026 (${sourceNote})`, redistributable: true },
   }
 }
