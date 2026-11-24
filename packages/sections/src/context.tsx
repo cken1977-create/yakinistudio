@@ -10,7 +10,14 @@ import type { Day, LinkTarget, Page, RichText, SiteDoc } from '@yakini/site-sche
  */
 export type RenderMode = 'draft' | 'live' | 'export'
 
-export type ResolvedImage = { src: string; srcSet?: string; width: number; height: number }
+export type ResolvedImage = {
+  src: string
+  srcSet?: string
+  width: number
+  height: number
+  /** Better formats offered first (e.g. WebP); `src` stays the file every browser can show. */
+  sources?: readonly { type: 'image/webp' | 'image/avif'; srcSet: string }[]
+}
 
 /** The active Today update (spec 11.5). Phase 1 never has one; Phase 6 fills it in. */
 export type TodayUpdate = { kind: string; headline: string; lines: string[] } | null
@@ -143,7 +150,7 @@ export function Img({ ctx, image, className, sizes, priority }: {
   const r = ctx.image(image.assetId)
   if (!r) return null
   const style = image.focal ? { objectPosition: `${Math.round(image.focal.x * 100)}% ${Math.round(image.focal.y * 100)}%` } : undefined
-  return (
+  const img = (
     // eslint-disable-next-line @next/next/no-img-element -- the same markup must work in exports and client runtimes
     <img
       className={className}
@@ -158,6 +165,14 @@ export function Img({ ctx, image, className, sizes, priority }: {
       decoding="async"
       style={style}
     />
+  )
+  if (!r.sources?.length) return img
+  // <picture> is laid out as if absent (display: contents), so every img style and selector still applies.
+  return (
+    <picture className="ys-pic">
+      {r.sources.map((s) => <source key={s.type} type={s.type} srcSet={s.srcSet} sizes={sizes ?? '100vw'} />)}
+      {img}
+    </picture>
   )
 }
 

@@ -88,6 +88,12 @@ describe('modes', () => {
     expect(d).toContain('Your Today update shows here when you post one.')
     expect(html(ctxFor(doc, home, 'export'))).not.toContain('Your Today update shows here')
   })
+  it('offers WebP first with the JPEG as the fallback when the image has a WebP copy', () => {
+    const ctx = { ...ctxFor(doc, home, 'live'), image: () => ({ src: '/a.jpg', width: 1280, height: 720, sources: [{ type: 'image/webp' as const, srcSet: '/a-sm.webp 640w, /a.webp 1280w' }] }) }
+    const h = html(ctx)
+    expect(h).toMatch(/<picture class="ys-pic"><source type="image\/webp" srcset="\/a-sm\.webp 640w, \/a\.webp 1280w"/i)
+    expect(h).toMatch(/<img [^>]*src="\/a\.jpg"[^>]*alt="[^"]+"/)
+  })
   it('escapes text from the doc: script-looking text is shown, never run', () => {
     const evil = structuredClone(doc)
     ;(evil.pages[0].sections[1].props as { headline: string }).headline = '<script>alert(1)</script>'

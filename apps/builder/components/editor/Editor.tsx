@@ -1,7 +1,7 @@
 'use client'
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 import type { EditOp } from '@yakini/edits'
-import { sampleImageById } from '@yakini/kits'
+import { sampleImageById, sampleImageSrc } from '@yakini/kits'
 import type { SiteDoc } from '@yakini/site-schema'
 import { EditSession, type Transport } from '@/lib/editor/session'
 import { Canvas } from './Canvas'
@@ -122,7 +122,7 @@ export function Editor(props: EditorProps) {
 
   const imageUrl = useCallback((id: string) => {
     const sample = sampleImageById(id)
-    if (sample) return `/${sample.storagePath}`
+    if (sample) return sampleImageSrc(sample)
     // The business's own photos come through the access-checked asset route (its tenant only).
     return /^[0-9a-f-]{36}$/.test(id) ? `/api/drafts/${props.siteId}/assets/${id}` : null
   }, [props.siteId])

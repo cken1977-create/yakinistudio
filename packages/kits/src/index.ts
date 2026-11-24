@@ -44,6 +44,18 @@ export function sampleImageById(assetId: string): SampleImage | undefined {
   return SAMPLES_BY_ID.get(assetId)
 }
 
+/** Sample pictures the editor offers for this kit (retired drawings stay resolvable, not offered). */
+export function offeredSamples(kit: KitDefinition | undefined): SampleImage[] {
+  return (kit?.sampleImages ?? []).filter((s) => !s.retired)
+}
+
+/** URL of a sample file the studio serves from public/ (`small` for thumbnails). */
+export function sampleImageSrc(sample: SampleImage, size: 'full' | 'small' = 'full'): string {
+  const dir = sample.storagePath.slice(0, sample.storagePath.lastIndexOf('/') + 1)
+  if (sample.webp) return `/${dir}${size === 'small' ? sample.webp.small : sample.webp.large}`
+  return `/${sample.storagePath}`
+}
+
 /** The kit's first allowed font pair is its default. */
 export function defaultFontPair(kit: KitDefinition): FontPair {
   return kit.fontPairs[0]

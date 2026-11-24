@@ -15,6 +15,10 @@
 - Tests: 129 builder unit tests, 31 edit-engine tests, 25 AI-package tests, 66 renderer tests (including old versions still rendering after a format change), browser tests for claim → edit → reload, every section on every page edited by click, the two-window conflict, chat, versions and all 8 tutorial steps, at 390 and 1280.
 
 ### Changed
+- Kit photos: food truck and restaurant drafts now use real sample photos (5 per kit, JPEG for every browser plus full-size and 640-wide WebP offered first), replacing the drawings for new drafts. Older drafts keep showing the drawings. Photos for the 8 later kits are stored in `apps/builder/kit-photos/`.
+- The renderer offers WebP first (`<picture>`, laid out as if absent) when an image has a WebP copy.
+- A Today section set to hide when empty now shows a note in drafts, so the owner can find and edit it (live pages unchanged).
+- The "Skip to content" link is clipped until focused instead of sitting above the site, so it can't cover anything above it.
 - The draft screen's "Keep editing" and "Make it mine" now work (they were "Opens soon").
 - Members can view their claimed draft at `/d/[siteId]`, and its photos.
 - The renderer marks draft sections with `data-ys-section` so the editor can select them (live pages carry no ids).

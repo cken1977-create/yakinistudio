@@ -5,7 +5,7 @@ import { readSite, type SiteReading } from '@yakini/brand/read-site'
 import { colorsLookWeak, suggestKitFromText } from '@yakini/brand'
 import { factsToText, phoneToE164 } from '@yakini/brand/facts'
 import {
-  BUILDER_KIT_IDS, assembleDoc, brandFor, buildKitDraft, isBuilderKit, kitDefinition,
+  BUILDER_KIT_IDS, assembleDoc, brandFor, buildKitDraft, isBuilderKit, kitDefinition, offeredSamples,
   type KitDefinition, type Palette, type TemplateContext,
 } from '@yakini/kits'
 import type { KitId } from '@yakini/pricing'
@@ -153,7 +153,7 @@ export async function createDraft(
         businessName: name,
         ownHosts: ownHostsFor(site?.finalUrl.toString()),
         // Photos still downloading are allowed here and re-checked against what was stored below.
-        allowedAssetIds: new Set([...photoPlan.map((p) => p.id), ...kit.sampleImages.map((s) => s.assetId)]),
+        allowedAssetIds: new Set([...photoPlan.map((p) => p.id), ...offeredSamples(kit).map((s) => s.assetId)]),
       },
       chat: rt.chat,
       deadline,
@@ -164,7 +164,7 @@ export async function createDraft(
   const stored = await imagesDone
   const logo = stored.find((i) => i.kind === 'logo')
   const brand = brandFor(kit, { colors: palette, ...(logo ? { logo: { assetId: logo.id, alt: logo.alt } } : {}) }, ownerColors ? 'owner' : 'extracted')
-  const storedIds = new Set([...stored.map((i) => i.id), ...kit.sampleImages.map((s) => s.assetId)])
+  const storedIds = new Set([...stored.map((i) => i.id), ...offeredSamples(kit).map((s) => s.assetId)])
   const fallbackCtx: TemplateContext = { name, ...(req.city ? { city: req.city } : {}) }
 
   let doc: SiteDoc | null = null

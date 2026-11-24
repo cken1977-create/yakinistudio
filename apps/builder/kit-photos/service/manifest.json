@@ -1,0 +1,77 @@
+{
+  "kit": "service",
+  "photos": [
+    {
+      "key": "ac-repair",
+      "source": "43",
+      "alt": "A technician repairing an outdoor air conditioning unit",
+      "width": 1280,
+      "height": 720,
+      "files": {
+        "jpg": "ac-repair.jpg",
+        "webp": "ac-repair.webp",
+        "webpSmall": "ac-repair-sm.webp"
+      }
+    },
+    {
+      "key": "service-van",
+      "source": "44",
+      "alt": "A clean white service van parked in a driveway",
+      "width": 1280,
+      "height": 720,
+      "files": {
+        "jpg": "service-van.jpg",
+        "webp": "service-van.webp",
+        "webpSmall": "service-van-sm.webp"
+      }
+    },
+    {
+      "key": "panel-testing",
+      "source": "45",
+      "alt": "An electrician in gloves testing an open breaker panel",
+      "width": 1280,
+      "height": 720,
+      "files": {
+        "jpg": "panel-testing.jpg",
+        "webp": "panel-testing.webp",
+        "webpSmall": "panel-testing-sm.webp"
+      }
+    },
+    {
+      "key": "kitchen-clean",
+      "source": "46",
+      "alt": "A cleaner in gloves wiping down a kitchen island",
+      "width": 1280,
+      "height": 720,
+      "files": {
+        "jpg": "kitchen-clean.jpg",
+        "webp": "kitchen-clean.webp",
+        "webpSmall": "kitchen-clean-sm.webp"
+      }
+    },
+    {
+      "key": "pipe-fitting",
+      "source": "47",
+      "alt": "A plumber tightening a fitting under a bathroom sink",
+      "width": 1280,
+      "height": 720,
+      "files": {
+        "jpg": "pipe-fitting.jpg",
+        "webp": "pipe-fitting.webp",
+        "webpSmall": "pipe-fitting-sm.webp"
+      }
+    },
+    {
+      "key": "tablet-signoff",
+      "source": "48",
+      "alt": "A homeowner signing a tablet held by a service worker at the door",
+      "width": 1280,
+      "height": 720,
+      "files": {
+        "jpg": "tablet-signoff.jpg",
+        "webp": "tablet-signoff.webp",
+        "webpSmall": "tablet-signoff-sm.webp"
+      }
+    }
+  ]
+}

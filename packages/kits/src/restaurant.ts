@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { HHMM, type SiteDocContent } from '@yakini/site-schema'
-import { consentText, footer, header, imageOr, inCity, paragraphs, section, trimTo } from './common'
+import { consentText, footer, header, imageOr, inCity, paragraphs, section, trimTo, photoSample } from './common'
 import type { KitDefinition, SampleImage, TemplateContext } from './types'
 
 const YAKINI_DRAWN = {
@@ -10,9 +10,15 @@ const YAKINI_DRAWN = {
 } as const
 
 export const RESTAURANT_SAMPLES: readonly SampleImage[] = [
-  { key: 'dining', assetId: '7a1e0000-0000-4000-8000-000000000201', storagePath: 'kit-samples/restaurant/dining.svg', mime: 'image/svg+xml', width: 1600, height: 1000, alt: 'Illustration of a warm dining room with set tables', license: YAKINI_DRAWN },
-  { key: 'plate', assetId: '7a1e0000-0000-4000-8000-000000000202', storagePath: 'kit-samples/restaurant/plate.svg', mime: 'image/svg+xml', width: 1600, height: 1000, alt: 'Illustration of a plated dish with herbs', license: YAKINI_DRAWN },
-  { key: 'table', assetId: '7a1e0000-0000-4000-8000-000000000203', storagePath: 'kit-samples/restaurant/table.svg', mime: 'image/svg+xml', width: 1600, height: 1000, alt: 'Illustration of a long table set for a private event', license: YAKINI_DRAWN },
+  { key: 'dining', assetId: '7a1e0000-0000-4000-8000-000000000201', storagePath: 'kit-samples/restaurant/dining.svg', mime: 'image/svg+xml', width: 1600, height: 1000, alt: 'Illustration of a warm dining room with set tables', license: YAKINI_DRAWN, retired: true },
+  { key: 'plate', assetId: '7a1e0000-0000-4000-8000-000000000202', storagePath: 'kit-samples/restaurant/plate.svg', mime: 'image/svg+xml', width: 1600, height: 1000, alt: 'Illustration of a plated dish with herbs', license: YAKINI_DRAWN, retired: true },
+  { key: 'table', assetId: '7a1e0000-0000-4000-8000-000000000203', storagePath: 'kit-samples/restaurant/table.svg', mime: 'image/svg+xml', width: 1600, height: 1000, alt: 'Illustration of a long table set for a private event', license: YAKINI_DRAWN, retired: true },
+  // Photos (approved Nov 2026). The drawings above stay only so older drafts keep rendering.
+  photoSample('restaurant', 'corner-dusk', '7a1e0000-0000-4000-8000-000000000204', 'A corner restaurant with a lit patio and potted plants at dusk', 'approved set #12'),
+  photoSample('restaurant', 'dining-room', '7a1e0000-0000-4000-8000-000000000205', 'A warm, candlelit dining room with wine glasses on a wooden table', 'approved set #07'),
+  photoSample('restaurant', 'plated-fish', '7a1e0000-0000-4000-8000-000000000206', 'A chef finishing a plate of seared fish with fresh herbs', 'approved set #08'),
+  photoSample('restaurant', 'family-table', '7a1e0000-0000-4000-8000-000000000207', 'Fried chicken, mac and cheese, collard greens and cornbread served family style', 'approved set #09'),
+  photoSample('restaurant', 'cocktail', '7a1e0000-0000-4000-8000-000000000208', 'A bartender pouring a cocktail into a coupe glass at a candlelit bar', 'approved set #10'),
 ]
 const sample = (key: string) => RESTAURANT_SAMPLES.find((s) => s.key === key)
 
@@ -26,7 +32,7 @@ const PAGES = [
 
 function template(ctx: TemplateContext): SiteDocContent {
   const name = ctx.name
-  const hero = imageOr(ctx, sample('dining'))
+  const hero = imageOr(ctx, sample('corner-dusk'))
   const gallery = ctx.gallery?.length ? ctx.gallery : []
   const reserve = { kind: 'section', pageId: 'contact', sectionId: 'booking' } as const
   return {
@@ -94,7 +100,7 @@ function template(ctx: TemplateContext): SiteDocContent {
           section('about', 'story', 'right-image', {
             heading: 'Our story',
             body: paragraphs('[[Tell your story: how the restaurant started, the food you love to cook and the people behind it.]]'),
-            ...(imageOr(ctx, sample('plate')) ? { image: imageOr(ctx, sample('plate')) } : {}),
+            ...(imageOr(ctx, sample('plated-fish')) ? { image: imageOr(ctx, sample('plated-fish')) } : {}),
           }),
           section('team', 'team', 'grid', { heading: 'The team', members: [] }),
           section('gallery', 'gallery', 'masonry', { heading: 'Inside', images: gallery }, gallery.length === 0),

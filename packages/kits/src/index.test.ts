@@ -3,7 +3,7 @@ import { lintCopy, strayPrices } from '@yakini/ai'
 import { SECTION_DEFS, SiteDoc, validateContent, type SiteDocContent } from '@yakini/site-schema'
 import {
   BUILDER_KITS, BUILDER_KIT_IDS, assembleDoc, brandFor, buildKitDraft, checkAgainstKit, isBuilderKit, kitDefinition,
-  kitRules, sampleImageById, unlicensedSamples, type KitDefinition,
+  kitRules, offeredSamples, sampleImageById, sampleImageSrc, unlicensedSamples, type KitDefinition,
 } from './index'
 
 const kits = Object.values(BUILDER_KITS) as KitDefinition[]
@@ -24,6 +24,31 @@ describe('kit registry (Phase 1)', () => {
       expect(typeof img.license.redistributable).toBe('boolean')
       expect(sampleImageById(img.assetId)).toBe(img)
       expect(img.storagePath).toMatch(/^kit-samples\/[a-z-]+\/[a-z-]+\.(svg|webp|jpg|png)$/)
+    }
+  })
+  it('offers photos (JPEG plus WebP copies) and keeps the retired drawings resolvable for old drafts', () => {
+    for (const k of kits) {
+      const offered = offeredSamples(k)
+      expect(offered.length, k.id).toBeGreaterThanOrEqual(5)
+      for (const img of offered) {
+        expect(img.mime).toBe('image/jpeg')
+        expect(img.webp?.large).toMatch(/^[a-z-]+\.webp$/)
+        expect(img.webp?.small).toMatch(/^[a-z-]+-sm\.webp$/)
+        expect(img.alt.length).toBeGreaterThan(20)
+        expect(img.alt).not.toMatch(/illustration|\bAI\b|generated/i)
+        expect(sampleImageSrc(img)).toBe(`/kit-samples/${k.id}/${img.webp!.large}`)
+        expect(sampleImageSrc(img, 'small')).toBe(`/kit-samples/${k.id}/${img.webp!.small}`)
+      }
+      for (const old of k.sampleImages.filter((s) => s.retired)) expect(sampleImageById(old.assetId)).toBe(old)
+      const ids = new Set(k.sampleImages.map((s) => s.assetId))
+      expect(ids.size, 'asset ids are unique').toBe(k.sampleImages.length)
+    }
+  })
+  it('new drafts use photos, never the retired drawings', () => {
+    for (const k of kits) {
+      const json = JSON.stringify(k.template({ name: 'Test Co' }))
+      for (const old of k.sampleImages.filter((s) => s.retired)) expect(json).not.toContain(old.assetId)
+      expect(offeredSamples(k).some((s) => json.includes(s.assetId)), k.id).toBe(true)
     }
   })
   it('flags any sample image without licence info', () => {

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { HHMM, type SiteDocContent } from '@yakini/site-schema'
-import { consentText, footer, header, imageOr, inCity, paragraphs, section, trimTo } from './common'
+import { consentText, footer, header, imageOr, inCity, paragraphs, section, trimTo, photoSample } from './common'
 import type { KitDefinition, SampleImage, TemplateContext } from './types'
 
 const YAKINI_DRAWN = {
@@ -10,9 +10,15 @@ const YAKINI_DRAWN = {
 } as const
 
 export const FOOD_TRUCK_SAMPLES: readonly SampleImage[] = [
-  { key: 'truck', assetId: '7a1e0000-0000-4000-8000-000000000101', storagePath: 'kit-samples/food-truck/truck.svg', mime: 'image/svg+xml', width: 1600, height: 1000, alt: 'Illustration of a food truck with its service window open', license: YAKINI_DRAWN },
-  { key: 'tacos', assetId: '7a1e0000-0000-4000-8000-000000000102', storagePath: 'kit-samples/food-truck/tacos.svg', mime: 'image/svg+xml', width: 1600, height: 1000, alt: 'Illustration of three tacos on a tray', license: YAKINI_DRAWN },
-  { key: 'event', assetId: '7a1e0000-0000-4000-8000-000000000103', storagePath: 'kit-samples/food-truck/event.svg', mime: 'image/svg+xml', width: 1600, height: 1000, alt: 'Illustration of string lights over an outdoor event', license: YAKINI_DRAWN },
+  { key: 'truck', assetId: '7a1e0000-0000-4000-8000-000000000101', storagePath: 'kit-samples/food-truck/truck.svg', mime: 'image/svg+xml', width: 1600, height: 1000, alt: 'Illustration of a food truck with its service window open', license: YAKINI_DRAWN, retired: true },
+  { key: 'tacos', assetId: '7a1e0000-0000-4000-8000-000000000102', storagePath: 'kit-samples/food-truck/tacos.svg', mime: 'image/svg+xml', width: 1600, height: 1000, alt: 'Illustration of three tacos on a tray', license: YAKINI_DRAWN, retired: true },
+  { key: 'event', assetId: '7a1e0000-0000-4000-8000-000000000103', storagePath: 'kit-samples/food-truck/event.svg', mime: 'image/svg+xml', width: 1600, height: 1000, alt: 'Illustration of string lights over an outdoor event', license: YAKINI_DRAWN, retired: true },
+  // Photos (approved Nov 2026). The drawings above stay only so older drafts keep rendering.
+  photoSample('food-truck', 'truck-line', '7a1e0000-0000-4000-8000-000000000104', 'A colorful food truck at sunset with customers lined up at the window', 'approved set #01'),
+  photoSample('food-truck', 'brisket', '7a1e0000-0000-4000-8000-000000000105', 'Smoked brisket sandwiches and loaded fries on a food truck counter', 'approved set #02'),
+  photoSample('food-truck', 'griddle-tacos', '7a1e0000-0000-4000-8000-000000000106', 'Tacos being topped with onion and cilantro on a flat-top griddle', 'approved set #03'),
+  photoSample('food-truck', 'handoff', '7a1e0000-0000-4000-8000-000000000107', 'A box of glazed ribs and cornbread handed through a food truck window', 'approved set #05'),
+  photoSample('food-truck', 'street-spread', '7a1e0000-0000-4000-8000-000000000108', 'Burgers, street corn, wings, fries and lemonade on a picnic table', 'approved set #06'),
 ]
 const sample = (key: string) => FOOD_TRUCK_SAMPLES.find((s) => s.key === key)
 
@@ -26,7 +32,7 @@ const PAGES = [
 
 function template(ctx: TemplateContext): SiteDocContent {
   const name = ctx.name
-  const hero = imageOr(ctx, sample('truck'))
+  const hero = imageOr(ctx, sample('truck-line'))
   const gallery = ctx.gallery?.length ? ctx.gallery : []
   return {
     kitId: 'food-truck',
@@ -93,7 +99,7 @@ function template(ctx: TemplateContext): SiteDocContent {
           section('about', 'story', 'left-image', {
             heading: `About ${trimTo(name, 70)}`,
             body: paragraphs('[[Tell your story: who started the truck, what you cook and why people come back.]]'),
-            ...(imageOr(ctx, sample('tacos')) ? { image: imageOr(ctx, sample('tacos')) } : {}),
+            ...(imageOr(ctx, sample('griddle-tacos')) ? { image: imageOr(ctx, sample('griddle-tacos')) } : {}),
           }),
           section('gallery', 'gallery', 'grid', { heading: 'From the truck', images: gallery }, gallery.length === 0),
           section('faq', 'faq', 'accordion', {

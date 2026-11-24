@@ -36,3 +36,18 @@ export function trimTo(s: string, max: number): string {
   const space = cut.lastIndexOf(' ')
   return `${(space > max * 0.6 ? cut.slice(0, space) : cut).trimEnd()}…`
 }
+
+/**
+ * A photo sample shipped as a JPEG (every browser) plus full-size and 640-wide WebP copies, all in
+ * public/kit-samples/<kit>/. Photos are made for Yakini's kits and contain no people's faces,
+ * logos or readable text.
+ */
+export function photoSample(kit: string, key: string, assetId: string, alt: string, sourceNote: string): SampleImage {
+  return {
+    key, assetId, alt,
+    storagePath: `kit-samples/${kit}/${key}.jpg`,
+    mime: 'image/jpeg', width: 1280, height: 720,
+    webp: { large: `${key}.webp`, small: `${key}-sm.webp`, smallWidth: 640 },
+    license: { kind: 'yakini-owned', source: `Sample photo made for Yakini Digital's ${kit} kit, Nov 2026 (${sourceNote})`, redistributable: true },
+  }
+}

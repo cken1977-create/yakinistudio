@@ -40,7 +40,12 @@ async function pick(page: Page, sectionId: string) {
   await expect(inspector(page).locator(`[data-inspector-section="${sectionId}"]`)).toBeVisible()
 }
 async function closeSheet(page: Page) {
-  if (isPhone(page)) await page.locator('[role="dialog"][aria-label="edit"]').getByRole('button', { name: 'Close' }).first().click()
+  if (!isPhone(page)) return
+  const sheet = page.locator('[role="dialog"][aria-label="edit"]')
+  if (await sheet.isVisible()) {
+    await sheet.getByRole('button', { name: 'Close' }).first().click()
+    await expect(sheet).toBeHidden()
+  }
 }
 /** The tour starts on a first visit; these tests skip it (Escape), which is remembered. */
 async function skipTour(page: Page) {

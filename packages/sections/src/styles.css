@@ -31,6 +31,7 @@
 .ys-site :where(h1, h2, h3, p, ul, ol, dl, dd, figure, blockquote, address) { margin: 0; }
 .ys-site :where(ul, ol) { padding: 0; list-style: none; }
 .ys-site img { max-width: 100%; height: auto; display: block; }
+.ys-site picture.ys-pic { display: contents; }
 .ys-site a { color: inherit; text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
 .ys-site :focus-visible { outline: 3px solid currentColor; outline-offset: 3px; border-radius: 6px; }
 .ys-site address { font-style: normal; }

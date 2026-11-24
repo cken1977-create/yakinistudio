@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useId, useRef, useState } from 'react'
-import { kitDefinition } from '@yakini/kits'
+import { kitDefinition, offeredSamples, sampleImageSrc } from '@yakini/kits'
 import { panel, useEditor } from './context'
 
 /**
@@ -20,7 +20,7 @@ export function PhotoPicker({ title, onPick, onClose }: { title: string; onPick:
   const dialog = useRef<HTMLDialogElement>(null)
   const altId = useId()
   const kit = kitDefinition(doc.kitId)
-  const kitPhotos = kit?.sampleImages ?? []
+  const kitPhotos = offeredSamples(kit)
 
   useEffect(() => { dialog.current?.showModal(); void refreshPhotos() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -51,8 +51,8 @@ export function PhotoPicker({ title, onPick, onClose }: { title: string; onPick:
     } finally { setBusy(false) }
   }
 
-  const tile = (id: string, suggested: string) => {
-    const src = imageUrl(id)
+  const tile = (id: string, suggested: string, thumb?: string) => {
+    const src = thumb ?? imageUrl(id)
     return (
       <li key={id}>
         <button type="button" onClick={() => choose(id, suggested)} aria-pressed={chosen === id}
@@ -81,7 +81,7 @@ export function PhotoPicker({ title, onPick, onClose }: { title: string; onPick:
         {tab === 'mine' && (photos.length
           ? <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">{photos.map((p) => tile(p.id, p.alt))}</ul>
           : <p className="text-paper/80">No photos yet. Upload one, or use a kit photo for now.</p>)}
-        {tab === 'kit' && <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">{kitPhotos.map((p) => tile(p.assetId, p.alt))}</ul>}
+        {tab === 'kit' && <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">{kitPhotos.map((p) => tile(p.assetId, p.alt, sampleImageSrc(p, 'small')))}</ul>}
         {tab === 'upload' && (
           <div className="space-y-2">
             <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" aria-label="Photo from your device"
