@@ -3,6 +3,7 @@ import { lintCopy, strayPrices } from '@yakini/ai'
 import { decideHost, normalizeHost } from '@/lib/hosts'
 import { PUBLISH_CHECKLIST, canPublish } from '@/lib/checklist'
 import { domainCapacity, domainLimitFromEnv } from '@/lib/domain-limit'
+import { buildStudioCsp } from '@/lib/csp'
 import { scrubEvent, maskText } from '@/lib/observability/scrub'
 import { EXPORT_URL_TTL_SECONDS, canDownloadHtml, exportObjectPath, exportableAssets } from '@/lib/exports'
 import { LANDING } from '@/lib/copy'
@@ -61,6 +62,28 @@ describe('Vercel domain-limit check (v1.1)', () => {
     expect(domainCapacity(NaN, 50).ok).toBe(false)
     expect(domainLimitFromEnv('abc')).toBe(50)
     expect(domainLimitFromEnv('100')).toBe(100)
+  })
+})
+
+describe('studio CSP (nonce-based)', () => {
+  it('drops script unsafe-inline in production and includes the nonce', () => {
+    const csp = buildStudioCsp('abc123+/OK=', { isDev: false })
+    expect(csp).toContain("script-src 'self' 'nonce-abc123+/OK=' 'strict-dynamic'")
+    expect(csp).not.toMatch(/script-src[^;]*'unsafe-inline'/)
+    expect(csp).not.toContain("'unsafe-eval'")
+    expect(csp).toContain("style-src 'self' 'nonce-abc123+/OK='")
+    expect(csp).toContain("style-src-attr 'unsafe-inline'")
+    expect(csp).toContain('https://*.ingest.sentry.io')
+  })
+  it('allows unsafe-eval only in development', () => {
+    expect(buildStudioCsp('n0', { isDev: true })).toContain("'unsafe-eval'")
+  })
+  it('adds a PostHog host to connect-src when set', () => {
+    const csp = buildStudioCsp('n0', { posthogHost: 'https://us.i.posthog.com' })
+    expect(csp).toContain('https://us.i.posthog.com')
+  })
+  it('rejects a nonce that could break out of the header value', () => {
+    expect(() => buildStudioCsp("x; script-src 'unsafe-inline'")).toThrow(/invalid csp nonce/)
   })
 })
 
