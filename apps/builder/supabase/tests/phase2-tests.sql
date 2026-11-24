@@ -26,7 +26,9 @@ BEGIN
 
   PERFORM bt.ok(builder.claim_draft(v_site, repeat('d', 64), v_user, null, null, null) = 'not_found', 'claim with the wrong token is refused');
   PERFORM bt.ok(NOT EXISTS (SELECT 1 FROM builder.memberships WHERE tenant_id = v_tenant), 'a refused claim adds no member');
-  r := builder.claim_draft(v_site, repeat('c', 64), v_user, repeat('e', 64), 'America/Chicago', '{"schemaVersion":1,"claimed":true}');
+  PERFORM bt.ok(builder.claim_draft(v_site, repeat('c', 64), v_user, null, null, '{"schemaVersion":1,"stale":true}', 7) = 'changed', 'details built on an older draft are refused (no edit is written over)');
+  PERFORM bt.ok(NOT EXISTS (SELECT 1 FROM builder.memberships WHERE tenant_id = v_tenant) AND (SELECT draft_token_hash FROM builder.sites WHERE id = v_site) IS NOT NULL, 'a stale claim changes nothing');
+  r := builder.claim_draft(v_site, repeat('c', 64), v_user, repeat('e', 64), 'America/Chicago', '{"schemaVersion":1,"claimed":true}', 0);
   PERFORM bt.ok(r = 'ok', 'claim with the right token works');
   PERFORM bt.ok(EXISTS (SELECT 1 FROM builder.memberships WHERE tenant_id = v_tenant AND user_id = v_user AND role = 'owner'), 'claimer becomes the owner');
   SELECT status, ownership_attested_at, ownership_attested_ip_hash, timezone INTO v FROM builder.tenants WHERE id = v_tenant;

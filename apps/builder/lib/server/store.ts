@@ -39,6 +39,8 @@ export type StoredDraft = {
   siteId: string
   tenantId: string
   doc: unknown
+  /** draft_rev: bumped by every saved change (compare-and-set). */
+  rev: number
   tokenHash: string | null
   expiresAt: Date | null
   deleted: boolean
@@ -76,13 +78,14 @@ export type EditorSite = {
 }
 
 export type VersionRow = { id: string; number: number; kind: 'checkpoint' | 'published' | 'review'; note: string | null; createdAt: Date }
-export type ClaimResult = 'ok' | 'not_found' | 'expired' | 'already_claimed'
+export type ClaimResult = 'ok' | 'not_found' | 'expired' | 'already_claimed' | 'changed'
 export type AuditAction = 'restore' | 'brand.colors.change'
 export type SaveResult = { ok: true; rev: number } | { ok: false; conflict: true; rev: number; doc: unknown }
 
 /** Phase 2 additions: claiming, saving the draft, versions, chat, tutorial (spec 5.4, 10.2-10.9). */
 export interface EditorStore {
-  claimDraft(c: { siteId: string; tokenHash: string; userId: string; ipHash: string; timezone: string | null; doc: unknown | null }): Promise<ClaimResult>
+  /** `doc` (business details from the claim screen) is saved only if the draft is still at `baseRev`. */
+  claimDraft(c: { siteId: string; tokenHash: string; userId: string; ipHash: string; timezone: string | null; doc: unknown | null; baseRev: number | null }): Promise<ClaimResult>
   /** The user's role on the tenant (operators get 'operator' on any tenant), or null. */
   memberRole(userId: string, tenantId: string): Promise<Role | null>
   sitesForUser(userId: string): Promise<{ siteId: string; name: string; status: TenantStatus }[]>
@@ -163,14 +166,14 @@ export function createSupabaseStore(db: SupabaseClient<any, any, any>): DraftSto
     },
     async getDraft(siteId) {
       const { data, error } = await db.from('sites')
-        .select('id, tenant_id, draft_doc, draft_token_hash, draft_expires_at, deleted_at')
+        .select('id, tenant_id, draft_doc, draft_rev, draft_token_hash, draft_expires_at, deleted_at')
         .eq('id', siteId).maybeSingle()
       if (error) fail('site read', error)
       if (!data) return null
       const members = await db.from('memberships').select('id', { count: 'exact', head: true }).eq('tenant_id', data.tenant_id).is('deleted_at', null)
       if (members.error) fail('membership read', members.error)
       return {
-        siteId: data.id, tenantId: data.tenant_id, doc: data.draft_doc, tokenHash: data.draft_token_hash,
+        siteId: data.id, tenantId: data.tenant_id, doc: data.draft_doc, rev: data.draft_rev, tokenHash: data.draft_token_hash,
         expiresAt: data.draft_expires_at ? new Date(data.draft_expires_at) : null, deleted: Boolean(data.deleted_at),
         claimed: (members.count ?? 0) > 0,
       }
@@ -218,7 +221,7 @@ export function createSupabaseStore(db: SupabaseClient<any, any, any>): DraftSto
       return expired.length
     },
     async claimDraft(c) {
-      const { data, error } = await db.rpc('claim_draft', { p_site: c.siteId, p_token_hash: c.tokenHash, p_user: c.userId, p_ip_hash: c.ipHash, p_timezone: c.timezone, p_doc: c.doc })
+      const { data, error } = await db.rpc('claim_draft', { p_site: c.siteId, p_token_hash: c.tokenHash, p_user: c.userId, p_ip_hash: c.ipHash, p_timezone: c.timezone, p_doc: c.doc, p_base_rev: c.baseRev })
       if (error) fail('claim', error)
       return data as ClaimResult
     },
@@ -361,7 +364,7 @@ export function createMemoryStore(): DraftStore & EditorStore & { _state: MemSta
     },
     async getDraft(siteId) {
       const s = state.sites.get(siteId)
-      return s ? { siteId: s.siteId, tenantId: s.tenantId, doc: clone(s.doc), tokenHash: s.tokenHash, expiresAt: s.expiresAt, deleted: s.deleted, claimed: s.claimed || isClaimed(s.tenantId) } : null
+      return s ? { siteId: s.siteId, tenantId: s.tenantId, doc: clone(s.doc), rev: s.rev, tokenHash: s.tokenHash, expiresAt: s.expiresAt, deleted: s.deleted, claimed: s.claimed || isClaimed(s.tenantId) } : null
     },
     async getAsset(tenantId, assetId) {
       const a = state.assets.get(assetId)
@@ -389,6 +392,7 @@ export function createMemoryStore(): DraftStore & EditorStore & { _state: MemSta
       if (s.tokenHash === null) return 'already_claimed'
       if (s.tokenHash !== c.tokenHash) return 'not_found'
       if (s.expiresAt && s.expiresAt.getTime() < Date.now()) return 'expired'
+      if (c.doc !== null && c.baseRev !== s.rev) return 'changed'
       if (!state.members.some((m) => m.tenantId === s.tenantId && m.userId === c.userId)) state.members.push({ tenantId: s.tenantId, userId: c.userId, role: 'owner' })
       const t = state.tenants.get(s.tenantId)!
       if (t.status === 'prospect') Object.assign(t, { status: 'trial', attestedAt: new Date(), attestedIpHash: c.ipHash, timezone: c.timezone || t.timezone })

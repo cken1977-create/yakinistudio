@@ -1,11 +1,11 @@
 import { loadSiteDoc } from '@yakini/site-schema'
 import { assetIdsIn } from '@/lib/draft/preview'
-import { openDraft } from '@/lib/server/draft-access'
+import { viewableDraft } from '@/lib/server/site-access'
 import { getRuntime } from '@/lib/server/runtime'
 
 /**
  * A private draft's own photos and logo (spec 5.2, 14.2). Only the browser holding that draft's
- * cookie gets them, only for files the draft itself uses, and only from its own tenant. Bytes are
+ * cookie (or, once claimed, a signed-in member) gets them, only for files the draft itself uses, and only from its own tenant. Bytes are
  * served as the re-encoded WebP/PNG we stored, never the original upload.
  */
 export const dynamic = 'force-dynamic'
@@ -17,7 +17,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ siteId:
   const { siteId, assetId } = await params
   let rt
   try { rt = getRuntime() } catch { return NOT_FOUND() }
-  const draft = await openDraft(rt, siteId)
+  const draft = await viewableDraft(rt, siteId)
   if (!draft) return NOT_FOUND()
   let used: Set<string>
   try { used = assetIdsIn(loadSiteDoc(draft.doc).doc) } catch { return NOT_FOUND() }

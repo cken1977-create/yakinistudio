@@ -5,7 +5,7 @@ import '@yakini/sections/fonts.css'
 import '@yakini/sections/styles.css'
 import { loadSiteDoc, SiteDocError } from '@yakini/site-schema'
 import { kitName, pageForPath, previewContext, type PreviewView } from '@/lib/draft/preview'
-import { openDraft } from '@/lib/server/draft-access'
+import { viewableDraft } from '@/lib/server/site-access'
 import { getRuntime } from '@/lib/server/runtime'
 
 /**
@@ -27,8 +27,10 @@ export default async function DraftPreview({ params, searchParams }: Props) {
   const [{ siteId, path }, query] = await Promise.all([params, searchParams])
   let rt
   try { rt = getRuntime() } catch { notFound() }
-  const draft = await openDraft(rt, siteId)
+  // The browser holding the draft cookie, or a signed-in member once it's claimed (spec 10.1).
+  const draft = await viewableDraft(rt, siteId)
   if (!draft) notFound()
+  const member = draft.member
 
   let doc
   try {
@@ -62,7 +64,9 @@ export default async function DraftPreview({ params, searchParams }: Props) {
           <div className="flex flex-wrap gap-2 text-sm">
             <a href="https://yakini.digital/demo" className="inline-flex min-h-10 items-center rounded-full border border-paper/25 px-4 font-semibold text-paper hover:border-gold">See your kit</a>
             <span aria-disabled="true" title="Opens soon" className="inline-flex min-h-10 cursor-not-allowed items-center rounded-full border border-paper/10 px-4 text-paper/50">Keep editing</span>
-            <span aria-disabled="true" title="Opens soon" className="inline-flex min-h-10 cursor-not-allowed items-center rounded-full bg-gold/40 px-4 font-semibold text-ink/70">Make it mine</span>
+            {member
+              ? <a href={`/sites/${siteId}/edit`} className="inline-flex min-h-10 items-center rounded-full bg-gold px-4 font-semibold text-ink hover:brightness-110">Open the editor</a>
+              : <a href={`/claim/${siteId}`} className="inline-flex min-h-10 items-center rounded-full bg-gold px-4 font-semibold text-ink hover:brightness-110">Make it mine</a>}
           </div>
         </div>
         {(unread || doc.brand.colorsSource === 'kit-default') && (
@@ -71,7 +75,7 @@ export default async function DraftPreview({ params, searchParams }: Props) {
             {doc.brand.colorsSource === 'kit-default' && <p>Default colors — replace with yours anytime.</p>}
           </div>
         )}
-        <p className="sr-only">Editing and saving your draft open soon. Your draft is kept in this browser for 14 days.</p>
+        {!member && <p className="sr-only">Your draft is kept in this browser for 14 days.</p>}
       </header>
 
       <div className={view === 'phone' ? 'flex justify-center px-3 py-6 sm:py-10' : ''}>

@@ -51,3 +51,8 @@ Source of truth: `00-core-v1.1.md` and `phase-0-v1.1.md`. Clarence approved "use
 - `middleware.ts` is deprecated in Next 16, so this uses `proxy.ts` (same behavior).
 - Folders starting with `_` are private in the App Router, so the renderer lives at `app/%5Fsite/[host]/[[...path]]`. The URL path is still `/_site/...`, and the proxy blocks direct requests to it.
 - RLS tests run on a plain Postgres 17 with a small Supabase shim (roles, `auth.uid()`, storage tables), not the Supabase CLI. CI does the same with a `postgres:17` service.
+
+## New questions from Phase 2
+
+1. **Sign-in email settings (Supabase Auth, yours to set).** For "Make it mine" to work on the live studio: (a) add `https://studio.yakini.digital/auth/callback` to Auth → URL Configuration → Redirect URLs; (b) the "Magic Link" email template must show the 6-digit code (`{{ .Token }}`) as well as the link, because a link only signs in on the device that asked for it; (c) to send from a Yakini address with Yakini branding (spec 5.4), point Auth → SMTP at Resend. Until (a) and (b) are done, sign-in works by link on the same device only. The studio also needs `NEXT_PUBLIC_SUPABASE_ANON_KEY` (public, names only here).
+2. **Claim screen time zone.** Picked from the device when it's a US zone, otherwise worked out from the address state (El Paso stays on Mountain time). Owners can change it later. Non-US addresses aren't accepted yet (the site format is US-only).

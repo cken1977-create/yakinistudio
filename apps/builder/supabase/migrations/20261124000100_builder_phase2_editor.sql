@@ -3,21 +3,24 @@
 
 -- Flow B (spec 5.4 step 3): the signed-in person who holds the draft cookie becomes its owner.
 -- p_token_hash is the HMAC of the cookie token (the token itself never reaches the database).
--- Returns 'ok', 'not_found' (wrong site/token, deleted), 'expired' or 'already_claimed'.
+-- Returns 'ok', 'not_found' (wrong site/token, deleted), 'expired', 'already_claimed', or 'changed'
+-- when p_doc was built from draft_rev p_base_rev and the draft has moved on since (the caller
+-- re-reads and tries once more, so details typed on the claim screen are never written over an edit).
 create or replace function builder.claim_draft(
-  p_site uuid, p_token_hash text, p_user uuid, p_ip_hash text, p_timezone text, p_doc jsonb
+  p_site uuid, p_token_hash text, p_user uuid, p_ip_hash text, p_timezone text, p_doc jsonb, p_base_rev int default null
 ) returns text
 language plpgsql security definer set search_path = pg_catalog as $$
 declare s record;
 begin
   if p_token_hash !~ '^[0-9a-f]{64}$' then return 'not_found'; end if;
   if p_ip_hash is not null and p_ip_hash !~ '^[0-9a-f]{64}$' then raise exception 'bad ip hash'; end if;
-  select id, tenant_id, draft_token_hash, draft_expires_at, deleted_at into s
+  select id, tenant_id, draft_token_hash, draft_expires_at, draft_rev, deleted_at into s
     from builder.sites where id = p_site for update;
   if not found or s.deleted_at is not null then return 'not_found'; end if;
   if s.draft_token_hash is null then return 'already_claimed'; end if;
   if s.draft_token_hash <> p_token_hash then return 'not_found'; end if;
   if s.draft_expires_at is not null and s.draft_expires_at < now() then return 'expired'; end if;
+  if p_doc is not null and p_base_rev is distinct from s.draft_rev then return 'changed'; end if;
 
   insert into builder.memberships (tenant_id, user_id, role) values (s.tenant_id, p_user, 'owner')
     on conflict (tenant_id, user_id) do nothing;
@@ -49,6 +52,6 @@ begin
     returning site_versions.id, site_versions.number;
 end $$;
 
-revoke all on function builder.claim_draft(uuid, text, uuid, text, text, jsonb) from public, anon, authenticated;
+revoke all on function builder.claim_draft(uuid, text, uuid, text, text, jsonb, int) from public, anon, authenticated;
 revoke all on function builder.create_version(uuid, text, jsonb, text, uuid, text) from public, anon, authenticated;
-grant execute on function builder.claim_draft(uuid, text, uuid, text, text, jsonb), builder.create_version(uuid, text, jsonb, text, uuid, text) to service_role;
+grant execute on function builder.claim_draft(uuid, text, uuid, text, text, jsonb, int), builder.create_version(uuid, text, jsonb, text, uuid, text) to service_role;
