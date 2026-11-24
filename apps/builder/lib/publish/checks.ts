@@ -1,7 +1,7 @@
 import { lintCopy } from '@yakini/ai'
 import { hasPlaceholder } from '@yakini/sections'
 import { TEMPLATE_PLAN_MAX_PAGES, type SiteDoc } from '@yakini/site-schema'
-import { contrastRatio, AA } from '@yakini/sections'
+import { contrastRatio, AA, liveSectionEmpty } from '@yakini/sections'
 import { formsOf } from './forms'
 
 /**
@@ -16,7 +16,7 @@ export type CheckId =
   | 'schema_valid' | 'no_placeholders' | 'contact_info' | 'images_ok' | 'links_ok' | 'copy_lint' | 'forms_wired'
   | 'doc_size' | 'ownership' | 'not_taken_down' | 'plan_active'
   // warnings
-  | 'contrast' | 'hours' | 'seo_description' | 'risk_check'
+  | 'contrast' | 'hours' | 'seo_description' | 'risk_check' | 'empty_targets'
 
 export type CheckItem = { id: CheckId; ok: boolean; blocking: boolean; label: string; detail?: string }
 
@@ -36,6 +36,7 @@ const LABELS: Record<CheckId, string> = {
   hours: 'Your hours are listed',
   seo_description: 'Your site has a search description',
   risk_check: 'Safety check',
+  empty_targets: 'Buttons go somewhere with something to see',
 }
 
 export const item = (id: CheckId, ok: boolean, blocking: boolean, detail?: string): CheckItem =>
@@ -82,6 +83,17 @@ export function brokenInternalLinks(doc: SiteDoc): string[] {
   }
   for (const item of doc.nav.items) if (!pages.has(item.pageId)) bad.push(`menu link ${item.label}`)
   return bad
+}
+
+/** Section names that buttons point at but that show nothing yet on the live site. */
+export function emptyLinkTargets(doc: SiteDoc): string[] {
+  const out = new Set<string>()
+  for (const l of linksIn(doc)) {
+    if (l.kind !== 'section') continue
+    const s = doc.pages.find((p) => p.id === l.pageId)?.sections.find((x) => x.id === l.sectionId)
+    if (s && liveSectionEmpty(doc, s)) out.add(s.type.replace('_', ' '))
+  }
+  return [...out]
 }
 
 export function externalUrls(doc: SiteDoc): string[] {
@@ -167,6 +179,8 @@ export function docChecks(doc: SiteDoc, ctx: DocCheckContext): CheckItem[] {
   const lowContrast = [primary, secondary, accent].some((c) => Math.max(contrastRatio(c, '#ffffff'), contrastRatio(c, '#000000')) < AA)
   items.push(item('contrast', !lowContrast, false, lowContrast ? 'One of your colors is hard to read text on, so we use black or white text there. Your colors stay as they are.' : undefined))
   items.push(item('hours', Boolean(b.hours?.length), false, b.hours?.length ? undefined : 'Add your hours so visitors know when you’re open.'))
+  const empty = emptyLinkTargets(doc)
+  items.push(item('empty_targets', empty.length === 0, false, empty.length ? `A button goes to your ${empty.join(', ')} section, which has nothing in it yet, so it opens the page instead. Fill it in when you can.` : undefined))
   items.push(item('seo_description', Boolean(doc.seo.description?.trim()), false, doc.seo.description?.trim() ? undefined : 'Add a short description for search results.'))
   return items
 }

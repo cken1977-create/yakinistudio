@@ -54,6 +54,17 @@ describe('pre-publish checklist (11.1)', () => {
     const big = filledDoc()
     expect(docChecks(big, { allowedAssetIds: allowed, maxPages: 2 }).find((i) => i.id === 'doc_size')!.ok).toBe(false)
   })
+  it('warns (doesn’t block) when a button points at a section with nothing in it yet', () => {
+    const doc = filledDoc()
+    const schedule = doc.pages[0].sections.find((x) => x.type === 'schedule')
+    if (!schedule) return
+    ;(schedule.props as { stops: unknown[] }).stops = []
+    const hero = doc.pages[0].sections.find((x) => x.type === 'hero')!
+    ;(hero.props as { primaryCta: unknown }).primaryCta = { label: 'Find us', target: { kind: 'section', pageId: doc.pages[0].id, sectionId: schedule.id } }
+    const w = docChecks(doc, { allowedAssetIds: allowed }).find((i) => i.id === 'empty_targets')!
+    expect(w).toMatchObject({ ok: false, blocking: false })
+    expect(w.detail).toContain('schedule')
+  })
   it('a business’s own menu prices are fine (R9 is about Yakini’s price line)', () => {
     const doc = filledDoc()
     doc.business.tagline = 'Three tacos for $9'

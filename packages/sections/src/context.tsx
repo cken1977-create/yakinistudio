@@ -87,9 +87,36 @@ function bookingSection(doc: SiteDoc): { page: Page; sectionId: string } | null 
 export type ResolvedLink = { href: string; external: boolean }
 
 /** Turn a LinkTarget into an href. Unsafe or dangling links resolve to null and are not rendered. */
+/**
+ * True when a section shows nothing on a live site (hidden, or nothing filled in yet), mirroring
+ * each section's own empty rule. Links to such a section go to its page instead of a dead anchor,
+ * and the publish checklist flags them (spec 11.1 item 5).
+ */
+export function liveSectionEmpty(doc: SiteDoc, s: Page['sections'][number], hasToday = false): boolean {
+  if (s.hidden) return true
+  const b = doc.business
+  switch (s.type) {
+    case 'services': case 'testimonials': case 'faq': return s.props.items.length === 0
+    case 'menu': return !s.props.categories.some((c) => c.items.length > 0)
+    case 'schedule': return s.props.stops.length === 0
+    case 'gallery': return s.props.images.length === 0
+    case 'team': return s.props.members.length === 0
+    case 'hours_location': return !((b.hours?.length ?? 0) > 0 || b.address || b.phone || b.serviceArea)
+    case 'today': return !hasToday && (s.props.emptyBehavior === 'hide' || !s.props.emptyText)
+    default: return false
+  }
+}
+
 export function resolveLink(ctx: RenderContext, link: LinkTarget): ResolvedLink | null {
-  const at = (target: { page: Page; sectionId: string } | null) =>
-    target ? { href: `${target.page.id === ctx.page.id ? '' : ctx.hrefForPage(target.page)}#${target.sectionId}`, external: false } : null
+  const at = (target: { page: Page; sectionId: string } | null) => {
+    if (!target) return null
+    const section = target.page.sections.find((x) => x.id === target.sectionId)
+    const pageHref = target.page.id === ctx.page.id ? '' : ctx.hrefForPage(target.page)
+    if (ctx.mode !== 'draft' && (!section || liveSectionEmpty(ctx.doc, section, Boolean(ctx.today)))) {
+      return { href: pageHref || ctx.hrefForPage(target.page), external: false }
+    }
+    return { href: `${pageHref}#${target.sectionId}`, external: false }
+  }
   switch (link.kind) {
     case 'page': {
       const p = pageById(ctx.doc, link.pageId)

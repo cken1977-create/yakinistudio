@@ -54,6 +54,7 @@ export default async function DraftPreview({ params, searchParams }: Props) {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3 sm:px-6">
           <p className="min-w-0 flex-1 basis-64 text-sm text-paper sm:text-base">
             <strong className="font-semibold">This is your site draft.</strong> Nothing is public yet.
+            {' '}<a href={`/report?site=${siteId}`} rel="nofollow" className="text-paper/70 underline underline-offset-4 hover:text-paper">Report this site</a>
           </p>
           <nav aria-label="Preview size" className="flex rounded-full border border-paper/20 p-1 text-sm">
             <a href={here} aria-current={view === 'desktop' ? 'page' : undefined}

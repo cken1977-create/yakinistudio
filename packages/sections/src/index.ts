@@ -5,7 +5,7 @@
  */
 export { SiteView, jsonLdFor } from './SiteView'
 export {
-  PLACEHOLDER_RE, hasPlaceholder, resolveLink, time12, timeRange, formatPhone,
+  PLACEHOLDER_RE, hasPlaceholder, resolveLink, liveSectionEmpty, time12, timeRange, formatPhone,
   type RenderContext, type RenderMode, type ResolvedImage, type TodayUpdate,
 } from './context'
 export { themeFor, contrastRatio, readableInk, luminance, FONT_STACKS, AA, INK, PAGE_BG, type ThemeReport } from './theme'

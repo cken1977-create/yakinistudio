@@ -57,7 +57,7 @@ export function previewContext(doc: SiteDoc, page: Page, siteId: string, view: P
     hrefForPage: (p) => draftHref(siteId, p, view),
     image: (id) => draftImage(siteId, id, known),
     formAction: () => null, // forms start working once the site is published (Phase 3)
-    reportUrl: null, // /report arrives with publishing (Phase 3); private drafts are not public
+    reportUrl: `/report?site=${siteId}`, // spec 7.3: every preview carries the Report link
     today: null,
   }
 }
