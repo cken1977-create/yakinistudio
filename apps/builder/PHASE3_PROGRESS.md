@@ -32,7 +32,7 @@ If a session ends, read this file first, then `git log --oneline main..HEAD`.
 6. [✓] Share links + /p previews; /report + abuse_reports + auto-hold; takedown/restore; /ops, /ops/reports, /ops/reviews; Check stored sites
 7. [✓] Studio screens: /sites/[id]/publish, rollback in versions, takedown banner
 8. [✓] Evidence: unit + DB + e2e at 390/1280, Lighthouse, link crawl, screenshots
-9. [ ] Self-review, security review, CHANGELOG, PR
+9. [✓] Self-review, security review, CHANGELOG, PR → cken1977-create/yakinistudio#123 (waiting for Clarence)
 
 ## How to try it locally (test mode)
 `npm run build` in apps/builder, then `BUILDER_TEST_MODE=1 npx next start -p 3110`.
