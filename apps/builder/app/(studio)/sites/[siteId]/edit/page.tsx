@@ -36,10 +36,15 @@ export default async function EditPage({ params, searchParams }: Props) {
     }
     throw e
   }
-  const [photos, tutorialDone] = await Promise.all([
+  const [photos, tutorialDone, info] = await Promise.all([
     rt.store.tenantPhotos(a.tenantId),
     a.kind === 'member' ? rt.store.tutorialDone(a.user.id, siteId) : Promise.resolve([]),
+    a.kind === 'member' ? rt.store.publishInfo(siteId) : Promise.resolve(null),
   ])
+  const publish = info && a.kind === 'member' ? {
+    liveUrl: info.publishedVersionId && info.primaryHost && info.primaryHostStatus === 'active' ? `https://${info.primaryHost}` : null,
+    paused: Boolean(info.takedown), inReview: info.reviewStatus === 'pending', canPublish: a.role === 'owner' || a.role === 'operator',
+  } : null
   const kit = kitDefinition(doc.kitId)
 
   return (
@@ -47,7 +52,7 @@ export default async function EditPage({ params, searchParams }: Props) {
       siteId={siteId} siteName={doc.business.name} doc={doc} rev={a.rev} photos={photos}
       kitSampleIds={kit?.sampleImages?.map((s) => s.assetId) ?? []}
       anonymous={a.kind === 'anonymous'} canManageVersions={canManageVersions(a)}
-      welcome={q.welcome === '1'}
+      welcome={q.welcome === '1'} publish={publish}
       initialPageId={typeof q.page === 'string' ? q.page : undefined}
       tutorialDone={tutorialDone} tourStep={typeof q.tour === 'string' ? q.tour : undefined}
     />

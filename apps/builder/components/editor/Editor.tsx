@@ -19,7 +19,11 @@ import { TOUR_STEPS, tourStart, type TourStep } from '@/lib/editor/tutorial'
  * Publish along the bottom opening as sheets. Everything saves on its own; Undo/Redo go back and
  * forth through this visit's changes.
  */
+/** Publish state for the editor bar (spec 5.6, 14.8): null for anonymous drafts. */
+export type EditorPublishState = { liveUrl: string | null; paused: boolean; inReview: boolean; canPublish: boolean }
+
 export type EditorProps = {
+  publish?: EditorPublishState | null
   siteId: string
   siteName: string
   doc: SiteDoc
@@ -180,9 +184,21 @@ export function Editor(props: EditorProps) {
           </nav>
           <a href={`/d/${props.siteId}${page.slug ? `/${page.slug}` : ''}`} target="_blank" rel="noopener" className={`${panel.btn} hidden lg:inline-flex`} onClick={() => void session.flush()}>Preview</a>
           {props.canManageVersions && <a href={`/sites/${props.siteId}/versions`} className={`${panel.btn} hidden lg:inline-flex`} onClick={() => void session.flush()}>Versions</a>}
-          <button type="button" data-tour="publish" className={`${panel.primary} hidden lg:inline-flex`} disabled title="Publishing opens soon">Publish</button>
+          {props.publish
+            ? <a href={`/sites/${props.siteId}/publish`} data-tour="publish" className={`${panel.primary} hidden lg:inline-flex`} onClick={() => void session.flush()}>Publish</a>
+            : <a href={`/claim/${props.siteId}`} data-tour="publish" className={`${panel.primary} hidden lg:inline-flex`} title="Make it yours to publish">Publish</a>}
         </header>
 
+        {props.publish?.paused && (
+          <div role="alert" className="border-b border-[#E3A08F]/50 bg-[#3a1d17] px-4 py-3 text-sm">
+            Your site is paused and visitors see a “site unavailable” page. Your work is all here. <a href="https://yakini.digital/contact" className="font-semibold underline underline-offset-4">Contact us</a>
+          </div>
+        )}
+        {props.publish?.inReview && !props.publish.paused && (
+          <div role="status" className="border-b border-gold/30 bg-gold/10 px-4 py-2 text-sm">
+            We’re giving your site a quick look before it goes live. Your preview still works.
+          </div>
+        )}
         {props.anonymous && (
           <div className="border-b border-gold/30 bg-gold/10 px-4 py-2 text-sm">
             You’re editing a draft kept in this browser for 14 days. <a href={`/claim/${props.siteId}`} className="font-semibold underline underline-offset-4">Make it mine</a> to keep it and use it anywhere.
@@ -233,8 +249,12 @@ export function Editor(props: EditorProps) {
             {sheet === 'publish' && (
               <div className="space-y-3 p-5">
                 <h2 className={panel.h2}>Publish</h2>
-                <p className="text-paper/85">Publishing opens soon. Your changes are saved, and you can preview the whole site any time.</p>
-                <a href={`/d/${props.siteId}`} className={panel.btn}>Preview the site</a>
+                {props.publish?.liveUrl ? <p className="text-paper/85">Your site is live at <a href={props.publish.liveUrl} className="font-semibold underline underline-offset-4">{props.publish.liveUrl.replace(/^https:\/\//, '')}</a>. Edits stay private until you publish again.</p>
+                  : <p className="text-paper/85">Your changes are saved. Publish when you’re ready: a quick check runs first.</p>}
+                {props.publish
+                  ? <a href={`/sites/${props.siteId}/publish`} className={panel.primary} onClick={() => void session.flush()}>Go to Publish</a>
+                  : <a href={`/claim/${props.siteId}`} className={panel.primary}>Make it mine to publish</a>}
+                <a href={`/d/${props.siteId}`} className={`${panel.btn} ml-2`}>Preview the site</a>
                 {props.canManageVersions && <a href={`/sites/${props.siteId}/versions`} className={`${panel.btn} ml-2`}>Versions</a>}
               </div>
             )}
