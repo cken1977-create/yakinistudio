@@ -215,7 +215,7 @@ test('chat proposes a change, Apply saves it, and brand colors stay as they are'
   if (isPhone(page)) await page.getByRole('navigation', { name: 'Editor' }).getByRole('button', { name: 'Chat' }).click()
   else await page.getByRole('tab', { name: 'Chat' }).click()
 
-  await page.getByLabel('Your request').fill('Make the hero say we cater weddings')
+  await page.getByLabel('Your request', { exact: true }).fill('Make the hero say we cater weddings')
   await page.getByRole('button', { name: 'Send' }).click()
   await expect(page.getByText('Here’s the change.')).toBeVisible()
   expect(JSON.stringify((await saved(page, siteId)).pages[0])).not.toMatch(/wedding/i) // nothing saved yet
@@ -225,7 +225,7 @@ test('chat proposes a change, Apply saves it, and brand colors stay as they are'
   expect(JSON.stringify((await saved(page, siteId)).pages[0])).toMatch(/wedding/i)
 
   const colors = JSON.stringify((await saved(page, siteId)).brand)
-  await page.getByLabel('Your request').fill('Change my colors to red')
+  await page.getByLabel('Your request', { exact: true }).fill('Change my colors to red')
   await page.getByRole('button', { name: 'Send' }).click()
   await expect(page.getByText(/Brand/).last()).toBeVisible()
   expect(JSON.stringify((await saved(page, siteId)).brand)).toBe(colors)

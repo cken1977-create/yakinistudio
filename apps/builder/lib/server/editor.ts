@@ -105,6 +105,7 @@ export async function withEditor(fn: (rt: Runtime) => Promise<Response>): Promis
     throw e
   }
   try { return await fn(rt) } catch (e) {
+    if (e instanceof ConfigError) return json({ error: 'The studio isn’t open yet. Please try again soon.' }, 503)
     const ref = Sentry.captureException(e, { tags: { area: 'editor-api' } })
     return json({ error: 'Something went wrong on our side. Your last saved change is safe. Please try again.', ref: ref || undefined }, 500)
   }

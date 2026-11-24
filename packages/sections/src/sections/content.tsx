@@ -286,7 +286,15 @@ export function CtaBandSection({ ctx, s, first }: P<'cta_band'>) {
 export function TodaySection({ ctx, s }: P<'today'>) {
   const t = ctx.today
   if (!t) {
-    if (s.props.emptyBehavior === 'hide' || !s.props.emptyText) return null
+    if (s.props.emptyBehavior === 'hide' || !s.props.emptyText) {
+      if (ctx.mode !== 'draft') return null
+      // In a draft the section stays findable (and clickable in the editor); the live site shows nothing.
+      return (
+        <section className={`ys-s ys-today ys-v-${s.variant} is-empty`} id={s.id} aria-label={s.props.heading || 'Today'}>
+          <div className="ys-wrap"><p className="ys-hint">Your Today update shows here when you post one. Until then this section is hidden on your site.</p></div>
+        </section>
+      )
+    }
     return (
       <section className={`ys-s ys-today ys-v-${s.variant} is-empty`} id={s.id} aria-label={s.props.heading || 'Today'}>
         <div className="ys-wrap"><p className="ys-today-text"><Txt>{s.props.emptyText}</Txt></p></div>

@@ -42,7 +42,9 @@ type Tab = 'edit' | 'chat' | 'kit' | 'help'
 function transport(siteId: string): Transport {
   return {
     async save(body) {
-      const res = await fetch(`/api/sites/${siteId}/draft`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), keepalive: true })
+      const payload = JSON.stringify(body)
+      // keepalive lets a save finish while the page closes, but browsers cap it at 64 KB.
+      const res = await fetch(`/api/sites/${siteId}/draft`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: payload, keepalive: payload.length < 60_000 })
       const out = await res.json().catch(() => ({})) as { rev?: number; doc?: SiteDoc; error?: string; conflict?: boolean }
       if (res.ok && typeof out.rev === 'number') return { ok: true, rev: out.rev }
       if (res.status === 409 && out.conflict && out.doc && typeof out.rev === 'number') return { ok: false, conflict: true, rev: out.rev, doc: out.doc, error: out.error ?? 'This site was changed in another window. We loaded the latest version.' }

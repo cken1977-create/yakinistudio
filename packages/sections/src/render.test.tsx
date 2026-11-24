@@ -82,6 +82,12 @@ describe('modes', () => {
     const withUpdate = html(ctxFor(doc, home, 'live', { today: { kind: 'stop', headline: 'Civic Plaza until 2 PM', lines: ['Green chile cheeseburgers'] } }))
     expect(withUpdate).toContain('Civic Plaza until 2 PM')
   })
+  it('in a draft, a hidden-when-empty Today section shows a note so the owner can find and edit it', () => {
+    const d = html(ctxFor(doc, home, 'draft'))
+    expect(d).toContain('id="today-banner"')
+    expect(d).toContain('Your Today update shows here when you post one.')
+    expect(html(ctxFor(doc, home, 'export'))).not.toContain('Your Today update shows here')
+  })
   it('escapes text from the doc: script-looking text is shown, never run', () => {
     const evil = structuredClone(doc)
     ;(evil.pages[0].sections[1].props as { headline: string }).headline = '<script>alert(1)</script>'

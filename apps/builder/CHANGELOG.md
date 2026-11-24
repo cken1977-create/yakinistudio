@@ -1,5 +1,25 @@
 # Changelog: Yakini Builder
 
+## Phase 2: editing, sign-in and claim (2026-11-24, branch `feat/builder-phase2`)
+
+### Added
+- `@yakini/edits` (new): every editor operation (spec 8.7) as a checked, reversible change: text and list fields, business info, add/remove/move/duplicate/hide sections, styles, photos, pages, SEO. All-or-nothing batches; brand colors and logo can't be reached; after every batch the whole site must still be valid, keep its header/footer, kit sections and styles, the page limit, and use only the tenant's own pictures (so even a tampered undo can't break those). Undo/redo history (50 deep).
+- Chat edits (spec 8.6, 10.4): the spec prompt, tools generated from the same operation schemas, validate → apply to a copy → copy lint → plain-English proposal, one retry; brand, publishing, domain and billing requests answered without the model. 20 scripted requests pass with no stray changes; `npm run eval -w builder` also runs them against the real model.
+- Sign-in (spec 5.4): email-only, a 6-digit code or the link from the email, no passwords. Rate-limited per IP and per address; the email never appears in a URL; `next` only ever goes to a studio path.
+- "Make it mine" (Flow B): `/claim/[siteId]` with the required ownership box (stored with time and IP hash), optional phone, address and hours, and the time zone (from the device, else the address; El Paso stays on Mountain time). One database step makes the owner, moves the tenant to trial and clears the draft token; typed details are saved only onto the draft the owner was looking at.
+- Draft API: `GET /api/drafts/[siteId]`, `PATCH /api/sites/[siteId]/draft` (operations only, compare-and-set on `draft_rev`; a second window gets "This site was changed in another window. We loaded the latest version." and nothing is lost), versions list/save/restore (restore saves the current draft first, keeps today's brand, writes an audit row), automatic versions every 20 changes or 10 minutes, `POST /api/ai/edit` with per-tenant limits (20/hour trial, 120 active, daily token cap), photo upload (`POST /api/assets`, re-encoded, location data removed) and the photo list.
+- The editor (`/sites/[siteId]/edit`, spec 10.2-10.5): the live page rendered with the same components as the published site; tap a section to edit every field it has (live character counters, rich text with bold/italic/links, buttons and where they go, photos with required descriptions, lists with add/move/remove); section toolbar; pages and business info; Chat with Apply / Undo / Try again and the change outlined on the page; Undo/Redo; saves 1.5 s after the last change, in order, and keeps working offline. Desktop: pages, canvas, Edit · Chat · Kit · Help. Phone: Pages · Edit · Chat · Publish as bottom sheets. Works for the anonymous draft holder ("Keep editing") and for members.
+- Tutorial (spec 10.9): an 8-step guided tour pointing at the real editor on phone and desktop (skip any time; remembered per person and site; resumable), a written tutorial page with "Show me", and Destiny in the Help tab (editor how-tos, the one price line, change requests handed to Chat, every answer checked for stack names, other prices and "log in to see the demo").
+- `/sites` (my sites) and `/sites/[siteId]/versions`.
+- Database: `builder.claim_draft` and `builder.create_version` (service role only), with 15 new database checks.
+- Tests: 129 builder unit tests, 31 edit-engine tests, 25 AI-package tests, 66 renderer tests (including old versions still rendering after a format change), browser tests for claim → edit → reload, every section on every page edited by click, the two-window conflict, chat, versions and all 8 tutorial steps, at 390 and 1280.
+
+### Changed
+- The draft screen's "Keep editing" and "Make it mine" now work (they were "Opens soon").
+- Members can view their claimed draft at `/d/[siteId]`, and its photos.
+- The renderer marks draft sections with `data-ys-section` so the editor can select them (live pages carry no ids).
+- `/api/health` reports `phase: 2`.
+
 ## Phase 1: demo or description → branded 5-page draft (2026-11-23, branch `feat/builder-phase1`)
 
 ### Added
