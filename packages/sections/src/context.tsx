@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { preload } from 'react-dom'
 import type { Day, LinkTarget, Page, RichText, SiteDoc } from '@yakini/site-schema'
 
 /**
@@ -178,6 +179,13 @@ export function Img({ ctx, image, className, sizes, priority }: {
 }) {
   const r = ctx.image(image.assetId)
   if (!r) return null
+  // The first image on a page is usually the largest thing on screen: start it with the HTML
+  // (a <link rel="preload"> in the head) instead of after the CSS. Not in exports (no head there).
+  if (priority && ctx.mode !== 'export') {
+    const best = r.sources?.[0]
+    if (best) preload(r.src, { as: 'image', imageSrcSet: best.srcSet, imageSizes: sizes ?? '100vw', type: best.type, fetchPriority: 'high' })
+    else preload(r.src, { as: 'image', ...(r.srcSet ? { imageSrcSet: r.srcSet, imageSizes: sizes ?? '100vw' } : {}), fetchPriority: 'high' })
+  }
   const style = image.focal ? { objectPosition: `${Math.round(image.focal.x * 100)}% ${Math.round(image.focal.y * 100)}%` } : undefined
   const img = (
     // eslint-disable-next-line @next/next/no-img-element -- the same markup must work in exports and client runtimes

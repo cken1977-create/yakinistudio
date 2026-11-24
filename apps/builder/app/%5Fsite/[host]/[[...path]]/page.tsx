@@ -22,7 +22,7 @@ const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { host, path } = await params
   const v = await siteView(decodeURIComponent(host), path)
-  if (v.kind !== 'page' && v.kind !== 'thanks') return { title: { absolute: v.kind === 'updating' ? 'This site is being updated' : 'This site is unavailable' }, description: null, robots: { index: false, follow: false } }
+  if (v.kind !== 'page' && v.kind !== 'thanks') return { title: { absolute: v.kind === 'updating' ? 'This site is being updated' : 'This site is unavailable' }, description: null, robots: { index: false, follow: false }, icons: { icon: 'data:,' } }
   const { doc, page, canonicalHost, indexable } = v
   const title = v.kind === 'thanks' ? `Thank you · ${doc.business.name}` : page.slug === '' ? (doc.seo.siteTitle || doc.business.name) : `${page.seo?.title || page.title} · ${doc.business.name}`
   // Never fall back to the studio's own description on a client site.
@@ -35,6 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description,
     alternates: { canonical: url },
     openGraph: { title, description: description ?? undefined, url, siteName: doc.business.name, type: 'website', locale: 'en_US', ...(og ? { images: og } : {}) },
+    icons: { icon: 'data:,' }, // no favicon request (a logo icon is Phase 8 polish)
     robots: indexable && v.kind === 'page' && !page.seo?.noindex ? { index: true, follow: true } : { index: false, follow: false },
   }
 }
@@ -57,10 +58,10 @@ export default async function SiteRenderer({ params, searchParams }: Props) {
 
 function Neutral({ title, note }: { title: string; note: string }) {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-white px-6 text-center text-neutral-900">
+    <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', textAlign: 'center', background: '#fff', color: '#1a1a1a', fontFamily: 'system-ui, -apple-system, Segoe UI, sans-serif' }}>
       <div>
-        <h1 className="font-serif text-3xl">{title}</h1>
-        <p className="mt-3 text-neutral-600">{note}</p>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 600, margin: 0 }}>{title}</h1>
+        <p style={{ marginTop: '12px', color: '#555' }}>{note}</p>
       </div>
     </main>
   )

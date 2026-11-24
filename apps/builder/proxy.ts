@@ -24,14 +24,10 @@ export function proxy(request: NextRequest) {
   if (d.kind === 'site') {
     const url = request.nextUrl.clone()
     url.pathname = d.rewriteTo
-    return applyCsp(request, (requestHeaders) => {
-      const res = NextResponse.rewrite(url, { request: { headers: requestHeaders } })
-      // Spec 11.4: no client site is indexable until it has a paid plan and the owner turns on
-      // "Let search engines find this site" (Phase 4+). Until then every client host is noindex by
-      // header too; the renderer's meta tags and robots.txt already make the per-site decision.
-      res.headers.set('X-Robots-Tag', 'noindex')
-      return res
-    }, true)
+    // Indexing is decided per site by the renderer (spec 11.4): robots meta tags and robots.txt say
+    // noindex unless the site has a paid plan and the owner turned indexing on. A blanket header here
+    // would wrongly hide paid, indexable sites.
+    return applyCsp(request, (requestHeaders) => NextResponse.rewrite(url, { request: { headers: requestHeaders } }), true)
   }
   return applyCsp(request, (requestHeaders) => {
     const res = NextResponse.next({ request: { headers: requestHeaders } })

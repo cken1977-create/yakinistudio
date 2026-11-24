@@ -14,20 +14,21 @@ import { getRuntime, isTestMode } from '@/lib/server/runtime'
 export const dynamic = 'force-dynamic'
 
 /** The kit draft with every [[fill this in]] spot filled: ready to publish. */
-function readyKit(name: string, extra: (d: Record<string, any>) => void = () => {}) { // eslint-disable-line @typescript-eslint/no-explicit-any
-  const kit = kitDefinition('food-truck')!
+function readyKit(name: string, extra: (d: Record<string, any>) => void = () => {}, kitId: 'food-truck' | 'restaurant' = 'food-truck') { // eslint-disable-line @typescript-eslint/no-explicit-any
+  const kit = kitDefinition(kitId)!
   const fill = (v: unknown): unknown => typeof v === 'string' ? v.replace(/\[\[[^\]]{1,200}\]\]/g, 'Fresh tacos daily')
     : Array.isArray(v) ? v.map(fill) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, fill(x)])) : v
   const doc = fill(buildKitDraft(kit, { name, city: 'El Paso' }, brandFor(kit, { colors: { primary: '#9A3412', secondary: '#15130F', accent: '#F59E0B' } }))) as Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
   doc.business.phone = '+19155550142'
   doc.business.hours = [{ day: 'tue', open: '11:00', close: '20:00' }, { day: 'sat', open: '10:00', close: '21:00' }]
-  doc.seo.description = `${name}: street tacos in El Paso.`
+  doc.seo.description = `${name} in El Paso.`
   extra(doc)
   return doc
 }
 
 const FIXTURES: Record<string, () => unknown> = {
   'kit-ready': () => readyKit('Mesa Street Tacos'),
+  'restaurant-ready': () => readyKit('Casa Lupita Kitchen', () => {}, 'restaurant'),
   // Spec 16.4 impersonation fixture: a "Secure Bank" page asking visitors to verify their account.
   'impersonation': () => readyKit('Secure Bank', (d) => { d.business.tagline = 'Verify your account to keep your card active' }),
   'food-truck-every-section': () => foodTruckEvery,
