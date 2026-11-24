@@ -124,3 +124,39 @@ describe('proposal wording and undo history', () => {
     expect(record(u.next, { applied: [], inverse: [], label: 'new' }).future).toEqual([])
   })
 })
+
+describe('whole-site rules hold for any batch, even forged undo/restore ops', () => {
+  const forge = (doc: SiteDoc, change: (pages: SiteDoc['pages']) => void): EditOp => {
+    const pages = structuredClone(doc.pages)
+    change(pages)
+    return { op: 'restore_doc_parts', pages: pages as unknown as Record<string, unknown>[], nav: structuredClone(doc.nav) as unknown as Record<string, unknown>, footer: structuredClone(doc.footer) as unknown as Record<string, unknown> }
+  }
+
+  it('refuses a page without its header, a footer that is not last, and a style the section does not have', () => {
+    const doc = base()
+    const noHeader = applyOps(doc, [forge(doc, (p) => { p[0].sections.shift() })], ctx, { internal: true })
+    expect(noHeader.ok).toBe(false)
+    const footerMid = applyOps(doc, [forge(doc, (p) => { const f = p[0].sections.pop()!; p[0].sections.splice(1, 0, f) })], ctx, { internal: true })
+    expect(footerMid.ok).toBe(false)
+    const badStyle = applyOps(doc, [forge(doc, (p) => { (p[0].sections[1] as { variant: string }).variant = 'sparkly' })], ctx, { internal: true })
+    expect(badStyle.ok).toBe(false)
+  })
+
+  it('refuses a picture that is not in the tenant’s files, and more pages than the plan allows', () => {
+    const doc = base()
+    const foreign = applyOps(doc, [forge(doc, (p) => {
+      const s = p[0].sections.find((x) => JSON.stringify(x).includes('"assetId"'))!
+      const json = JSON.stringify(s).replace(/"assetId":"[^"]+"/, '"assetId":"99999999-9999-4999-8999-999999999999"')
+      p[0].sections[p[0].sections.indexOf(s)] = JSON.parse(json)
+    })], ctx, { internal: true })
+    expect(foreign).toMatchObject({ ok: false, error: 'That picture isn’t in your files.' })
+    const tooMany = applyOps(doc, [forge(doc, (p) => { const c = structuredClone(p[1]); c.id = 'extra'; c.slug = 'extra'; c.sections.forEach((s, i) => { s.id = `extra-${i}` }); p.push(c) })], { ...ctx, maxPages: doc.pages.length }, { internal: true })
+    expect(tooMany.ok).toBe(false)
+  })
+
+  it('a rule a site already breaks does not block unrelated edits', () => {
+    const doc = base()
+    const over = applyOps(doc, [{ op: 'update_business', field: 'tagline', value: 'Still editable' }], { ...ctx, maxPages: doc.pages.length - 1 })
+    expect(over.ok).toBe(true)
+  })
+})

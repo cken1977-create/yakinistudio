@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { kitDefinition, type KitDefinition } from '@yakini/kits'
 import { isEditablePath, INSPECTORS } from '@yakini/sections/inspectors'
+import { pageAssetIds, structureProblems } from './guard'
 import {
   Id, SECTION_DEFS, SECTION_TYPES, validateNewDoc, type Page, type Section, type SectionType, type SiteDoc,
 } from '@yakini/site-schema'
@@ -336,6 +337,16 @@ export function applyOps(doc: SiteDoc, ops: readonly unknown[], ctx: EditContext
     }
   }
   if (JSON.stringify(work.brand) !== JSON.stringify(doc.brand)) return { ok: false, error: 'Brand colors and logo are changed in Brand settings.', opIndex: null }
+  const kit = kitDefinition(doc.kitId)
+  if (!kit) return { ok: false, error: 'This kind of site cannot be edited yet.', opIndex: null }
+  const max = Math.min(ctx.maxPages ?? DEFAULT_MAX_PAGES, 12)
+  const before = new Set(structureProblems(doc, kit, max))
+  const added = structureProblems(work, kit, max).filter((p) => !before.has(p))
+  if (added.length) return { ok: false, error: added[0], opIndex: null }
+  const known = pageAssetIds(doc)
+  for (const id of pageAssetIds(work)) {
+    if (!known.has(id) && !ctx.allowedAssetIds.has(id)) return { ok: false, error: 'That picture isn’t in your files.', opIndex: null }
+  }
   const v = validateNewDoc(work)
   if (!v.ok) return { ok: false, error: v.issues.slice(0, 3).join('; '), opIndex: null }
   return { ok: true, doc: v.doc, applied, inverse, changed }

@@ -1,58 +1,12 @@
-import { randomUUID } from 'node:crypto'
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
-import { brandFor, buildKitDraft, kitDefinition } from '@yakini/kits'
 import { loadSiteDoc } from '@yakini/site-schema'
+import { form as post, jar, makeDraft, signIn, where } from './browser'
 
-// A browser cookie jar behind next/headers: routes read and write it like a real browser would.
-const jar = new Map<string, string>()
-vi.mock('next/headers', () => ({
-  cookies: async () => ({
-    get: (name: string) => (jar.has(name) ? { name, value: jar.get(name)! } : undefined),
-    getAll: () => [...jar].map(([name, value]) => ({ name, value })),
-    set: (name: string, value: string, opts?: { maxAge?: number }) => { if (opts?.maxAge === 0 || value === '') jar.delete(name); else jar.set(name, value) },
-    delete: (name: string) => jar.delete(name),
-  }),
-}))
-
-const STUDIO = 'https://studio.yakini.digital'
-let ip = 0
-function post(path: string, fields: Record<string, string>, headers: Record<string, string> = {}) {
-  return new Request(`${STUDIO}${path}`, {
-    method: 'POST', body: new URLSearchParams(fields),
-    headers: { origin: STUDIO, 'content-type': 'application/x-www-form-urlencoded', 'x-forwarded-for': `198.51.100.${++ip % 250}`, ...headers },
-  })
-}
-const where = (res: Response) => { const u = new URL(res.headers.get('location') ?? '', STUDIO); return `${u.pathname}${u.search}` }
+vi.mock('next/headers', async () => (await import('./browser')).headersMock)
 
 beforeAll(() => { vi.stubEnv('BUILDER_TEST_MODE', '1'); vi.stubEnv('VERCEL', ''); vi.stubEnv('VERCEL_ENV', '') })
 afterAll(() => vi.unstubAllEnvs())
 beforeEach(() => jar.clear())
-
-/** An anonymous draft held by this "browser" (cookie in the jar), as /start would leave it. */
-async function makeDraft(extra: { phone?: string } = {}) {
-  const { getRuntime } = await import('@/lib/server/runtime')
-  const { newDraftToken, hashDraftToken, draftCookieName } = await import('@/lib/server/draft-token')
-  const rt = getRuntime()
-  const kit = kitDefinition('food-truck')!
-  const doc = loadSiteDoc(buildKitDraft(kit, { name: 'Mesa Street Tacos', city: 'El Paso' }, brandFor(kit, { colors: null }))).doc
-  if (extra.phone) doc.business.phone = extra.phone
-  const tenantId = randomUUID(), siteId = randomUUID(), token = newDraftToken()
-  await rt.store.createTenant({ id: tenantId, name: 'Mesa Street Tacos', kitId: 'food-truck' })
-  await rt.store.createDraft({ tenantId, siteId, slug: `draft-${siteId.slice(0, 8)}`, kitId: 'food-truck', doc, docSha256: 'x'.repeat(64), tokenHash: hashDraftToken(token, rt.draftPepper), expiresAt: new Date(Date.now() + 86_400_000), sourceUrl: null })
-  jar.set(draftCookieName(siteId), token)
-  return { rt, siteId, tenantId, cookie: draftCookieName(siteId), token }
-}
-
-let signins = 0
-async function signIn(email = `owner${++signins}@mesastreet.example`) {
-  const { POST: code } = await import('@/app/api/auth/code/route')
-  const { POST: verify } = await import('@/app/api/auth/verify/route')
-  const { TEST_MODE_CODE, testUserId } = await import('@/lib/server/auth')
-  expect(where(await code(post('/api/auth/code', { email, next: '/claim/x' })))).toContain('step=code')
-  const res = await verify(post('/api/auth/verify', { code: TEST_MODE_CODE }))
-  expect(res.status).toBe(303)
-  return testUserId(email)
-}
 
 const claimFields = (rev: number, more: Record<string, string> = {}) => ({ rev: String(rev), attest: 'on', ...more })
 

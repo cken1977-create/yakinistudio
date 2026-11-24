@@ -92,7 +92,7 @@ export interface EditorStore {
   getEditorSite(siteId: string): Promise<EditorSite | null>
   /** Compare-and-set on draft_rev: saves only if the stored rev is still `baseRev`. */
   saveDraft(s: { siteId: string; baseRev: number; doc: unknown }): Promise<SaveResult>
-  logEdit(e: { tenantId: string; siteId: string; userId: string | null; actorKind: 'owner' | 'editor' | 'operator' | 'ai'; source: 'click' | 'chat' | 'system'; ops: unknown; revAfter: number }): Promise<void>
+  logEdit(e: { tenantId: string; siteId: string; userId: string | null; actorKind: 'owner' | 'editor' | 'operator' | 'ai' | 'anonymous'; source: 'click' | 'chat' | 'system'; ops: unknown; revAfter: number }): Promise<void>
   editsSinceLastVersion(siteId: string): Promise<{ count: number; lastVersionAt: Date | null }>
   createVersion(v: { siteId: string; doc: unknown; docSha256: string; userId: string | null; note: string | null }): Promise<{ id: string; number: number }>
   listVersions(siteId: string): Promise<VersionRow[]>
