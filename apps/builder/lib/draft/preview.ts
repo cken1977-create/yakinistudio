@@ -21,7 +21,14 @@ export function draftHref(siteId: string, page: Page, view: PreviewView): string
 
 export function draftImage(siteId: string, assetId: string, known: ReadonlySet<string>): ResolvedImage | null {
   const sample = sampleImageById(assetId)
-  if (sample) return { src: `/${sample.storagePath}`, width: sample.width, height: sample.height }
+  if (sample) {
+    if (!sample.webp) return { src: `/${sample.storagePath}`, width: sample.width, height: sample.height }
+    const dir = `/${sample.storagePath.slice(0, sample.storagePath.lastIndexOf('/') + 1)}`
+    return {
+      src: `/${sample.storagePath}`, width: sample.width, height: sample.height,
+      sources: [{ type: 'image/webp', srcSet: `${dir}${sample.webp.small} ${sample.webp.smallWidth}w, ${dir}${sample.webp.large} ${sample.width}w` }],
+    }
+  }
   // Only ids the stored draft itself references are linked (a doc cannot point at another tenant's file;
   // the asset route also checks the tenant).
   if (!known.has(assetId)) return null

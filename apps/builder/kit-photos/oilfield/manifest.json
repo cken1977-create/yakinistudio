@@ -1,0 +1,77 @@
+{
+  "kit": "oilfield",
+  "photos": [
+    {
+      "key": "pumpjack",
+      "source": "55",
+      "alt": "A pumpjack silhouetted against a sunset",
+      "width": 1280,
+      "height": 720,
+      "files": {
+        "jpg": "pumpjack.jpg",
+        "webp": "pumpjack.webp",
+        "webpSmall": "pumpjack-sm.webp"
+      }
+    },
+    {
+      "key": "wellhead-crew",
+      "source": "56",
+      "alt": "Two workers in hard hats working on a wellhead",
+      "width": 1280,
+      "height": 720,
+      "files": {
+        "jpg": "wellhead-crew.jpg",
+        "webp": "wellhead-crew.webp",
+        "webpSmall": "wellhead-crew-sm.webp"
+      }
+    },
+    {
+      "key": "drill-rig",
+      "source": "57",
+      "alt": "A tall drilling rig at a well site in the desert",
+      "width": 1280,
+      "height": 720,
+      "files": {
+        "jpg": "drill-rig.jpg",
+        "webp": "drill-rig.webp",
+        "webpSmall": "drill-rig-sm.webp"
+      }
+    },
+    {
+      "key": "lease-road",
+      "source": "58",
+      "alt": "Service pickups and a tank truck on a dusty lease road",
+      "width": 1280,
+      "height": 720,
+      "files": {
+        "jpg": "lease-road.jpg",
+        "webp": "lease-road.webp",
+        "webpSmall": "lease-road-sm.webp"
+      }
+    },
+    {
+      "key": "valve-wrench",
+      "source": "59",
+      "alt": "A worker's gloved hands turning a valve with a pipe wrench",
+      "width": 1280,
+      "height": 720,
+      "files": {
+        "jpg": "valve-wrench.jpg",
+        "webp": "valve-wrench.webp",
+        "webpSmall": "valve-wrench-sm.webp"
+      }
+    },
+    {
+      "key": "tank-battery",
+      "source": "60",
+      "alt": "Storage tanks and separators at a well site at sunset",
+      "width": 1280,
+      "height": 720,
+      "files": {
+        "jpg": "tank-battery.jpg",
+        "webp": "tank-battery.webp",
+        "webpSmall": "tank-battery-sm.webp"
+      }
+    }
+  ]
+}

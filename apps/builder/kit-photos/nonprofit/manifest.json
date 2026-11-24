@@ -1,0 +1,41 @@
+{
+  "kit": "nonprofit",
+  "photos": [
+    {
+      "key": "food-boxes",
+      "source": "31",
+      "alt": "Volunteers packing fresh produce and canned food into boxes",
+      "width": 1280,
+      "height": 720,
+      "files": {
+        "jpg": "food-boxes.jpg",
+        "webp": "food-boxes.webp",
+        "webpSmall": "food-boxes-sm.webp"
+      }
+    },
+    {
+      "key": "community-circle",
+      "source": "32",
+      "alt": "Community members sitting in a circle during a group meeting",
+      "width": 1280,
+      "height": 720,
+      "files": {
+        "jpg": "community-circle.jpg",
+        "webp": "community-circle.webp",
+        "webpSmall": "community-circle-sm.webp"
+      }
+    },
+    {
+      "key": "garden-volunteers",
+      "source": "34",
+      "alt": "Volunteers in matching shirts planting a neighborhood garden",
+      "width": 1280,
+      "height": 720,
+      "files": {
+        "jpg": "garden-volunteers.jpg",
+        "webp": "garden-volunteers.webp",
+        "webpSmall": "garden-volunteers-sm.webp"
+      }
+    }
+  ]
+}

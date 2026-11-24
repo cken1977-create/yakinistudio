@@ -37,9 +37,9 @@ Source of truth: `00-core-v1.1.md` and `phase-0-v1.1.md`. Clarence approved "use
 ## New questions from Phase 1
 
 1. **Settings to turn the studio on** (names only; values are yours to add in Vercel): `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `DRAFT_TOKEN_PEPPER` and `IP_HASH_PEPPER` (long random strings), `XAI_API_KEY`, `CRON_SECRET`, `DEMO_ORIGIN` (default `https://yakini.digital`). Without them the studio shows "The studio isn’t open yet" instead of failing. On yakini.digital: `BUILDER_HANDOFF_ENABLED=1` (and `BUILDER_STUDIO_ORIGIN` only for a preview).
-2. **Kit sample pictures.** The kits ship Yakini-drawn illustrations (owned, redistributable). Licensed food photos would look richer; that's a cost and licence choice.
+2. **Kit sample pictures.** Settled in Phase 2: the kits now use the approved sample photos (see Phase 2 item 5).
 3. **Photos read from a client's own site** are stored as not redistributable until the owner confirms them (matters for the Phase 4 export).
-4. **Draft screen buttons.** "Keep editing" and "Make it mine" are visible but disabled ("Opens soon") until Phase 2 builds editing and sign-in. Alternative: hide them until then.
+4. **Draft screen buttons.** Settled in Phase 2: "Keep editing" and "Make it mine" both work.
 5. **Report link on drafts.** Private drafts don't show "Report this site"; `/report` arrives with publishing in Phase 3.
 6. **Studio landing.** `/` still says the studio is opening soon. Spec §12 wants "Your website, ready in minutes." with two buttons; switch it when you're ready to open the studio.
 7. **First draft snapshot kind.** The Phase 0 table has no `draft` kind, so the first draft is saved as a `checkpoint` (no migration needed).
@@ -51,3 +51,12 @@ Source of truth: `00-core-v1.1.md` and `phase-0-v1.1.md`. Clarence approved "use
 - `middleware.ts` is deprecated in Next 16, so this uses `proxy.ts` (same behavior).
 - Folders starting with `_` are private in the App Router, so the renderer lives at `app/%5Fsite/[host]/[[...path]]`. The URL path is still `/_site/...`, and the proxy blocks direct requests to it.
 - RLS tests run on a plain Postgres 17 with a small Supabase shim (roles, `auth.uid()`, storage tables), not the Supabase CLI. CI does the same with a `postgres:17` service.
+
+## New questions from Phase 2
+
+1. **Sign-in email settings (Supabase Auth, yours to set).** For "Make it mine" to work on the live studio: (a) add `https://studio.yakini.digital/auth/callback` to Auth → URL Configuration → Redirect URLs; (b) the "Magic Link" email template must show the 6-digit code (`{{ .Token }}`) as well as the link, because a link only signs in on the device that asked for it; (c) to send from a Yakini address with Yakini branding (spec 5.4), point Auth → SMTP at Resend. Until (a) and (b) are done, sign-in works by link on the same device only. The studio also needs `NEXT_PUBLIC_SUPABASE_ANON_KEY` (public, names only here).
+2. **Typing straight onto the page.** Spec 10.3 describes typing directly on the page. This PR edits words in the side panel (bottom sheet on phones) after tapping the section, with live counters, which covers every field and works the same on phone and desktop. Typing on the page itself is a follow-up if you want it.
+3. **Destiny's voice in the Help tab** is not built (spec: optional). Text answers work now.
+4. **Tutorial screenshots.** The browser tests take them at 390 and 1280 on every check run (the `builder-screenshots` download on each run). This session can't download them, so the written tutorial shows words only for now; adding them is a small follow-up (copy `tutorial-<step>-<size>.png` to `public/tutorial/<step>-<size>.png` and list them in `lib/editor/tutorial-shots.ts`).
+5. **Kit photos.** The approved photos are in. Food truck and restaurant each use 5 (new drafts get a photo hero and menu photo; all 5 are in the editor's Kit photos). The other 8 kits' photos are stored in `apps/builder/kit-photos/<kit>/` with alt text in each `manifest.json`, ready for Phase 8. Six were left out: #04 and #11 (faces in focus; #11 also has a tangle of hands), #18 (a small brand badge on the range hood), #33 and #35 (hands that don't read right), #36 (a large painted face in the mural). #01 and #07 were kept though a small, out-of-focus face shows in the background; say if you want them out. They're marked Yakini-owned and allowed in "Download my site", which assumes the image generator's terms let Yakini use and pass on the pictures commercially; please confirm. The earlier drawings stay in the code only so older drafts keep showing them.
+6. **Claim screen time zone.** Picked from the device when it's a US zone, otherwise worked out from the address state (El Paso stays on Mountain time). A screen to change it later isn't in this PR (it matters first for the Today card). Non-US addresses aren't accepted yet (the site format is US-only).

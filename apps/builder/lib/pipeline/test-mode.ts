@@ -92,3 +92,40 @@ export const mockGenerateChat: GenerateChat = async (opts) => {
   }
   return result
 }
+
+/**
+ * Stand-in for chat edits: answers each of the 20 scripted eval requests (packages/ai/evals)
+ * the way a correct model would, and anything else with a polite reply. Proves the pipeline in
+ * tests and browser runs; the real model is measured by `npm run eval -w builder`.
+ */
+export const mockEditChat: GenerateChat = async (opts) => {
+  const { EDIT_CASES } = await import('@yakini/ai/evals/edit-cases')
+  const user = [...opts.messages].reverse().find((m) => m.role === 'user')?.content ?? ''
+  const request = /OWNER_REQUEST: (.*)$/m.exec(user)?.[1]?.trim() ?? ''
+  const site = JSON.parse(between(user, '<CURRENT_SITE>\n', '\n</CURRENT_SITE>') || '{}')
+  const c = EDIT_CASES.find((x) => x.request.toLowerCase() === request.toLowerCase())
+  const calls = c ? c.script(site) : [{ name: 'reply', arguments: { message: 'I can help with that. Try clicking the text you want to change.' } }]
+  return { content: null, toolCalls: calls.map((call, i) => ({ id: `mock-e${i}`, ...call })), usage: { inputTokens: 400, outputTokens: 60 }, model: 'mock', latencyMs: 1 }
+}
+
+/** One stand-in for every model call in test mode, routed by the tools offered. */
+/**
+ * Stand-in Destiny for the Help tab: short answers keyed on the question, in the real prompt's
+ * style. A question containing "leak-test" answers with a stack name, so tests can check the
+ * route's safety net replaces it.
+ */
+export const mockHelperChat: GenerateChat = async (opts) => {
+  const q = String(opts.messages[opts.messages.length - 1]?.content ?? '').toLowerCase()
+  const say = (content: string) => ({ content, toolCalls: [], usage: { inputTokens: 300, outputTokens: 40 }, model: 'test-helper', latencyMs: 5 })
+  if (q.includes('leak-test')) return say('This runs on Vercel and Supabase.')
+  if (/photo|picture|image/.test(q)) return say('Tap the section with the photo, then Change photo in its fields. Pick one of yours, a kit photo, or upload one, and describe it in a few words. Tutorial step 3: Change a photo.')
+  if (/hide|move|section/.test(q)) return say('Tap the section, then use the arrows to move it or Hide to take it off the page for now. Tutorial step 4: Move or hide a section.')
+  if (/publish|live|domain/.test(q)) return say('Publishing opens soon. Your draft is saved and private until then. Tutorial step 7: Publish.')
+  if (/change .* (headline|words)|my headline/.test(q)) return say('I’ll put that in the Chat tab for you.')
+  return say('Tap any part of the page to change it; it saves on its own. Tutorial step 2: Change any words.')
+}
+
+export const mockChat: GenerateChat = (opts) =>
+  opts.tools?.some((t) => t.function.name === 'update_field') ? mockEditChat(opts)
+    : opts.tools?.length ? mockGenerateChat(opts)
+    : mockHelperChat(opts)

@@ -23,7 +23,7 @@ const STUDIO_CSP = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  transpilePackages: ['@yakini/site-schema', '@yakini/sections', '@yakini/kits', '@yakini/brand', '@yakini/ai', '@yakini/pricing', '@yakini/abuse', '@yakini/visits'],
+  transpilePackages: ['@yakini/site-schema', '@yakini/sections', '@yakini/edits', '@yakini/kits', '@yakini/brand', '@yakini/ai', '@yakini/pricing', '@yakini/abuse', '@yakini/visits'],
   async headers() {
     return [
       {

@@ -38,7 +38,7 @@ test('studio landing renders, follows copy rules and loads nothing third-party',
 test('health endpoint answers without secrets', async ({ request }) => {
   const r = await request.get('/api/health')
   expect(r.ok()).toBe(true)
-  expect(await r.json()).toEqual({ ok: true, app: 'builder', phase: 1, schemaVersion: 1 })
+  expect(await r.json()).toEqual({ ok: true, app: 'builder', phase: 2, schemaVersion: 1 })
 })
 
 test('unknown client host gets the neutral unavailable page, noindex', async ({ request }) => {

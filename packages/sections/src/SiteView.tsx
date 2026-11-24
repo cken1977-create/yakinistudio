@@ -45,14 +45,16 @@ export function SiteView({ ctx }: { ctx: RenderContext }) {
   const header = sections.filter((s) => s.type === 'header')
   const footer = sections.filter((s) => s.type === 'footer')
   const body = sections.filter((s) => s.type !== 'header' && s.type !== 'footer')
+  // In a draft each section is marked so the editor can select it with a click; live pages carry no ids.
+  const mark = (s: Section) => (ctx.mode === 'draft' ? { 'data-ys-section': s.id } : {})
   return (
     <div className="ys-site" data-font={ctx.doc.brand.fontPair} data-kit={ctx.doc.kitId} style={vars as CSSProperties}>
       <a className="ys-skip" href="#ys-main">Skip to content</a>
-      {header.map((s) => <div key={s.id} className="ys-slot">{renderSection(ctx, s, false)}</div>)}
+      {header.map((s) => <div key={s.id} className="ys-slot" {...mark(s)}>{renderSection(ctx, s, false)}</div>)}
       <main id="ys-main" tabIndex={-1}>
-        {body.map((s) => <div key={s.id} className="ys-slot">{renderSection(ctx, s, sections.indexOf(s) === firstMain)}</div>)}
+        {body.map((s) => <div key={s.id} className="ys-slot" {...mark(s)}>{renderSection(ctx, s, sections.indexOf(s) === firstMain)}</div>)}
       </main>
-      {footer.map((s) => <div key={s.id} className="ys-slot">{renderSection(ctx, s, false)}</div>)}
+      {footer.map((s) => <div key={s.id} className="ys-slot" {...mark(s)}>{renderSection(ctx, s, false)}</div>)}
       {ctx.mode !== 'draft' ? <JsonLd doc={ctx.doc} /> : null}
     </div>
   )

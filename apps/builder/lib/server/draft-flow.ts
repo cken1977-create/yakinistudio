@@ -163,6 +163,11 @@ export async function withRuntime(fn: (rt: Runtime) => Promise<Response>): Promi
   try {
     return await fn(rt)
   } catch (e) {
+    // A setting needed later in the flow (for example sign-in's public key) is missing.
+    if (e instanceof ConfigError) {
+      Sentry.captureMessage(`Builder config missing: ${e.missing.join(', ')}`, 'error')
+      return errorPage('config')
+    }
     const ref = Sentry.captureException(e, { tags: { area: 'draft-route' } })
     return errorPage('server', ref || undefined)
   }

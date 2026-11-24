@@ -13,14 +13,16 @@
     "test:rls": "bash supabase/tests/run.sh",
     "test:e2e": "playwright test",
     "check:client-env": "node scripts/check-client-env.mjs",
-    "eval": "tsx --conditions=react-server --tsconfig tsconfig.json scripts/eval-generate.ts"
+    "eval": "tsx --conditions=react-server --tsconfig tsconfig.json scripts/eval-generate.ts && tsx --conditions=react-server --tsconfig tsconfig.json scripts/eval-edits.ts"
   },
   "dependencies": {
     "@sentry/nextjs": "^11.11.0",
+    "@supabase/ssr": "0.10.3",
     "@supabase/supabase-js": "2.105.4",
     "@yakini/abuse": "*",
     "@yakini/ai": "*",
     "@yakini/brand": "*",
+    "@yakini/edits": "*",
     "@yakini/kits": "*",
     "@yakini/pricing": "*",
     "@yakini/sections": "*",

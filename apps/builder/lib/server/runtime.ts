@@ -2,10 +2,10 @@ import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 import { DEFAULT_DEPS, type SafeFetchDeps } from '@yakini/brand/safe-fetch'
 import type { GenerateChat } from '@/lib/pipeline/generate'
-import { mockFetchDeps, mockGenerateChat } from '@/lib/pipeline/test-mode'
+import { mockChat, mockFetchDeps } from '@/lib/pipeline/test-mode'
 import { runAi } from './ai'
 import { serverEnv } from './env'
-import { createMemoryStore, createSupabaseStore, type DraftStore } from './store'
+import { createMemoryStore, createSupabaseStore, type DraftStore, type EditorStore } from './store'
 
 /**
  * Wires the draft flow to real services, or to in-memory fakes in test mode.
@@ -15,7 +15,7 @@ import { createMemoryStore, createSupabaseStore, type DraftStore } from './store
  */
 export type Runtime = {
   testMode: boolean
-  store: DraftStore
+  store: DraftStore & EditorStore
   fetchDeps: SafeFetchDeps
   chat: GenerateChat
   draftPepper: string
@@ -38,14 +38,14 @@ export function isTestMode(): boolean {
 const TEST_PEPPER = 'test-mode-pepper-not-a-secret-0001'
 
 // Route handlers and pages are separate bundles; keep one test-mode store per server process.
-const shared = globalThis as typeof globalThis & { __yakiniMemoryStore?: DraftStore }
+const shared = globalThis as typeof globalThis & { __yakiniMemoryStore?: DraftStore & EditorStore }
 let real: Runtime | null = null
 
 export function getRuntime(): Runtime {
   if (isTestMode()) {
     const memory = (shared.__yakiniMemoryStore ??= createMemoryStore())
     return {
-      testMode: true, store: memory, fetchDeps: mockFetchDeps(), chat: mockGenerateChat,
+      testMode: true, store: memory, fetchDeps: mockFetchDeps(), chat: mockChat,
       draftPepper: TEST_PEPPER, ipPepper: TEST_PEPPER, demoOrigin: process.env.DEMO_ORIGIN || 'https://yakini.digital',
     }
   }
