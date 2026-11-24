@@ -79,32 +79,63 @@ test('catering sides list the same four without changing category pricing', () =
   )
 })
 
-test('existing plate, dessert, and drink prices stay as they were', () => {
+test('plates, desserts, and drinks match Nychole\'s handwritten menu update', () => {
   const plates = category('Meat Plates')
-  assert.equal(plates.items.find((item) => item.name === '1 Meat Plate')!.price, '$15')
-  assert.equal(plates.items.find((item) => item.name === '2 Meat Plate')!.price, '$25')
-  assert.equal(plates.note, 'Plates include sides. · Los platos incluyen acompañamientos.')
+  const one = plates.items.find((item) => item.name === '1 Meat Plate')!
+  const two = plates.items.find((item) => item.name === '2 Meat Plate')!
+  assert.equal(one.price, '$15')
+  assert.equal(one.description, '1 meat, 2 sides and a drink')
+  assert.equal(one.descriptionTranslated, '1 carne, 2 acompañamientos y una bebida')
+  assert.equal(two.price, '$25')
+  assert.equal(two.description, '2 meats, 3 sides and a drink')
+  assert.equal(two.descriptionTranslated, '2 carnes, 3 acompañamientos y una bebida')
+  assert.equal(
+    plates.note,
+    'Please place orders ahead of time. Canned drink included with plates. · Favor de hacer el pedido con anticipación. La bebida en lata va incluida en los platos.',
+  )
 
   const desserts = category('Desserts')
   assert.deepEqual(
     desserts.items.map((item) => [item.name, item.price, item.nameTranslated]),
     [
-      ['Cookies or Brownie', '$2', 'Galletas o brownie'],
+      ['Cookies', '$2', 'Galletas'],
+      ['Brownies', '$3', 'Brownies'],
       ['Banana Pudding', '$5', 'Pudín de plátano'],
-      ['Pie', '$2', 'Pay'],
+      ['Pie', '$3', 'Pay'],
     ],
   )
+  assert.equal(desserts.items.filter((item) => item.name === 'Brownies').length, 1)
+  assert.equal(desserts.items.filter((item) => /Cookies or Brownie/i.test(item.name)).length, 0)
 
   const drinks = category('Drinks')
   assert.deepEqual(
     drinks.items.map((item) => [item.name, item.price]),
     [
       ['Soda', '$2'],
-      ['Powerade', '$2'],
+      ['Powerade', '$3'],
       ['Monster', '$4'],
       ['Water', 'Market Price'],
     ],
   )
+})
+
+test('public site copy spells the owner Nychole, not Nicole', async () => {
+  const { readFile } = await import('node:fs/promises')
+  const files = [
+    'app/about/page.tsx',
+    'app/page.tsx',
+    'app/menu/page.tsx',
+    'app/catering/page.tsx',
+    'config/brand.ts',
+    'config/site.ts',
+  ]
+  for (const file of files) {
+    const source = await readFile(new URL(`../${file}`, import.meta.url), 'utf8')
+    assert.doesNotMatch(source, /Nicole|Nichole|Nycole/)
+  }
+  const about = await readFile(new URL('../app/about/page.tsx', import.meta.url), 'utf8')
+  assert.match(about, /Nychole — Momma Sally/)
+  assert.match(about, /nychole-chef-coat\.webp/)
 })
 
 const THANKSGIVING_ONLY = [

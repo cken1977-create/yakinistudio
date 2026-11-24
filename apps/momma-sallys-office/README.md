@@ -1,7 +1,7 @@
 # Momma Sally's Office (back office, slice 1)
 
 Private back office for Momma Sally's at **office.mamasallys.com** (not set up yet).
-Owner (Nicole) sees money. Crew sign in and see the menu, never a dollar amount.
+Owner (Nychole) sees money. Crew sign in and see the menu, never a dollar amount.
 **Everything ships OFF.** With no env set, every path returns 404.
 
 ## What's in slice 1
@@ -35,7 +35,7 @@ migrations need. Seed data is fake.
 ## Infrastructure needed (NOT created; needs Clarence's OK)
 1. Her own Supabase project, then apply `supabase/migrations/*` in order. Auth settings: disable sign-ups,
    site URL `https://office.mamasallys.com`, redirect `https://office.mamasallys.com/auth/confirm`.
-2. Seed the owner: `insert into ms_members (email, role, display_name) values ('<nicole's email>', 'owner', 'Nicole');`
+2. Seed the owner: `insert into ms_members (email, role, display_name) values ('<nychole's email>', 'owner', 'Nychole');`
    plus an auth user for that email. She claims it on first sign-in.
 3. A Vercel project for `apps/momma-sallys-office`, domain `office.mamasallys.com` (DNS CNAME), env from `env.example`.
 4. Square developer app (sandbox): redirect URL + webhook subscription to `/api/square/webhook` for

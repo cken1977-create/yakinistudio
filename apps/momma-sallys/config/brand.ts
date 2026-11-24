@@ -70,14 +70,26 @@ export const config: BrandConfig = {
       {
         name: 'Meat Plates',
         nameTranslated: 'Platos de carne',
-        note: 'Plates include sides. · Los platos incluyen acompañamientos.',
+        note: 'Please place orders ahead of time. Canned drink included with plates. · Favor de hacer el pedido con anticipación. La bebida en lata va incluida en los platos.',
         items: [
           { name: 'Brisket', nameTranslated: 'Brisket' },
           { name: 'Sausage', nameTranslated: 'Salchicha' },
           { name: 'Chicken', nameTranslated: 'Pollo' },
           { name: 'Pulled Pork', nameTranslated: 'Cerdo deshebrado' },
-          { name: '1 Meat Plate', nameTranslated: 'Plato de 1 carne', price: '$15' },
-          { name: '2 Meat Plate', nameTranslated: 'Plato de 2 carnes', price: '$25' },
+          {
+            name: '1 Meat Plate',
+            nameTranslated: 'Plato de 1 carne',
+            description: '1 meat, 2 sides and a drink',
+            descriptionTranslated: '1 carne, 2 acompañamientos y una bebida',
+            price: '$15',
+          },
+          {
+            name: '2 Meat Plate',
+            nameTranslated: 'Plato de 2 carnes',
+            description: '2 meats, 3 sides and a drink',
+            descriptionTranslated: '2 carnes, 3 acompañamientos y una bebida',
+            price: '$25',
+          },
         ],
       },
       {
@@ -97,9 +109,10 @@ export const config: BrandConfig = {
         name: 'Desserts',
         nameTranslated: 'Postres',
         items: [
-          { name: 'Cookies or Brownie', nameTranslated: 'Galletas o brownie', price: '$2' },
+          { name: 'Cookies', nameTranslated: 'Galletas', price: '$2' },
+          { name: 'Brownies', nameTranslated: 'Brownies', price: '$3' },
           { name: 'Banana Pudding', nameTranslated: 'Pudín de plátano', price: '$5' },
-          { name: 'Pie', nameTranslated: 'Pay', price: '$2' },
+          { name: 'Pie', nameTranslated: 'Pay', price: '$3' },
         ],
       },
       {
@@ -108,7 +121,7 @@ export const config: BrandConfig = {
         note: 'Prices subject to change. · Precios sujetos a cambio.',
         items: [
           { name: 'Soda', nameTranslated: 'Refresco', price: '$2' },
-          { name: 'Powerade', price: '$2' },
+          { name: 'Powerade', price: '$3' },
           { name: 'Monster', price: '$4' },
           { name: 'Water', nameTranslated: 'Agua', price: 'Market Price' },
         ],

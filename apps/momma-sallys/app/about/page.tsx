@@ -41,8 +41,8 @@ export default function AboutPage() {
         }}>
           <div>
             <img
-              src="/photos/nicole-chef-coat.webp"
-              alt="Nicole — Momma Sally’s"
+              src="/photos/nychole-chef-coat.webp"
+              alt="Nychole — Momma Sally’s"
               style={{ width: '100%', borderRadius: 16, objectFit: 'cover' }}
             />
             <div style={{
