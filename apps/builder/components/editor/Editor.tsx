@@ -27,6 +27,8 @@ export type EditorProps = {
   anonymous: boolean
   canManageVersions: boolean
   welcome: boolean
+  /** Open on this page (links from the tutorial and tests). */
+  initialPageId?: string
 }
 
 type Tab = 'edit' | 'chat' | 'kit' | 'help'
@@ -53,7 +55,7 @@ export function Editor(props: EditorProps) {
   const [session] = useState(() => new EditSession(props.doc, props.rev, { allowedAssetIds: new Set([...props.photos.map((p) => p.id), ...props.kitSampleIds]), maxPages: 5 }, transport(props.siteId)))
   const snap = useSyncExternalStore(session.subscribe, session.getSnapshot, session.getSnapshot)
   const doc = snap.doc
-  const [pageId, setPageId] = useState(doc.pages[0].id)
+  const [pageId, setPageId] = useState(props.initialPageId && doc.pages.some((p) => p.id === props.initialPageId) ? props.initialPageId : doc.pages[0].id)
   const [selected, setSelected] = useState<string | null>(null)
   const [view, setView] = useState<'desktop' | 'phone'>('desktop')
   const [tab, setTab] = useState<Tab>('edit')

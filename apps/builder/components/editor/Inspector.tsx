@@ -34,7 +34,7 @@ export function Inspector() {
   const name = SECTION_LABELS[section.type]
 
   return (
-    <div className="space-y-5 p-5">
+    <div className="space-y-5 p-5" data-inspector-section={section.id}>
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="text-xs uppercase tracking-wide text-muted">{page.title} page</p>

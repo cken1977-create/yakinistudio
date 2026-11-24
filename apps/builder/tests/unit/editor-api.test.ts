@@ -226,3 +226,14 @@ describe('automatic versions by time', () => {
     expect(await maybeCheckpoint(rt, a, a.doc, Date.now() + 10 * 60_000)).toBe(2)
   })
 })
+
+describe('test-only seeding', () => {
+  it('does not exist outside test mode', async () => {
+    const { POST } = await import('@/app/api/dev/seed/route')
+    vi.stubEnv('VERCEL', '1')
+    try {
+      expect((await POST(api('POST', '/api/dev/seed?fixture=kit-food-truck'))).status).toBe(404)
+    } finally { vi.stubEnv('VERCEL', '') }
+    expect((await POST(api('POST', '/api/dev/seed?fixture=kit-food-truck'))).status).toBe(201)
+  })
+})

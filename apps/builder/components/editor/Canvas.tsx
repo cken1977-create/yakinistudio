@@ -35,6 +35,8 @@ export function Canvas({ doc, page, view, selected, changed, onSelect, onPage, i
     selected ? `[data-ys-section="${cssEscape(selected)}"]{outline:3px solid #C9A14A;outline-offset:-3px}` : '',
     ...highlight.map((id) => `[data-ys-section="${cssEscape(id)}"]{box-shadow:inset 0 0 0 4px rgba(201,161,74,.55)}`),
     '[data-ys-section]{cursor:pointer;scroll-margin-top:80px}',
+    // In the editor the site's header scrolls with the page, so it never covers the editor's own bar.
+    '[data-preview] .ys-header{position:relative}',
     '[data-ys-section]:hover{outline:2px dashed rgba(201,161,74,.7);outline-offset:-2px}',
   ].join('')
 

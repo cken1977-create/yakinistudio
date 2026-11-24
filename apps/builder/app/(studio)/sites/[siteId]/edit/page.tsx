@@ -45,6 +45,7 @@ export default async function EditPage({ params, searchParams }: Props) {
       kitSampleIds={kit?.sampleImages?.map((s) => s.assetId) ?? []}
       anonymous={a.kind === 'anonymous'} canManageVersions={canManageVersions(a)}
       welcome={q.welcome === '1'}
+      initialPageId={typeof q.page === 'string' ? q.page : undefined}
     />
   )
 }
