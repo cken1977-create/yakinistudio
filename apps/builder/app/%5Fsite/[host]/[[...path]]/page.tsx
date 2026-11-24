@@ -6,8 +6,7 @@ import '@yakini/sections/fonts.css'
 import '@yakini/sections/styles.css'
 import { liveContext, thanksPage } from '@/lib/site/live'
 import { siteView } from '@/lib/site/resolve'
-import { signFormTime } from '@/lib/server/request'
-import { getRuntime } from '@/lib/server/runtime'
+import { freshFormStamp } from '@/lib/server/form-stamp'
 import { studioOrigin } from '@/lib/server/settings'
 
 /**
@@ -50,8 +49,7 @@ export default async function SiteRenderer({ params, searchParams }: Props) {
   if (v.kind === 'redirect') return permanentRedirect(v.to)
   if (v.kind === 'error' || v.kind === 'updating') return <Neutral title="This site is being updated" note="Please check back soon." />
 
-  const rt = getRuntime()
-  const stamp = signFormTime(Date.now(), rt.ipPepper)
+  const stamp = freshFormStamp()
   const reportUrl = v.reportLinkHidden ? null : `${studioOrigin()}/report?site=${v.siteId}`
   const page = v.kind === 'thanks' ? thanksPage(v.doc, v.formKey) : v.page
   return <SiteView ctx={liveContext(v.doc, page, { siteId: v.siteId, reportUrl, formStamp: stamp, forms: true })} />

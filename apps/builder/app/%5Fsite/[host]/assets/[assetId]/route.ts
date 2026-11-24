@@ -9,6 +9,7 @@ import { liveSite } from '@/lib/site/resolve'
 export const dynamic = 'force-dynamic'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
+const SAFE_TYPES = new Set(['image/webp', 'image/png', 'image/jpeg'])
 const missing = () => new Response('Not found', { status: 404, headers: { 'cache-control': 'no-store' } })
 
 export async function GET(_request: Request, { params }: { params: Promise<{ host: string; assetId: string }> }): Promise<Response> {
@@ -21,8 +22,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ hos
   const editor = await rt.store.getEditorSite(s.site.siteId)
   if (!editor) return missing()
   const file = await rt.store.getAsset(editor.tenantId, assetId)
-  if (!file) return missing()
+  if (!file || !SAFE_TYPES.has(file.mime)) return missing()
   return new Response(new Uint8Array(file.bytes), {
-    headers: { 'content-type': file.mime, 'cache-control': 'public, max-age=31536000, immutable', 'x-content-type-options': 'nosniff', 'content-disposition': 'inline' },
+    headers: { 'content-type': file.mime, 'cache-control': 'public, max-age=31536000, immutable', 'x-content-type-options': 'nosniff', 'content-security-policy': "default-src 'none'; sandbox" },
   })
 }
