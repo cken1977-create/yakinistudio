@@ -1,7 +1,7 @@
 /**
  * Thanksgiving half-pan bundle.
  * One price for five half pans. Sides here are the special, not the daily menu.
- * Dessert half pans are not listed: Nicole has not confirmed which desserts qualify.
+ * Dessert half pans are not listed: Nychole has not confirmed which desserts qualify.
  */
 
 export const THANKSGIVING_PAN_COUNT = 5

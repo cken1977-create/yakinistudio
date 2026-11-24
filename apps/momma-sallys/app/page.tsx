@@ -107,6 +107,8 @@ export default function HomePage() {
                 <div>
                   <div style={{ fontWeight: 700 }}>{item.name}</div>
                   {item.nameTranslated && <div className="ms-es" style={{ fontSize: 13 }}>{item.nameTranslated}</div>}
+                  {item.description && <div style={{ fontSize: 14, color: '#cfcfcf', marginTop: 4, lineHeight: 1.5 }}>{item.description}</div>}
+                  {item.descriptionTranslated && <div className="ms-es" style={{ fontSize: 13, marginTop: 2, lineHeight: 1.5 }}>{item.descriptionTranslated}</div>}
                 </div>
                 {item.price && <div className="h-price">{item.price}</div>}
               </div>

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 
-// Hidden until Nicole supplies real food photos.
+// Hidden until Nychole supplies real food photos.
 export default function PortfolioPage() {
   redirect('/events')
 }

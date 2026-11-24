@@ -1,7 +1,7 @@
 -- MOMMA SALLY'S OFFICE · 1/3 · Members, roles, audit
 --
 -- Two roles only (Clarence, Oct 25 2026):
---   owner  Nicole. Everything, including all money data.
+--   owner  Nychole. Everything, including all money data.
 --   crew   Staff. Sees their own login row and the crew-safe RPCs only.
 --          No table that holds money (sales, fees, prices, receipts, costs)
 --          has any policy that crew can match. Deny by default.
