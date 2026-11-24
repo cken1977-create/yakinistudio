@@ -26,7 +26,7 @@ Source of truth: `00-core-v1.1.md` and `phase-0-v1.1.md`. Clarence approved "use
 
 ## New questions from Phase 0
 
-1. **Vercel domain limit per project.** `VERCEL_PROJECT_DOMAIN_LIMIT` defaults to 50 with a headroom of 5 (`lib/domain-limit.ts`). Please confirm the team plan's real limit.
+1. **Vercel domain limit per project.** Confirmed 2026-11-23: brsa-registry is on Vercel Pro. Official docs list Pro as unlimited with a soft limit of 100,000 domains per project (Hobby is 50). `DEFAULT_DOMAIN_LIMIT` is now 100,000 with a headroom of 5; override with `VERCEL_PROJECT_DOMAIN_LIMIT` if that changes.
 2. **Operator access logging.** RLS can't log reads. Operators read through RLS, and every operator *write* goes through server routes that write `audit_log`. If operator *reads* must be logged too, they need a server-only read path (Phase 2).
 3. **Expose the `builder` schema.** On the hosted project, add `builder` to the API's exposed schemas (Settings → API).
 4. **Backups.** Daily backups are included on Supabase Pro; point-in-time recovery is an add-on. Clarence decides the cost (see `docs/ARCHITECTURE.md`).
