@@ -139,3 +139,45 @@ function blankRow(type: SectionType, pattern: string): unknown | null {
   }
   return row
 }
+
+/** Props for a newly added section: the kit's own example of that section, else a blank one. */
+export function starterProps(doc: SiteDoc, type: SectionType): Record<string, unknown> | null {
+  const kit = kitDefinition(doc.kitId)
+  const example = kit?.template({ name: doc.business.name }).pages.flatMap((p) => p.sections).find((s) => s.type === type)
+  if (example) return structuredClone(example.props) as Record<string, unknown>
+  const json = jsonFor(type)
+  if (!json?.properties) return null
+  const labels = new Map(INSPECTORS[type].filter((f) => f.path.split('/').length === 2).map((f) => [f.path.slice(1), f.label]))
+  const out: Record<string, unknown> = {}
+  for (const key of json.required ?? []) {
+    const p = json.properties[key] as Json & { enum?: string[] }
+    if (p.enum?.length) out[key] = p.enum[0]
+    else if (p.type === 'string') out[key] = `[[${labels.get(key) ?? 'Add text'}]]`.slice(0, p.maxLength ?? 80)
+    else if (p.type === 'array') out[key] = []
+    else if (p.type === 'boolean') out[key] = false
+    else return null
+  }
+  return out
+}
+
+/** Sections an owner can add from the editor: the kit's, minus the header and footer every page has. */
+export function addableSections(doc: SiteDoc): { type: SectionType; variant: string; label: string }[] {
+  const kit = kitDefinition(doc.kitId)
+  if (!kit) return []
+  return kit.allowedSections
+    .filter((t) => t !== 'header' && t !== 'footer')
+    .map((t) => ({ type: t, variant: (kit.defaultVariants as Partial<Record<SectionType, string>>)[t] ?? SECTION_DEFS[t].variants[0], label: SECTION_LABELS[t] }))
+}
+
+export const SECTION_LABELS: Record<SectionType, string> = {
+  header: 'Header', hero: 'Big welcome', about: 'About', services: 'Services', menu: 'Menu', schedule: 'Where we’ll be',
+  gallery: 'Photo gallery', hours_location: 'Hours and location', testimonials: 'Reviews', faq: 'Questions', team: 'Team',
+  cta_band: 'Call to action', contact_form: 'Contact form', booking: 'Booking', catering_request: 'Catering request', today: 'Today', footer: 'Footer',
+}
+
+export const VARIANT_LABELS: Record<string, string> = {
+  bar: 'Bar', centered: 'Centered', split: 'Side by side', fullbleed: 'Full photo', minimal: 'Simple', 'left-image': 'Photo on the left',
+  'right-image': 'Photo on the right', 'text-only': 'Text only', cards: 'Cards', list: 'List', columns: 'Columns', week: 'Week', grid: 'Grid',
+  masonry: 'Mosaic', card: 'Card', single: 'One at a time', accordion: 'Fold-out', solid: 'Solid', outline: 'Outline', simple: 'Simple',
+  'with-details': 'With your details', banner: 'Banner',
+}

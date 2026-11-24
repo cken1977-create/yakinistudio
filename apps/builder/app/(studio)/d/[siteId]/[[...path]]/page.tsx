@@ -63,7 +63,7 @@ export default async function DraftPreview({ params, searchParams }: Props) {
           </nav>
           <div className="flex flex-wrap gap-2 text-sm">
             <a href="https://yakini.digital/demo" className="inline-flex min-h-10 items-center rounded-full border border-paper/25 px-4 font-semibold text-paper hover:border-gold">See your kit</a>
-            <span aria-disabled="true" title="Opens soon" className="inline-flex min-h-10 cursor-not-allowed items-center rounded-full border border-paper/10 px-4 text-paper/50">Keep editing</span>
+            {!member && <a href={`/sites/${siteId}/edit`} className="inline-flex min-h-10 items-center rounded-full border border-paper/25 px-4 font-semibold text-paper hover:border-gold">Keep editing</a>}
             {member
               ? <a href={`/sites/${siteId}/edit`} className="inline-flex min-h-10 items-center rounded-full bg-gold px-4 font-semibold text-ink hover:brightness-110">Open the editor</a>
               : <a href={`/claim/${siteId}`} className="inline-flex min-h-10 items-center rounded-full bg-gold px-4 font-semibold text-ink hover:brightness-110">Make it mine</a>}

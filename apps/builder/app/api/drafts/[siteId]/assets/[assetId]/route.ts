@@ -1,11 +1,10 @@
-import { loadSiteDoc } from '@yakini/site-schema'
-import { assetIdsIn } from '@/lib/draft/preview'
 import { viewableDraft } from '@/lib/server/site-access'
 import { getRuntime } from '@/lib/server/runtime'
 
 /**
  * A private draft's own photos and logo (spec 5.2, 14.2). Only the browser holding that draft's
- * cookie (or, once claimed, a signed-in member) gets them, only for files the draft itself uses, and only from its own tenant. Bytes are
+ * cookie (or, once claimed, a signed-in member) gets them, and only files of that draft's own
+ * tenant (its photo library, for the editor's photo picker). Bytes are
  * served as the re-encoded WebP/PNG we stored, never the original upload.
  */
 export const dynamic = 'force-dynamic'
@@ -19,9 +18,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ siteId:
   try { rt = getRuntime() } catch { return NOT_FOUND() }
   const draft = await viewableDraft(rt, siteId)
   if (!draft) return NOT_FOUND()
-  let used: Set<string>
-  try { used = assetIdsIn(loadSiteDoc(draft.doc).doc) } catch { return NOT_FOUND() }
-  if (!used.has(assetId)) return NOT_FOUND()
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(assetId)) return NOT_FOUND()
   const asset = await rt.store.getAsset(draft.tenantId, assetId)
   if (!asset || !SAFE_TYPES.has(asset.mime)) return NOT_FOUND()
   return new Response(new Uint8Array(asset.bytes), {

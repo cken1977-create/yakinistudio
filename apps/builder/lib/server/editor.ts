@@ -21,6 +21,8 @@ export type EditorAccess = {
   tenantStatus: TenantStatus
   doc: unknown
   rev: number
+  /** The business's time zone, once set at claim (for showing times). */
+  timezone: string | null
 } & (
   | { kind: 'member'; user: SessionUser; role: Role }
   | { kind: 'anonymous' }
@@ -29,9 +31,9 @@ export type EditorAccess = {
 export async function editorAccess(rt: Runtime, siteId: string): Promise<EditorAccess | null> {
   const user = await currentUser()
   const m = await memberSite(rt, siteId, user)
-  if (m && user) return { kind: 'member', user, role: m.role, siteId, tenantId: m.site.tenantId, tenantStatus: m.site.tenantStatus, doc: m.site.doc, rev: m.site.rev }
+  if (m && user) return { kind: 'member', user, role: m.role, siteId, tenantId: m.site.tenantId, tenantStatus: m.site.tenantStatus, doc: m.site.doc, rev: m.site.rev, timezone: m.site.timezone }
   const d = await openDraft(rt, siteId)
-  if (d) return { kind: 'anonymous', siteId, tenantId: d.tenantId, tenantStatus: 'prospect', doc: d.doc, rev: d.rev }
+  if (d) return { kind: 'anonymous', siteId, tenantId: d.tenantId, tenantStatus: 'prospect', doc: d.doc, rev: d.rev, timezone: null }
   return null
 }
 

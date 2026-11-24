@@ -99,6 +99,8 @@ export interface EditorStore {
   getVersion(siteId: string, versionId: string): Promise<{ number: number; doc: unknown } | null>
   audit(a: { tenantId: string; userId: string | null; actorKind: 'owner' | 'editor' | 'operator'; action: AuditAction; targetId: string; details: Record<string, unknown> }): Promise<void>
   tenantAssetIds(tenantId: string): Promise<string[]>
+  /** The tenant's own photos (not the logo) for the photo picker, newest first. */
+  tenantPhotos(tenantId: string): Promise<{ id: string; width: number; height: number; alt: string }[]>
   /** Chat edits in the last hour and AI tokens today for one tenant (per-tenant limits, 8.7). */
   tenantAiUsage(tenantId: string): Promise<{ editsLastHour: number; tokensToday: number }>
   saveChat(m: { tenantId: string; siteId: string; role: 'user' | 'assistant'; content: string; proposal: unknown | null }): Promise<string>
@@ -295,6 +297,11 @@ export function createSupabaseStore(db: SupabaseClient<any, any, any>): DraftSto
       if (error) fail('assets read', error)
       return (data ?? []).map((r) => r.id as string)
     },
+    async tenantPhotos(tenantId) {
+      const { data, error } = await db.from('assets').select('id, width, height, alt').eq('tenant_id', tenantId).eq('kind', 'image').is('deleted_at', null).order('created_at', { ascending: false }).limit(200)
+      if (error) fail('photos read', error)
+      return (data ?? []).map((r) => ({ id: r.id as string, width: r.width as number, height: r.height as number, alt: (r.alt as string) ?? '' }))
+    },
     async tenantAiUsage(tenantId) {
       const hourAgo = new Date(Date.now() - 3600_000).toISOString()
       const dayStart = new Date(); dayStart.setUTCHours(0, 0, 0, 0)
@@ -445,6 +452,9 @@ export function createMemoryStore(): DraftStore & EditorStore & { _state: MemSta
     },
     async audit(a) { state.audit.push({ tenantId: a.tenantId, action: a.action, targetId: a.targetId, details: clone(a.details) }) },
     async tenantAssetIds(tenantId) { return [...state.assets.values()].filter((a) => a.tenantId === tenantId).map((a) => a.id) },
+    async tenantPhotos(tenantId) {
+      return [...state.assets.values()].filter((a) => a.tenantId === tenantId && a.kind === 'image').reverse().map((a) => ({ id: a.id, width: a.width, height: a.height, alt: a.alt }))
+    },
     async tenantAiUsage(tenantId) {
       const runs = state.runs.filter((r) => r.tenantId === tenantId)
       return { editsLastHour: runs.filter((r) => r.kind === 'edit' && r.at > Date.now() - 3600_000).length, tokensToday: runs.reduce((n, r) => n + r.inputTokens + r.outputTokens, 0) }
