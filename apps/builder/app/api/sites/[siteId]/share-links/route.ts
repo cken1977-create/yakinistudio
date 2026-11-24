@@ -28,6 +28,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ sit
     if (m.info.takedown) return json({ error: 'Your site is paused. Please contact Yakini.' }, 409)
     const parsed = Body.safeParse(await readJson(request, 512))
     if (!parsed.success) return json({ error: 'That link couldn’t be made.' }, 400)
+    if (!(await rt.store.hitRateLimit(`share:${siteId}`, 30, 3600))) return json({ error: 'You’ve made a lot of preview links this hour. Please wait a few minutes.' }, 429)
     const s = phase3Settings()
 
     let doc

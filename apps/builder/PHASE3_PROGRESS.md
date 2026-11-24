@@ -28,10 +28,10 @@ If a session ends, read this file first, then `git log --oneline main..HEAD`.
 2. [✓] Migration (repo only) + store methods (Supabase + memory) + DB tests (313 DB checks pass locally)
 3. [✓] Checklist, slug check, publish / rollback / unpublish, review gate, subdomain registration
 4. [✓] Renderer: host routing, caching, neutral pages, sitemap/robots/JSON-LD/canonical, client-site CSP (/p previews move to step 6)
-5. [ ] Forms endpoint, thanks page, owner alert, booking request mode, /sites/[id]/forms
-6. [ ] Share links + /p previews; /report + abuse_reports + auto-hold; takedown/restore; /ops, /ops/reports, /ops/reviews; Check stored sites
-7. [ ] Studio screens: /sites/[id]/publish, rollback in versions, takedown banner
-8. [ ] Evidence: unit + DB + e2e at 390/1280, Lighthouse, link crawl, screenshots
+5. [✓] Forms endpoint, thanks page, owner alert, booking request mode, /sites/[id]/forms
+6. [✓] Share links + /p previews; /report + abuse_reports + auto-hold; takedown/restore; /ops, /ops/reports, /ops/reviews; Check stored sites
+7. [✓] Studio screens: /sites/[id]/publish, rollback in versions, takedown banner
+8. [✓] Evidence: unit + DB + e2e at 390/1280, Lighthouse, link crawl, screenshots
 9. [ ] Self-review, security review, CHANGELOG, PR
 
 ## How to try it locally (test mode)

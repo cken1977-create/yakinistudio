@@ -72,6 +72,12 @@ export async function runChecklist(rt: Runtime, m: Manager, doc: SiteDoc): Promi
   const items = docChecks(doc, { allowedAssetIds: new Set([...own, ...samples]) })
 
   const urls = externalUrls(doc).filter((u) => u.startsWith('https://')).slice(0, MAX_EXTERNAL_URLS)
+  // Outside links are fetched by our server, so how often is capped per site (fails closed).
+  if (urls.length && !(await rt.store.hitRateLimit(`linkcheck:${m.site.siteId}`, 40, 3600))) {
+    const i = items.findIndex((x) => x.id === 'links_ok')
+    items[i] = item('links_ok', false, true, 'We checked your links many times this hour. Please try again in a few minutes.')
+    urls.length = 0
+  }
   const check = rt.testMode ? testUrlCheck : realUrlCheck(rt)
   const results = await Promise.all(urls.map(async (u) => ({ u, ok: await check(u) })))
   const dead = results.filter((r) => !r.ok)
