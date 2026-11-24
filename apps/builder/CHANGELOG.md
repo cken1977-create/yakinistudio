@@ -1,5 +1,24 @@
 # Changelog: Yakini Builder
 
+## Phase 3: publish, working forms and the safety net (2026-11-24, branch `feat/builder-phase3`)
+
+### Added
+- Publishing (spec 5.6, 11.1, 11.2): `/sites/[id]/publish` with the pre-publish checklist (placeholders, a way to reach the business, photos and descriptions, internal and outside links, wording, forms, size, ownership, takedown, plan; warnings for contrast, hours, search description and buttons to empty sections), the address with a live check, Publish, "Your site is live" with copy and QR code, roll back, take offline, and preview links. Routes: `POST /api/sites/[id]/checks|publish|rollback|unpublish`, `GET /api/slugs/check`.
+- Addresses (13.2 B, 13.3): `<slug>.yakini.digital`; reserved, big-brand and taken addresses refused; the Vercel Domains API adds the address when its settings exist, otherwise the address waits as pending.
+- Renderer (13.5, 11.4): every client host resolves to its published version only (never a draft). Unknown hosts and sites under takedown get "This site is unavailable." (404, noindex, no-store); an unpublished site says "This site is being updated". Cached per host and refreshed on publish, rollback, unpublish, takedown and restore. robots.txt, sitemap.xml, canonical, Open Graph and JSON-LD; noindex unless paid and indexable. Client-site CSP with no outside hosts; the error reporter runs on studio hosts only.
+- Site forms (11.3, 5.8): `POST /api/f/[siteId]/[formKey]` works with JavaScript off; host must be the site's own; honeypot, signed render time, 5 per 10 minutes per visitor and 200 a day per site; only declared fields kept. The owner gets an internal email; the visitor gets nothing (R4/R5). Thank-you page. Booking sections are request forms until portal booking (Phase 6). `/sites/[id]/forms` lists the messages.
+- Safety net (14.8, Flow I): share links (owners/editors of claimed sites, shown once, hashed, expiring, revocable, max 20, refused for anonymous drafts and for flagged sites, which open a review); `/p` previews with a "Preview, not a live site" banner; the Report link on live sites, share previews and draft previews; `/report` (JS-off) with a reference code and an operator alert only; auto-hold of unpaid sites (3 distinct reporters in 24 h, or any phishing report); takedown and restore; the review gate per `REVIEW_GATE_MODE`.
+- Operator desk (5.10): `/ops`, `/ops/reports` (dismiss, actioned, take down, restore), `/ops/reviews` (approve publishes the reviewed version, reject keeps the preview), Check stored sites (7.4). Routes per spec 18.
+- Database (repo only, not applied anywhere): `20261125000100_builder_phase3_publish.sql` — server-only functions for publish, review, rollback, unpublish, takedown, lift, reports, share links and the host lookup, each one transaction with its own audit row; two new audit actions (`unpublish`, `report.create`). 67 new database checks (`supabase/tests/phase3-tests.sql`).
+- Tests: 167 builder unit tests (31 new), 68 renderer tests, 313 database checks, 64 browser tests at 390 and 1280 (14 new). Lighthouse evidence in `docs/phase3-evidence`.
+
+### Changed
+- Links to a section with nothing in it yet open the page instead of a dead anchor.
+- The first image on a page is preloaded; kit photos have a 960 px WebP for phones; client sites no longer load the studio stylesheet or ask for a favicon.
+- Honeypot field renamed to `company_website` (spec 11.3).
+- Editor: Publish opens the publish screen; banners for a paused site or one waiting for review; tour text updated.
+- `/api/health` reports `phase: 3`.
+
 ## Phase 2: editing, sign-in and claim (2026-11-24, branch `feat/builder-phase2`)
 
 ### Added

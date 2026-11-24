@@ -6,7 +6,15 @@ export default defineConfig({
   timeout: 90_000,
   retries: process.env.CI ? 1 : 0,
   reporter: [['list'], ['html', { open: 'never' }]],
-  use: { baseURL: process.env.E2E_BASE_URL || `http://localhost:${PORT}`, trace: 'retain-on-failure' },
+  use: {
+    baseURL: process.env.E2E_BASE_URL || `http://localhost:${PORT}`, trace: 'retain-on-failure',
+    // Client sites are reached by their own host names (spec 16.6 #5): *.yakini.digital resolves to this machine.
+    launchOptions: {
+      args: ['--host-resolver-rules=MAP *.yakini.digital 127.0.0.1'],
+      // Local machines with a preinstalled browser can point at it (CI installs its own).
+      ...(process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {}),
+    },
+  },
   projects: [
     { name: 'phone-390', use: { ...devices['iPhone 13'], viewport: { width: 390, height: 844 }, browserName: 'chromium' } },
     { name: 'desktop-1280', use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 800 } } },
@@ -16,7 +24,7 @@ export default defineConfig({
     url: `http://localhost:${PORT}/api/health`,
     reuseExistingServer: !process.env.CI,
     // Test mode: stand-in model and mock websites, in-memory store. Refused on Vercel (runtime.ts).
-    env: { ...(Object.fromEntries(Object.entries(process.env).filter(([, v]) => v !== undefined)) as Record<string, string>), BUILDER_TEST_MODE: '1' },
+    env: { ...(Object.fromEntries(Object.entries(process.env).filter(([, v]) => v !== undefined)) as Record<string, string>), BUILDER_TEST_MODE: '1', OPERATOR_EMAIL: 'ops@yakini.example' },
     timeout: 60_000,
   },
 })

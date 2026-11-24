@@ -63,7 +63,7 @@ describe('modes', () => {
     const l = html(ctxFor(doc, more, 'live', { formAction: (k) => `/api/f/site/${k}` }))
     expect(l).toContain('action="/api/f/site/contact"')
     expect(l).not.toContain('Forms start working')
-    expect(l).toContain('name="website"') // honeypot
+    expect(l).toContain('name="company_website"') // honeypot (11.3)
   })
   it('the Report link and Site by Yakini link show on drafts and live sites, never in exports', () => {
     expect(html(ctxFor(doc, home, 'draft'))).toContain('Report this site')

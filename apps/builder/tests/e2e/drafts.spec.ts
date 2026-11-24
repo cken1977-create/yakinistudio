@@ -41,6 +41,10 @@ async function checkPage(page: Page, label: string, project: string) {
   await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1)
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
   expect(overflow, `${label}: horizontal scroll`).toBeLessThanOrEqual(0)
+  // Lazy images below the fold load as they come into view: scroll through first, then check.
+  // (Playwright scrolling works with JavaScript on or off.)
+  for (const img of await page.locator('img').all()) await img.scrollIntoViewIfNeeded().catch(() => {})
+  await expect.poll(() => page.locator('img').evaluateAll((imgs) => imgs.every((i) => (i as HTMLImageElement).complete)), { timeout: 10_000 }).toBe(true)
   const broken = await page.locator('img').evaluateAll((imgs) => imgs.filter((i) => !(i as HTMLImageElement).complete || (i as HTMLImageElement).naturalWidth === 0).map((i) => (i as HTMLImageElement).src))
   expect(broken, `${label}: broken images`).toEqual([])
   const site = await page.locator('.ys-site').innerText()

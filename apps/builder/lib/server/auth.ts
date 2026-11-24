@@ -2,6 +2,7 @@ import 'server-only'
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto'
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
+import { rememberTestEmail } from './publish-store'
 import { ConfigError, isTestMode } from './runtime'
 
 /**
@@ -110,6 +111,7 @@ const testAuth: AuthBackend = {
   async verifyCode(email, code) {
     if (code !== TEST_MODE_CODE) return null
     const user = { id: testUserId(email), email: email.toLowerCase() }
+    rememberTestEmail(user.id, user.email)
     await setTestSession(user)
     return user
   },
@@ -118,6 +120,7 @@ const testAuth: AuthBackend = {
     const email = code.startsWith('email:') ? code.slice(6) : ''
     if (!EMAIL_RE.test(email)) return null
     const user = { id: testUserId(email), email: email.toLowerCase() }
+    rememberTestEmail(user.id, user.email)
     await setTestSession(user)
     return user
   },

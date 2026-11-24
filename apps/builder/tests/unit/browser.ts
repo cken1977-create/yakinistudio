@@ -77,3 +77,45 @@ export async function ownedSite() {
   if (res.status !== 303 || !where(res).includes('/edit')) throw new Error(`claim failed: ${where(res)}`)
   return { ...d, userId }
 }
+
+/** The kit draft with every [[fill this in]] spot filled, so it passes the publish checklist. */
+export function filledDoc(extra: { phone?: string; name?: string } = {}): SiteDoc {
+  const fill = (v: unknown): unknown => {
+    if (typeof v === 'string') return v.replace(/\[\[[^\]]{1,200}\]\]/g, 'Fresh tacos')
+    if (Array.isArray(v)) return v.map(fill)
+    if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, fill(x)]))
+    return v
+  }
+  const doc = loadSiteDoc(fill(kitDoc({ phone: extra.phone ?? '+19155550142' }))).doc
+  if (extra.name) doc.business.name = extra.name
+  return doc
+}
+
+type P3 = { tenantPlan: Map<string, boolean>; operators: Map<string, { canOverridePublish: boolean; canTakedown: boolean }> }
+export async function p3State(): Promise<P3 & { [k: string]: unknown }> {
+  const { getRuntime } = await import('@/lib/server/runtime')
+  return (getRuntime().store as unknown as { _p3: P3 & { [k: string]: unknown } })._p3
+}
+
+/** A claimed site whose draft is ready to publish; `plan` sets whether the tenant pays. */
+export async function readySite(opts: { plan?: boolean; name?: string } = {}) {
+  const s = await ownedSite()
+  const doc = filledDoc({ name: opts.name })
+  const saved = await s.rt.store.saveDraft({ siteId: s.siteId, baseRev: (await s.rt.store.getEditorSite(s.siteId))!.rev, doc })
+  if (!saved.ok) throw new Error('could not save the ready draft')
+  ;(await p3State()).tenantPlan.set(s.tenantId, opts.plan ?? true)
+  return { ...s, doc }
+}
+
+/** Sign in as a Yakini operator with the given powers. */
+export async function signInOperator(powers: { canOverridePublish?: boolean; canTakedown?: boolean } = {}) {
+  const email = `operator${++signins}@yakini.example`
+  const { testUserId } = await import('@/lib/server/auth')
+  const { getRuntime } = await import('@/lib/server/runtime')
+  const id = testUserId(email)
+  ;(getRuntime().store as unknown as { _state: { operators: Set<string> } })._state.operators.add(id)
+  ;(await p3State()).operators.set(id, { canOverridePublish: Boolean(powers.canOverridePublish), canTakedown: Boolean(powers.canTakedown) })
+  jar.clear()
+  await signIn(email)
+  return id
+}

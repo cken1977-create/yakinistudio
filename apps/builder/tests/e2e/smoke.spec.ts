@@ -38,14 +38,16 @@ test('studio landing renders, follows copy rules and loads nothing third-party',
 test('health endpoint answers without secrets', async ({ request }) => {
   const r = await request.get('/api/health')
   expect(r.ok()).toBe(true)
-  expect(await r.json()).toEqual({ ok: true, app: 'builder', phase: 2, schemaVersion: 1 })
+  expect(await r.json()).toEqual({ ok: true, app: 'builder', phase: 3, schemaVersion: 1 })
 })
 
 test('unknown client host gets the neutral unavailable page, noindex', async ({ request }) => {
   const r = await request.get('/', { headers: { host: 'unknown-site.example.com' } })
   expect(r.status()).toBe(404)
-  expect(r.headers()['x-robots-tag'] ?? '').toContain('noindex')
-  expect(await r.text()).toContain('This site is unavailable.')
+  // Client hosts carry noindex in the page (spec 11.4: the renderer decides per site); studio hosts also by header.
+  const body = await r.text()
+  expect(body).toMatch(/<meta name="robots" content="noindex/)
+  expect(body).toContain('This site is unavailable.')
 })
 
 test('the internal renderer path cannot be reached directly', async ({ request }) => {

@@ -5,8 +5,9 @@ export const RESERVED_SUBDOMAINS = new Set([
   'pay', 'billing', 'checkout', 'login', 'signin', 'auth', 'account', 'dashboard', 'academy', 'class', 'sign',
   'preview', 'staging', 'dev', 'test', 'beta', 'new', 'ns1', 'ns2', '_dmarc', '_domainkey', 'autodiscover',
   'yakini', 'brsa',
-  // Subdomains already in use on yakini.digital (refresh from Vercel/DNS before Phase 3, OPEN_QUESTIONS O-6).
-  'mission',
+  // Subdomains in use on yakini.digital (Namecheap DNS, checked 2026-11-24): composer, mission, portal,
+  // sign, studio, www, plus `send` (email sending). Add new ones here or in RESERVED_SUBDOMAINS.
+  'mission', 'composer', 'send', 'resend',
 ])
 
 /** Prefixes kept for the studio's own use: anonymous drafts get `draft-<hex>` (Phase 1). */

@@ -26,7 +26,7 @@ export function draftImage(siteId: string, assetId: string, known: ReadonlySet<s
     const dir = `/${sample.storagePath.slice(0, sample.storagePath.lastIndexOf('/') + 1)}`
     return {
       src: `/${sample.storagePath}`, width: sample.width, height: sample.height,
-      sources: [{ type: 'image/webp', srcSet: `${dir}${sample.webp.small} ${sample.webp.smallWidth}w, ${dir}${sample.webp.large} ${sample.width}w` }],
+      sources: [{ type: 'image/webp', srcSet: [`${dir}${sample.webp.small} ${sample.webp.smallWidth}w`, sample.webp.medium ? `${dir}${sample.webp.medium} ${sample.webp.mediumWidth}w` : null, `${dir}${sample.webp.large} ${sample.width}w`].filter(Boolean).join(', ') }],
     }
   }
   // Only ids the stored draft itself references are linked (a doc cannot point at another tenant's file;
@@ -57,7 +57,7 @@ export function previewContext(doc: SiteDoc, page: Page, siteId: string, view: P
     hrefForPage: (p) => draftHref(siteId, p, view),
     image: (id) => draftImage(siteId, id, known),
     formAction: () => null, // forms start working once the site is published (Phase 3)
-    reportUrl: null, // /report arrives with publishing (Phase 3); private drafts are not public
+    reportUrl: `/report?site=${siteId}`, // spec 7.3: every preview carries the Report link
     today: null,
   }
 }
