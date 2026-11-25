@@ -109,7 +109,7 @@ export function realPayPal(): PayPalApi {
         application_context: { brand_name: 'Yakini', shipping_preference: 'NO_SHIPPING', user_action: 'SUBSCRIBE_NOW', return_url: s.returnUrl, cancel_url: s.cancelUrl },
       })
       const approve = r?.links.find((l) => l.rel === 'approve')?.href
-      if (!r?.id || !approve || !/^https:\/\/([a-z0-9-]+\.)*paypal\.com\//.test(approve)) throw new PayPalError('subscribe link')
+      if (!r?.id || !approve || !/^https:\/\/www\.(sandbox\.)?paypal\.com\//.test(approve)) throw new PayPalError('subscribe link')
       return { id: r.id, approveUrl: approve }
     },
     async getSubscription(id) {
