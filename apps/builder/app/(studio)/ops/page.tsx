@@ -38,6 +38,11 @@ export default async function OpsDesk({ searchParams }: Props) {
           <p className="text-paper/80">sites waiting for a look</p>
           <a href="/ops/reviews" className="mt-3 inline-flex min-h-11 items-center text-gold underline underline-offset-4">Open reviews</a>
         </li>
+        <li className="rounded-2xl border border-paper/15 p-5">
+          <p className="text-3xl font-semibold">PayPal</p>
+          <p className="text-paper/80">plans and subscriptions</p>
+          <a href="/ops/billing" className="mt-3 inline-flex min-h-11 items-center text-gold underline underline-offset-4">Open billing</a>
+        </li>
       </ul>
       <section className="mt-10 rounded-2xl border border-paper/15 p-5">
         <h2 className="text-xl font-semibold">Check stored sites</h2>

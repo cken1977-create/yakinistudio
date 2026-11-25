@@ -76,7 +76,7 @@ export async function siteKit(m: Manager): Promise<SiteKitId> {
   return 'doc' in d ? d.doc.kitId : 'service'
 }
 
-export async function startCheckout(rt: Runtime, m: Manager, productKey: string): Promise<CheckoutResult> {
+export async function startCheckout(rt: Runtime, m: Manager, productKey: string, origin: string): Promise<CheckoutResult> {
   if (m.role !== 'owner') return { error: 'Only the owner can choose a plan.', code: 403 }
   const choice = (await planChoices(rt, await siteKit(m))).find((c) => c.key === productKey)
   if (!choice) return { error: 'That plan isn’t available for this site.', code: 422 }
@@ -86,7 +86,7 @@ export async function startCheckout(rt: Runtime, m: Manager, productKey: string)
   const plan = (await rt.store.activePlans()).find((p) => p.productKey === productKey)
   if (!plan) return { error: 'Plans aren’t set up yet. Please contact Yakini.', code: 503 }
   try {
-    const back = `${studioOrigin()}/sites/${m.site.siteId}/plan`
+    const back = `${origin}/sites/${m.site.siteId}/plan`
     const sub = await paypalFor(rt).createSubscription({ planId: plan.providerPlanId, customId: m.site.tenantId, returnUrl: `${back}?paid=1`, cancelUrl: `${back}?canceled=1` })
     // Linked to this tenant now, so no later event can move it to another tenant.
     await rt.store.recordSubscription({ tenantId: m.site.tenantId, subscriptionId: sub.id, planId: plan.providerPlanId, productKey, status: 'pending', paidThrough: null, customerId: null, eventId: null, eventType: 'checkout.start' })
