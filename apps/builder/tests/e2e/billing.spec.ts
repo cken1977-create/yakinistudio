@@ -134,3 +134,20 @@ test('leaving PayPal without paying changes nothing', async ({ page }) => {
   await expect(page.getByText('No payment was made.')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Continue to PayPal' }).first()).toBeVisible()
 })
+
+test('back from PayPal while it is still confirming: the page says so and turns Active by itself', async ({ page }) => {
+  await plansReady(page)
+  const siteId = await ownerSite(page)
+  await page.goto(`/sites/${siteId}/plan`)
+  await page.getByRole('button', { name: 'Continue to PayPal' }).first().click()
+  await page.waitForURL(/\/dev\/paypal\?subscription_id=I-\d{6}/)
+  const subId = new URL(page.url()).searchParams.get('subscription_id')!
+  await page.getByRole('button', { name: 'Agree (PayPal still confirming)' }).click()
+  await expect(page.getByTestId('plan-confirming')).toBeVisible()
+  await expect(page.getByText('A payment was started but not finished')).toHaveCount(0)
+  await shot(page, 'plan-confirming')
+  // PayPal finishes: the page checks again on its own.
+  const r = await page.request.post('/api/dev/paypal', { data: { action: 'set', subscriptionId: subId, status: 'ACTIVE' } })
+  expect(await r.json()).toEqual({ webhook: 200 })
+  await expect(page.getByTestId('plan-status')).toContainText('Active', { timeout: 15_000 })
+})

@@ -22,6 +22,7 @@ export default async function FakePayPal({ searchParams }: { searchParams: Promi
       <form method="post" action="/api/dev/paypal" className="mt-6 flex flex-wrap gap-3">
         <input type="hidden" name="subscription_id" value={sub.id} />
         <button name="decision" value="approve" className="inline-flex min-h-12 items-center rounded-full bg-gold px-6 font-semibold text-ink">Agree and subscribe</button>
+        <button name="decision" value="approve-slow" className="inline-flex min-h-12 items-center rounded-full border border-paper/25 px-6 font-semibold">Agree (PayPal still confirming)</button>
         <button name="decision" value="cancel" className="inline-flex min-h-12 items-center rounded-full border border-paper/25 px-6 font-semibold">Cancel and return</button>
       </form>
     </main>

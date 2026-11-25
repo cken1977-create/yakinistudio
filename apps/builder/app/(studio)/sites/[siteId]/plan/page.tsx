@@ -35,7 +35,9 @@ export default async function PlanPage({ params, searchParams }: Props) {
   }
   const [subs, choices] = await Promise.all([rt.store.tenantSubscriptions(m.site.tenantId), planChoices(rt, await siteKit(m))])
   const cur = currentSub(subs)
-  const waiting = !cur && subs.some((s) => s.status === 'pending')
+  // Back from PayPal but not active yet: PayPal is still taking the first payment (a few seconds).
+  const confirming = !cur && returned === 'ok' && subs.some((s) => s.providerSubscriptionId === subId && s.status === 'pending')
+  const waiting = !cur && !confirming && subs.some((s) => s.status === 'pending')
   const result = one(q.result)
 
   return (
@@ -44,7 +46,13 @@ export default async function PlanPage({ params, searchParams }: Props) {
       <h1 className="mt-4 font-serif text-4xl">Your plan</h1>
       {result && BILLING_RESULTS[result] ? <p role="status" className="mt-6 rounded-xl border border-gold/40 bg-gold/10 px-4 py-3">{BILLING_RESULTS[result]}</p> : null}
       {one(q.canceled) === '1' ? <p role="status" className="mt-6 rounded-xl border border-paper/25 px-4 py-3">No payment was made. You can choose a plan any time.</p> : null}
-      {returned === 'unknown' ? <p role="status" className="mt-6 rounded-xl border border-paper/25 px-4 py-3">We’re still waiting to hear from PayPal. This page updates within a few minutes.</p> : null}
+      {returned === 'unknown' || confirming ? (
+        <>
+          {/* Checks PayPal again every few seconds until the plan is active (works without JavaScript). */}
+          <meta httpEquiv="refresh" content="5" />
+          <p role="status" className="mt-6 rounded-xl border border-gold/40 bg-gold/10 px-4 py-3" data-testid="plan-confirming">Thanks! PayPal is confirming your payment. This page updates by itself.</p>
+        </>
+      ) : null}
 
       {cur ? (
         <section className="mt-8 rounded-2xl border border-paper/15 p-6" aria-labelledby="cur-h">
