@@ -232,12 +232,13 @@ export function createSupabaseStore(db: SupabaseClient<any, any, any>): DraftSto
       return data as ClaimResult
     },
     async memberRole(userId, tenantId) {
-      const op = await db.from('operators').select('user_id').eq('user_id', userId).maybeSingle()
-      if (op.error) fail('operator read', op.error)
-      if (op.data) return 'operator'
+      // Your own site first: an operator who owns a site acts as its owner there (pays, cancels).
       const { data, error } = await db.from('memberships').select('role').eq('tenant_id', tenantId).eq('user_id', userId).is('deleted_at', null).maybeSingle()
       if (error) fail('membership read', error)
-      return (data?.role as Role | undefined) ?? null
+      if (data?.role) return data.role as Role
+      const op = await db.from('operators').select('user_id').eq('user_id', userId).maybeSingle()
+      if (op.error) fail('operator read', op.error)
+      return op.data ? 'operator' : null
     },
     async sitesForUser(userId) {
       const { data, error } = await db.from('memberships')
@@ -417,8 +418,9 @@ export function createMemoryStore(): DraftStore & EditorStore & PublishStore & B
       return 'ok'
     },
     async memberRole(userId, tenantId) {
-      if (state.operators.has(userId)) return 'operator'
-      return state.members.find((m) => m.tenantId === tenantId && m.userId === userId)?.role ?? null
+      const own = state.members.find((m) => m.tenantId === tenantId && m.userId === userId)?.role
+      if (own) return own
+      return state.operators.has(userId) ? 'operator' : null
     },
     async sitesForUser(userId) {
       return [...state.sites.values()].filter((s) => !s.deleted && state.members.some((m) => m.tenantId === s.tenantId && m.userId === userId))

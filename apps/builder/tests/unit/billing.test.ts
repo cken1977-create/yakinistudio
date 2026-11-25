@@ -217,3 +217,19 @@ describe('subscriptions the studio did not start', () => {
     expect((await (await rt()).store.publishInfo(s.siteId))!.hasPlan).toBe(false)
   })
 })
+
+describe('an operator who owns a site', () => {
+  it('acts as its owner there: can choose a plan and pay', async () => {
+    await plansReady()
+    const s = await readySite({ plan: false })
+    const r = await rt()
+    ;(r.store as unknown as { _state: { operators: Set<string> } })._state.operators.add(s.userId)
+    expect(await r.store.memberRole(s.userId, s.tenantId)).toBe('owner')
+    const { POST } = await import('@/app/api/sites/[siteId]/billing/checkout/route')
+    const res = await POST(form(`/api/sites/${s.siteId}/billing/checkout`, { product: 'kit:food-truck:small' }), ctx({ siteId: s.siteId }))
+    expect(res.headers.get('location')).toMatch(/\/dev\/paypal\?subscription_id=I-\d{6}/)
+    // On a site they don't belong to, they are still the operator.
+    const other = await readySite({ plan: false })
+    expect(await r.store.memberRole(s.userId, other.tenantId)).toBe('operator')
+  })
+})
