@@ -34,6 +34,11 @@ export async function POST(request: Request): Promise<Response> {
   const id = form?.get('subscription_id')
   const sub = typeof id === 'string' ? st.subs.get(id) : undefined
   if (!sub) return new Response('Unknown subscription', { status: 404 })
+  if (form?.get('decision') === 'approve-slow') {
+    // Like real PayPal right after approval: approved, first payment still being taken.
+    sub.status = 'APPROVED'
+    return new Response(null, { status: 303, headers: { location: `${sub.returnUrl}&subscription_id=${sub.id}` } })
+  }
   if (form?.get('decision') === 'approve') {
     sub.status = 'ACTIVE'
     sub.payerId = 'TESTPAYER01'
