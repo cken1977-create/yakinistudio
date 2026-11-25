@@ -108,6 +108,9 @@ export async function syncSubscription(rt: Runtime, subscriptionId: string, even
   const plan = sub.planId ? await rt.store.planByProviderId(sub.planId) : null
   const status = mapStatus(sub.status)
   const before = (await rt.store.tenantSubscriptions(sub.customId)).find((s) => s.providerSubscriptionId === sub.id)
+  // Not started from the studio and not one of our plans (for example a payment set up by hand in
+  // PayPal): nothing to link it to. Acknowledged so PayPal stops retrying; an operator handles it.
+  if (!before && !plan) return 'unknown'
   const result = await rt.store.recordSubscription({
     tenantId: sub.customId, subscriptionId: sub.id, planId: sub.planId, productKey: plan?.productKey ?? null, status,
     paidThrough: status === 'active' ? sub.nextBillingTime : null, customerId: sub.payerId, eventId: event?.id ?? null, eventType: event?.type ?? 'return',

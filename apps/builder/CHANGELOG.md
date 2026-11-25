@@ -1,5 +1,23 @@
 # Changelog: Yakini Builder
 
+## Phase 4: billing with PayPal (2026-11-26, branch `feat/builder-phase4-billing`)
+
+Spec: `docs/spec/phase-4.md` (written from Clarence's decisions; no Phase 4 file was provided).
+
+### Added
+- **Plans:** one PayPal subscription plan per product (Template website, and each sold kit at Small/Growing/Larger), with the setup amount as the plan's setup fee and the monthly amount repeating. Amounts come only from `@yakini/pricing` (R9). Created from `/ops/billing` ("Set up plans in PayPal") and stored in `builder.billing_plans`; pressing again keeps matching plans and replaces changed ones.
+- **Owner flow:** `/sites/[id]/plan` shows the recommended plan first (the kit's Small plan, or the Template website for the general kit), then the others; "Continue to PayPal" → PayPal approval → back to an active plan. Cancel (with a confirm box) keeps the plan in force for the paid month. Works with JavaScript off.
+- **Webhook** `POST /api/billing/paypal/webhook`: verified with PayPal before anything is read; the subscription is then read back from PayPal (the event body is never trusted for status, plan or tenant); each event is stored once; a subscription can't move between tenants.
+- **Lapsed plans:** the nightly cleanup takes a site offline ("being updated") when its plan ended or a payment stayed failed past `PAST_DUE_GRACE_DAYS` (default 7). Nothing is deleted; paying and publishing again brings it back. Owner and operator get one email each.
+- **Search engines switch** on the Publish screen (paid sites only), and a banner when a payment fails.
+- **Operator desk:** `/ops/billing` with PayPal mode, missing settings (names only), plans and every subscription.
+- **Settings:** `PAYPAL_ENV`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID` replace the `STRIPE_*` names.
+- **Database (repo only, not applied):** `20261126000100_builder_phase4_billing.sql` renames the empty Stripe columns to provider-neutral names, adds `billing_plans`, and the server-only functions `save_billing_plan`, `record_subscription`, `set_site_indexable`, `lapse_due_sites`, with audit actions `billing.change`, `billing.lapse`, `billing.plans`, `indexing.change`.
+- **Test stand-in for PayPal** (`/dev/paypal`, test mode only, refused on Vercel): browser tests never touch PayPal.
+
+### Tests
+- Builder unit 185 (14 new billing tests), pricing 6, database checks 360 (incl. Phase 4: duplicates, tenant conflicts, grace period, lapse, indexing, no Stripe names left), browser 86 at 390 and 1280 (6 new). Screenshots in `docs/phase4-evidence`.
+
 ## Seven more kits (2026-11-25, branch `feat/builder-kits`)
 
 ### Added

@@ -95,3 +95,12 @@ the spec says Stripe. What it changes, to do in Phase 4 (nothing changed yet):
   `subscriptions.stripe_subscription_id`, `stripe_price_ids`, table `stripe_events`), all empty. A new
   Phase 4 migration renames them to provider-neutral names; Clarence applies it, as before.
 - Customer copy never names the payment company beyond what PayPal's own buttons show.
+
+## New questions from Phase 4
+
+1. **Apply the Phase 4 migration before deploying this branch.** `20261126000100_builder_phase4_billing.sql` (repo only). Without it the plan page, webhook and Publish screen fail on the live studio.
+2. **PayPal settings in Vercel** (builder project, Production and Preview): `PAYPAL_ENV` (`sandbox` first, `live` later), `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` (mark Sensitive), `PAYPAL_WEBHOOK_ID`. The webhook in PayPal points at `https://studio.yakini.digital/api/billing/paypal/webhook` with the events listed in the PR.
+3. **Price line vs the Template website.** R9's only public price line is "Setup from $299. Monthly plans from $149.", but the Template website (the plan general-kit sites buy) is $99 + $79 a month. The plan page shows the real amounts from the pricing config. Should the public line change, or should general-kit sites buy a kit plan instead?
+4. **Card without a PayPal account** for subscriptions depends on your PayPal account settings; worth confirming with PayPal.
+5. **Switching plans** (e.g. Small → Growing) is cancel then choose again for now; PayPal's plan revision can come later.
+6. **Hand-marked tenants** (paid outside the studio, e.g. your PayPal link) never lapse automatically; an operator manages them.
