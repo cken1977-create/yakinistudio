@@ -73,5 +73,12 @@ Source of truth: `00-core-v1.1.md` and `phase-0-v1.1.md`. Clarence approved "use
 8. **Profanity in addresses.** Reserved words, Yakini's own subdomains and exact big-brand names are refused; names that only contain a brand go to review. There is no profanity list yet; please send one if you want it.
 9. **Operator desk** has reports, reviews and Check stored sites. The full tenant list of Flow H (status, domains, AI usage, hand-off) is not in Phase 3.
 10. **Lighthouse in CI.** The numbers in `docs/phase3-evidence` are local runs. Adding a Lighthouse step to `.github/workflows/builder-ci.yml` would give steadier numbers; say if you want it.
-11. **Contrast on brand buttons.** Lighthouse flags dark text on the food-truck kit's brick-red buttons (accessibility still 96). The renderer picks black or white ink and never changes the brand color (R6); a slightly stronger ink rule would fix it. Phase 8 polish?
+11. **Contrast on brand buttons.** Fixed on `feat/builder-industries`: a link rule (`.ys-site a { color: inherit }`) was beating the button colors, so button text took the surrounding color (and was invisible on solid bands). Originally: Lighthouse flags dark text on the food-truck kit's brick-red buttons (accessibility still 96). The renderer picks black or white ink and never changes the brand color (R6); a slightly stronger ink rule would fix it. Phase 8 polish?
 12. **Merge order.** PR #122 (studio pages render per request so the CSP nonce reaches `/`) should merge before or with this branch.
+
+## New questions from the industries work (`feat/builder-industries`)
+
+1. **Which plan does a "Business and services" site buy?** The general layout (`service`) is not a sold kit, so it has no kit price. The closest existing product is the Template website ($99 setup, $79 a month), which already lists "service business". Until billing (Phase 4) this doesn't matter: unpaid sites can't go live without an operator override. Please confirm the plan mapping before Phase 4.
+2. **Industries whose kit isn't built yet** (landlord, real estate, lawn, nonprofit, school, trucking, oilfield, specialized, cannabis, home health, reentry) use the general layout for now, with the industry name passed to the writer. Each moves onto its own kit automatically when that kit ships (one PR each, next).
+3. **The /demo hand-off** still says "coming soon" for kits the studio doesn't build yet, unchanged. Should it start a general-layout draft instead until each kit ships?
+4. **The industry list** (173 entries in 17 groups) is in `packages/kits/src/industries.ts`. Add or rename freely; ids must stay stable once sites use them. Industry is not stored on the site yet, only used to build the draft; storing it can come with the tenant list (Flow H).

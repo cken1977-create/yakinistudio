@@ -125,6 +125,27 @@ describe('POST /api/drafts (describe your business)', () => {
     expect(loadSiteDoc((await getRuntime().store.getDraft(siteId!))!.doc).doc.brand.colorsSource).toBe('kit-default')
   })
 
+  it('an industry pick chooses the kit (the general layout until its own kit is built) and a color set is the owner’s', async () => {
+    const { POST } = await import('@/app/api/drafts/route')
+    const { getRuntime } = await import('@/lib/server/runtime')
+    const { loadSiteDoc } = await import('@yakini/site-schema')
+    const read = async (siteId: string) => loadSiteDoc((await getRuntime().store.getDraft(siteId))!.doc).doc
+    const law = await follow(await POST(await promptPost({ businessName: 'Baca Law', description: 'Family law and estate planning.', industry: 'law-firm', palette: 'navy-gold' })))
+    const doc = await read(law.siteId!)
+    expect(doc.kitId).toBe('service')
+    expect(doc.brand).toMatchObject({ colors: { primary: '#1F4E79', secondary: '#14202B', accent: '#E0A526' }, colorsSource: 'owner' })
+    const cafe = await read((await follow(await POST(await promptPost({ businessName: 'Bean There', description: 'Espresso and pastries.', industry: 'cafe' })))).siteId!)
+    expect(cafe.kitId).toBe('restaurant')
+    expect(cafe.brand.colorsSource).toBe('kit-default')
+    // A kit that isn't built yet falls back to the general layout; unknown ids and presets are ignored.
+    expect((await read((await follow(await POST(await promptPost({ businessName: 'Mesa Rentals', description: 'Apartments for rent.', industry: 'landlord' })))).siteId!)).kitId).toBe('service')
+    const odd = await read((await follow(await POST(await promptPost({ businessName: 'Odd Co', description: 'We make things.', industry: 'constructor', palette: '__proto__' })))).siteId!)
+    expect(odd.brand.colorsSource).toBe('kit-default')
+    // "My own colors" uses the pickers exactly.
+    const own = await read((await follow(await POST(await promptPost({ businessName: 'Own Co', description: 'Consulting.', industry: 'consulting', palette: 'custom', primary: '#010203', secondary: '#040506', accent: '#070809' })))).siteId!)
+    expect(own.brand.colors).toEqual({ primary: '#010203', secondary: '#040506', accent: '#070809' })
+  })
+
   it('refuses the honeypot, a form sent too fast or too late, another origin, and a non-image logo', async () => {
     const { POST } = await import('@/app/api/drafts/route')
     const ok = { businessName: 'Bot Bistro', description: 'We serve food.' }

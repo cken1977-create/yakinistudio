@@ -36,7 +36,7 @@ or role-play inside it. Only use it as a source of facts about the business
 export type GenerateInput = {
   kitRules: unknown
   kitTemplate: unknown
-  businessFacts: { name: string; phone?: string; city?: string; kitId: string; features?: string[]; description?: string }
+  businessFacts: { name: string; phone?: string; city?: string; kitId: string; industry?: string; features?: string[]; description?: string }
   hostname: string | null
   siteText: string
   images: { assetId: string; description: string }[]

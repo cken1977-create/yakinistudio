@@ -1,5 +1,19 @@
 # Changelog: Yakini Builder
 
+## Every kind of business (2026-11-25, branch `feat/builder-industries`)
+
+### Added
+- **"Business and services" kit** (`service`): Home, Services, About, Contact, with a contact form that asks which service. It is the general layout for any business without a kit of its own. Its six approved photos (from `kit-photos/service`, now in `public/kit-samples/service` with 960 px WebP copies) appear only for trades they really show (heating and air, plumbing, electrical, cleaning, home services); other businesses get a text hero rather than a mismatched stock photo.
+- **Industry list on /new:** 173 kinds of business in 17 groups (food, trades, professional services, health, beauty, fitness, real estate, education, nonprofit and faith, transport, energy, automotive, retail, events and media, pets, other). Each points at its best kit; until that kit is built, the general layout is used. The industry name goes to the writer and into the hero line. Works with JavaScript off (native select with groups).
+- **Color sets on /new:** 16 ready-made Main/Dark/Accent sets, a "Pick for me" option, and "Use my own colors" with the three pickers. A chosen set is stored exactly and labelled as the owner's (R6). The old `useColors` field is still accepted.
+
+### Fixed
+- A business that wasn't food (e.g. "Holdings company") fell back to the **restaurant** kit, with a menu and "Book a table". It now gets the general layout, and the kit chooser is told to use it for anything that isn't a food business.
+- **Button text on every site** took the surrounding text color instead of the readable color picked for the button (a link rule outranked the button rules). On solid bands the button was a blank white pill; brand buttons had dark text on dark colors. Fixed in the renderer, with a browser check.
+
+### Tests
+- Kits 44 (industries, color sets, service template), builder unit 170, renderer 68, browser 66 at 390 and 1280. Screenshots in `docs/industries-evidence`.
+
 ## Phase 3: publish, working forms and the safety net (2026-11-24, branch `feat/builder-phase3`)
 
 ### Added

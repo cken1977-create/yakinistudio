@@ -1,20 +1,25 @@
 /**
- * Kits (spec 7.2). Phase 1 ships `food-truck` and `restaurant`. Each kit exports its page
+ * Kits (spec 7.2). Phase 1 ships `food-truck` and `restaurant`; `service` is the general layout
+ * for any business without a kit of its own. Each kit exports its page
  * templates, allowed sections, default variants, font pairs, copy tone, licensed sample images,
  * default palette and Today kinds. Later kits are one PR each (Phase 8).
  */
-import type { KitId } from '@yakini/pricing'
+import type { SiteKitId as KitId } from '@yakini/pricing'
 import type { Brand, FontPair, SiteDocContent, SiteDocInput } from '@yakini/site-schema'
 import { foodTruck } from './food-truck'
 import { restaurant } from './restaurant'
+import { service } from './service'
 import type { KitDefinition, Palette, SampleImage, TemplateContext } from './types'
 
 export * from './types'
 export { paragraphs } from './common'
+export * from './industries'
+export * from './color-presets'
 
 export const BUILDER_KITS: Partial<Record<KitId, KitDefinition>> = {
   'food-truck': foodTruck,
   restaurant,
+  service,
 }
 
 export const BUILDER_KIT_IDS = Object.keys(BUILDER_KITS) as KitId[]

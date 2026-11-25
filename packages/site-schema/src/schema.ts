@@ -8,14 +8,14 @@
  * at real pages/sections, and form links that point at a real form.
  */
 import { z } from 'zod'
-import { KITS, type KitId } from '@yakini/pricing'
+import { KITS, SITE_ONLY_KIT_IDS, type SiteKitId } from '@yakini/pricing'
 import { Day, E164, HexColor, HHMM, HttpsUrl, Id, LinkTarget, Section } from './sections'
 
 export * from './sections'
 
 export const CURRENT_SCHEMA_VERSION = 1 as const
 
-const kitIds = KITS.map((k) => k.id) as [KitId, ...KitId[]]
+const kitIds = [...KITS.map((k) => k.id), ...SITE_ONLY_KIT_IDS] as unknown as [SiteKitId, ...SiteKitId[]]
 export const KitIdSchema = z.enum(kitIds)
 
 export const FONT_PAIRS = ['editorial', 'modern', 'friendly', 'classic'] as const

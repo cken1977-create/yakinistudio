@@ -3,15 +3,17 @@ import { lintCopy, strayPrices } from '@yakini/ai'
 import { SECTION_DEFS, SiteDoc, validateContent, type SiteDocContent } from '@yakini/site-schema'
 import {
   BUILDER_KITS, BUILDER_KIT_IDS, assembleDoc, brandFor, buildKitDraft, checkAgainstKit, isBuilderKit, kitDefinition,
-  kitRules, offeredSamples, sampleImageById, sampleImageSrc, unlicensedSamples, type KitDefinition,
+  INDUSTRIES, INDUSTRY_GROUPS, industryById, kitRules, offeredSamples, sampleImageById, sampleImageSrc, unlicensedSamples, type KitDefinition,
 } from './index'
+import { KITS, SITE_ONLY_KIT_IDS } from '@yakini/pricing'
 
 const kits = Object.values(BUILDER_KITS) as KitDefinition[]
 const ctx = { name: 'Mesa Street Tacos', phone: '+15055550142', city: 'Albuquerque' }
 
-describe('kit registry (Phase 1)', () => {
-  it('ships exactly the food truck and restaurant kits', () => {
-    expect([...BUILDER_KIT_IDS].sort()).toEqual(['food-truck', 'restaurant'])
+describe('kit registry', () => {
+  it('ships the food truck, restaurant and general service kits', () => {
+    expect([...BUILDER_KIT_IDS].sort()).toEqual(['food-truck', 'restaurant', 'service'])
+    expect(kitDefinition('service')?.name).toBe('Business and services')
     expect(kitDefinition('food-truck')?.name).toBe('Food truck')
     expect(isBuilderKit('restaurant')).toBe(true)
     expect(isBuilderKit('landlord')).toBe(false)
@@ -46,7 +48,8 @@ describe('kit registry (Phase 1)', () => {
   })
   it('new drafts use photos, never the retired drawings', () => {
     for (const k of kits) {
-      const json = JSON.stringify(k.template({ name: 'Test Co' }))
+      // The general kit only shows a photo when the industry's own work is in it.
+      const json = JSON.stringify(k.template({ name: 'Test Co', ...(k.id === 'service' ? { industry: { label: 'Plumber', photo: 'pipe-fitting' } } : {}) }))
       for (const old of k.sampleImages.filter((s) => s.retired)) expect(json).not.toContain(old.assetId)
       expect(offeredSamples(k).some((s) => json.includes(s.assetId)), k.id).toBe(true)
     }
@@ -70,8 +73,9 @@ describe.each(kits.map((k) => [k.id, k] as const))('%s template', (_id, kit) => 
     expect(validateContent(content)).toMatchObject({ ok: true })
     expect(checkAgainstKit(content, kit)).toEqual([])
   })
-  it('has five pages with a home page, each starting with a header and ending with a footer', () => {
-    expect(content.pages).toHaveLength(5)
+  it('has its template pages, a home page first, each starting with a header and ending with a footer', () => {
+    expect(content.pages).toHaveLength(kit.pageTemplates.length)
+    expect(content.pages.length).toBeGreaterThanOrEqual(4)
     expect(content.pages[0].slug).toBe('')
     for (const p of content.pages) {
       expect(p.sections[0].type).toBe('header')
@@ -118,7 +122,7 @@ describe.each(kits.map((k) => [k.id, k] as const))('%s template', (_id, kit) => 
   })
   it('exports kit rules for the prompt', () => {
     const r = kitRules(kit)
-    expect(r.pageTemplates).toHaveLength(5)
+    expect(r.pageTemplates).toHaveLength(kit.pageTemplates.length)
     expect(r.allowedSections).toContain('today')
   })
 })
@@ -164,5 +168,51 @@ describe('kit check (AI output must fit the kit)', () => {
     expect(issues).toMatch(/must use the address "menu"/)
     expect(issues).toMatch(/"blog" is not one of the kit pages/)
     expect(issues).toMatch(/the "catering" page is missing/)
+  })
+})
+
+describe('industries (what the owner picks on /new)', () => {
+  const sold = new Set<string>([...KITS.map((k) => k.id), ...SITE_ONLY_KIT_IDS])
+  it('offers a broad list, every id unique, every group used', () => {
+    expect(INDUSTRIES.length).toBeGreaterThanOrEqual(150)
+    expect(new Set(INDUSTRIES.map((i) => i.id)).size).toBe(INDUSTRIES.length)
+    for (const g of INDUSTRY_GROUPS) expect(INDUSTRIES.some((i) => i.group === g), g).toBe(true)
+  })
+  it('points every industry at a real kit, and photos only at real service samples', () => {
+    const photos = new Set(BUILDER_KITS.service!.sampleImages.map((s) => s.key))
+    for (const i of INDUSTRIES) {
+      expect(sold.has(i.kit), i.id).toBe(true)
+      expect(i.id).toMatch(/^[a-z0-9-]{2,40}$/)
+      expect(i.label.length).toBeLessThanOrEqual(40)
+      if (i.photo) expect(photos.has(i.photo), i.id).toBe(true)
+    }
+  })
+  it('looks industries up by id only', () => {
+    expect(industryById('law-firm')?.label).toBe('Law firm or attorney')
+    expect(industryById('holding-company')?.kit).toBe('service')
+    expect(industryById('__proto__')).toBeUndefined()
+    expect(industryById('')).toBeUndefined()
+  })
+  it('the general kit writes the industry into the draft and leaves the hero text-only without a fitting photo', () => {
+    const svc = BUILDER_KITS.service!
+    const law = svc.template({ name: 'BRSA Holdings', city: 'Albuquerque', industry: { label: 'Holding company or investments' } })
+    const hero = law.pages[0].sections.find((s) => s.type === 'hero')!
+    expect(hero.variant).toBe('minimal')
+    expect(hero.props).toMatchObject({ eyebrow: 'Holding company or investments in Albuquerque' })
+    expect(JSON.stringify(law)).not.toMatch(/7a1e0000-0000-4000-8000-0000000003/)
+    const plumber = svc.template({ name: 'Rio Plumbing', industry: { label: 'Plumber', photo: 'pipe-fitting' } })
+    expect(plumber.pages[0].sections.find((s) => s.type === 'hero')).toMatchObject({ variant: 'split', props: { image: { assetId: '7a1e0000-0000-4000-8000-000000000305' } } })
+  })
+})
+
+describe('color presets', () => {
+  it('are valid hex colors with unique ids, looked up by id only', async () => {
+    const { COLOR_PRESETS, colorPresetById } = await import('./index')
+    const { HexColor } = await import('@yakini/site-schema')
+    expect(COLOR_PRESETS.length).toBeGreaterThanOrEqual(12)
+    expect(new Set(COLOR_PRESETS.map((p) => p.id)).size).toBe(COLOR_PRESETS.length)
+    for (const p of COLOR_PRESETS) for (const c of Object.values(p.colors)) expect(HexColor.safeParse(c).success, `${p.id} ${c}`).toBe(true)
+    expect(colorPresetById('ocean')?.colors.primary).toBe('#0F6E8C')
+    expect(colorPresetById('constructor')).toBeUndefined()
   })
 })

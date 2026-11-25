@@ -1,5 +1,5 @@
 import type { z } from 'zod'
-import type { KitId } from '@yakini/pricing'
+import type { SiteKitId as KitId } from '@yakini/pricing'
 import type { FontPair, SectionType, SiteDocContent } from '@yakini/site-schema'
 
 export type ImageLicense = {
@@ -47,6 +47,8 @@ export type TemplateContext = {
   heroImage?: { assetId: string; alt: string }
   /** Extra photos from the business's own site for the gallery (already stored as tenant assets). */
   gallery?: { assetId: string; alt: string }[]
+  /** What kind of business this is, from the owner's pick on /new (e.g. "Law firm or attorney"). */
+  industry?: { label: string; photo?: string }
 }
 
 export type PageTemplate = {

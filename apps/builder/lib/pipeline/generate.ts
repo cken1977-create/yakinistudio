@@ -3,7 +3,7 @@ import {
   generateSystemPrompt, generateUserMessage, retryMessages, submitSiteTool,
   type ChatMessage, type ChatOptions, type ChatResult, type GenerateInput,
 } from '@yakini/ai'
-import { checkAgainstKit, kitRules, type KitDefinition } from '@yakini/kits'
+import { checkAgainstKit, kitRules, type KitDefinition, type TemplateContext } from '@yakini/kits'
 import { siteDocContentJsonSchema, validateContent, type SiteDocContent } from '@yakini/site-schema'
 import { copyIssues, sanitizeContent, type SanitizeContext, type SanitizeReport } from './sanitize'
 
@@ -44,12 +44,14 @@ export async function generateContent(args: {
   chat: GenerateChat
   /** Wall-clock deadline (ms since epoch). No retry starts once less than `minAttemptMs` is left. */
   deadline: number
+  /** The owner's industry, so the starting template is the one they'll see on a fallback. */
+  industry?: TemplateContext['industry']
   minAttemptMs?: number
   now?: () => number
 }): Promise<GenerateResult> {
   const now = args.now ?? Date.now
   const started = now()
-  const kitTemplate = args.kit.template({ name: args.sanitize.businessName, phone: args.input.businessFacts.phone, city: args.input.businessFacts.city })
+  const kitTemplate = args.kit.template({ name: args.sanitize.businessName, phone: args.input.businessFacts.phone, city: args.input.businessFacts.city, ...(args.industry ? { industry: args.industry } : {}) })
   const messages: ChatMessage[] = [
     { role: 'system', content: generateSystemPrompt(args.kit.copyTone) },
     { role: 'user', content: generateUserMessage({ ...args.input, kitRules: kitRules(args.kit), kitTemplate }) },

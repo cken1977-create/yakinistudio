@@ -59,7 +59,8 @@ function between(text: string, start: string, end: string): string {
 export const mockGenerateChat: GenerateChat = async (opts) => {
   if (opts.tools?.[0]?.function.name === 'choose_kit') {
     const text = (opts.messages.find((m) => m.role === 'user')?.content ?? '').toLowerCase()
-    const kitId = /truck|trailer|cart/.test(text) ? 'food-truck' : 'restaurant'
+    const kitId = /truck|trailer|cart/.test(text) ? 'food-truck'
+      : /restaurant|bistro|kitchen|grill|food|seafood|bbq|cafe|bar\b/.test(text) ? 'restaurant' : 'service'
     return { content: null, toolCalls: [{ id: 'mock-k', name: 'choose_kit', arguments: { kitId } }], usage: { inputTokens: 50, outputTokens: 5 }, model: 'mock', latencyMs: 1 }
   }
   const user = opts.messages.find((m) => m.role === 'user')?.content ?? ''
