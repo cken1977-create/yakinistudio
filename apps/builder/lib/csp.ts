@@ -27,7 +27,9 @@ export function buildStudioCsp(nonce: string, opts: StudioCspOptions = {}): stri
     `connect-src ${connect}`,
     "frame-ancestors 'none'",
     "base-uri 'self'",
-    "form-action 'self'",
+    // Continue to PayPal is a form post whose answer sends the owner on to PayPal's approval page.
+    // Browsers check form-action on that redirect too, so PayPal's two approval hosts are allowed.
+    "form-action 'self' https://www.paypal.com https://www.sandbox.paypal.com",
     "object-src 'none'",
   ].join('; ')
 }

@@ -60,6 +60,9 @@ async function pay(page: Page, siteId: string) {
   await page.goto(`/sites/${siteId}/publish`)
   await page.getByRole('link', { name: 'Choose a plan' }).click()
   await page.waitForURL(new RegExp(`/sites/${siteId}/plan`))
+  // The real PayPal page is on another site: the browser must be allowed to follow the form there.
+  const csp = (await page.request.get(`/sites/${siteId}/plan`)).headers()['content-security-policy'] ?? ''
+  expect(csp).toContain("form-action 'self' https://www.paypal.com https://www.sandbox.paypal.com")
   await expect(page.getByText('Recommended for your site')).toBeVisible()
   await shot(page, 'plan-choose')
   await page.getByRole('button', { name: 'Continue to PayPal' }).first().click()

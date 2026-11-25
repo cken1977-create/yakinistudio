@@ -88,6 +88,10 @@ describe('studio CSP (nonce-based)', () => {
   it('rejects a nonce that could break out of the header value', () => {
     expect(() => buildStudioCsp("x; script-src 'unsafe-inline'")).toThrow(/invalid csp nonce/)
   })
+  it('lets Continue to PayPal reach PayPal’s approval pages, and no other outside site', () => {
+    const formAction = buildStudioCsp('n0').split('; ').find((d) => d.startsWith('form-action'))
+    expect(formAction).toBe("form-action 'self' https://www.paypal.com https://www.sandbox.paypal.com")
+  })
 })
 
 describe('Sentry scrubbing (14.2)', () => {
