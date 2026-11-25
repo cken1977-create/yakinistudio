@@ -43,8 +43,8 @@ describe('fallbackAnswer', () => {
 
   it('gives the food truck example totals', () => {
     const reply = fallbackAnswer('Show me the food truck example')
-    assert.match(reply.text, /\$597/)
-    assert.match(reply.text, /\$277/)
+    assert.match(reply.text, /\$547/)
+    assert.match(reply.text, /\$257/)
     assert.ok(reply.links.some((l) => l.href === '/demo'))
     assert.ok(reply.links.some((l) => /foodtruck-demo/i.test(l.href)))
     assertPublicLinks(reply.links)

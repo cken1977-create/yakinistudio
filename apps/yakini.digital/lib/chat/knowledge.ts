@@ -99,17 +99,21 @@ Public headline: Setup from $299. Monthly plans from $149. Totals on the site ar
 Setup levels: Quick Start $299, Standard $750, Advanced $1,500, Custom from $2,500 (can be 3 payments).
 
 Monthly plans, by size Small / Growing / Larger (from-prices; the written quote confirms the industry monthly):
-- Food truck, landlord, real estate: $149 / $299 / $549
+- Food truck, real estate: $149 / $299 / $549
+- Landlord: $149 / $279 / $499
 - Restaurant, tree and lawn, nonprofit, training: $199 / $399 / $799
-- Trucking, oilfield, specialized: $299 / $599 / $1,199
+- Trucking, oilfield, specialized: $199 / $449 / $1,199 (compliance and credential tracking included)
 Annual prepay: pay for 11 months and get 12, on recurring Yakini fees.
 
 Template website: $99 setup + $79/mo. You pick a type; Yakini builds from that template, in your brand. A fully custom website is quoted. Existing sites can be linked.
-Online ordering and pay-ahead: $199 setup + $49/mo.
+Online ordering and pay-ahead: $149 setup + $29/mo.
+Phone receptionist: $199 setup + $99/mo, including 250 voice minutes a month; extra minutes are $0.20 each.
+
+Every price includes a real person who sets it up with the client and stays after go-live, unlike software that hands over a login and leaves them to figure it out.
 
 Business Setup: the client pays $495 plus state filing fees only. Yakini covers the first-year domain and any phone or email activation fees. Ongoing email/phone is billed later by those providers, in the client's name.
 
-Example: a small food truck with Quick Start, a template website, and online ordering is $597 setup and $277 a month.
+Example: a small food truck with Quick Start, a template website, and online ordering is $547 setup and $257 a month.
 
 Included support: Small 30 minutes a month of changes or training; Growing 1 hour a month plus a quarterly 30-minute check-in; Larger 2 hours a month plus a monthly 30-minute check-in. Support hours Monday–Friday, 9 a.m.–5 p.m. Mountain Time. Response times are for the first response. Unused time does not roll over. Work beyond the allowance is $125/hr, approved first.
 
@@ -274,15 +278,15 @@ export function fallbackAnswer(question: string): FallbackReply {
       links: [CONTACT],
     }
   }
-  if (hasAny(q, 'food truck') && hasAny(q, 'price', 'cost', 'how much', 'example', '597', 'estimate')) {
+  if (hasAny(q, 'food truck') && hasAny(q, 'price', 'cost', 'how much', 'example', '547', '597', 'estimate')) {
     return {
-      text: 'A small food truck with Quick Start, a template website, and online ordering is $597 to set up and $277 a month. Those are estimates. The written quote is final. You can open the food truck tour, or build a free demo in your brand on See your kit.',
+      text: 'A small food truck with Quick Start, a template website, and online ordering is $547 to set up and $257 a month. Those are estimates. The written quote is final. You can open the food truck tour, or build a free demo in your brand on See your kit.',
       links: [DEMO, KIT_TOURS[0], CALL],
     }
   }
   if (hasAny(q, 'food truck', 'foodtruck')) {
     return {
-      text: 'The food truck kit covers the owner dashboard, and you can add a template website ($99 + $79/mo) and online ordering ($199 + $49/mo). A small food truck with Quick Start plus those two is $597 setup and $277 a month, as an estimate. Open the food truck tour, or paste your website on See your kit.',
+      text: 'The food truck kit covers the owner dashboard, and you can add a template website ($99 + $79/mo) and online ordering ($149 + $29/mo). A small food truck with Quick Start plus those two is $547 setup and $257 a month, as an estimate. Open the food truck tour, or paste your website on See your kit.',
       links: [DEMO, KIT_TOURS[0], CALL],
     }
   }

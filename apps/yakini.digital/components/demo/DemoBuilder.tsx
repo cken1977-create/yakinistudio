@@ -12,6 +12,7 @@ import {
   DASHBOARD_NOTE,
   HEADLINE,
   KITS,
+  itemPriceLabel,
   PACKAGE_EXAMPLE,
   QUOTE_NOTE,
   SETUPS,
@@ -357,10 +358,7 @@ export function DemoBuilder({ handoff = null }: { handoff?: Handoff }) {
                 <div className="db-items">
                   {CATALOG.filter((item) => item.group === group.id && item.picker !== false).map((item) => {
                     const checked = items.includes(item.id)
-                    const price = [
-                      item.once ? moneyLabel(item.once) + (item.once.kind !== 'quote' && item.once.amount ? ' setup' : '') : null,
-                      item.monthly ? moneyLabel(item.monthly, item.monthly.kind === 'pass-through' ? '' : '/mo') : null,
-                    ].filter(Boolean).join(' + ')
+                    const price = itemPriceLabel(item, kitId)
                     return (
                       <label key={item.id} className={`db-item ${checked ? 'on' : ''}`}>
                         <input type="checkbox" checked={checked} onChange={() => toggle(item.id)} />
