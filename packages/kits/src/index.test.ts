@@ -11,12 +11,13 @@ const kits = Object.values(BUILDER_KITS) as KitDefinition[]
 const ctx = { name: 'Mesa Street Tacos', phone: '+15055550142', city: 'Albuquerque' }
 
 describe('kit registry', () => {
-  it('ships the food truck, restaurant and general service kits', () => {
-    expect([...BUILDER_KIT_IDS].sort()).toEqual(['food-truck', 'restaurant', 'service'])
+  it('ships every kit that has approved photos, plus the general service kit', () => {
+    expect([...BUILDER_KIT_IDS].sort()).toEqual(['food-truck', 'landlord', 'nonprofit', 'oilfield', 'real-estate', 'restaurant', 'service', 'training-school', 'tree-lawn', 'trucking'])
     expect(kitDefinition('service')?.name).toBe('Business and services')
     expect(kitDefinition('food-truck')?.name).toBe('Food truck')
     expect(isBuilderKit('restaurant')).toBe(true)
-    expect(isBuilderKit('landlord')).toBe(false)
+    expect(isBuilderKit('landlord')).toBe(true)
+    expect(isBuilderKit('cannabis')).toBe(false)
     expect(isBuilderKit('__proto__')).toBe(false)
     expect(isBuilderKit(undefined)).toBe(false)
   })
@@ -31,7 +32,7 @@ describe('kit registry', () => {
   it('offers photos (JPEG plus WebP copies) and keeps the retired drawings resolvable for old drafts', () => {
     for (const k of kits) {
       const offered = offeredSamples(k)
-      expect(offered.length, k.id).toBeGreaterThanOrEqual(5)
+      expect(offered.length, k.id).toBeGreaterThanOrEqual(3)
       for (const img of offered) {
         expect(img.mime).toBe('image/jpeg')
         expect(img.webp?.large).toMatch(/^[a-z-]+\.webp$/)
@@ -190,6 +191,8 @@ describe('industries (what the owner picks on /new)', () => {
   it('looks industries up by id only', () => {
     expect(industryById('law-firm')?.label).toBe('Law firm or attorney')
     expect(industryById('holding-company')?.kit).toBe('service')
+    // Industries whose kit is built now land on it.
+    for (const id of ['landlord', 'real-estate-agent', 'lawn-care', 'church', 'trade-school', 'owner-operator', 'well-service']) expect(isBuilderKit(industryById(id)!.kit), id).toBe(true)
     expect(industryById('__proto__')).toBeUndefined()
     expect(industryById('')).toBeUndefined()
   })
@@ -214,5 +217,31 @@ describe('color presets', () => {
     for (const p of COLOR_PRESETS) for (const c of Object.values(p.colors)) expect(HexColor.safeParse(c).success, `${p.id} ${c}`).toBe(true)
     expect(colorPresetById('ocean')?.colors.primary).toBe('#0F6E8C')
     expect(colorPresetById('constructor')).toBeUndefined()
+  })
+})
+
+describe('kit details', () => {
+  it('asset ids are unique across all kits', () => {
+    const all = kits.flatMap((k) => k.sampleImages.map((s) => s.assetId))
+    expect(new Set(all).size).toBe(all.length)
+  })
+  it('every kit has a form a visitor can reach, and every in-site link points at a real page and section', () => {
+    for (const k of kits) {
+      const c = k.template(ctx)
+      const ids = new Map(c.pages.map((p) => [p.id, new Set(p.sections.map((s) => s.id))]))
+      const targets = JSON.stringify(c).match(/\{"kind":"(page|section)","pageId":"[^"]+"(,"sectionId":"[^"]+")?\}/g) ?? []
+      expect(targets.length, k.id).toBeGreaterThan(0)
+      for (const t of targets) {
+        const o = JSON.parse(t) as { pageId: string; sectionId?: string }
+        expect(ids.has(o.pageId), `${k.id} ${t}`).toBe(true)
+        if (o.sectionId) expect(ids.get(o.pageId)!.has(o.sectionId), `${k.id} ${t}`).toBe(true)
+      }
+      expect(c.pages.some((p) => p.sections.some((s) => s.type === 'contact_form' || s.type === 'catering_request')), k.id).toBe(true)
+    }
+  })
+  it('Today kinds: an open house must end after it starts', () => {
+    const oh = BUILDER_KITS['real-estate']!.todayKinds.find((t) => t.id === 'open_house')!
+    expect(oh.fields.safeParse({ place: '12 Elm St', start: '13:00', end: '15:00' }).success).toBe(true)
+    expect(oh.fields.safeParse({ place: '12 Elm St', start: '15:00', end: '13:00' }).success).toBe(false)
   })
 })

@@ -3,7 +3,8 @@
  * setup" for a kit the studio builds becomes a plain top-level form POST to the studio's /start,
  * so the prospect lands on a draft of their own site. Off (the default), nothing changes.
  */
-export const STUDIO_KITS = ['food-truck', 'restaurant'] as const
+// Keep in step with BUILDER_KITS in @yakini/kits (the general `service` layout is not a sold kit).
+export const STUDIO_KITS = ['food-truck', 'restaurant', 'landlord', 'real-estate', 'tree-lawn', 'nonprofit', 'training-school', 'trucking', 'oilfield'] as const
 
 export type Handoff = { action: string; describeUrl: string } | null
 

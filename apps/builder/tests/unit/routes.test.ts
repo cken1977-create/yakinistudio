@@ -65,11 +65,22 @@ describe('POST /start (demo hand-off)', () => {
     await www.text()
     expect((await POST(demoPost({ kitId: 'food-truck' }))).status).toBe(400)
     expect((await POST(demoPost({ businessName: 'x'.repeat(20_000), kitId: 'food-truck' }))).status).toBe(400)
-    const other = (await import('@yakini/pricing')).KITS.find((k) => k.id !== 'food-truck' && k.id !== 'restaurant')
+    const { isBuilderKit } = await import('@yakini/kits')
+    const other = (await import('@yakini/pricing')).KITS.find((k) => !isBuilderKit(k.id))
     if (other) {
       const res = await POST(demoPost({ businessName: 'X', kitId: other.id }))
       expect(res.status).toBe(400)
       expect(await res.text()).toContain('coming soon')
+    }
+  })
+
+  it('the new kits draft from the demo too (landlord, trucking)', async () => {
+    const { POST } = await import('@/app/start/route')
+    const { getRuntime } = await import('@/lib/server/runtime')
+    const { loadSiteDoc } = await import('@yakini/site-schema')
+    for (const kitId of ['landlord', 'trucking']) {
+      const { siteId } = await follow(await POST(demoPost({ businessName: `Test ${kitId}`, kitId })))
+      expect(loadSiteDoc((await getRuntime().store.getDraft(siteId!))!.doc).doc.kitId).toBe(kitId)
     }
   })
 
@@ -137,8 +148,9 @@ describe('POST /api/drafts (describe your business)', () => {
     const cafe = await read((await follow(await POST(await promptPost({ businessName: 'Bean There', description: 'Espresso and pastries.', industry: 'cafe' })))).siteId!)
     expect(cafe.kitId).toBe('restaurant')
     expect(cafe.brand.colorsSource).toBe('kit-default')
-    // A kit that isn't built yet falls back to the general layout; unknown ids and presets are ignored.
-    expect((await read((await follow(await POST(await promptPost({ businessName: 'Mesa Rentals', description: 'Apartments for rent.', industry: 'landlord' })))).siteId!)).kitId).toBe('service')
+    // Built kits are used; a kit that isn't built yet falls back to the general layout; unknown ids and presets are ignored.
+    expect((await read((await follow(await POST(await promptPost({ businessName: 'Mesa Rentals', description: 'Apartments for rent.', industry: 'landlord' })))).siteId!)).kitId).toBe('landlord')
+    expect((await read((await follow(await POST(await promptPost({ businessName: 'Green Leaf', description: 'A dispensary.', industry: 'cannabis' })))).siteId!)).kitId).toBe('service')
     const odd = await read((await follow(await POST(await promptPost({ businessName: 'Odd Co', description: 'We make things.', industry: 'constructor', palette: '__proto__' })))).siteId!)
     expect(odd.brand.colorsSource).toBe('kit-default')
     // "My own colors" uses the pickers exactly.

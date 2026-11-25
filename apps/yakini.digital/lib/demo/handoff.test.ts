@@ -17,7 +17,9 @@ test('only an https studio origin is used', () => {
 test('only food truck and restaurant go to the studio for now', () => {
   assert.equal(studioBuilds('food-truck'), true)
   assert.equal(studioBuilds('restaurant'), true)
-  assert.equal(studioBuilds('landlord'), false)
+  assert.equal(studioBuilds('landlord'), true)
+  assert.equal(studioBuilds('cannabis'), false)
+  assert.equal(studioBuilds('service'), false)
   assert.equal(studioBuilds(undefined), false)
 })
 

@@ -1,5 +1,6 @@
-import type { RichText, Section, SectionOf, SectionType } from '@yakini/site-schema'
-import type { SampleImage, TemplateContext } from './types'
+import { z } from 'zod'
+import type { FormField, RichText, Section, SectionOf, SectionType } from '@yakini/site-schema'
+import type { SampleImage, TemplateContext, TodayKind } from './types'
 
 /** Plain paragraphs as RichText. */
 export function paragraphs(...texts: string[]): RichText {
@@ -50,4 +51,20 @@ export function photoSample(kit: string, key: string, assetId: string, alt: stri
     webp: { large: `${key}.webp`, small: `${key}-sm.webp`, smallWidth: 640, medium: `${key}-md.webp`, mediumWidth: 960 },
     license: { kind: 'yakini-owned', source: `Sample photo made for Yakini Digital's ${kit} kit, Nov 2026 (${sourceNote})`, redistributable: true },
   }
+}
+
+/** Today kinds several kits share (spec 11.5): a short notice, and "closed today". */
+export function noticeKind(id: string, label: string): TodayKind {
+  return {
+    id, label,
+    fields: z.object({ title: z.string().min(1).max(80), description: z.string().max(200).optional() }).strict(),
+  }
+}
+export function closedKind(label = 'Closed today'): TodayKind {
+  return { id: 'closed', label, headline: label, fields: z.object({ note: z.string().max(140).optional() }).strict() }
+}
+
+/** A contact form section with the kit's standard consent line. */
+export function formSection(id: string, name: string, p: { heading: string; intro?: string; formKey: string; fields: FormField[]; submitLabel: string }, variant: 'simple' | 'with-details' = 'simple'): Section {
+  return section('contact_form', id, variant, { ...p, consentText: consentText(trimTo(name, 120)) })
 }

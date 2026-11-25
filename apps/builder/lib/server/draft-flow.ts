@@ -93,7 +93,7 @@ export function errorPage(kind: 'rate' | 'origin' | 'bad' | 'kit' | 'config' | '
     case 'rate': return plainPage('Please wait a bit', `<h1>That’s a lot of drafts for now.</h1><p>Please try again in an hour. Your earlier drafts are still saved in this browser.</p>${back}`, 429)
     case 'origin': return plainPage('Start from the demo', `<h1>Let’s start from the demo.</h1><p>Open the free demo and tap “Start my setup” there.</p>${back}`, 403)
     case 'bad': return plainPage('Missing details', '<h1>We need a little more.</h1><p>Add your website or your business name, then try again.</p><p><a class="btn" href="/new">Describe your business</a></p>', 400)
-    case 'kit': return plainPage('Coming soon', '<h1>This kind of site is coming soon.</h1><p>Right now the studio builds food truck and restaurant sites. Yakini can still set up your kit with you.</p>' + back, 400)
+    case 'kit': return plainPage('Coming soon', '<h1>This kind of site is coming soon.</h1><p>The studio doesn’t build this kind of site yet. Yakini can still set up your kit with you, or describe your business at studio.yakini.digital/new.</p>' + back, 400)
     case 'config': return plainPage('Almost open', `<h1>The studio isn’t open yet.</h1><p>Please try again soon.</p><p class="small">Reference: ${esc(ref ?? 'setup')}</p>${back}`, 503)
     case 'server': return plainPage('Something went wrong', `<h1>Something went wrong on our side.</h1><p>Please try again in a minute.</p><p class="small">Reference: ${esc(ref ?? 'unknown')}</p>${back}`, 500)
   }
