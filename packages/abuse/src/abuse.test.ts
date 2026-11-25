@@ -31,6 +31,12 @@ describe('slugs (13.3)', () => {
     expect(slugProblem('draft-1a2b3c4d5e6f')).toMatch(/reserved/)
     expect(slugProblem('drafthouse-grill')).toBeNull()
   })
+  it('refuses rude words in an address, without catching ordinary words that contain them', () => {
+    expect(slugProblem('shit-show-tacos')).toMatch(/different address/)
+    expect(slugProblem('bigfuckingdeal')).toMatch(/different address/)
+    expect(slugProblem('porn')).toMatch(/different address/)
+    for (const ok of ['scunthorpe-bakery', 'cocktail-lounge', 'assessment-pros', 'dickens-books', 'essex-cafe', 'shiitake-farm', 'class-act-dance']) expect(slugProblem(ok), ok).toBeNull()
+  })
 })
 
 describe('risk check (14.8)', () => {

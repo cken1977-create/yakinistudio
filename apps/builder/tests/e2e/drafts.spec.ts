@@ -186,3 +186,38 @@ test.describe('every section and variant (fixtures)', () => {
     }
   }
 })
+
+const KIT_DRAFTS = [
+  { industry: 'property-management', name: 'Mesa Vista Rentals', what: 'Apartments and duplexes on the west side.', nav: 'Residents' },
+  { industry: 'real-estate-agent', name: 'Sandia Home Group', what: 'Helping families buy and sell homes.', nav: 'Sell' },
+  { industry: 'tree-service', name: 'High Desert Tree Care', what: 'Tree trimming, removal and lawn care.', nav: 'Our work' },
+  { industry: 'nonprofit', name: 'South Valley Food Collective', what: 'A weekly food pantry and community garden.', nav: 'Get involved' },
+  { industry: 'trade-school', name: 'Rio Grande Welding Institute', what: 'Hands-on welding and pipefitting training.', nav: 'Schedule' },
+  { industry: 'trucking', name: 'Two Rivers Freight', what: 'Flatbed and dry van freight across the Southwest.', nav: 'Drivers' },
+  { industry: 'oilfield', name: 'Caprock Well Services', what: 'Well servicing and roustabout crews in the Permian.', nav: 'Safety' },
+] as const
+
+for (const k of KIT_DRAFTS) {
+  test(`kit draft: ${k.industry} gets its own pages, every page opens, buttons are readable`, async ({ page }, info) => {
+    await page.setExtraHTTPHeaders({ 'x-forwarded-for': freshIp() })
+    await page.goto('/new')
+    await page.getByLabel('Business name').fill(k.name)
+    await page.getByLabel('What do you do?').fill(k.what)
+    await page.getByLabel(/Kind of business/).selectOption(k.industry)
+    await page.waitForTimeout(3_200)
+    await page.getByRole('button', { name: 'Build my draft' }).click()
+    await page.waitForURL(/\/d\/[0-9a-f-]{36}/, { timeout: 60_000 })
+    const site = page.locator('.ys-site')
+    await expect(site).toContainText(k.name)
+    await expect(site.locator('header a', { hasText: k.nav }).first()).toHaveCount(1)
+    if (SHOTS) await page.screenshot({ path: `${SHOTS}/kit-${k.industry}-${info.project.name}.png`, fullPage: true })
+    for (const [fg, bg] of await site.locator('a.ys-btn-primary, a.ys-btn-on-primary').evaluateAll((as) => as.map((a) => { const cs = getComputedStyle(a); return [cs.color, cs.backgroundColor] }))) expect(fg).not.toBe(bg)
+    const hrefs = await site.locator('header a[href^="/d/"]').evaluateAll((as) => [...new Set(as.map((a) => a.getAttribute('href')!.split('#')[0]))])
+    expect(hrefs.length).toBeGreaterThanOrEqual(5)
+    for (const h of hrefs) {
+      const r = await page.goto(h)
+      expect(r?.status(), h).toBe(200)
+      await expect(page.locator('.ys-site h1')).toHaveCount(1)
+    }
+  })
+}

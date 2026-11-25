@@ -3,7 +3,10 @@
  * setup" for a kit the studio builds becomes a plain top-level form POST to the studio's /start,
  * so the prospect lands on a draft of their own site. Off (the default), nothing changes.
  */
-export const STUDIO_KITS = ['food-truck', 'restaurant'] as const
+import { KITS } from '@yakini/pricing'
+
+// Keep in step with BUILDER_KITS in @yakini/kits (the general `service` layout is not a sold kit).
+export const STUDIO_KITS = ['food-truck', 'restaurant', 'landlord', 'real-estate', 'tree-lawn', 'nonprofit', 'training-school', 'trucking', 'oilfield'] as const
 
 export type Handoff = { action: string; describeUrl: string } | null
 
@@ -20,7 +23,16 @@ export function handoffFromEnv(env: Record<string, string | undefined> = process
   return { action: `${origin}/start`, describeUrl: `${origin}/new` }
 }
 
+/**
+ * Every kit can hand off: the studio's own kits draft on that kit, the rest start on the general
+ * "Business and services" layout (Clarence, 2026-11-25).
+ */
 export function studioBuilds(kitId: string | undefined): boolean {
+  return !!kitId && KITS.some((k) => k.id === kitId)
+}
+
+/** True when the studio has a kit of its own for this kit (not the general layout). */
+export function studioHasOwnKit(kitId: string | undefined): boolean {
   return !!kitId && (STUDIO_KITS as readonly string[]).includes(kitId)
 }
 

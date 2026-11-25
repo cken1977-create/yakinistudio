@@ -1,5 +1,25 @@
 # Changelog: Yakini Builder
 
+## Seven more kits (2026-11-25, branch `feat/builder-kits`)
+
+### Added
+- **Landlord:** Home, Rentals (open units, rental questions, inquiry form), Residents (repair request form, rent and move-out info, emergencies), About, Contact. Today: unit available, resident notice, office closed.
+- **Real estate:** Home, Listings, Buy (steps, buyer form), Sell (steps, "What's my home worth?" form), About with contact. Today: open house (time-checked), new listing, away. The tone forbids promising prices or describing who should live in a neighborhood.
+- **Tree and lawn:** Home, Services, Our work (gallery seeded with the kit photos), About, Free estimate. Today: now booking, weather update, no crews out.
+- **Nonprofit:** Home (mission), Programs (with meeting times), Get involved (volunteer, give, partner, sign-up form), About, Contact. Today: event, what we need today, closed. Three approved photos.
+- **Training school:** Home, Programs, Class schedule, About, Enroll. Today: now enrolling, student notice, no classes. The tone forbids promising jobs, pay, pass rates or aid.
+- **Trucking:** Home, Services, Drive with us (driver application), About, Request a quote. Today: hiring, trucks available, office closed. Never invents authority numbers or ratings.
+- **Oilfield:** Home, Services, Safety, Careers (application), Request service. Today: hiring, field notice, office closed. Never invents safety stats or certifications.
+- Each kit has its approved photos (moved from `kit-photos/` to `public/kit-samples/`, with 960 px WebP copies), its own palette, font pairs and wording rules. The industry list sends its industries to these kits automatically, and the /demo hand-off (`STUDIO_KITS` in yakini.digital) now includes them; it stays off until `BUILDER_HANDOFF_ENABLED` is set.
+
+### Decided and done (Clarence, 2026-11-25)
+- A "Business and services" site buys the Template website; so does a kit that isn't sold in-app (`defaultProduct` in `@yakini/pricing`, for Phase 4 checkout).
+- The /demo hand-off works for every kit: kits without a studio kit of their own start a general-layout draft named for that kit, instead of "coming soon".
+- Addresses can't contain rude words or slurs (whole parts of the address; a few anywhere), without catching words like "cocktail" or "Scunthorpe".
+
+### Tests
+- Kits 117 (every in-site link and button points at a real page and section, unique photo ids, each kit has a form). Builder unit 171, renderer 68, yakini.digital 21. Browser 80 at 390 and 1280, including a draft for each new kit that opens every page and checks button contrast. Screenshots in `docs/kits-evidence`.
+
 ## Every kind of business (2026-11-25, branch `feat/builder-industries`)
 
 ### Added

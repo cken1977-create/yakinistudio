@@ -67,10 +67,10 @@ Source of truth: `00-core-v1.1.md` and `phase-0-v1.1.md`. Clarence approved "use
 2. **Subdomains need the Vercel Domains API settings** (names only): `VERCEL_API_TOKEN`, `VERCEL_TEAM_ID`, `VERCEL_BUILDER_PROJECT_ID`, plus the one-time wildcard DNS record `*.yakini.digital` (13.2 B, Q3). Without them a published address stays "being set up" (pending) and doesn't serve. Done 2026-11-24: the env names are set, the `*.yakini.digital` record is live at Namecheap, and the subdomains in use (composer, mission, portal, sign, studio, www, send) are reserved in code.
 3. **Alert emails need** `RESEND_API_KEY`, `EMAIL_FROM` and `OPERATOR_EMAIL` on the builder project. Done 2026-11-24.
 4. **Publishing without a plan.** Until billing (Phase 4), an owner can't go live; an operator with `can_override_publish` can, with a reason, and the first such publish waits for review. Members can always see their site at `/p/<siteId>`, which is the "preview address" of spec 5.6 step 3.
-5. **Indexing switch.** Sites are noindex until they have a paid plan *and* `sites.indexable` is on. There is no owner switch for it yet ("Let search engines find this site"); suggest adding it with billing in Phase 4.
-6. **Copy lint at publish** blocks vendor names and "AI-built" wording (R7/R8) but does not yet let the owner "keep flagged text" (11.1 item 6); it does not check "$" amounts, because a business's own menu prices are its content and R9 is Yakini's own price line. OK?
-7. **Outside links** count as working when the site answers, including 401/403/405/429 (many sites block robots). OK?
-8. **Profanity in addresses.** Reserved words, Yakini's own subdomains and exact big-brand names are refused; names that only contain a brand go to review. There is no profanity list yet; please send one if you want it.
+5. **Indexing switch.** Decided 2026-11-25: add the owner switch with billing in Phase 4. Sites are noindex until they have a paid plan *and* `sites.indexable` is on. There is no owner switch for it yet ("Let search engines find this site"); suggest adding it with billing in Phase 4.
+6. **Copy lint at publish** (decided 2026-11-25: OK as is) blocks vendor names and "AI-built" wording (R7/R8) but does not yet let the owner "keep flagged text" (11.1 item 6); it does not check "$" amounts, because a business's own menu prices are its content and R9 is Yakini's own price line. OK?
+7. **Outside links** (decided 2026-11-25: OK) count as working when the site answers, including 401/403/405/429 (many sites block robots). OK?
+8. **Profanity in addresses.** Done 2026-11-25: a built-in list in `packages/abuse/src/reserved.ts` refuses rude words and slurs as address parts (ordinary words that contain them still pass). Originally: Reserved words, Yakini's own subdomains and exact big-brand names are refused; names that only contain a brand go to review. There is no profanity list yet; please send one if you want it.
 9. **Operator desk** has reports, reviews and Check stored sites. The full tenant list of Flow H (status, domains, AI usage, hand-off) is not in Phase 3.
 10. **Lighthouse in CI.** The numbers in `docs/phase3-evidence` are local runs. Adding a Lighthouse step to `.github/workflows/builder-ci.yml` would give steadier numbers; say if you want it.
 11. **Contrast on brand buttons.** Fixed on `feat/builder-industries`: a link rule (`.ys-site a { color: inherit }`) was beating the button colors, so button text took the surrounding color (and was invisible on solid bands). Originally: Lighthouse flags dark text on the food-truck kit's brick-red buttons (accessibility still 96). The renderer picks black or white ink and never changes the brand color (R6); a slightly stronger ink rule would fix it. Phase 8 polish?
@@ -78,7 +78,20 @@ Source of truth: `00-core-v1.1.md` and `phase-0-v1.1.md`. Clarence approved "use
 
 ## New questions from the industries work (`feat/builder-industries`)
 
-1. **Which plan does a "Business and services" site buy?** The general layout (`service`) is not a sold kit, so it has no kit price. The closest existing product is the Template website ($99 setup, $79 a month), which already lists "service business". Until billing (Phase 4) this doesn't matter: unpaid sites can't go live without an operator override. Please confirm the plan mapping before Phase 4.
-2. **Industries whose kit isn't built yet** (landlord, real estate, lawn, nonprofit, school, trucking, oilfield, specialized, cannabis, home health, reentry) use the general layout for now, with the industry name passed to the writer. Each moves onto its own kit automatically when that kit ships (one PR each, next).
-3. **The /demo hand-off** still says "coming soon" for kits the studio doesn't build yet, unchanged. Should it start a general-layout draft instead until each kit ships?
+1. **Which plan does a "Business and services" site buy?** Decided 2026-11-25: the Template website (`defaultProduct` in `@yakini/pricing`), also for kits not sold in-app. Originally: The general layout (`service`) is not a sold kit, so it has no kit price. The closest existing product is the Template website ($99 setup, $79 a month), which already lists "service business". Until billing (Phase 4) this doesn't matter: unpaid sites can't go live without an operator override. Please confirm the plan mapping before Phase 4.
+2. **Industries whose kit isn't built yet** (specialized operations, cannabis, home health, reentry) use the general layout, with the industry name passed to the writer. The other seven kits are built on `feat/builder-kits`. These four have no approved photos yet; send photos (or say to build them text-only) and they can follow the same pattern.
+3. **The /demo hand-off.** Decided 2026-11-25: every kit hands off; kits without their own studio kit start on the general layout, named for the kit. Originally: it handed off nine kits (`STUDIO_KITS`). It still says "coming soon" for the four quote-only or unbuilt kits. Should those start a general-layout draft instead?
 4. **The industry list** (173 entries in 17 groups) is in `packages/kits/src/industries.ts`. Add or rename freely; ids must stay stable once sites use them. Industry is not stored on the site yet, only used to build the draft; storing it can come with the tenant list (Flow H).
+
+## Billing provider (decided 2026-11-25, for Phase 4)
+
+**PayPal, not Stripe.** Clarence chose PayPal for plans and payments. Phase 4 follows this even where
+the spec says Stripe. What it changes, to do in Phase 4 (nothing changed yet):
+- `@yakini/pricing` `products.ts` names Stripe price env vars (`STRIPE_PRICE_*`); these become PayPal plan
+  ids (`PAYPAL_PLAN_*`), one per plan, with the setup fee as the plan's setup fee.
+- `env.ts` lists `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET`; these become `PAYPAL_CLIENT_ID`,
+  `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID` and `PAYPAL_ENV` (sandbox or live).
+- The live database already has Stripe-named columns (`tenants.stripe_customer_id`,
+  `subscriptions.stripe_subscription_id`, `stripe_price_ids`, table `stripe_events`), all empty. A new
+  Phase 4 migration renames them to provider-neutral names; Clarence applies it, as before.
+- Customer copy never names the payment company beyond what PayPal's own buttons show.
