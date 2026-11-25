@@ -41,7 +41,7 @@ BEGIN
     INSERT INTO builder.form_submissions (tenant_id, site_id, form_id, payload) VALUES (t.tid, v_site, v_form, '{"message":"hi"}');
     INSERT INTO builder.ai_runs (tenant_id, site_id, kind, model, prompt_version, input_tokens, output_tokens, outcome) VALUES (t.tid, v_site, 'generate', 'test-model', 'g1', 100, 50, 'ok');
     INSERT INTO builder.chat_messages (tenant_id, site_id, role, content) VALUES (t.tid, v_site, 'user', 'make it pop');
-    INSERT INTO builder.subscriptions (tenant_id, stripe_subscription_id, product_key, status) VALUES (t.tid, 'sub_test_' || t.slug, 'website-simple', 'active');
+    INSERT INTO builder.subscriptions (tenant_id, provider_subscription_id, product_key, status) VALUES (t.tid, 'sub_test_' || t.slug, 'website-simple', 'active');
     INSERT INTO builder.audit_log (tenant_id, actor_kind, action) VALUES (t.tid, 'system', 'publish');
     INSERT INTO builder.tutorial_progress (user_id, site_id, step) VALUES (t.owner, v_site, 'welcome');
     INSERT INTO builder.share_links (tenant_id, site_id, token_hash, created_by) VALUES (t.tid, v_site, encode(extensions.digest(t.slug, 'sha256'), 'hex'), t.owner);
@@ -57,6 +57,6 @@ BEGIN
     INSERT INTO storage.objects (bucket_id, name) VALUES ('site-assets', t.tid || '/logo.png'), ('site-exports', t.tid || '/export.zip');
   END LOOP;
   INSERT INTO builder.visit_salts (day, salt) VALUES (current_date, extensions.gen_random_bytes(32));
-  INSERT INTO builder.stripe_events (id, type) VALUES ('evt_test_1', 'checkout.session.completed');
+  INSERT INTO builder.billing_events (id, type) VALUES ('evt_test_1', 'BILLING.SUBSCRIPTION.ACTIVATED');
   INSERT INTO builder.rate_limits (key, window_start, count) VALUES ('ip:test', now(), 1);
 END $$;

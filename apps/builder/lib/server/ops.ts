@@ -24,6 +24,9 @@ export const OPS_RESULTS = {
   bad_input: 'Please fill in the required fields.',
   failed: 'That didn’t work. Please try again.',
   checked: 'Check stored sites finished.',
+  plans_ready: 'PayPal plans are set up at today’s prices.',
+  paypal_missing: 'PayPal settings are missing in Vercel. See the list above.',
+  paypal_failed: 'PayPal refused the request. Check the PayPal settings and try again.',
 } as const
 export type OpsResult = keyof typeof OPS_RESULTS
 

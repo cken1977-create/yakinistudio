@@ -11,7 +11,7 @@ import { isTestMode } from './runtime'
  * Sent through Resend's HTTPS API when RESEND_API_KEY and EMAIL_FROM are set. A failure never
  * fails the visitor's request; it is reported without the message body.
  */
-export type Mail = { to: string[]; subject: string; text: string; tag: 'form-alert' | 'report-alert' | 'review-alert' }
+export type Mail = { to: string[]; subject: string; text: string; tag: 'form-alert' | 'report-alert' | 'review-alert' | 'billing-alert' }
 
 const outbox = globalThis as typeof globalThis & { __yakiniOutbox?: Mail[] }
 /** Test mode keeps alerts here instead of sending them (read by unit and browser tests). */

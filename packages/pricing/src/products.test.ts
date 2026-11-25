@@ -13,18 +13,14 @@ describe('builder products', () => {
     expect(websiteSimpleProduct().monthly).toBe(item.monthly)
   })
   it('offers kit setup for ready fixed-price kits and refuses quoted kits', () => {
-    expect(kitProduct('food-truck', 'small')?.monthlyPriceEnv).toBe('STRIPE_PRICE_KIT_FOOD_TRUCK_SMALL_MONTHLY')
     expect(kitProduct('cannabis', 'small')).toBeUndefined()
     expect(kitProduct('reentry', 'small')).toBeUndefined()
     expect(builderProducts('restaurant').map((p) => p.key)).toEqual([
       'website-simple', 'kit:restaurant:small', 'kit:restaurant:growing', 'kit:restaurant:larger',
     ])
   })
-  it('never holds a Stripe price id value, only env names', () => {
-    for (const p of builderProducts('food-truck')) {
-      expect(p.setupPriceEnv ?? '').toMatch(/^[A-Z0-9_]*$/)
-      expect(p.monthlyPriceEnv ?? '').toMatch(/^[A-Z0-9_]*$/)
-    }
+  it('holds no payment provider ids (plans live in the database)', () => {
+    for (const p of builderProducts('food-truck')) expect(Object.keys(p).sort()).toEqual(['key', 'monthly', 'name', 'setup'])
   })
 })
 
@@ -34,5 +30,20 @@ describe('defaultProduct (Q: which plan a general-kit site buys)', () => {
     expect(defaultProduct('service').key).toBe('website-simple')
     expect(defaultProduct('landlord', 'growing').key).toBe('kit:landlord:growing')
     expect(defaultProduct('cannabis').key).toBe('website-simple') // quoted kits are not sold in-app
+  })
+})
+
+describe('PayPal plan amounts come only from the pricing config (R9)', () => {
+  it('every sold product has a setup fee and a monthly amount', async () => {
+    const { allBuilderProducts, planAmounts, productByKey } = await import('./products')
+    const { KITS, SETUPS, CATALOG } = await import('./index')
+    const all = allBuilderProducts()
+    expect(all.length).toBeGreaterThan(20)
+    for (const p of all) expect(planAmounts(p), p.key).not.toBeNull()
+    const web = CATALOG.find((c) => c.id === 'website-simple')!
+    expect(planAmounts(productByKey('website-simple')!)).toEqual({ setup: web.once!.amount, monthly: web.monthly!.amount })
+    const ft = KITS.find((k) => k.id === 'food-truck')!
+    expect(planAmounts(productByKey('kit:food-truck:growing')!)).toEqual({ setup: SETUPS.find((s) => s.id === 'quick')!.price.amount, monthly: ft.monthly.growing.amount })
+    expect(productByKey('kit:cannabis:small')).toBeUndefined()
   })
 })
