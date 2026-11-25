@@ -1,5 +1,6 @@
 import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { createMemoryBillingStore, createSupabaseBillingStore, type BillingStore, type MemBillingState } from './billing-store'
 import { createMemoryPublishStore, createSupabasePublishStore, type MemPublishState, type PublishStore } from './publish-store'
 
 /**
@@ -130,13 +131,14 @@ const BUCKET = 'site-assets'
 const extFor = (mime: string) => (mime === 'image/png' ? 'png' : 'webp')
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- schema types are not generated for the builder schema yet
-export function createSupabaseStore(db: SupabaseClient<any, any, any>): DraftStore & EditorStore & PublishStore {
+export function createSupabaseStore(db: SupabaseClient<any, any, any>): DraftStore & EditorStore & PublishStore & BillingStore {
   const fail = (what: string, error: { message?: string } | null): never => {
     // Only the operation name goes to logs/Sentry: never row contents (14.2).
     throw new Error(`Database ${what} failed${error?.message ? `: ${error.message.slice(0, 120)}` : ''}`)
   }
   return {
     ...createSupabasePublishStore(db),
+    ...createSupabaseBillingStore(db),
     async createTenant(t) {
       const { error } = await db.from('tenants').insert({ id: t.id, name: t.name, kit_id: t.kitId, status: 'prospect' })
       if (error) fail('tenant insert', error)
@@ -355,15 +357,17 @@ type MemState = {
 }
 
 /** In-memory store for unit tests and the CI end-to-end run. Never used on Vercel. */
-export function createMemoryStore(): DraftStore & EditorStore & PublishStore & { _state: MemState; _p3: MemPublishState } {
+export function createMemoryStore(): DraftStore & EditorStore & PublishStore & BillingStore & { _state: MemState; _p3: MemPublishState; _p4: MemBillingState } {
   const state: MemState = {
     tenants: new Map(), sites: new Map(), assets: new Map(), runs: [], limits: new Map(), members: [], operators: new Set(),
     versions: [], edits: [], audit: [], chat: [], tutorial: new Set(),
   }
   const clone = <T>(v: T): T => structuredClone(v)
   const isClaimed = (tenantId: string) => state.members.some((m) => m.tenantId === tenantId)
+  const p3 = createMemoryPublishStore(state)
   return {
-    ...createMemoryPublishStore(state),
+    ...p3,
+    ...createMemoryBillingStore(state, p3._p3),
     _state: state,
     async createTenant(t) { state.tenants.set(t.id, { ...t, status: 'prospect', timezone: null, attestedIpHash: null, attestedAt: null }) },
     async saveAsset(a) { state.assets.set(a.id, a) },
