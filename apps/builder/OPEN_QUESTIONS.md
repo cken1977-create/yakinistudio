@@ -82,3 +82,16 @@ Source of truth: `00-core-v1.1.md` and `phase-0-v1.1.md`. Clarence approved "use
 2. **Industries whose kit isn't built yet** (specialized operations, cannabis, home health, reentry) use the general layout, with the industry name passed to the writer. The other seven kits are built on `feat/builder-kits`. These four have no approved photos yet; send photos (or say to build them text-only) and they can follow the same pattern.
 3. **The /demo hand-off.** Decided 2026-11-25: every kit hands off; kits without their own studio kit start on the general layout, named for the kit. Originally: it handed off nine kits (`STUDIO_KITS`). It still says "coming soon" for the four quote-only or unbuilt kits. Should those start a general-layout draft instead?
 4. **The industry list** (173 entries in 17 groups) is in `packages/kits/src/industries.ts`. Add or rename freely; ids must stay stable once sites use them. Industry is not stored on the site yet, only used to build the draft; storing it can come with the tenant list (Flow H).
+
+## Billing provider (decided 2026-11-25, for Phase 4)
+
+**PayPal, not Stripe.** Clarence chose PayPal for plans and payments. Phase 4 follows this even where
+the spec says Stripe. What it changes, to do in Phase 4 (nothing changed yet):
+- `@yakini/pricing` `products.ts` names Stripe price env vars (`STRIPE_PRICE_*`); these become PayPal plan
+  ids (`PAYPAL_PLAN_*`), one per plan, with the setup fee as the plan's setup fee.
+- `env.ts` lists `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET`; these become `PAYPAL_CLIENT_ID`,
+  `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID` and `PAYPAL_ENV` (sandbox or live).
+- The live database already has Stripe-named columns (`tenants.stripe_customer_id`,
+  `subscriptions.stripe_subscription_id`, `stripe_price_ids`, table `stripe_events`), all empty. A new
+  Phase 4 migration renames them to provider-neutral names; Clarence applies it, as before.
+- Customer copy never names the payment company beyond what PayPal's own buttons show.
