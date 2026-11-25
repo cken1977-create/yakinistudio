@@ -126,8 +126,8 @@ describe('kit templates render as drafts with visible placeholders', () => {
         expect(l).not.toContain('class="ys-hint"')
         expect((d.match(/<h1[ >]/g) ?? []).length).toBe(1)
       }
-      const menu = doc.pages.find((p) => p.id === 'menu')!
-      expect(html(ctxFor(doc, menu, 'draft'))).toContain('class="ys-ph"')
+      const filled = doc.pages.find((p) => p.id === 'menu') ?? doc.pages.find((p) => p.id === 'services')!
+      expect(html(ctxFor(doc, filled, 'draft'))).toContain('class="ys-ph"')
     }
   })
 })

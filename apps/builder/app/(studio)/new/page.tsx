@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { BUILDER_KITS } from '@yakini/kits'
+import { COLOR_PRESETS, INDUSTRIES, INDUSTRY_GROUPS } from '@yakini/kits'
 import { signFormTime } from '@/lib/server/request'
 import { getRuntime } from '@/lib/server/runtime'
 
@@ -14,6 +14,7 @@ export const metadata: Metadata = { title: 'Describe your business' }
 const label = 'block text-sm font-semibold text-paper'
 const input = 'mt-2 block w-full rounded-xl border border-paper/25 bg-[#15130F] px-4 py-3 text-base text-paper placeholder:text-paper/40 focus:border-gold focus:outline-none'
 const hint = 'mt-1 text-sm text-muted'
+const swatch = 'flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border border-paper/15 px-3 py-2 text-sm text-paper/90 hover:border-paper/40 has-[:checked]:border-gold has-[:checked]:bg-gold/10 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-gold'
 
 /** The signed "form shown at" time, or null when the studio is not configured yet. */
 function freshFormTime(): string | null {
@@ -53,11 +54,16 @@ export default function NewDraft() {
           </div>
 
           <div>
-            <label htmlFor="kitId" className={label}>Kind of site <span className="font-normal text-muted">(optional)</span></label>
-            <select id="kitId" name="kitId" defaultValue="" className={input}>
-              <option value="">Pick for me</option>
-              {Object.values(BUILDER_KITS).map((k) => <option key={k.id} value={k.id}>{k.name}</option>)}
+            <label htmlFor="industry" className={label}>Kind of business <span className="font-normal text-muted">(optional)</span></label>
+            <select id="industry" name="industry" defaultValue="" aria-describedby="industry-hint" className={input}>
+              <option value="">Pick for me from my description</option>
+              {INDUSTRY_GROUPS.map((g) => (
+                <optgroup key={g} label={g}>
+                  {INDUSTRIES.filter((i) => i.group === g).map((i) => <option key={i.id} value={i.id}>{i.label}</option>)}
+                </optgroup>
+              ))}
             </select>
+            <p id="industry-hint" className={hint}>Over 150 kinds of business. Don’t see yours? Pick “Something else” and describe it above.</p>
           </div>
 
           <div>
@@ -73,19 +79,39 @@ export default function NewDraft() {
           </div>
 
           <fieldset className="rounded-2xl border border-paper/15 p-5">
-            <legend className="px-1 text-sm font-semibold">Brand colors <span className="font-normal text-muted">(optional)</span></legend>
-            <label className="flex min-h-11 items-center gap-3 text-base">
-              <input type="checkbox" name="useColors" className="h-5 w-5 accent-[#C9A14A]" /> Use my colors
-            </label>
-            <div className="mt-3 grid grid-cols-3 gap-3">
-              {([['primary', 'Main', '#7A2E2A'], ['secondary', 'Dark', '#1B1714'], ['accent', 'Accent', '#C9A14A']] as const).map(([n, l, v]) => (
-                <label key={n} className="text-sm text-paper/85">
-                  {l}
-                  <input type="color" name={n} defaultValue={v} className="mt-2 block h-12 w-full cursor-pointer rounded-lg border border-paper/25 bg-transparent" />
+            <legend className="px-1 text-sm font-semibold">Colors <span className="font-normal text-muted">(optional)</span></legend>
+            <p className={hint}>Pick a color set, or use your own brand colors. You can change them anytime.</p>
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+              <label className={swatch}>
+                <input type="radio" name="palette" value="" defaultChecked className="sr-only" />
+                <span className="flex h-6 w-14 items-center justify-center rounded-md border border-dashed border-paper/40 text-xs text-paper/70" aria-hidden="true">Auto</span>
+                <span>Pick for me</span>
+              </label>
+              {COLOR_PRESETS.map((p) => (
+                <label key={p.id} className={swatch}>
+                  <input type="radio" name="palette" value={p.id} className="sr-only" />
+                  <span className="flex h-6 w-14 overflow-hidden rounded-md ring-1 ring-paper/20" aria-hidden="true">
+                    {[p.colors.primary, p.colors.secondary, p.colors.accent].map((c, i) => <span key={i} className="flex-1" style={{ background: c }} />)}
+                  </span>
+                  <span>{p.name}</span>
                 </label>
               ))}
             </div>
-            <p className={hint}>Leave “Use my colors” unticked and we’ll use our default colors. You can replace them anytime.</p>
+
+            <div className="mt-3 rounded-xl border border-paper/15 p-4 has-[:checked]:border-gold">
+              <label className="flex min-h-11 items-center gap-3 text-base">
+                <input type="radio" name="palette" value="custom" className="h-5 w-5 accent-[#C9A14A]" /> Use my own colors
+              </label>
+              <div className="mt-3 grid grid-cols-3 gap-3">
+                {([['primary', 'Main', '#7A2E2A'], ['secondary', 'Dark', '#1B1714'], ['accent', 'Accent', '#C9A14A']] as const).map(([n, l, v]) => (
+                  <label key={n} className="text-sm text-paper/85">
+                    {l}
+                    <input type="color" name={n} defaultValue={v} className="mt-2 block h-12 w-full cursor-pointer rounded-lg border border-paper/25 bg-transparent" />
+                  </label>
+                ))}
+              </div>
+              <p className={hint}>Main is for buttons and headings, Dark for the header and footer, Accent for highlights. Your colors are used exactly as you pick them.</p>
+            </div>
           </fieldset>
 
           <button type="submit" className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-gold px-7 font-semibold text-ink hover:brightness-110 sm:w-auto">

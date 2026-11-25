@@ -109,6 +109,15 @@ export type KitId =
   | 'home-healthcare'
   | 'reentry'
 
+/**
+ * Site layouts the studio builds that are not sold as a kit of their own (no price, no plan).
+ * `service` is the general layout for any business without its own kit yet.
+ */
+export const SITE_ONLY_KIT_IDS = ['service'] as const
+export type SiteOnlyKitId = (typeof SITE_ONLY_KIT_IDS)[number]
+/** Every kit a site file may name: the sold kits plus the site-only layouts. */
+export type SiteKitId = KitId | SiteOnlyKitId
+
 export type PriceKind = 'fixed' | 'from' | 'quote' | 'usage' | 'pass-through' | 'included'
 
 export type Money = { amount: number; kind: PriceKind }

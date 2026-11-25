@@ -136,6 +136,19 @@ describe('content policy and prompt start', () => {
     expect(doc.brand.colorsSource).toBe('owner')
     expect(doc.brand.colors).toEqual({ primary: '#123456', secondary: '#0A0A0A', accent: '#FFCC00' })
   })
+  it('a business with no kit of its own gets the general layout, never a restaurant menu', async () => {
+    const { rt, store } = runtime()
+    const { r, doc } = await draftDoc(rt, store, { source: 'prompt', businessName: 'BRSA Holdings Inc', description: 'Holdings company', city: 'Albuquerque' })
+    expect(r.kitId).toBe('service')
+    expect(doc.pages.map((p) => p.slug)).toEqual(['', 'services', 'about', 'contact'])
+    expect(JSON.stringify(doc)).not.toMatch(/"type":"menu"/)
+  })
+  it('the owner’s industry shapes the draft: its label in the hero and, for trades, a fitting photo', async () => {
+    const { rt, store } = runtime()
+    const { doc } = await draftDoc(rt, store, { source: 'prompt', businessName: 'Rio Grande Plumbing', description: 'Repairs, water heaters and drains.', kitId: 'service', industry: { label: 'Plumber', photo: 'pipe-fitting' }, city: 'Santa Fe' })
+    const hero = doc.pages[0].sections.find((s) => s.type === 'hero')!
+    expect(hero.props).toMatchObject({ eyebrow: 'Plumber in Santa Fe', image: { assetId: '7a1e0000-0000-4000-8000-000000000305' } })
+  })
   it('without colors, uses the kit default palette and says so', async () => {
     const { rt, store } = runtime()
     const { doc } = await draftDoc(rt, store, { source: 'prompt', businessName: 'Corner Bistro', description: 'Neighborhood bistro with seasonal plates', kitId: 'restaurant', colors: null })

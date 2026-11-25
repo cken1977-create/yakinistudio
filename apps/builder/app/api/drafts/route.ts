@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { colorPresetById, industryById, isBuilderKit } from '@yakini/kits'
 import { HexColor } from '@yakini/site-schema'
 import { asKit, errorPage, plainPage, streamDraft, underRateLimit, withRuntime } from '@/lib/server/draft-flow'
 import { checkFormTime, originAllowed, readCappedForm, requestOrigin } from '@/lib/server/request'
@@ -18,7 +19,10 @@ const PromptForm = z.object({
   businessName: clean(120).pipe(z.string().min(1)),
   description: clean(500).pipe(z.string().min(1)),
   kitId: z.string().optional(),
+  industry: z.string().max(40).optional(),
   city: clean(80).optional(),
+  /** '' or missing: the kit's colors; 'custom': the three pickers; otherwise a preset id. */
+  palette: z.string().max(40).optional(),
   useColors: z.literal('on').optional(),
   primary: HexColor.optional(),
   secondary: HexColor.optional(),
@@ -48,12 +52,22 @@ export async function POST(request: Request): Promise<Response> {
 
     const parsed = PromptForm.safeParse({
       businessName: field(form, 'businessName') ?? '', description: field(form, 'description') ?? '',
-      kitId: field(form, 'kitId'), city: field(form, 'city'), useColors: field(form, 'useColors'),
+      kitId: field(form, 'kitId'), industry: field(form, 'industry'), city: field(form, 'city'),
+      palette: field(form, 'palette'), useColors: field(form, 'useColors'),
       primary: field(form, 'primary'), secondary: field(form, 'secondary'), accent: field(form, 'accent'),
     })
     if (!parsed.success) return plainPage('Missing details', '<h1>We need a little more.</h1><p>Add your business name and one sentence about what you do.</p><p><a class="btn" href="/new">Back to the form</a></p>', 400)
     const p = parsed.data
-    const colors = p.useColors && p.primary && p.secondary && p.accent ? { primary: p.primary, secondary: p.secondary, accent: p.accent } : null
+    const custom = (p.palette === 'custom' || p.useColors) && p.primary && p.secondary && p.accent
+      ? { primary: p.primary, secondary: p.secondary, accent: p.accent } : null
+    const preset = colorPresetById(p.palette)
+    const colors = custom ?? (preset ? { ...preset.colors } : null)
+
+    // The owner's industry picks the kit: its own kit once built, the general layout until then.
+    // "Something else" (or nothing) lets the description decide.
+    const industry = industryById(p.industry)
+    const picked = industry && industry.id !== 'other' ? industry : undefined
+    const kitId = asKit(p.kitId) ?? (picked ? (isBuilderKit(picked.kit) ? picked.kit : 'service') : undefined)
 
     let logo: Buffer | null = null
     const file = form.get('logo')
@@ -66,7 +80,8 @@ export async function POST(request: Request): Promise<Response> {
 
     if (!(await underRateLimit(rt, request.headers))) return errorPage('rate')
     return streamDraft({
-      source: 'prompt', businessName: p.businessName, description: p.description, kitId: asKit(p.kitId),
+      source: 'prompt', businessName: p.businessName, description: p.description, kitId,
+      ...(picked ? { industry: { label: picked.label, ...(picked.photo ? { photo: picked.photo } : {}) } } : {}),
       city: p.city || undefined, colors, logoUpload: logo,
     }, rt)
   })
