@@ -57,7 +57,7 @@ CREATE TABLE bt.tenant_tables AS
   SELECT table_name::text FROM information_schema.columns WHERE table_schema = 'builder' AND column_name = 'tenant_id'
   UNION SELECT 'tenants';
 CREATE TABLE bt.no_client_tables (table_name text);
-INSERT INTO bt.no_client_tables VALUES ('runtime_links'), ('visit_hashes'), ('visit_salts'), ('stripe_events'), ('rate_limits');
+INSERT INTO bt.no_client_tables VALUES ('runtime_links'), ('visit_hashes'), ('visit_salts'), ('billing_events'), ('billing_plans'), ('rate_limits');
 CREATE TABLE bt.operator_only (table_name text);
 INSERT INTO bt.operator_only VALUES ('abuse_reports'), ('publish_reviews'), ('runtime_releases');
 CREATE TABLE bt.owner_only (table_name text);
@@ -72,11 +72,11 @@ DO $$
 DECLARE missing text[];
 BEGIN
   SELECT array_agg(x) INTO missing FROM unnest(array['tenants','operators','memberships','sites','site_versions','site_edits',
-    'assets','domains','forms','form_submissions','ai_runs','chat_messages','subscriptions','stripe_events','rate_limits',
+    'assets','domains','forms','form_submissions','ai_runs','chat_messages','subscriptions','billing_events','billing_plans','rate_limits',
     'audit_log','tutorial_progress','share_links','abuse_reports','publish_reviews','today_updates','site_visits_daily',
     'visit_hashes','visit_salts','exports','runtime_releases','client_deployments','runtime_links']) x
   WHERE NOT EXISTS (SELECT 1 FROM bt.all_tables a WHERE a.table_name = x);
-  PERFORM bt.ok(missing IS NULL, 'every Section 9 table (incl. 1.1) exists: 28 tables');
+  PERFORM bt.ok(missing IS NULL, 'every Section 9 table (incl. 1.1 and Phase 4) exists: 29 tables');
   PERFORM bt.ok(NOT EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'builder' AND NOT rowsecurity), 'RLS enabled on every builder table');
   PERFORM bt.ok((SELECT count(*) FROM storage.buckets WHERE id IN ('site-assets','site-exports') AND NOT public) = 2, 'site-assets and site-exports buckets exist and are private');
   PERFORM bt.ok(NOT EXISTS (
