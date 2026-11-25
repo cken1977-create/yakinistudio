@@ -100,7 +100,7 @@ Setup levels: Quick Start $299, Standard $750, Advanced $1,500, Custom from $2,5
 
 Monthly plans, by size Small / Growing / Larger (from-prices; the written quote confirms the industry monthly):
 - Food truck, real estate: $149 / $299 / $549
-- Landlord: $149 / $279 / $499
+- Landlord: $149 / $279 / $549
 - Restaurant, tree and lawn, nonprofit, training: $199 / $399 / $799
 - Trucking, oilfield, specialized: $199 / $449 / $1,199 (compliance and credential tracking included)
 Annual prepay: pay for 11 months and get 12, on recurring Yakini fees.

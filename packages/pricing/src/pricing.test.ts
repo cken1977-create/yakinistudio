@@ -27,7 +27,7 @@ describe('November 25, 2026 price revision', () => {
   })
 
   it('prices landlord and the trucking group at the revised amounts', () => {
-    expect(monthly('landlord')).toEqual([149, 279, 499])
+    expect(monthly('landlord')).toEqual([149, 279, 549])
     for (const id of ['trucking', 'oilfield', 'specialized'] as const) expect(monthly(id)).toEqual([199, 449, 1199])
   })
 

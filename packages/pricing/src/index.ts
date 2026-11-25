@@ -1,5 +1,5 @@
 // Yakini launch pricing, locked November 22, 2026 (Clarence Kennedy).
-// Revised November 25, 2026: landlord and trucking/oilfield/specialized kits, online ordering,
+// Revised November 25, 2026: landlord Growing and trucking/oilfield/specialized kits, online ordering,
 // phone receptionist, and compliance included in the kits that need it.
 // Public headline: "Setup from $299. Monthly plans from $149."
 // Customer-facing copy names services (hosting, database, texting line, payments), never the companies behind them.
@@ -145,7 +145,7 @@ export type Kit = {
 
 export const KITS: readonly Kit[] = [
   { id: 'food-truck', name: 'Food truck', group: 'A', monthly: { small: { amount: 149, kind: 'fixed' }, growing: { amount: 299, kind: 'fixed' }, larger: { amount: 549, kind: 'fixed' } }, capacity: { small: '1 truck, 1 menu', growing: 'Up to 3 trucks, same brand', larger: 'Up to 10 trucks' }, ready: true },
-  { id: 'landlord', name: 'Landlord', group: 'A', monthly: { small: { amount: 149, kind: 'fixed' }, growing: { amount: 279, kind: 'fixed' }, larger: { amount: 499, kind: 'fixed' } }, capacity: { small: 'Up to 10 units', growing: 'Up to 25 units', larger: 'Up to 50 units' }, ready: true },
+  { id: 'landlord', name: 'Landlord', group: 'A', monthly: { small: { amount: 149, kind: 'fixed' }, growing: { amount: 279, kind: 'fixed' }, larger: { amount: 549, kind: 'fixed' } }, capacity: { small: 'Up to 10 units', growing: 'Up to 25 units', larger: 'Up to 50 units' }, ready: true },
   { id: 'real-estate', name: 'Real estate', group: 'A', monthly: { small: { amount: 149, kind: 'fixed' }, growing: { amount: 299, kind: 'fixed' }, larger: { amount: 549, kind: 'fixed' } }, capacity: { small: '1 agent', growing: 'Up to 3 agents', larger: 'Up to 10 agents' }, ready: true },
   { id: 'restaurant', name: 'Restaurant', group: 'B', monthly: { small: { amount: 199, kind: 'fixed' }, growing: { amount: 399, kind: 'fixed' }, larger: { amount: 799, kind: 'fixed' } }, capacity: { small: '1 location', growing: 'Up to 3 locations', larger: 'Up to 10 locations' }, ready: true },
   { id: 'tree-lawn', name: 'Tree and lawn', group: 'B', monthly: { small: { amount: 199, kind: 'fixed' }, growing: { amount: 399, kind: 'fixed' }, larger: { amount: 799, kind: 'fixed' } }, capacity: { small: '1 crew', growing: 'Up to 3 crews', larger: 'Up to 10 crews' }, ready: true },
