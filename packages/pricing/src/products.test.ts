@@ -27,3 +27,12 @@ describe('builder products', () => {
     }
   })
 })
+
+describe('defaultProduct (Q: which plan a general-kit site buys)', () => {
+  it('a Business and services site buys the Template website; sold kits buy their own plan', async () => {
+    const { defaultProduct } = await import('./products')
+    expect(defaultProduct('service').key).toBe('website-simple')
+    expect(defaultProduct('landlord', 'growing').key).toBe('kit:landlord:growing')
+    expect(defaultProduct('cannabis').key).toBe('website-simple') // quoted kits are not sold in-app
+  })
+})

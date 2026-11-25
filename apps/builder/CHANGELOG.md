@@ -12,6 +12,11 @@
 - **Oilfield:** Home, Services, Safety, Careers (application), Request service. Today: hiring, field notice, office closed. Never invents safety stats or certifications.
 - Each kit has its approved photos (moved from `kit-photos/` to `public/kit-samples/`, with 960 px WebP copies), its own palette, font pairs and wording rules. The industry list sends its industries to these kits automatically, and the /demo hand-off (`STUDIO_KITS` in yakini.digital) now includes them; it stays off until `BUILDER_HANDOFF_ENABLED` is set.
 
+### Decided and done (Clarence, 2026-11-25)
+- A "Business and services" site buys the Template website; so does a kit that isn't sold in-app (`defaultProduct` in `@yakini/pricing`, for Phase 4 checkout).
+- The /demo hand-off works for every kit: kits without a studio kit of their own start a general-layout draft named for that kit, instead of "coming soon".
+- Addresses can't contain rude words or slurs (whole parts of the address; a few anywhere), without catching words like "cocktail" or "Scunthorpe".
+
 ### Tests
 - Kits 117 (every in-site link and button points at a real page and section, unique photo ids, each kit has a form). Builder unit 171, renderer 68, yakini.digital 21. Browser 80 at 390 and 1280, including a draft for each new kit that opens every page and checks button contrast. Screenshots in `docs/kits-evidence`.
 

@@ -1,5 +1,5 @@
 import { isBuilderKit } from '@yakini/kits'
-import type { KitId } from '@yakini/pricing'
+import { KITS, type SiteKitId as KitId } from '@yakini/pricing'
 import { errorPage, readHandoff, streamDraft, underRateLimit, withRuntime } from '@/lib/server/draft-flow'
 import { originAllowed, readCappedForm, requestOrigin, withWww } from '@/lib/server/request'
 
@@ -28,13 +28,16 @@ export async function POST(request: Request): Promise<Response> {
       return parsed.error.issues.some((i) => i.path[0] === 'kitId') ? errorPage('kit') : errorPage('bad')
     }
     const h = parsed.data
-    if (!isBuilderKit(h.kitId)) return errorPage('kit')
+    // A kit the studio doesn't build yet starts on the general layout, named for that kit (Clarence, 2026-11-25).
+    const sold = KITS.find((k) => k.id === h.kitId)
+    const built = isBuilderKit(h.kitId)
     if (!(await underRateLimit(rt, request.headers))) return errorPage('rate')
     return streamDraft({
       source: 'demo',
       businessName: h.businessName,
       sourceUrl: h.sourceUrl || undefined,
-      kitId: h.kitId as KitId,
+      kitId: (built ? h.kitId : 'service') as KitId,
+      ...(built || !sold ? {} : { industry: { label: sold.name } }),
       features: h.features,
     }, rt)
   })

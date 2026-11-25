@@ -4,7 +4,7 @@
  * the pricing config stays the single source of truth (R9). Stripe price ids are
  * referenced by environment variable NAME only (Section 17); values live in Vercel.
  */
-import { CATALOG, KITS, SETUPS, type KitId, type Money, type SizeId } from './index'
+import { CATALOG, KITS, SETUPS, SITE_ONLY_KIT_IDS, type KitId, type Money, type SiteKitId, type SizeId } from './index'
 
 export const PUBLIC_PRICE_LINE = 'Setup from $299. Monthly plans from $149.' as const
 
@@ -58,4 +58,13 @@ export function builderProducts(kitId?: KitId): BuilderProduct[] {
     if (p) out.push(p)
   }
   return out
+}
+
+/**
+ * The plan a site buys by default: its kit's plan at the chosen size, or the Template website for
+ * a site-only layout (`service`) or a kit that isn't sold in-app. Decided by Clarence 2026-11-25.
+ */
+export function defaultProduct(kitId: SiteKitId, size: SizeId = 'small'): BuilderProduct {
+  if ((SITE_ONLY_KIT_IDS as readonly string[]).includes(kitId)) return websiteSimpleProduct()
+  return kitProduct(kitId as KitId, size) ?? websiteSimpleProduct()
 }

@@ -55,7 +55,7 @@ describe('POST /start (demo hand-off)', () => {
     expect(html).toContain('?note=unread')
   })
 
-  it('refuses other origins, unknown kits, kits the studio does not build yet and empty hand-offs', async () => {
+  it('refuses other origins, unknown kits and empty hand-offs; a kit not built yet starts on the general layout', async () => {
     const { POST } = await import('@/app/start/route')
     expect((await POST(demoPost({ businessName: 'X', kitId: 'food-truck' }, { origin: 'https://evil.example' }))).status).toBe(403)
     expect((await POST(demoPost({ businessName: 'X', kitId: 'food-truck' }, { origin: 'null', referer: '' }))).status).toBe(403)
@@ -65,13 +65,13 @@ describe('POST /start (demo hand-off)', () => {
     await www.text()
     expect((await POST(demoPost({ kitId: 'food-truck' }))).status).toBe(400)
     expect((await POST(demoPost({ businessName: 'x'.repeat(20_000), kitId: 'food-truck' }))).status).toBe(400)
-    const { isBuilderKit } = await import('@yakini/kits')
-    const other = (await import('@yakini/pricing')).KITS.find((k) => !isBuilderKit(k.id))
-    if (other) {
-      const res = await POST(demoPost({ businessName: 'X', kitId: other.id }))
-      expect(res.status).toBe(400)
-      expect(await res.text()).toContain('coming soon')
-    }
+    // A sold kit the studio doesn't build yet starts on the general layout, named for that kit.
+    const { getRuntime } = await import('@/lib/server/runtime')
+    const { loadSiteDoc } = await import('@yakini/site-schema')
+    const { siteId } = await follow(await POST(demoPost({ businessName: 'Green Leaf', kitId: 'cannabis' })))
+    const doc = loadSiteDoc((await getRuntime().store.getDraft(siteId!))!.doc).doc
+    expect(doc.kitId).toBe('service')
+    expect(JSON.stringify(doc.pages[0])).toContain('Cannabis')
   })
 
   it('the new kits draft from the demo too (landlord, trucking)', async () => {
