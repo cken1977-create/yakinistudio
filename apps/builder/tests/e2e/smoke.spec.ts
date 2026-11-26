@@ -13,6 +13,11 @@ test('studio landing renders, follows copy rules and loads nothing third-party',
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your website, set up in your brand.')
   await expect(page.getByTestId('price-line')).toHaveText('Setup from $299. Monthly plans from $149.')
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+  // Sign in is the studio's own sign-in (it used to point at the client portal).
+  await page.getByRole('link', { name: 'Sign in' }).click()
+  await page.waitForURL(/\/signin\?next=%2Fsites/)
+  await expect(page.getByLabel('Email')).toBeVisible()
+  await page.goto('/')
 
   // Previews and the unlaunched studio are noindex.
   expect(res?.headers()['x-robots-tag'] ?? '').toContain('noindex')
