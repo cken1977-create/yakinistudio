@@ -20,7 +20,10 @@ export function hostLabel(name: string, apex = apexOf(name)): string {
 }
 
 export function parseDomainInput(raw: string, rootDomain: string): ParsedDomain | { error: DomainInputError } {
-  let s = raw.trim().toLowerCase()
+  // Forgive what copying from a message or email brings along: quotes, backticks, invisible
+  // characters, spaces around dots, and punctuation at the ends.
+  let s = raw.normalize('NFKC').replace(/[\u200b-\u200d\u2060\ufeff\u00ad]/g, '').replace(/\s*\.\s*/g, '.').trim()
+    .replace(/^[`'"“”‘’<(\[]+|[`'"“”‘’>)\],;!]+$/g, '').toLowerCase()
   if (!s) return { error: 'empty' }
   s = s.replace(/^[a-z]+:\/\//, '').replace(/[/?#].*$/, '').replace(/:\d+$/, '').replace(/\.$/, '')
   if (s.length > 253 || /^[\d.]+$/.test(s) || s.includes(':')) return { error: 'invalid' }
