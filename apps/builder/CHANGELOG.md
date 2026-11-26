@@ -1,5 +1,15 @@
 # Changelog: Yakini Builder
 
+## Phase 5a: your own domain (2026-11-26, branch `feat/builder-phase5-domains`)
+
+Spec: `docs/spec/phase-5.md`.
+
+- **Owner flow** `/sites/[id]/domain` (linked from Publish as "Use your own domain"): type a whole domain (`yourbusiness.com`, www is added too) or one part (`shop.yourbusiness.com`). The page shows the exact DNS records to add, taken from Vercel's answer: `A @ <IP>` for a whole domain, `CNAME <name> <target>` for www and subdomains, and a `TXT` proof when Vercel asks for one. "Check now", plus a check on page open (at most once a minute) and every night. Once the main name works it becomes the site's main address; the free address and www forward to it. Remove (with a confirm box) makes the free address main again and releases the names. Works with JavaScript off.
+- **Rules:** paid plan (or an operator); one domain per site; refuses yakini.digital addresses, hosting names, IP addresses, names another site or another hosting project holds. Publishing again keeps the custom domain as the main address.
+- **Database (repo only, not applied):** `20261126000300_builder_custom_domains.sql`: server-only `add_custom_domain`, `set_domain_status`, `remove_custom_domain` (audited `domain.add`, `domain.remove`).
+- **Test stand-in for Vercel domains** (`/api/dev/domains`, test mode only).
+- Tests: unit 201 (9 new), database (16 new domain checks), browser 4 new at 390 and 1280. Screenshots in `docs/phase5-evidence`.
+
 ## Founding offer (2026-11-26, branch `feat/builder-founding-offer`)
 
 - **Founding 20:** the first 20 businesses pay the setup fee at sign-up; PayPal starts monthly billing on February 1, 2027 (`start_time`). The plan page shows the offer, spots left and "$299 today, then $149 a month from February 1, 2027".

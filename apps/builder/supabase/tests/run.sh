@@ -32,3 +32,6 @@ echo "$out4" | grep -q 'ALL PHASE 4 TESTS PASSED'
 out5=$(psql -X -q -v ON_ERROR_STOP=1 -d "$DB" -f phase4b-tests.sql 2>&1) || { echo "$out5" | sed -n 's/^psql:[^ ]* NOTICE:  //p; /FAIL\|ERROR/p'; exit 1; }
 echo "$out5" | sed -n 's/^psql:[^ ]* NOTICE:  //p'
 echo "$out5" | grep -q 'ALL FOUNDING OFFER TESTS PASSED'
+out6=$(psql -X -q -v ON_ERROR_STOP=1 -d "$DB" -f phase5-tests.sql 2>&1) || { echo "$out6" | sed -n 's/^psql:[^ ]* NOTICE:  //p; /FAIL\|ERROR/p'; exit 1; }
+echo "$out6" | sed -n 's/^psql:[^ ]* NOTICE:  //p'
+echo "$out6" | grep -q 'ALL PHASE 5 TESTS PASSED'

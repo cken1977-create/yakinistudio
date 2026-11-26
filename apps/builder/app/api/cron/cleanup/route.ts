@@ -1,12 +1,13 @@
 import { timingSafeEqual } from 'node:crypto'
 import * as Sentry from '@sentry/nextjs'
 import { lapseSites } from '@/lib/server/billing'
+import { checkWaitingDomains } from '@/lib/server/domains'
 import { getRuntime } from '@/lib/server/runtime'
 
 /**
  * Daily draft clean-up (spec 5.2 step 7): unclaimed anonymous drafts older than 14 days are
  * soft-deleted (an operator can restore them for 30 days). Phase 4: sites whose plan has lapsed go
- * offline (nothing is deleted). Vercel Cron calls this with
+ * offline (nothing is deleted). Phase 5a: custom domains still waiting for DNS are checked again. Vercel Cron calls this with
  * `Authorization: Bearer $CRON_SECRET`; anything else gets a 401.
  */
 export const dynamic = 'force-dynamic'
@@ -26,7 +27,8 @@ export async function GET(request: Request): Promise<Response> {
     const rt = getRuntime()
     const expired = await rt.store.expireDrafts(new Date())
     const lapsed = await lapseSites(rt)
-    return Response.json({ ok: true, expired, lapsed }, { headers: { 'cache-control': 'no-store' } })
+    const domains = await checkWaitingDomains(rt).catch((e) => { Sentry.captureException(e, { tags: { area: 'domain-check' } }); return 0 })
+    return Response.json({ ok: true, expired, lapsed, domains }, { headers: { 'cache-control': 'no-store' } })
   } catch (e) {
     Sentry.captureException(e, { tags: { area: 'draft-cleanup' } })
     return Response.json({ ok: false }, { status: 500, headers: { 'cache-control': 'no-store' } })
