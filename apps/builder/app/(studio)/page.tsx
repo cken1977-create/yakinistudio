@@ -8,7 +8,7 @@ export default function StudioLanding() {
         <a href="https://yakini.digital" className="inline-flex min-h-11 items-center font-serif text-xl tracking-wide text-paper">
           Yakini <span className="text-gold">Studio</span>
         </a>
-        <a href="https://portal.yakini.digital/enter" className="inline-flex min-h-11 items-center rounded-full border border-paper/25 px-4 text-sm text-paper/90 hover:border-gold">
+        <a href="/signin?next=%2Fsites" className="inline-flex min-h-11 items-center rounded-full border border-paper/25 px-4 text-sm text-paper/90 hover:border-gold">
           Sign in
         </a>
       </header>

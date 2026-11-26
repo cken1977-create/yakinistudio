@@ -28,6 +28,15 @@ export interface DomainApi {
 
 type Json = Record<string, unknown>
 
+/** Operator diagnostics: Vercel's status and error code/message only; never the token or team. */
+const redact = (path: string) => path.replace(/\/projects\/[^/]+/, '/projects/:project')
+function logFailure(method: string, path: string, status: number, json: Json) {
+  const err = (json.error ?? {}) as { code?: unknown; message?: unknown }
+  const code = typeof err.code === 'string' ? err.code.slice(0, 80) : '-'
+  const message = typeof err.message === 'string' ? err.message.slice(0, 200) : '-'
+  console.error(`[vercel-domains] ${method} ${redact(path)} -> ${status} ${code}: ${message}`)
+}
+
 export function realDomainApi(): DomainApi {
   const token = serverEnv('VERCEL_API_TOKEN')
   const project = serverEnv('VERCEL_BUILDER_PROJECT_ID') ?? null
@@ -44,8 +53,10 @@ export function realDomainApi(): DomainApi {
       })
       let json: Json = {}
       try { json = (await res.json()) as Json } catch { /* empty body */ }
+      if (res.status >= 400 && res.status !== 404) logFailure(method, path, res.status, json)
       return { status: res.status, json }
-    } catch {
+    } catch (e) {
+      console.error(`[vercel-domains] ${method} ${redact(path)} failed: ${e instanceof Error ? e.name : 'error'}`)
       return { status: 0, json: {} }
     }
   }
