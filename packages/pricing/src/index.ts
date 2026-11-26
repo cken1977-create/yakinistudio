@@ -1,4 +1,6 @@
 // Yakini launch pricing, locked November 22, 2026 (Clarence Kennedy).
+// Revised November 25, 2026: landlord Growing and trucking/oilfield/specialized kits, online ordering,
+// phone receptionist, and compliance included in the kits that need it.
 // Public headline: "Setup from $299. Monthly plans from $149."
 // Customer-facing copy names services (hosting, database, texting line, payments), never the companies behind them.
 // Founding, Operate, and Grow are superseded and must not be offered.
@@ -24,9 +26,9 @@ export function startUrl(_planId?: string): string {
 export const HEADLINE = 'Setup from $299. Monthly plans from $149.'
 export const PACKAGE_EXAMPLE_TITLE = 'Example: Small food truck package'
 export const PACKAGE_EXAMPLE =
-  'A Small food truck kit with Quick Start, a template website, and online ordering is $597 to set up and $277 a month ($299 + $99 + $199 setup, and $149 + $79 + $49 monthly), plus hosting, texting, and payment processing billed by those providers.'
-export const PACKAGE_EXAMPLE_SETUP = 597
-export const PACKAGE_EXAMPLE_MONTHLY = 277
+  'A Small food truck kit with Quick Start, a template website, and online ordering is $547 to set up and $257 a month ($299 + $99 + $149 setup, and $149 + $79 + $29 monthly), plus hosting, texting, and payment processing billed by those providers.'
+export const PACKAGE_EXAMPLE_SETUP = 547
+export const PACKAGE_EXAMPLE_MONTHLY = 257
 
 /** Types for a template website. The customer picks one; we build from that template. */
 export const WEBSITE_TYPES = [
@@ -43,6 +45,10 @@ export type WebsiteTypeId = (typeof WEBSITE_TYPES)[number]['id']
 export const BUSINESS_SETUP_PRICE = 495
 export const BUSINESS_SETUP_NOTE =
   'Business Setup is $495 plus the state filing fees. You pay only those two amounts at sign-up. The $495 covers LLC formation setup, and setting up the domain, business email, and business phone line, all in your name. Yakini covers the first year of the domain and any phone or email activation fees. Ongoing monthly email and phone service is billed later, in your name, by those providers.'
+
+/** Shown next to the kit prices: what the monthly price buys that do-it-yourself software does not. */
+export const STAY_WITH_YOU_NOTE =
+  'Most business software hands you a login and leaves you to figure it out. Every Yakini price includes a real person who sets it up with you and stays with you after go-live.'
 
 export const PITCH_HEAD = 'A real person sets it up with you. And stays.'
 export const PITCH =
@@ -148,19 +154,30 @@ export type Kit = {
 
 export const KITS: readonly Kit[] = [
   { id: 'food-truck', name: 'Food truck', group: 'A', monthly: { small: { amount: 149, kind: 'fixed' }, growing: { amount: 299, kind: 'fixed' }, larger: { amount: 549, kind: 'fixed' } }, capacity: { small: '1 truck, 1 menu', growing: 'Up to 3 trucks, same brand', larger: 'Up to 10 trucks' }, ready: true },
-  { id: 'landlord', name: 'Landlord', group: 'A', monthly: { small: { amount: 149, kind: 'fixed' }, growing: { amount: 299, kind: 'fixed' }, larger: { amount: 549, kind: 'fixed' } }, capacity: { small: 'Up to 10 units', growing: 'Up to 25 units', larger: 'Up to 50 units' }, ready: true },
+  { id: 'landlord', name: 'Landlord', group: 'A', monthly: { small: { amount: 149, kind: 'fixed' }, growing: { amount: 279, kind: 'fixed' }, larger: { amount: 549, kind: 'fixed' } }, capacity: { small: 'Up to 10 units', growing: 'Up to 25 units', larger: 'Up to 50 units' }, ready: true },
   { id: 'real-estate', name: 'Real estate', group: 'A', monthly: { small: { amount: 149, kind: 'fixed' }, growing: { amount: 299, kind: 'fixed' }, larger: { amount: 549, kind: 'fixed' } }, capacity: { small: '1 agent', growing: 'Up to 3 agents', larger: 'Up to 10 agents' }, ready: true },
   { id: 'restaurant', name: 'Restaurant', group: 'B', monthly: { small: { amount: 199, kind: 'fixed' }, growing: { amount: 399, kind: 'fixed' }, larger: { amount: 799, kind: 'fixed' } }, capacity: { small: '1 location', growing: 'Up to 3 locations', larger: 'Up to 10 locations' }, ready: true },
   { id: 'tree-lawn', name: 'Tree and lawn', group: 'B', monthly: { small: { amount: 199, kind: 'fixed' }, growing: { amount: 399, kind: 'fixed' }, larger: { amount: 799, kind: 'fixed' } }, capacity: { small: '1 crew', growing: 'Up to 3 crews', larger: 'Up to 10 crews' }, ready: true },
   { id: 'nonprofit', name: 'Nonprofit', group: 'B', monthly: { small: { amount: 199, kind: 'fixed' }, growing: { amount: 399, kind: 'fixed' }, larger: { amount: 799, kind: 'fixed' } }, capacity: { small: '1 program', growing: 'Up to 3 programs', larger: 'Up to 10 programs' }, ready: true },
   { id: 'training-school', name: 'Training school', group: 'B', monthly: { small: { amount: 199, kind: 'fixed' }, growing: { amount: 399, kind: 'fixed' }, larger: { amount: 799, kind: 'fixed' } }, capacity: { small: '1 program or location, up to 50 active students', growing: 'Up to 3 programs or locations, up to 150 students', larger: 'Up to 10 programs or locations, up to 400 students' }, ready: true },
-  { id: 'trucking', name: 'Trucking', group: 'C', monthly: { small: { amount: 299, kind: 'fixed' }, growing: { amount: 599, kind: 'fixed' }, larger: { amount: 1199, kind: 'fixed' } }, capacity: { small: '1 truck, 1 dispatcher', growing: 'Up to 3 trucks', larger: 'Up to 10 trucks' }, ready: true },
-  { id: 'oilfield', name: 'Oilfield', group: 'C', monthly: { small: { amount: 299, kind: 'fixed' }, growing: { amount: 599, kind: 'fixed' }, larger: { amount: 1199, kind: 'fixed' } }, capacity: { small: '1 field crew', growing: 'Up to 3 crews', larger: 'Up to 10 crews' }, ready: true },
-  { id: 'specialized', name: 'Specialized operations', group: 'C', monthly: { small: { amount: 299, kind: 'fixed' }, growing: { amount: 599, kind: 'fixed' }, larger: { amount: 1199, kind: 'fixed' } }, capacity: { small: '1 operation or crew', growing: 'Up to 3 crews', larger: 'Up to 10 crews' }, ready: true },
+  { id: 'trucking', name: 'Trucking', group: 'C', monthly: { small: { amount: 199, kind: 'fixed' }, growing: { amount: 449, kind: 'fixed' }, larger: { amount: 1199, kind: 'fixed' } }, capacity: { small: '1 truck, 1 dispatcher', growing: 'Up to 3 trucks', larger: 'Up to 10 trucks' }, ready: true },
+  { id: 'oilfield', name: 'Oilfield', group: 'C', monthly: { small: { amount: 199, kind: 'fixed' }, growing: { amount: 449, kind: 'fixed' }, larger: { amount: 1199, kind: 'fixed' } }, capacity: { small: '1 field crew', growing: 'Up to 3 crews', larger: 'Up to 10 crews' }, ready: true },
+  { id: 'specialized', name: 'Specialized operations', group: 'C', monthly: { small: { amount: 199, kind: 'fixed' }, growing: { amount: 449, kind: 'fixed' }, larger: { amount: 1199, kind: 'fixed' } }, capacity: { small: '1 operation or crew', growing: 'Up to 3 crews', larger: 'Up to 10 crews' }, ready: true },
   { id: 'cannabis', name: 'Cannabis', group: 'quote', monthly: { small: { amount: 0, kind: 'quote' }, growing: { amount: 0, kind: 'quote' }, larger: { amount: 0, kind: 'quote' } }, capacity: { small: 'Quoted', growing: 'Quoted', larger: 'Quoted' }, ready: true },
   { id: 'home-healthcare', name: 'Home healthcare', group: 'quote', monthly: { small: { amount: 0, kind: 'quote' }, growing: { amount: 0, kind: 'quote' }, larger: { amount: 0, kind: 'quote' } }, capacity: { small: 'Quoted once the kit is built', growing: 'Quoted once the kit is built', larger: 'Quoted once the kit is built' }, ready: false },
   { id: 'reentry', name: 'Reentry', group: 'quote', monthly: { small: { amount: 0, kind: 'quote' }, growing: { amount: 0, kind: 'quote' }, larger: { amount: 0, kind: 'quote' } }, capacity: { small: 'Quoted once the kit is built', growing: 'Quoted once the kit is built', larger: 'Quoted once the kit is built' }, ready: false },
 ]
+
+/** Phone receptionist: voice minutes included in the monthly price, and the rate past that. */
+export const RECEPTIONIST_MINUTES = 250
+export const RECEPTIONIST_EXTRA_MINUTE = 0.2
+
+/** Kits where compliance and credential tracking is part of the kit, not a paid add-on. */
+export const COMPLIANCE_INCLUDED_KITS: readonly KitId[] = ['trucking', 'oilfield', 'specialized', 'training-school']
+
+export function complianceIncluded(kitId: KitId | undefined): boolean {
+  return Boolean(kitId && COMPLIANCE_INCLUDED_KITS.includes(kitId))
+}
 
 export type CatalogItem = {
   id: string
@@ -175,8 +192,8 @@ export type CatalogItem = {
 export const CATALOG: readonly CatalogItem[] = [
   { id: 'website-simple', name: 'Template website', group: 'website', once: { amount: 99, kind: 'fixed' }, monthly: { amount: 79, kind: 'fixed' }, summary: 'You pick a type (restaurant or food truck, service business, real estate, nonprofit, and others), and we build from that template, in your brand. Up to 5 pages, mobile-ready, with 30 minutes of content edits each month. Hosting is in your name and billed by the host. Skip this if you already have a site and only need it linked.', picker: true },
   { id: 'website-custom', name: 'Full custom website', group: 'website', once: { amount: 4000, kind: 'from' }, monthly: { amount: 149, kind: 'from' }, summary: 'A fully custom public site, quoted by scope. Written scope, 50% deposit. Monthly care is quoted after launch, often from $149. This is not the template website, and not the kit dashboard.', picker: true },
-  { id: 'ordering', name: 'Online ordering and pay-ahead', group: 'addon', once: { amount: 199, kind: 'fixed' }, monthly: { amount: 49, kind: 'fixed' }, summary: 'Menu, order flow, and pay-ahead checkout on your own payment account.', picker: true },
-  { id: 'receptionist', name: 'Phone receptionist', group: 'addon', once: { amount: 299, kind: 'fixed' }, monthly: { amount: 99, kind: 'fixed' }, summary: 'Answers calls with your greeting and hours, takes messages, and transfers to a person. Voice minutes appear as a separate, clearly labeled Yakini usage fee on the quote, not as a markup on a provider bill you already paid.', picker: true },
+  { id: 'ordering', name: 'Online ordering and pay-ahead', group: 'addon', once: { amount: 149, kind: 'fixed' }, monthly: { amount: 29, kind: 'fixed' }, summary: 'Menu, order flow, and pay-ahead checkout on your own payment account.', picker: true },
+  { id: 'receptionist', name: 'Phone receptionist', group: 'addon', once: { amount: 199, kind: 'fixed' }, monthly: { amount: 99, kind: 'fixed' }, summary: `Answers calls with your greeting and hours, takes messages, and transfers to a person. Includes ${RECEPTIONIST_MINUTES} voice minutes a month. Minutes past that are $${RECEPTIONIST_EXTRA_MINUTE.toFixed(2)} each, shown as their own line on your bill, never as a markup on a provider bill you already paid.`, picker: true },
   { id: 'course-portal', name: 'Course and learning portal', group: 'addon', once: { amount: 399, kind: 'fixed' }, monthly: { amount: 49, kind: 'fixed' }, summary: 'Student login, lessons, progress, and class lists.', picker: true },
   { id: 'ai-tutor', name: 'Guided tutor or assistant', group: 'addon', once: { amount: 200, kind: 'fixed' }, monthly: { amount: 49, kind: 'fixed' }, summary: 'A guided assistant inside the course portal. Any usage fee is listed as its own line on the quote, not added as a percentage on a provider bill you already paid. Requires the course portal.', picker: true },
   { id: 'ecommerce', name: 'E-commerce store, simple catalog', group: 'addon', once: { amount: 499, kind: 'fixed' }, monthly: { amount: 99, kind: 'fixed' }, summary: 'A small catalog and checkout on your payment account. Larger stores are quoted.', picker: true },
@@ -194,7 +211,7 @@ export const CATALOG: readonly CatalogItem[] = [
   { id: 'number-port', name: 'Phone number porting', group: 'addon', once: { amount: 125, kind: 'fixed' }, summary: 'Move an existing business number onto the texting line, plus any carrier charges.', picker: true },
   { id: 'extra-number', name: 'Additional texting number', group: 'addon', once: { amount: 50, kind: 'fixed' }, monthly: { amount: 0, kind: 'pass-through' }, summary: 'A second number. You pay the number fee (about $1.15 a month).', picker: true },
   { id: 'accounting-sync', name: 'Accounting sync', group: 'addon', once: { amount: 125, kind: 'from' }, summary: 'Send invoices and payments to your accounting software, billed at $125 an hour. Often 3–5 hours if a connector already exists.', picker: true },
-  { id: 'compliance', name: 'Compliance and credential tracking', group: 'addon', once: { amount: 399, kind: 'fixed' }, monthly: { amount: 49, kind: 'fixed' }, summary: 'Credential and expiry tracking, with a check so an unqualified person is not put on a job.', picker: true },
+  { id: 'compliance', name: 'Compliance and credential tracking', group: 'addon', once: { amount: 399, kind: 'fixed' }, monthly: { amount: 49, kind: 'fixed' }, summary: 'Credential and expiry tracking, with a check so an unqualified person is not put on a job. Included at no extra cost in the trucking, oilfield, specialized operations, and training school kits.', picker: true },
   { id: 'app-stores', name: 'App store listings', group: 'addon', once: { amount: 125, kind: 'from' }, summary: 'Publish the installable web app to the major phone app stores, quoted at $125 an hour. You pay the store developer fees.', picker: true },
   { id: 'ops-check-standard', name: 'Operations Check, one location', group: 'service', once: { amount: 2500, kind: 'fixed' }, summary: 'A written map of how the work runs, the one problem costing you the most, a done list, and a fixed price to fix it. For up to 15 people at one location. 100% credited toward the next step if you proceed within 60 days.', picker: true },
   { id: 'ops-check-multi', name: 'Operations Check, multi-location', group: 'service', once: { amount: 4500, kind: 'fixed' }, summary: 'The same diagnostic for more than one location, or 16–60 people. 100% credited if you proceed within 60 days.', picker: true },
@@ -261,6 +278,15 @@ export function moneyLabel(price?: Money, suffix = ''): string {
   return price.kind === 'from' ? `From ${base}` : base
 }
 
+/** The price shown on an add-on in the build pickers, given the kit the visitor picked. */
+export function itemPriceLabel(item: CatalogItem, kitId?: KitId): string {
+  if (item.id === 'compliance' && complianceIncluded(kitId)) return 'Included in your kit'
+  return [
+    item.once ? moneyLabel(item.once) + (item.once.kind !== 'quote' && item.once.amount ? ' setup' : '') : null,
+    item.monthly ? moneyLabel(item.monthly, item.monthly.kind === 'pass-through' ? '' : '/mo') : null,
+  ].filter(Boolean).join(' + ')
+}
+
 export function annualFromMonthly(monthly: number): number {
   return monthly * 11
 }
@@ -303,6 +329,10 @@ export function estimateBuild(sel: BuildSelection): Estimate {
   const picked = new Set(sel.items)
   for (const item of CATALOG) {
     if (!picked.has(item.id)) continue
+    if (item.id === 'compliance' && complianceIncluded(kit?.id)) {
+      lines.push({ label: `${item.name} (included in your kit)`, setup: 0, monthly: 0, kind: 'included', note: item.summary })
+      continue
+    }
     lines.push({
       label: item.name,
       setup: item.once && item.once.kind !== 'quote' ? item.once.amount : 0,

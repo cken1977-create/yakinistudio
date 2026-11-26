@@ -22,6 +22,7 @@ import {
   REFUND_RULE,
   SETUPS,
   SIZES,
+  STAY_WITH_YOU_NOTE,
   TUTORIAL_NOTE,
   formatUsd,
   moneyLabel,
@@ -77,6 +78,7 @@ export default function PricingPage() {
         <div className="yk-section-inner">
           <div className="yk-section-tag"><span className="yk-num">03</span><span>Monthly kit prices</span></div>
           <h2 className="yk-section-h2">Priced by the kind of business, and by size.</h2>
+          <p className="pr-lead"><strong>{STAY_WITH_YOU_NOTE}</strong></p>
           <p className="pr-lead">{ANNUAL_NOTE} Cannabis, home healthcare, and reentry are quote-only. Home healthcare and reentry are not sold until those kits are built.</p>
           <div className="pr-table-wrap">
             <table className="pr-table">

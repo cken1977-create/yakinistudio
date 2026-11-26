@@ -10,6 +10,7 @@ import {
   PACKAGE_EXAMPLE,
   WEBSITE_TYPES,
   KITS,
+  itemPriceLabel,
   QUOTE_NOTE,
   SETUPS,
   SIZES,
@@ -192,7 +193,7 @@ export function BuildPicker() {
                 <div className="bp-items">
                   {CATALOG.filter((item) => item.group === group.id && item.picker !== false).map((item) => {
                     const checked = items.includes(item.id)
-                    const price = [item.once ? moneyLabel(item.once) + (item.once.kind !== 'quote' && item.once.amount ? ' setup' : '') : null, item.monthly ? moneyLabel(item.monthly, item.monthly.kind === 'pass-through' ? '' : '/mo') : null].filter(Boolean).join(' + ')
+                    const price = itemPriceLabel(item, kitId)
                     return (
                       <label key={item.id} className={`bp-item ${checked ? 'on' : ''}`}>
                         <input type="checkbox" checked={checked} onChange={() => toggle(item.id)} />
