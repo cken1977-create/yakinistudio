@@ -18,9 +18,10 @@ export const SERVER_ENV_NAMES = [
 ] as const
 export type ServerEnvName = (typeof SERVER_ENV_NAMES)[number]
 
+/** The value, trimmed: a space or newline pasted into a dashboard setting must not break it. Empty counts as unset. */
 export function serverEnv(name: ServerEnvName): string | undefined {
-  const v = process.env[name]
-  return v === undefined || v === '' ? undefined : v
+  const v = process.env[name]?.trim()
+  return v ? v : undefined
 }
 
 /** Which required names are missing (names only, safe to show an operator). */

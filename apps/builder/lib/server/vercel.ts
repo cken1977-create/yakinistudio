@@ -26,7 +26,7 @@ export const addProjectDomain: AddDomain = async (hostname) => {
   const headers = { authorization: `Bearer ${token}`, 'content-type': 'application/json' }
   try {
     const res = await fetch(`${base}${q}`, { method: 'POST', headers, body: JSON.stringify({ name: hostname }), signal: AbortSignal.timeout(8000) })
-    let body: { verified?: boolean; error?: { code?: string } } = {}
+    let body: { verified?: boolean; error?: { code?: string; message?: string } } = {}
     try { body = await res.json() } catch { /* empty */ }
     if (res.ok) return body.verified === false ? 'pending' : 'active'
     // Already on this project: read it back.
@@ -36,9 +36,10 @@ export const addProjectDomain: AddDomain = async (hostname) => {
       const d = (await got.json()) as { verified?: boolean }
       return d.verified === false ? 'pending' : 'active'
     }
-    // Operator diagnostics: Vercel's status and error code only, never the token or team.
+    // Operator diagnostics: Vercel's status, error code and message only, never the token or team.
     const code = typeof body.error?.code === 'string' ? body.error.code.slice(0, 80) : '-'
-    console.error(`[vercel] add subdomain -> ${res.status} ${code}`)
+    const message = typeof body.error?.message === 'string' ? body.error.message.slice(0, 200) : '-'
+    console.error(`[vercel] add subdomain -> ${res.status} ${code}: ${message}`)
     return 'error'
   } catch {
     return 'error'
