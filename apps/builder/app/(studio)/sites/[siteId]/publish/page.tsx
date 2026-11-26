@@ -55,6 +55,9 @@ export default async function PublishPage({ params, searchParams }: { params: Pr
             <a href={`/sites/${siteId}/plan`} className="mt-3 inline-flex min-h-12 items-center justify-center rounded-full bg-gold px-6 font-semibold text-ink">Choose a plan</a>
           </>
         )}
+        {manage && (m.info.hasPlan || m.role === 'operator') ? (
+          <p className="mt-3"><a href={`/sites/${siteId}/domain`} className="inline-flex min-h-11 items-center text-gold underline underline-offset-4">Use your own domain</a></p>
+        ) : null}
         {manage && m.info.hasPlan ? (
           <form method="post" action={`/api/sites/${siteId}/indexing`} className="mt-5 border-t border-paper/15 pt-4">
             <input type="hidden" name="on" value={indexable ? '0' : '1'} />

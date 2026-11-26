@@ -118,3 +118,12 @@ billing starts February 1, 2027 at the normal price. Built on `feat/builder-foun
 3. **Public price line (R9):** the offer adds a second price message ("setup today, nothing more
    until February 1, 2027") on the plan page. It is not on yakini.digital; say if you want it there.
 4. **Spots** are held at "Continue to PayPal" and go back to the pool if not paid within a day.
+
+## Phase 5a (custom domains)
+
+| # | Question | Answer in use | Status |
+|---|---|---|---|
+| P5-1 | Which domains can owners connect? | Any domain they own; one per site; whole domain adds www. | Default |
+| P5-2 | Who manages DNS? | The owner adds records at their own provider; we never change their DNS. | Default |
+| P5-3 | First live test | `test.brsaregistry.com` (CNAME at Namecheap). The `brsaregistry.com` apex stays on its current project. | **Clarence adds the record** |
+| P5-4 | Client-owned hosting ("Move to my accounts") | Phase 5b, next. | Open |

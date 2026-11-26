@@ -364,7 +364,7 @@ export type MemPublishState = {
   site: Map<string, { publishedVersionId: string | null; reviewStatus: PublishSiteInfo['reviewStatus']; takedown: { at: Date; kind: TakedownKind; reason: string } | null; indexable: boolean; reportLinkHidden: boolean; sourceUrl: string | null }>
   tenantPlan: Map<string, boolean>
   firstLive: Map<string, Date>
-  domains: { id: string; siteId: string; tenantId: string; hostname: string; status: 'active' | 'pending' | 'removed'; isPrimary: boolean; deleted: boolean }[]
+  domains: { id: string; siteId: string; tenantId: string; hostname: string; status: 'active' | 'pending' | 'removed' | 'verifying' | 'misconfigured' | 'error'; isPrimary: boolean; deleted: boolean; kind?: 'subdomain' | 'custom'; verification?: unknown; lastCheckedAt?: Date | null }[]
   forms: { id: string; siteId: string; tenantId: string; formKey: string; kind: FormKind; fields: string[] }[]
   submissions: { id: string; siteId: string; formId: string; payload: Record<string, string>; status: string; ipHash: string; createdAt: Date }[]
   reviews: { id: string; siteId: string; tenantId: string; versionId: string; trigger: 'override' | 'risk_check'; flags: RiskFlagRow[]; status: 'pending' | 'approved' | 'rejected'; createdAt: Date; decidedAt: Date | null; note: string | null }[]
@@ -469,7 +469,7 @@ export function createMemoryPublishStore(base: MemBase): PublishStore & { _p3: M
       const number = nextNumber(p.siteId), versionId = crypto.randomUUID()
       base.versions.push({ id: versionId, siteId: p.siteId, number, kind: 'published', note: 'Published', createdAt: new Date(), doc: clone(p.doc) })
       s.slug = p.slug
-      for (const d of st.domains) if (d.siteId === p.siteId && d.hostname !== p.hostname && !d.deleted) Object.assign(d, { status: 'removed', isPrimary: false, deleted: true })
+      for (const d of st.domains) if (d.siteId === p.siteId && d.hostname !== p.hostname && d.kind !== 'custom' && !d.deleted) Object.assign(d, { status: 'removed', isPrimary: false, deleted: true })
       const existing = st.domains.find((d) => d.hostname === p.hostname)
       const otherPrimary = st.domains.some((d) => d.siteId === p.siteId && d !== existing && d.isPrimary && !d.deleted)
       if (existing) Object.assign(existing, { status: existing.status === 'active' ? 'active' : p.domainStatus, deleted: false, isPrimary: !otherPrimary })
