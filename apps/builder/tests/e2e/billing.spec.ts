@@ -64,6 +64,9 @@ async function pay(page: Page, siteId: string) {
   const csp = (await page.request.get(`/sites/${siteId}/plan`)).headers()['content-security-policy'] ?? ''
   expect(csp).toContain("form-action 'self' https://www.paypal.com https://www.sandbox.paypal.com")
   await expect(page.getByText('Recommended for your site')).toBeVisible()
+  // The fixture is a food truck site: Small is $299 setup + $149 a month, both charged today.
+  await expect(page.getByTestId('plan-price').first()).toHaveText('$448 today, then $149 a month')
+  await expect(page.getByText('Today: $299 setup + $149 first month.')).toBeVisible()
   await shot(page, 'plan-choose')
   await page.getByRole('button', { name: 'Continue to PayPal' }).first().click()
   await page.waitForURL(/\/dev\/paypal\?subscription_id=I-\d{6}/)

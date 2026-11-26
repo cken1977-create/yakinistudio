@@ -83,7 +83,9 @@ export default async function PlanPage({ params, searchParams }: Props) {
               <li key={c.key} className={`rounded-2xl border p-6 ${c.recommended ? 'border-gold' : 'border-paper/15'}`}>
                 {c.recommended ? <p className="text-sm font-semibold uppercase tracking-wide text-gold">Recommended for your site</p> : null}
                 <h2 className="mt-1 text-xl font-semibold">{c.name}</h2>
-                <p className="mt-2 text-lg">{c.setup > 0 ? `${usd(c.setup)} setup today, then ` : ''}{usd(c.monthly)} a month</p>
+                {/* PayPal charges the setup fee and the first month together today, then monthly. */}
+                <p className="mt-2 text-lg" data-testid="plan-price">{usd(c.setup + c.monthly)} today, then {usd(c.monthly)} a month</p>
+                {c.setup > 0 ? <p className="mt-1 text-sm text-muted">Today: {usd(c.setup)} setup + {usd(c.monthly)} first month.</p> : null}
                 {owner ? (
                   <form method="post" action={`/api/sites/${siteId}/billing/checkout`} className="mt-4">
                     <input type="hidden" name="product" value={c.key} />
