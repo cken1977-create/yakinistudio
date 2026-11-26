@@ -35,6 +35,11 @@ describe('what an owner types (parse)', () => {
     expect(parseDomainInput('mesatacos.co.uk', root)).toMatchObject({ names: ['mesatacos.co.uk', 'www.mesatacos.co.uk'] })
     expect(parseDomainInput('shop.mesatacos.co.uk', root)).toMatchObject({ names: ['shop.mesatacos.co.uk'], apex: 'mesatacos.co.uk' })
   })
+  it('forgives what pasting brings along: quotes, backticks, invisible characters, spaces, end punctuation', () => {
+    for (const s of ['`test.brsaregistry.com`', '"test.brsaregistry.com"', '“test.brsaregistry.com”', 'test.brsaregistry.com\u200b', 'test. brsaregistry.com', 'test.brsaregistry.com,', '<https://test.brsaregistry.com/>', '\u00a0test.brsaregistry.com\u00a0']) {
+      expect(parseDomainInput(s, root)).toMatchObject({ main: 'test.brsaregistry.com', names: ['test.brsaregistry.com'] })
+    }
+  })
   it('refuses our own addresses, hosting names, IPs and things that aren’t domains', () => {
     for (const s of ['yakini.digital', 'mesa.yakini.digital']) expect(parseDomainInput(s, root)).toEqual({ error: 'ours' })
     for (const s of ['x.vercel.app', 'localhost.com.localhost']) expect(parseDomainInput(s, root)).toHaveProperty('error')
