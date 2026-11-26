@@ -16,6 +16,8 @@ export type PayPalSubscription = {
   payerId: string | null
   /** The next charge date: what has been paid for runs until then. */
   nextBillingTime: Date | null
+  /** When monthly billing starts (later than today for the Founding offer). */
+  startTime: Date | null
 }
 export type NewPlan = { productKey: string; name: string; setup: number; monthly: number; currency: string; productId?: string }
 
@@ -23,7 +25,8 @@ export interface PayPalApi {
   createProduct(name: string): Promise<string>
   createPlan(p: NewPlan & { productId: string }): Promise<string>
   deactivatePlan(planId: string): Promise<void>
-  createSubscription(s: { planId: string; customId: string; returnUrl: string; cancelUrl: string }): Promise<{ id: string; approveUrl: string }>
+  /** `startTime` delays the first monthly charge (the setup fee is still taken at sign-up). */
+  createSubscription(s: { planId: string; customId: string; returnUrl: string; cancelUrl: string; startTime?: Date }): Promise<{ id: string; approveUrl: string }>
   getSubscription(id: string): Promise<PayPalSubscription | null>
   cancelSubscription(id: string, reason: string): Promise<void>
   /** True only when PayPal confirms this exact event was signed for our webhook. */
@@ -106,6 +109,7 @@ export function realPayPal(): PayPalApi {
     async createSubscription(s) {
       const r = await call<{ id: string; links: { rel: string; href: string }[] }>('subscribe', 'POST', '/v1/billing/subscriptions', {
         plan_id: s.planId, custom_id: s.customId,
+        ...(s.startTime ? { start_time: s.startTime.toISOString().replace(/\.\d{3}Z$/, 'Z') } : {}),
         application_context: { brand_name: 'Yakini', shipping_preference: 'NO_SHIPPING', user_action: 'SUBSCRIBE_NOW', return_url: s.returnUrl, cancel_url: s.cancelUrl },
       })
       const approve = r?.links.find((l) => l.rel === 'approve')?.href
@@ -114,12 +118,13 @@ export function realPayPal(): PayPalApi {
     },
     async getSubscription(id) {
       if (!/^[A-Z0-9-]{3,64}$/i.test(id)) return null
-      const r = await call<{ id: string; status: PayPalStatus; plan_id?: string; custom_id?: string; subscriber?: { payer_id?: string }; billing_info?: { next_billing_time?: string } }>(
+      const r = await call<{ id: string; status: PayPalStatus; plan_id?: string; custom_id?: string; start_time?: string; subscriber?: { payer_id?: string }; billing_info?: { next_billing_time?: string } }>(
         'read', 'GET', `/v1/billing/subscriptions/${encodeURIComponent(id)}`, undefined, true)
       if (!r) return null
       return {
         id: r.id, status: r.status, planId: r.plan_id ?? null, customId: r.custom_id ?? null, payerId: r.subscriber?.payer_id ?? null,
         nextBillingTime: r.billing_info?.next_billing_time ? new Date(r.billing_info.next_billing_time) : null,
+        startTime: r.start_time ? new Date(r.start_time) : null,
       }
     },
     async cancelSubscription(id, reason) {
@@ -158,12 +163,12 @@ export function fakePayPal(): PayPalApi {
     async deactivatePlan(planId) { const p = st.plans.get(planId); if (p) p.active = false },
     async createSubscription(s) {
       const sid = id('I')
-      st.subs.set(sid, { id: sid, status: 'APPROVAL_PENDING', planId: s.planId, customId: s.customId, payerId: null, nextBillingTime: null, returnUrl: s.returnUrl, cancelUrl: s.cancelUrl })
+      st.subs.set(sid, { id: sid, status: 'APPROVAL_PENDING', planId: s.planId, customId: s.customId, payerId: null, nextBillingTime: null, startTime: s.startTime ?? null, returnUrl: s.returnUrl, cancelUrl: s.cancelUrl })
       return { id: sid, approveUrl: `/dev/paypal?subscription_id=${sid}` }
     },
     async getSubscription(sid) {
       const s = st.subs.get(sid)
-      return s ? { id: s.id, status: s.status, planId: s.planId, customId: s.customId, payerId: s.payerId, nextBillingTime: s.nextBillingTime } : null
+      return s ? { id: s.id, status: s.status, planId: s.planId, customId: s.customId, payerId: s.payerId, nextBillingTime: s.nextBillingTime, startTime: s.startTime } : null
     },
     async cancelSubscription(sid) { const s = st.subs.get(sid); if (s) s.status = 'CANCELLED' },
     async verifyWebhook(headers) { return headers.get('paypal-transmission-sig') === FAKE_WEBHOOK_SIG },

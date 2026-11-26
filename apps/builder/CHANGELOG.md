@@ -1,5 +1,14 @@
 # Changelog: Yakini Builder
 
+## Founding offer (2026-11-26, branch `feat/builder-founding-offer`)
+
+- **Founding 20:** the first 20 businesses pay the setup fee at sign-up; PayPal starts monthly billing on February 1, 2027 (`start_time`). The plan page shows the offer, spots left and "$299 today, then $149 a month from February 1, 2027".
+- Spots are counted in one locked transaction (the 21st business never gets one); unpaid spots go back after a day (nightly cleanup).
+- `/ops/billing`: offer on/off, number of spots, end date, and who holds a spot. Audited (`billing.promo`, `billing.promo_claim`).
+- Database (repo only): `20261126000200_builder_founding_offer.sql` (`billing_promos`, `promo_claims`, `subscriptions.promo_id`, server-only `claim_promo`, `attach_promo`, `release_stale_promo_claims`, `set_promo`).
+- Plan page also shows the full amount due today when there is no offer ("$448 today, then $149 a month").
+- Tests: unit 192, database (incl. 16 offer checks), browser 88 at 390 and 1280.
+
 ## Phase 4: billing with PayPal (2026-11-26, branch `feat/builder-phase4-billing`)
 
 Spec: `docs/spec/phase-4.md` (written from Clarence's decisions; no Phase 4 file was provided).

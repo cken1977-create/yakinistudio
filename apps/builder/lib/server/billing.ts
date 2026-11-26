@@ -66,6 +66,25 @@ export async function setupPlans(rt: Runtime, userId: string): Promise<{ created
   return { created, kept }
 }
 
+// ------------------------------------------------------------------------------------------ Founding offer
+
+export const FOUNDING_PROMO = 'founders'
+export type OfferInfo = { id: string; label: string; freeUntil: string; billingStarts: Date; spotsLeft: number; maxClaims: number }
+
+/** The day monthly billing starts for the offer: the day after its free period ends (UTC midnight). */
+export const billingStartFor = (freeUntil: string) => new Date(`${freeUntil}T00:00:00Z`).getTime() + 86_400_000
+
+/** The offer as an owner would see it now, or null when it's off, over or full (a business holding a spot still gets it). */
+export async function currentOffer(rt: Runtime, tenantId?: string): Promise<OfferInfo | null> {
+  const p = await rt.store.promo(FOUNDING_PROMO)
+  const today = new Date().toISOString().slice(0, 10)
+  if (!p || !p.active || today > p.freeUntil) return null
+  const mine = tenantId ? (await rt.store.promoClaims(p.id)).some((c) => c.tenantId === tenantId && !c.releasedAt) : false
+  const left = Math.max(0, p.maxClaims - p.used)
+  if (left === 0 && !mine) return null
+  return { id: p.id, label: p.label, freeUntil: p.freeUntil, billingStarts: new Date(billingStartFor(p.freeUntil)), spotsLeft: left, maxClaims: p.maxClaims }
+}
+
 // ------------------------------------------------------------------------------------------ owner
 
 export type CheckoutResult = { url: string } | { error: string; code: number }
@@ -87,9 +106,16 @@ export async function startCheckout(rt: Runtime, m: Manager, productKey: string,
   if (!plan) return { error: 'Plans aren’t set up yet. Please contact Yakini.', code: 503 }
   try {
     const back = `${origin}/sites/${m.site.siteId}/plan`
-    const sub = await paypalFor(rt).createSubscription({ planId: plan.providerPlanId, customId: m.site.tenantId, returnUrl: `${back}?paid=1`, cancelUrl: `${back}?canceled=1` })
+    // Founding offer: hold one of the spots; monthly billing then starts after the free period.
+    const offer = await currentOffer(rt, m.site.tenantId)
+    const claimed = offer ? await rt.store.claimPromo(offer.id, m.site.tenantId) : false
+    const sub = await paypalFor(rt).createSubscription({
+      planId: plan.providerPlanId, customId: m.site.tenantId, returnUrl: `${back}?paid=1`, cancelUrl: `${back}?canceled=1`,
+      ...(claimed && offer ? { startTime: offer.billingStarts } : {}),
+    })
     // Linked to this tenant now, so no later event can move it to another tenant.
     await rt.store.recordSubscription({ tenantId: m.site.tenantId, subscriptionId: sub.id, planId: plan.providerPlanId, productKey, status: 'pending', paidThrough: null, customerId: null, eventId: null, eventType: 'checkout.start' })
+    if (claimed && offer) await rt.store.attachPromo(offer.id, m.site.tenantId, sub.id)
     return { url: sub.approveUrl }
   } catch (e) {
     Sentry.captureException(e, { tags: { area: 'billing-checkout' } })
@@ -106,14 +132,22 @@ export async function syncSubscription(rt: Runtime, subscriptionId: string, even
   if (!sub || !sub.customId || !/^[0-9a-f-]{36}$/i.test(sub.customId)) return 'unknown'
   if (expectTenant && sub.customId !== expectTenant) return 'conflict'
   const plan = sub.planId ? await rt.store.planByProviderId(sub.planId) : null
-  const status = mapStatus(sub.status)
   const before = (await rt.store.tenantSubscriptions(sub.customId)).find((s) => s.providerSubscriptionId === sub.id)
+  let status = mapStatus(sub.status)
+  let paidThrough = status === 'active' ? sub.nextBillingTime : null
+  // Founding offer: after approval PayPal may keep the subscription "approved" until monthly billing
+  // starts. The setup fee is taken at approval, so the plan is in force until that start date.
+  if (status === 'pending' && sub.status === 'APPROVED' && before?.promoId && sub.startTime && sub.startTime.getTime() > Date.now()) {
+    status = 'active'
+    paidThrough = sub.startTime
+  }
+  if (status === 'active' && before?.promoId && sub.startTime && (!paidThrough || paidThrough < sub.startTime)) paidThrough = sub.startTime
   // Not started from the studio and not one of our plans (for example a payment set up by hand in
   // PayPal): nothing to link it to. Acknowledged so PayPal stops retrying; an operator handles it.
   if (!before && !plan) return 'unknown'
   const result = await rt.store.recordSubscription({
     tenantId: sub.customId, subscriptionId: sub.id, planId: sub.planId, productKey: plan?.productKey ?? null, status,
-    paidThrough: status === 'active' ? sub.nextBillingTime : null, customerId: sub.payerId, eventId: event?.id ?? null, eventType: event?.type ?? 'return',
+    paidThrough, customerId: sub.payerId, eventId: event?.id ?? null, eventType: event?.type ?? 'return',
   })
   if (result === 'recorded' && before?.status !== status && status !== 'pending') await notifyChange(rt, sub.customId, status, plan?.productKey ?? before?.productKey ?? '')
   return result
@@ -192,6 +226,7 @@ export async function handleWebhook(rt: Runtime, headers: Headers, raw: string):
 
 /** Nightly: take lapsed sites offline (nothing is deleted) and tell the owner and the operator once. */
 export async function lapseSites(rt: Runtime): Promise<number> {
+  await rt.store.releaseStalePromoClaims()
   const lapsed = await rt.store.lapseDueSites(graceDays())
   const tenants = new Set<string>()
   for (const l of lapsed) {

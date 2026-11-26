@@ -32,6 +32,7 @@ async function plansReady(page: Page) {
   await page.getByRole('button', { name: 'Set up plans in PayPal' }).click()
   await expect(page.getByRole('status')).toContainText('PayPal plans are set up')
   await expect(page.locator('table tbody tr').first()).toBeVisible()
+  await expect(page.getByTestId('offer-status')).toContainText('free until 2027-01-31')
   await shot(page, 'ops-billing')
   await page.context().clearCookies()
 }
@@ -64,9 +65,10 @@ async function pay(page: Page, siteId: string) {
   const csp = (await page.request.get(`/sites/${siteId}/plan`)).headers()['content-security-policy'] ?? ''
   expect(csp).toContain("form-action 'self' https://www.paypal.com https://www.sandbox.paypal.com")
   await expect(page.getByText('Recommended for your site')).toBeVisible()
-  // The fixture is a food truck site: Small is $299 setup + $149 a month, both charged today.
-  await expect(page.getByTestId('plan-price').first()).toHaveText('$448 today, then $149 a month')
-  await expect(page.getByText('Today: $299 setup + $149 first month.')).toBeVisible()
+  // The fixture is a food truck site: Small is $299 setup + $149 a month. The Founding offer is on
+  // (until January 31, 2027): setup today, monthly billing from February 1, 2027.
+  await expect(page.getByTestId('founding-offer')).toContainText('pay the setup fee today and nothing more until February 1, 2027')
+  await expect(page.getByTestId('plan-price').first()).toHaveText('$299 today, then $149 a month from February 1, 2027')
   await shot(page, 'plan-choose')
   await page.getByRole('button', { name: 'Continue to PayPal' }).first().click()
   await page.waitForURL(/\/dev\/paypal\?subscription_id=I-\d{6}/)
@@ -76,6 +78,7 @@ async function pay(page: Page, siteId: string) {
   await page.waitForURL(new RegExp(`/sites/${siteId}/plan\\?paid=1`))
   await expect(page.getByTestId('plan-status')).toContainText('Active')
   await expect(page.getByText('Thanks! You can publish your site now.')).toBeVisible()
+  await expect(page.getByText('Next payment: February 1, 2027')).toBeVisible()
   await shot(page, 'plan-active')
   return subId
 }

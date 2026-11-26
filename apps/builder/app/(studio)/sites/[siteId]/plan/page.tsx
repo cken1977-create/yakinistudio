@@ -3,7 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 import { productByKey } from '@yakini/pricing/products'
 import { BILLING_RESULTS, STATUS_LABEL, usd } from '@/lib/billing-copy'
 import { currentUser } from '@/lib/server/auth'
-import { currentSub, planChoices, siteKit, syncSubscription } from '@/lib/server/billing'
+import { currentOffer, currentSub, planChoices, siteKit, syncSubscription } from '@/lib/server/billing'
 import { siteMember } from '@/lib/server/publish'
 import { getRuntime } from '@/lib/server/runtime'
 import { signinPath } from '@/lib/server/signin'
@@ -33,7 +33,8 @@ export default async function PlanPage({ params, searchParams }: Props) {
     const r = await syncSubscription(rt, subId, null, m.site.tenantId).catch(() => 'unknown' as const)
     returned = r === 'recorded' || r === 'duplicate' ? 'ok' : 'unknown'
   }
-  const [subs, choices] = await Promise.all([rt.store.tenantSubscriptions(m.site.tenantId), planChoices(rt, await siteKit(m))])
+  const [subs, choices, offer] = await Promise.all([rt.store.tenantSubscriptions(m.site.tenantId), planChoices(rt, await siteKit(m)), currentOffer(rt, m.site.tenantId)])
+  const starts = offer ? day(offer.billingStarts) : null
   const cur = currentSub(subs)
   // Back from PayPal but not active yet: PayPal is still taking the first payment (a few seconds).
   const confirming = !cur && returned === 'ok' && subs.some((s) => s.providerSubscriptionId === subId && s.status === 'pending')
@@ -59,6 +60,7 @@ export default async function PlanPage({ params, searchParams }: Props) {
           <h2 id="cur-h" className="text-xl font-semibold">{productByKey(cur.productKey)?.name ?? 'Your plan'}</h2>
           <p className="mt-2" data-testid="plan-status">Status: <strong>{STATUS_LABEL[cur.status]}</strong></p>
           {cur.status === 'active' && cur.paidThrough ? <p className="mt-1 text-paper/85">Next payment: {day(cur.paidThrough)}</p> : null}
+          {cur.promoId ? <p className="mt-1 text-gold">Founding offer: no monthly charge until then.</p> : null}
           {cur.status === 'canceled' && cur.paidThrough ? <p className="mt-1 text-paper/85">Your site stays live until {day(cur.paidThrough)}. Choose a plan again any time.</p> : null}
           {cur.status === 'past_due' ? (
             <p className="mt-3 rounded-xl border border-[#B4442C]/60 bg-[#B4442C]/15 px-4 py-3">PayPal couldn’t take your last payment. Your site is still live. Please update your payment in your PayPal account so it stays up.</p>
@@ -78,14 +80,30 @@ export default async function PlanPage({ params, searchParams }: Props) {
           <p className="mt-2 text-paper/85">Choose a plan to put your site live. You pay through PayPal and can cancel any time.</p>
           {waiting ? <p role="status" className="mt-6 rounded-xl border border-paper/25 px-4 py-3">A payment was started but not finished. You can start again below.</p> : null}
           {!owner ? <p className="mt-6 rounded-xl border border-paper/25 px-4 py-3">Only the owner of this site can choose a plan.</p> : null}
+          {offer ? (
+            <section className="mt-6 rounded-2xl border border-gold bg-gold/10 p-5" aria-labelledby="offer-h" data-testid="founding-offer">
+              <h2 id="offer-h" className="text-lg font-semibold text-gold">{offer.label} offer</h2>
+              <p className="mt-1">Be one of our first {offer.maxClaims} businesses: pay the setup fee today and nothing more until {starts}.</p>
+              <p className="mt-1 text-sm text-paper/80">{offer.spotsLeft} of {offer.maxClaims} spots left.</p>
+            </section>
+          ) : null}
           <ul className="mt-8 space-y-4">
             {choices.map((c) => (
               <li key={c.key} className={`rounded-2xl border p-6 ${c.recommended ? 'border-gold' : 'border-paper/15'}`}>
                 {c.recommended ? <p className="text-sm font-semibold uppercase tracking-wide text-gold">Recommended for your site</p> : null}
                 <h2 className="mt-1 text-xl font-semibold">{c.name}</h2>
                 {/* PayPal charges the setup fee and the first month together today, then monthly. */}
-                <p className="mt-2 text-lg" data-testid="plan-price">{usd(c.setup + c.monthly)} today, then {usd(c.monthly)} a month</p>
-                {c.setup > 0 ? <p className="mt-1 text-sm text-muted">Today: {usd(c.setup)} setup + {usd(c.monthly)} first month.</p> : null}
+                {offer ? (
+                  <>
+                    <p className="mt-2 text-lg" data-testid="plan-price">{usd(c.setup)} today, then {usd(c.monthly)} a month from {starts}</p>
+                    <p className="mt-1 text-sm text-muted">Today: {usd(c.setup)} setup. No monthly charge until {starts}.</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="mt-2 text-lg" data-testid="plan-price">{usd(c.setup + c.monthly)} today, then {usd(c.monthly)} a month</p>
+                    {c.setup > 0 ? <p className="mt-1 text-sm text-muted">Today: {usd(c.setup)} setup + {usd(c.monthly)} first month.</p> : null}
+                  </>
+                )}
                 {owner ? (
                   <form method="post" action={`/api/sites/${siteId}/billing/checkout`} className="mt-4">
                     <input type="hidden" name="product" value={c.key} />

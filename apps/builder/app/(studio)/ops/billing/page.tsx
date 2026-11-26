@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import { productByKey } from '@yakini/pricing/products'
-import { OpsShell, Result, goBtn } from '@/components/ops'
+import { OpsShell, Result, field, goBtn } from '@/components/ops'
 import { STATUS_LABEL, usd } from '@/lib/billing-copy'
 import { currentUser } from '@/lib/server/auth'
+import { FOUNDING_PROMO } from '@/lib/server/billing'
 import { operatorOf } from '@/lib/server/ops'
 import { paypalStatus } from '@/lib/server/paypal'
 import { getRuntime } from '@/lib/server/runtime'
@@ -24,7 +25,8 @@ export default async function OpsBilling({ searchParams }: Props) {
   const o = await operatorOf(rt)
   if (!o) { if (!(await currentUser())) redirect(signinPath('/ops/billing')); notFound() }
   const pp = paypalStatus()
-  const [plans, subs] = await Promise.all([rt.store.activePlans(), rt.store.listSubscriptions()])
+  const [plans, subs, promo, claims] = await Promise.all([rt.store.activePlans(), rt.store.listSubscriptions(), rt.store.promo(FOUNDING_PROMO), rt.store.promoClaims(FOUNDING_PROMO)])
+  const held = claims.filter((c) => !c.releasedAt)
   return (
     <OpsShell title="Billing">
       <Result code={one(q.result)} />
@@ -39,6 +41,25 @@ export default async function OpsBilling({ searchParams }: Props) {
           <p className="mt-2 text-sm text-muted">Creates one plan per product at today’s prices. Safe to press again: matching plans are kept; changed prices get a new plan.</p>
         </form>
       </section>
+
+      {promo ? (
+        <section className="mt-8 rounded-2xl border border-gold/50 p-5" aria-labelledby="offer-h">
+          <h2 id="offer-h" className="text-xl font-semibold">{promo.label} offer</h2>
+          <p className="mt-2" data-testid="offer-status">{promo.active ? 'On' : 'Off'} · {promo.used} of {promo.maxClaims} spots taken · free until {promo.freeUntil}</p>
+          <p className="mt-1 text-sm text-muted">Businesses with a spot pay the setup fee at sign-up; monthly billing starts the day after the free period. Spots not paid within a day go back to the pool.</p>
+          <form method="post" action="/api/ops/billing/promo" className="mt-4 grid gap-3 sm:grid-cols-3 sm:items-end">
+            <label className="flex min-h-11 items-center gap-2"><input type="checkbox" name="active" defaultChecked={promo.active} className="h-5 w-5 accent-[#C9A14A]" /> Offer is on</label>
+            <label className="text-sm">Spots<input name="max" type="number" min={0} max={10000} defaultValue={promo.maxClaims} className={field} /></label>
+            <label className="text-sm">Free until<input name="freeUntil" type="date" defaultValue={promo.freeUntil} className={field} /></label>
+            <button className={`${goBtn} sm:col-span-3 sm:w-fit`}>Save offer</button>
+          </form>
+          {held.length ? (
+            <ul className="mt-4 space-y-1 text-sm">
+              {held.map((c) => <li key={c.tenantId}>{c.tenantName} · {c.subscriptionId ?? 'not paid yet'} · {day(c.claimedAt)}</li>)}
+            </ul>
+          ) : <p className="mt-4 text-sm text-paper/85">No spots taken yet.</p>}
+        </section>
+      ) : null}
 
       <section className="mt-8" aria-labelledby="plans-h">
         <h2 id="plans-h" className="text-xl font-semibold">Plans ({plans.length})</h2>
