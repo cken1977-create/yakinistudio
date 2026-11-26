@@ -104,3 +104,17 @@ the spec says Stripe. What it changes, to do in Phase 4 (nothing changed yet):
 4. **Card without a PayPal account** for subscriptions depends on your PayPal account settings; worth confirming with PayPal.
 5. **Switching plans** (e.g. Small → Growing) is cancel then choose again for now; PayPal's plan revision can come later.
 6. **Hand-marked tenants** (paid outside the studio, e.g. your PayPal link) never lapse automatically; an operator manages them.
+
+## Founding offer (decided 2026-11-26)
+
+Clarence: the first 20 businesses pay the setup fee and nothing more until January 31, 2027; monthly
+billing starts February 1, 2027 at the normal price. Built on `feat/builder-founding-offer`.
+
+1. **Apply `20261126000200_builder_founding_offer.sql`** before deploying that branch (repo only).
+2. **Sandbox check needed:** PayPal is told to start monthly billing on February 1 (`start_time`).
+   The setup fee should be charged at approval. Please confirm in the sandbox buyer's Activity that
+   only the setup fee was taken today. If PayPal also charges the first month, tell me and the offer
+   switches to a plan with a free trial period instead.
+3. **Public price line (R9):** the offer adds a second price message ("setup today, nothing more
+   until February 1, 2027") on the plan page. It is not on yakini.digital; say if you want it there.
+4. **Spots** are held at "Continue to PayPal" and go back to the pool if not paid within a day.

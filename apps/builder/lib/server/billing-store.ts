@@ -13,7 +13,11 @@ export type PlanRow = { productKey: string; providerProductId: string; providerP
 export type SubRow = {
   tenantId: string; providerSubscriptionId: string; productKey: string; status: SubStatus
   paidThrough: Date | null; pastDueSince: Date | null; cancelAtPeriodEnd: boolean; updatedAt: Date
+  /** The offer this subscription was started with (e.g. the Founding 20), if any. */
+  promoId: string | null
 }
+export type PromoRow = { id: string; label: string; active: boolean; maxClaims: number; freeUntil: string; used: number }
+export type PromoClaimRow = { tenantId: string; tenantName: string; subscriptionId: string | null; claimedAt: Date; releasedAt: Date | null }
 export type SubOpsRow = SubRow & { tenantName: string; tenantStatus: string }
 export type RecordInput = {
   tenantId: string; subscriptionId: string; planId: string | null; productKey: string | null; status: SubStatus
@@ -36,6 +40,13 @@ export interface BillingStore {
   siteIndexable(siteId: string): Promise<boolean>
   setSiteIndexable(siteId: string, userId: string, on: boolean): Promise<boolean>
   lapseDueSites(graceDays: number): Promise<{ tenantId: string; siteId: string }[]>
+  promo(id: string): Promise<PromoRow | null>
+  promoClaims(id: string): Promise<PromoClaimRow[]>
+  /** True when this business holds a spot (new or already its own). */
+  claimPromo(id: string, tenantId: string): Promise<boolean>
+  attachPromo(id: string, tenantId: string, subscriptionId: string): Promise<boolean>
+  releaseStalePromoClaims(): Promise<number>
+  setPromo(id: string, p: { active: boolean; maxClaims: number; freeUntil: string }, userId: string): Promise<void>
 }
 
 const d = (v: unknown) => (v ? new Date(v as string) : null)
@@ -53,9 +64,9 @@ export function createSupabaseBillingStore(db: SupabaseClient<any, any, any>): B
   const sub = (r: Record<string, unknown>): SubRow => ({
     tenantId: r.tenant_id as string, providerSubscriptionId: r.provider_subscription_id as string, productKey: r.product_key as string,
     status: r.status as SubStatus, paidThrough: d(r.paid_through), pastDueSince: d(r.past_due_since),
-    cancelAtPeriodEnd: Boolean(r.cancel_at_period_end), updatedAt: new Date(r.updated_at as string),
+    cancelAtPeriodEnd: Boolean(r.cancel_at_period_end), updatedAt: new Date(r.updated_at as string), promoId: (r.promo_id as string) ?? null,
   })
-  const SUB_COLS = 'tenant_id, provider_subscription_id, product_key, status, paid_through, past_due_since, cancel_at_period_end, updated_at'
+  const SUB_COLS = 'tenant_id, provider_subscription_id, product_key, status, paid_through, past_due_since, cancel_at_period_end, updated_at, promo_id'
   return {
     async activePlans() {
       const { data, error } = await db.from('billing_plans').select('*').eq('active', true).order('product_key')
@@ -110,6 +121,41 @@ export function createSupabaseBillingStore(db: SupabaseClient<any, any, any>): B
       if (error) fail('lapse', error)
       return ((data ?? []) as { tenant_id: string; site_id: string }[]).map((r) => ({ tenantId: r.tenant_id, siteId: r.site_id }))
     },
+    async promo(id) {
+      const { data, error } = await db.from('billing_promos').select('id, label, active, max_claims, free_until').eq('id', id).maybeSingle()
+      if (error) fail('promo', error)
+      if (!data) return null
+      const used = await db.from('promo_claims').select('tenant_id', { count: 'exact', head: true }).eq('promo_id', id).is('released_at', null)
+      if (used.error) fail('promo count', used.error)
+      return { id: data.id, label: data.label, active: Boolean(data.active), maxClaims: Number(data.max_claims), freeUntil: String(data.free_until), used: used.count ?? 0 }
+    },
+    async promoClaims(id) {
+      const { data, error } = await db.from('promo_claims').select('tenant_id, subscription_id, claimed_at, released_at, tenants!inner(name)').eq('promo_id', id).order('claimed_at')
+      if (error) fail('promo claims', error)
+      return (data ?? []).map((r) => ({
+        tenantId: r.tenant_id as string, tenantName: (r as unknown as { tenants: { name: string } }).tenants.name, subscriptionId: (r.subscription_id as string) ?? null,
+        claimedAt: new Date(r.claimed_at as string), releasedAt: d(r.released_at),
+      }))
+    },
+    async claimPromo(id, tenantId) {
+      const { data, error } = await db.rpc('claim_promo', { p_promo: id, p_tenant: tenantId })
+      if (error) fail('claim', error)
+      return data === true
+    },
+    async attachPromo(id, tenantId, subscriptionId) {
+      const { data, error } = await db.rpc('attach_promo', { p_promo: id, p_tenant: tenantId, p_sub_id: subscriptionId })
+      if (error) fail('attach', error)
+      return data === true
+    },
+    async releaseStalePromoClaims() {
+      const { data, error } = await db.rpc('release_stale_promo_claims')
+      if (error) fail('release', error)
+      return Number(data ?? 0)
+    },
+    async setPromo(id, p, userId) {
+      const { error } = await db.rpc('set_promo', { p_promo: id, p_active: p.active, p_max: p.maxClaims, p_free_until: p.freeUntil, p_user: userId })
+      if (error) fail('set promo', error)
+    },
   }
 }
 
@@ -117,10 +163,17 @@ export type MemBillingState = {
   plans: (PlanRow & { id: string })[]
   subs: SubRow[]
   events: Map<string, { type: string; error: string | null }>
+  promos: Map<string, Omit<PromoRow, 'used'>>
+  claims: { promoId: string; tenantId: string; subscriptionId: string | null; claimedAt: Date; releasedAt: Date | null }[]
 }
 
 export function createMemoryBillingStore(base: MemBase, p3: MemPublishState): BillingStore & { _p4: MemBillingState } {
-  const st: MemBillingState = { plans: [], subs: [], events: new Map() }
+  const st: MemBillingState = {
+    plans: [], subs: [], events: new Map(), claims: [],
+    promos: new Map([['founders', { id: 'founders', label: 'Founding 20', active: true, maxClaims: 20, freeUntil: '2027-01-31' }]]),
+  }
+  const today = () => new Date().toISOString().slice(0, 10)
+  const held = (id: string) => st.claims.filter((c) => c.promoId === id && !c.releasedAt)
   const meta = (siteId: string) => p3.site.get(siteId)
   const hasPlan = (tenantId: string) => p3.tenantPlan.get(tenantId) ?? (['active', 'past_due'].includes(base.tenants.get(tenantId)?.status ?? '')
     || st.subs.some((s) => s.tenantId === tenantId && (s.status === 'active' || s.status === 'past_due')))
@@ -154,7 +207,7 @@ export function createMemoryBillingStore(base: MemBase, p3: MemPublishState): Bi
         if (!r.productKey) throw new Error('product_key required for a new subscription')
         st.subs.push({
           tenantId: r.tenantId, providerSubscriptionId: r.subscriptionId, productKey: r.productKey, status: r.status, paidThrough: r.paidThrough,
-          pastDueSince: r.status === 'past_due' ? new Date() : null, cancelAtPeriodEnd: r.status === 'canceled', updatedAt: new Date(),
+          pastDueSince: r.status === 'past_due' ? new Date() : null, cancelAtPeriodEnd: r.status === 'canceled', updatedAt: new Date(), promoId: null,
         })
       }
       const mine = st.subs.filter((s) => s.tenantId === r.tenantId)
@@ -207,6 +260,47 @@ export function createMemoryBillingStore(base: MemBase, p3: MemPublishState): Bi
         }
       }
       return out
+    },
+    async promo(id) {
+      const p = st.promos.get(id)
+      return p ? { ...p, used: held(id).length } : null
+    },
+    async promoClaims(id) {
+      return st.claims.filter((c) => c.promoId === id).map((c) => ({ tenantId: c.tenantId, tenantName: base.tenants.get(c.tenantId)?.name ?? '', subscriptionId: c.subscriptionId, claimedAt: c.claimedAt, releasedAt: c.releasedAt }))
+    },
+    async claimPromo(id, tenantId) {
+      const p = st.promos.get(id)
+      if (!p || !p.active || today() > p.freeUntil) return false
+      if (held(id).some((c) => c.tenantId === tenantId)) return true
+      if (held(id).length >= p.maxClaims) return false
+      const old = st.claims.find((c) => c.promoId === id && c.tenantId === tenantId)
+      if (old) Object.assign(old, { releasedAt: null, claimedAt: new Date(), subscriptionId: null })
+      else st.claims.push({ promoId: id, tenantId, subscriptionId: null, claimedAt: new Date(), releasedAt: null })
+      p3.audit.push({ tenantId, action: 'billing.promo_claim', targetId: id, details: {} })
+      return true
+    },
+    async attachPromo(id, tenantId, subscriptionId) {
+      const sub = st.subs.find((x) => x.tenantId === tenantId && x.providerSubscriptionId === subscriptionId)
+      if (!sub) return false
+      sub.promoId = id
+      const c = held(id).find((x) => x.tenantId === tenantId)
+      if (c) c.subscriptionId = subscriptionId
+      return Boolean(c)
+    },
+    async releaseStalePromoClaims() {
+      let n = 0
+      for (const c of st.claims) {
+        if (c.releasedAt || c.claimedAt.getTime() > Date.now() - 86_400_000) continue
+        if (st.subs.some((x) => x.tenantId === c.tenantId && x.promoId === c.promoId && x.status !== 'pending')) continue
+        c.releasedAt = new Date(); n++
+      }
+      return n
+    },
+    async setPromo(id, p, userId) {
+      const cur = st.promos.get(id)
+      if (!cur) throw new Error('promo_not_found')
+      st.promos.set(id, { ...cur, ...p })
+      p3.audit.push({ tenantId: null, action: 'billing.promo', targetId: id, details: { ...p, by: userId } })
     },
   }
 }

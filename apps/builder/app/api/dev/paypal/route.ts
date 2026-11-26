@@ -35,14 +35,15 @@ export async function POST(request: Request): Promise<Response> {
   const sub = typeof id === 'string' ? st.subs.get(id) : undefined
   if (!sub) return new Response('Unknown subscription', { status: 404 })
   if (form?.get('decision') === 'approve-slow') {
-    // Like real PayPal right after approval: approved, first payment still being taken.
+    // Like real PayPal right after approval of a normal plan: approved, first payment still being taken.
     sub.status = 'APPROVED'
+    sub.startTime = null
     return new Response(null, { status: 303, headers: { location: `${sub.returnUrl}&subscription_id=${sub.id}` } })
   }
   if (form?.get('decision') === 'approve') {
     sub.status = 'ACTIVE'
     sub.payerId = 'TESTPAYER01'
-    sub.nextBillingTime = new Date(Date.now() + 30 * 86_400_000)
+    sub.nextBillingTime = sub.startTime && sub.startTime.getTime() > Date.now() ? sub.startTime : new Date(Date.now() + 30 * 86_400_000)
     return new Response(null, { status: 303, headers: { location: `${sub.returnUrl}&subscription_id=${sub.id}` } })
   }
   return new Response(null, { status: 303, headers: { location: sub.cancelUrl } })

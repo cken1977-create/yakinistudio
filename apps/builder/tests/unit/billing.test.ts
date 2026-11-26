@@ -212,7 +212,7 @@ describe('subscriptions the studio did not start', () => {
   it('are acknowledged and left alone (PayPal does not retry forever)', async () => {
     const s = await readySite({ plan: false })
     const st = await fake()
-    st.subs.set('I-999999', { id: 'I-999999', status: 'ACTIVE', planId: 'P-NOT-OURS', customId: s.tenantId, payerId: null, nextBillingTime: null, returnUrl: '', cancelUrl: '' })
+    st.subs.set('I-999999', { id: 'I-999999', status: 'ACTIVE', planId: 'P-NOT-OURS', customId: s.tenantId, payerId: null, nextBillingTime: null, startTime: null, returnUrl: '', cancelUrl: '' })
     expect((await webhook(event('BILLING.SUBSCRIPTION.ACTIVATED', 'I-999999'))).status).toBe(200)
     expect((await (await rt()).store.publishInfo(s.siteId))!.hasPlan).toBe(false)
   })
@@ -231,5 +231,59 @@ describe('an operator who owns a site', () => {
     // On a site they don't belong to, they are still the operator.
     const other = await readySite({ plan: false })
     expect(await r.store.memberRole(s.userId, other.tenantId)).toBe('operator')
+  })
+})
+
+describe('the Founding offer (first businesses: setup today, monthly from the day after the free period)', () => {
+  const setOffer = async (p: { active: boolean; maxClaims: number; freeUntil: string }) => (await rt()).store.setPromo('founders', p, 'test-operator')
+  const future = () => new Date(Date.now() + 40 * 86_400_000).toISOString().slice(0, 10)
+
+  it('a business with a spot pays the setup fee now and monthly billing starts after the free period', async () => {
+    const until = future()
+    await setOffer({ active: true, maxClaims: 1000, freeUntil: until })
+    const s = await checkout()
+    const sub = (await fake()).subs.get(s.subId)!
+    const { billingStartFor } = await import('@/lib/server/billing')
+    expect(sub.startTime?.toISOString()).toBe(new Date(billingStartFor(until)).toISOString())
+    expect((await (await rt()).store.tenantSubscriptions(s.tenantId))[0].promoId).toBe('founders')
+    // PayPal may keep it "approved" until billing starts: the setup fee is paid, so the plan is in force.
+    sub.status = 'APPROVED'
+    const { syncSubscription } = await import('@/lib/server/billing')
+    expect(await syncSubscription(await rt(), s.subId, null, s.tenantId)).toBe('recorded')
+    const mine = (await (await rt()).store.tenantSubscriptions(s.tenantId))[0]
+    expect(mine.status).toBe('active')
+    expect(mine.paidThrough?.toISOString()).toBe(sub.startTime!.toISOString())
+    expect((await (await rt()).store.publishInfo(s.siteId))!.hasPlan).toBe(true)
+  })
+  it('only the first N businesses get a spot; after that the normal price applies', async () => {
+    await setOffer({ active: true, maxClaims: 0, freeUntil: future() })
+    const full = await checkout()
+    expect((await fake()).subs.get(full.subId)!.startTime).toBeNull()
+    const { currentOffer } = await import('@/lib/server/billing')
+    expect(await currentOffer(await rt(), full.tenantId)).toBeNull()
+  })
+  it('no offer while it is off or after its end date', async () => {
+    await setOffer({ active: false, maxClaims: 1000, freeUntil: future() })
+    expect((await fake()).subs.get((await checkout()).subId)!.startTime).toBeNull()
+    await setOffer({ active: true, maxClaims: 1000, freeUntil: '2020-01-31' })
+    expect((await fake()).subs.get((await checkout()).subId)!.startTime).toBeNull()
+  })
+  it('an approved subscription without the offer is still waiting (not active)', async () => {
+    await setOffer({ active: false, maxClaims: 1000, freeUntil: future() })
+    const s = await checkout()
+    const sub = (await fake()).subs.get(s.subId)!
+    sub.status = 'APPROVED'; sub.startTime = new Date(Date.now() + 86_400_000)
+    const { syncSubscription } = await import('@/lib/server/billing')
+    await syncSubscription(await rt(), s.subId, null, s.tenantId)
+    expect((await (await rt()).store.tenantSubscriptions(s.tenantId))[0].status).toBe('pending')
+  })
+  it('operators turn the offer on and off and set spots and the end date; nobody else can', async () => {
+    const { POST } = await import('@/app/api/ops/billing/promo/route')
+    await readySite()
+    expect((await POST(form('/api/ops/billing/promo', { active: 'on', max: '20', freeUntil: '2027-01-31' }))).status).toBe(404)
+    await signInOperator()
+    expect(where(await POST(form('/api/ops/billing/promo', { max: '-1', freeUntil: '2027-01-31' })))).toContain('result=bad_input')
+    expect(where(await POST(form('/api/ops/billing/promo', { active: 'on', max: '20', freeUntil: '2027-01-31' })))).toContain('result=offer_saved')
+    expect(await (await rt()).store.promo('founders')).toMatchObject({ active: true, maxClaims: 20, freeUntil: '2027-01-31' })
   })
 })
