@@ -36,6 +36,9 @@ export const addProjectDomain: AddDomain = async (hostname) => {
       const d = (await got.json()) as { verified?: boolean }
       return d.verified === false ? 'pending' : 'active'
     }
+    // Operator diagnostics: Vercel's status and error code only, never the token or team.
+    const code = typeof body.error?.code === 'string' ? body.error.code.slice(0, 80) : '-'
+    console.error(`[vercel] add subdomain -> ${res.status} ${code}`)
     return 'error'
   } catch {
     return 'error'
