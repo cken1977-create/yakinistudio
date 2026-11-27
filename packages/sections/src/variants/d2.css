@@ -176,3 +176,10 @@
 .ys-site[data-preset='signature'] .ys-stat { border-top-color: var(--ys-line-strong); }
 .ys-site[data-preset='signature'] .ys-footer-wordmark { color: color-mix(in srgb, var(--ys-on-surface) 88%, transparent); }
 .ys-site[data-preset='signature'] .ys-ed-leader { border-bottom-color: var(--ys-line-strong); }
+
+/* Rhythm rule 3: neighbouring sections alternate surface depth (design-v2 looks only; classic
+   pages never carry data-depth). A raised section sits on the first surface step with hairlines. */
+.ys-site:not([data-preset='classic']) .ys-slot[data-depth='raised'] {
+  background: color-mix(in srgb, var(--ys-surface-1) 70%, transparent);
+  border-block: 1px solid var(--ys-line);
+}

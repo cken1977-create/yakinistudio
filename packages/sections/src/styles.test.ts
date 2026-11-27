@@ -32,8 +32,8 @@ describe('stylesheet parts', () => {
   it('variant files only style variants and types that did not exist in v1', () => {
     const NEW = {
       'variants/hero-cinematic.css': /ys-v-cinematic|ys-cine-/,
-      // D2: editorial-split, collage, chapters, editorial menu, mosaic, filmstrip, big-quote, image band, statement footer, ticker, stats, feature rows.
-      'variants/d2.css': /ys-v-(editorial-split|collage|chapters|editorial|mosaic|filmstrip|big-quote|image|statement)\b|ys-(ed|collage|chapter|pullquote|mosaic|film|bigquote|cta-(media|scrim|image-inner|headline)|footer-wordmark|ticker|stat|feature)/,
+      // D2: editorial-split, collage, chapters, editorial menu, mosaic, filmstrip, big-quote, image band, statement footer, ticker, stats, feature rows, alternating depth (never on classic pages).
+      'variants/d2.css': /ys-v-(editorial-split|collage|chapters|editorial|mosaic|filmstrip|big-quote|image|statement)\b|ys-(ed|collage|chapter|pullquote|mosaic|film|bigquote|cta-(media|scrim|image-inner|headline)|footer-wordmark|ticker|stat|feature)|data-depth='raised'/,
     }
     for (const [file, re] of Object.entries(NEW)) {
       expect(imports, file).toContain(file)
