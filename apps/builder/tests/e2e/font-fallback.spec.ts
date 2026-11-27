@@ -4,11 +4,10 @@ import { RICH, fixtureUrl } from './design-fixtures'
 /**
  * The fallback fonts look like the web fonts (decision 2026-11-27): every rich design fixture, at
  * the project width (390 and 1280), laid out twice — once with the web fonts (checked loaded) and
- * once with the font files blocked, so only the size-matched local fallbacks are used. Published
- * pages never swap fonts after drawing (font-display: optional; font-delay.spec.ts checks the
- * layout shift), so this guards how close a slow first visit looks, not movement: the hero within
- * 12% of its height, the page within 2%. Exact line breaks are not compared, because they can
- * differ between browser versions.
+ * once with the font files blocked, so only the size-matched local fallbacks are used: the hero
+ * within 12% of its height, the page within 2% (how close a slow first visit looks before the real
+ * fonts swap in). The movement itself is measured by font-delay.spec.ts (CLS <= 0.02). Exact line
+ * breaks are not compared, because they can differ between browser versions.
  */
 test.skip(!!process.env.E2E_BASE_URL, 'Needs the local test-mode server')
 

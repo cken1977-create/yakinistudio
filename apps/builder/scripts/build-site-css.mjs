@@ -93,19 +93,11 @@ function inline(file) {
   return css.replace(/@import\s+['"]([^'"]+)['"]\s*;/g, (_m, spec) => inline(resolveImport(spec, file)))
 }
 
-/**
- * Published sites never swap fonts after the page is drawn (decision 2026-11-27, CLS <= 0.02 even
- * when fonts are late): each page preloads its own fonts, and `font-display: optional` uses them
- * if they're there in time (a normal connection) and otherwise keeps the size-matched fallback for
- * that page view, so nothing moves on any browser. The next page has them from cache. The studio
- * and editor keep `swap` (they import fonts.css directly, not this bundle).
- */
-const noSwap = (css) => css.replace(/font-display:\s*swap\s*;/g, 'font-display: optional;')
 
 rmSync(OUT, { recursive: true, force: true })
 mkdirSync(FONTS, { recursive: true })
 const sections = dirname(require.resolve('@yakini/sections/styles.css'))
-let css = noSwap(inline(join(sections, 'fonts.css'))) + '\n' + inline(join(sections, 'styles.css'))
+let css = inline(join(sections, 'fonts.css')) + '\n' + inline(join(sections, 'styles.css'))
 // Smaller download: drop comments and blank lines (rules are untouched).
 css = css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\n\s*\n+/g, '\n').trim() + '\n'
 if (/url\(\s*['"]?https?:/i.test(css)) throw new Error('site.css must not load anything from another site (R2)')
