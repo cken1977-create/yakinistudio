@@ -1,13 +1,12 @@
 # Design upgrade progress (D1)
 
-Plan: DESIGN_UPGRADE_PLAN.md, D1 "Signature look, the never-empty preview, and the quality harness".
-The plan file itself isn't in this repo yet. Steps 2 to 4 need its sections 6.1 (style schema),
-6.2 (tokens) and 6.3 (surface contrast), so those steps wait for the file.
+Plan: DESIGN_UPGRADE_PLAN.md, D1 "Signature look, the never-empty preview, and the quality harness"
+(sections 2, 4 and 6 were provided by Clarence on 2026-11-27).
 
 | Step | Status |
 |---|---|
 | 1. Quality harness | Done (this branch) |
-| 2. Schema v2 + migrate-on-read, `*accent*` marker | Waiting for plan 6.1 |
+| 2. Schema v2 + migrate-on-read, `*accent*` marker | Done |
 | 3. Tokens, Signature preset, fonts, surface contrast | Waiting for plan 6.2 / 6.3 |
 | 4. Cinematic hero | After step 3 |
 | 5. Never-empty draft preview, "Finish your site" strip, kit headlines | Can start any time |
@@ -28,6 +27,27 @@ The plan file itself isn't in this repo yet. Steps 2 to 4 need its sections 6.1 
 Rich fixtures take their copy from each kit's own placeholder wording (the example in "like ..."
 when there is one), plus a shared address, hours, menu, stops, three reviews and a team. The
 general (`service`) kit has 6 photos of its own, so its gallery repeats two to reach 8.
+
+## Step 2: schema v2
+
+- `SiteDoc` is version 2. It adds `style: { preset, surface, fontPair, radius, motion }` (plan 6.1),
+  and `FONT_PAIRS` gains `signature` (Cormorant Garamond, Inter and JetBrains Mono; the files arrive in step 3).
+- The v1 → v2 migration (`packages/site-schema/src/migrations/v1_to_v2.ts`, pure) gives every v1 doc
+  `{ preset: 'classic', surface: 'light', fontPair: brand.fontPair, radius: 'round', motion: 'off' }`.
+  An asterisk already in a v1 headline becomes U+2217 (∗), which looks the same and stays literal.
+- New drafts: food-truck and restaurant start on `signature` (dark surface, signature fonts,
+  subtle motion); the other kits start on `classic` (`packages/kits/src/index.ts` `defaultStyle`).
+  `style` is the server's to set, like `brand`: the AI content schema has no `style`, and a
+  submitted one is dropped.
+- Accent marker: `headline` and every `heading` accept one `*phrase*` (a second marker or a lone
+  asterisk is refused). The renderer outputs `<em class="ys-accent">`. `plainText()` strips the
+  marker in the page title, the meta description (`metaFor`) and JSON-LD (the new `slogan`). The
+  generate pipeline sends back any marker outside a headline.
+- **Proof the old look is unchanged:**
+  - `packages/sections/src/__snapshots__/v1-classic` holds the pre-v2 HTML of every v1 fixture
+    page (live and draft). `migrate.test.tsx` requires the same markup after migration, apart from
+    the two new root attributes and the JSON-LD slogan.
+  - The pixel diff of the 26 v1 gallery screenshots (390 and 1440) before and after is **0**.
 
 ## Baseline found on 2026-11-27 (the "before")
 

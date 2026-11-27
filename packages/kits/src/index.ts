@@ -6,7 +6,7 @@
  * default palette and Today kinds. Later kits are one PR each (Phase 8).
  */
 import type { SiteKitId as KitId } from '@yakini/pricing'
-import type { Brand, FontPair, SiteDocContent, SiteDocInput } from '@yakini/site-schema'
+import { CURRENT_SCHEMA_VERSION, type Brand, type FontPair, type SiteDocContent, type SiteDocInput, type Style } from '@yakini/site-schema'
 import { foodTruck } from './food-truck'
 import { landlord } from './landlord'
 import { nonprofit } from './nonprofit'
@@ -100,17 +100,31 @@ export function brandFor(kit: KitDefinition, b: DraftBrand, source: 'extracted' 
 }
 
 /**
+ * Kits whose new drafts get the Signature look in design phase D1 (other presets arrive in D3).
+ * Every other kit keeps the classic look with its own font pair.
+ */
+export const SIGNATURE_KITS: ReadonlySet<string> = new Set(['food-truck', 'restaurant'])
+
+/** The look a new draft starts with (design v2). Never touches brand colors (R6). */
+export function defaultStyle(kit: KitDefinition, brand: Brand): Style {
+  return SIGNATURE_KITS.has(kit.id)
+    ? { preset: 'signature', surface: 'dark', fontPair: 'signature', radius: 'round', motion: 'subtle' }
+    : { preset: 'classic', surface: 'light', fontPair: brand.fontPair, radius: 'round', motion: 'off' }
+}
+
+/**
  * Assemble a full SiteDoc from content the server trusts (a kit template, or AI content that
- * already passed validation and the kit check). Brand and integrations are always set here,
+ * already passed validation and the kit check). Brand, style and integrations are always set here,
  * never taken from the content (spec 8.5, R6).
  */
 export function assembleDoc(kit: KitDefinition, content: SiteDocContent, brand: Brand): SiteDocInput {
   return {
     ...content,
-    schemaVersion: 1,
+    schemaVersion: CURRENT_SCHEMA_VERSION,
     kitId: kit.id,
     locale: 'en-US',
     brand,
+    style: defaultStyle(kit, brand),
     footer: { ...content.footer, showSiteByYakini: true },
     integrations: { bookingEnabled: false, formsEnabled: true },
   }

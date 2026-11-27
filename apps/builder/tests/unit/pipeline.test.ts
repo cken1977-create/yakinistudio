@@ -279,3 +279,12 @@ describe('kit sample images ship with the studio', () => {
     }
   })
 })
+
+describe('accent marker only in headlines (design v2)', () => {
+  it('flags *accent* outside a headline or heading, allows it in them', async () => {
+    const { accentMisuse } = await import('@/lib/pipeline/sanitize')
+    expect(accentMisuse({ props: { headline: 'Street food, *made here*', heading: 'Good *to know*' } })).toEqual([])
+    expect(accentMisuse({ props: { body: 'We *love* tacos', subhead: 'Fresh *daily*' }, seo: { description: '*Best* in town' } })).toEqual(['We *love* tacos', 'Fresh *daily*', '*Best* in town'])
+    expect(accentMisuse({ props: { body: 'Rated 5* by locals' } })).toEqual([])
+  })
+})

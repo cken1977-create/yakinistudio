@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { preload } from 'react-dom'
-import type { Day, LinkTarget, Page, RichText, SiteDoc } from '@yakini/site-schema'
+import { splitAccent, type Day, type LinkTarget, type Page, type RichText, type SiteDoc } from '@yakini/site-schema'
 
 /**
  * Where a render is going:
@@ -59,6 +59,16 @@ export function Txt({ children }: { children: string }): ReactNode {
   }
   if (last < children.length) out.push(children.slice(last))
   return out
+}
+
+/**
+ * A headline or heading: the one `*accent*` phrase (design v2) as <em class="ys-accent">, the rest
+ * as plain text (placeholders still shown in drafts by Txt).
+ */
+export function HeadTxt({ children }: { children: string }): ReactNode {
+  const parts = splitAccent(children)
+  if (!parts) return <Txt>{children}</Txt>
+  return <>{parts.before ? <Txt>{parts.before}</Txt> : null}<em className="ys-accent"><Txt>{parts.accent}</Txt></em>{parts.after ? <Txt>{parts.after}</Txt> : null}</>
 }
 
 export function pageById(doc: SiteDoc, id: string): Page | undefined {

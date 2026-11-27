@@ -5,10 +5,12 @@ import {
   SECTION_DEFS, SECTION_TYPES, Section, SiteDoc, SiteDocContent, linksIn, loadSiteDoc, siteDocContentJsonSchema,
   validateContent, validateNewDoc, type SectionType,
 } from './index'
+import { v1ToV2 } from './migrations/v1_to_v2'
 
 const V1 = join(__dirname, '..', 'fixtures', 'v1')
 const fixture = (f: string) => JSON.parse(readFileSync(join(V1, f), 'utf8'))
-const every = (kit: string) => fixture(`${kit}-every-section.json`)
+/** A v1 fixture brought to the current version (raw, so tests can break it before validating). */
+const every = (kit: string) => v1ToV2.up(fixture(`${kit}-every-section.json`)) as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
 describe('section library coverage (spec 7.2, 7.4 fixture corpus)', () => {
   it('has the 17 Phase 1 section types', () => {
@@ -151,7 +153,7 @@ describe('AI content schema (spec 8.5)', () => {
     expect(JSON.stringify(s).length).toBeLessThan(120_000)
   })
   it('refuses content that carries a brand block', () => {
-    const { brand: _b, integrations: _i, schemaVersion: _v, ...content } = every('restaurant')
+    const { brand: _b, integrations: _i, schemaVersion: _v, style: _s, ...content } = every('restaurant')
     expect(validateContent(content)).toMatchObject({ ok: true })
     expect(SiteDocContent.safeParse({ ...content, brand: _b }).success).toBe(false)
   })

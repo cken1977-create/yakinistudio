@@ -1,5 +1,5 @@
 import type { Business, SectionOf } from '@yakini/site-schema'
-import { DAY_NAMES, DAY_ORDER, DraftHint, Txt, formatPhone, timeRange, type RenderContext } from '../context'
+import { DAY_NAMES, DAY_ORDER, DraftHint, HeadTxt, Txt, formatPhone, timeRange, type RenderContext } from '../context'
 import { Heading } from './heading'
 
 type Address = NonNullable<Business['address']>
@@ -21,7 +21,7 @@ export function HoursLocationSection({ ctx, s, first }: { ctx: RenderContext; s:
     <section className={`ys-s ys-hours ys-v-${s.variant}`} id={s.id} aria-labelledby={`${s.id}-h`}>
       <div className="ys-wrap ys-hours-grid">
         <div className="ys-hours-copy">
-          <Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading>
+          <Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading>
           {closedToday ? <p className="ys-today-flag" role="status">{ctx.today!.headline}</p> : null}
           {hours.length > 0 ? (
             <table className="ys-hours-table">

@@ -670,7 +670,7 @@
     "description": "Founding Test Tacos in El Paso. Street tacos and aguas frescas, made fresh on the truck.",
     "ogImageAssetId": "7a1e0000-0000-4000-8000-000000000104"
   },
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "brand": {
     "colors": {
       "primary": "#B4361B",
@@ -679,6 +679,13 @@
     },
     "colorsSource": "kit-default",
     "fontPair": "friendly"
+  },
+  "style": {
+    "preset": "signature",
+    "surface": "dark",
+    "fontPair": "signature",
+    "radius": "round",
+    "motion": "subtle"
   },
   "integrations": {
     "bookingEnabled": false,

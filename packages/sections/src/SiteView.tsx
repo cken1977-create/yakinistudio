@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react'
-import type { Section, SiteDoc } from '@yakini/site-schema'
+import { plainText, type Section, type SiteDoc } from '@yakini/site-schema'
 import type { RenderContext } from './context'
 import { FooterSection, HeaderSection } from './sections/chrome'
 import {
@@ -39,7 +39,8 @@ const NOT_MAIN = new Set(['header', 'footer', 'today'])
  * JavaScript off, and nothing loads from outside the site (no scripts, fonts, iframes or embeds).
  */
 export function SiteView({ ctx }: { ctx: RenderContext }) {
-  const { vars } = themeFor(ctx.doc.brand)
+  const style = ctx.doc.style
+  const { vars } = themeFor(ctx.doc.brand, style.fontPair)
   const sections = ctx.page.sections.filter((s) => !s.hidden)
   const firstMain = sections.findIndex((s) => !NOT_MAIN.has(s.type))
   const header = sections.filter((s) => s.type === 'header')
@@ -48,7 +49,7 @@ export function SiteView({ ctx }: { ctx: RenderContext }) {
   // In a draft each section is marked so the editor can select it with a click; live pages carry no ids.
   const mark = (s: Section) => (ctx.mode === 'draft' ? { 'data-ys-section': s.id } : {})
   return (
-    <div className="ys-site" data-font={ctx.doc.brand.fontPair} data-kit={ctx.doc.kitId} style={vars as CSSProperties}>
+    <div className="ys-site" data-preset={style.preset} data-surface={style.surface} data-font={style.fontPair} data-kit={ctx.doc.kitId} style={vars as CSSProperties}>
       <a className="ys-skip" href="#ys-main">Skip to content</a>
       {header.map((s) => <div key={s.id} className="ys-slot" {...mark(s)}>{renderSection(ctx, s, false)}</div>)}
       <main id="ys-main" tabIndex={-1}>
@@ -61,14 +62,35 @@ export function SiteView({ ctx }: { ctx: RenderContext }) {
 }
 
 /** LocalBusiness / Restaurant structured data from validated business info only (spec 11.4). */
+/** The home page's first hero headline as plain text (no accent marker), when it says more than the name. */
+export function homeSlogan(doc: SiteDoc): string | null {
+  const home = doc.pages.find((p) => p.slug === '')
+  const hero = home?.sections.find((s) => s.type === 'hero' && !s.hidden)
+  if (!hero || hero.type !== 'hero') return null
+  const line = plainText(hero.props.headline).trim()
+  return line && !line.includes('[[') && line.toLowerCase() !== doc.business.name.trim().toLowerCase() ? line : null
+}
+
+/**
+ * Page <title> and meta description for a client site, as plain text: an accent marker never
+ * reaches a title, a description or JSON-LD (plan 6.2).
+ */
+export function metaFor(doc: SiteDoc, page: { slug: string; title: string; seo?: { title?: string; description?: string } }): { title: string; description: string | null } {
+  const title = page.slug === '' ? (doc.seo.siteTitle || doc.business.name) : `${page.seo?.title || page.title} · ${doc.business.name}`
+  const description = page.seo?.description || doc.seo.description || doc.business.tagline || homeSlogan(doc) || null
+  return { title: plainText(title).slice(0, 120), description: description ? plainText(description) : null }
+}
+
 export function jsonLdFor(doc: SiteDoc): Record<string, unknown> {
   const b = doc.business
+  const slogan = homeSlogan(doc)
   const days: Record<string, string> = { mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday', sat: 'Saturday', sun: 'Sunday' }
   return {
     '@context': 'https://schema.org',
     '@type': doc.kitId === 'restaurant' ? 'Restaurant' : doc.kitId === 'food-truck' ? 'FoodEstablishment' : 'LocalBusiness',
     name: b.name,
     ...(b.tagline ? { description: b.tagline } : {}),
+    ...(slogan ? { slogan } : {}),
     ...(b.phone ? { telephone: b.phone } : {}),
     ...(b.email ? { email: b.email } : {}),
     ...(b.address ? {

@@ -591,7 +591,7 @@
     "description": "Greenline Tree and Lawn in Lubbock. Safe tree removal, trimming and weekly mowing, done right the first time.",
     "ogImageAssetId": "7a1e0000-0000-4000-8000-000000000601"
   },
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "brand": {
     "colors": {
       "primary": "#2F6B3F",
@@ -600,6 +600,13 @@
     },
     "colorsSource": "kit-default",
     "fontPair": "friendly"
+  },
+  "style": {
+    "preset": "classic",
+    "surface": "light",
+    "fontPair": "friendly",
+    "radius": "round",
+    "motion": "off"
   },
   "integrations": {
     "bookingEnabled": false,

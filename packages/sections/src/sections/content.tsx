@@ -1,5 +1,5 @@
-import type { SectionOf, SectionType } from '@yakini/site-schema'
-import { DAY_NAMES, DAY_ORDER, DraftHint, Img, Link, RichTextView, Txt, timeRange, type RenderContext } from '../context'
+import { plainText, type SectionOf, type SectionType } from '@yakini/site-schema'
+import { DAY_NAMES, DAY_ORDER, DraftHint, Img, Link, RichTextView, HeadTxt, Txt, timeRange, type RenderContext } from '../context'
 import { Heading } from './heading'
 import { Icon } from './icons'
 
@@ -21,7 +21,7 @@ export function HeroSection({ ctx, s, first }: P<'hero'>) {
       <div className="ys-wrap ys-hero-inner">
         <div className="ys-hero-copy">
           {p.eyebrow ? <p className="ys-eyebrow"><Txt>{p.eyebrow}</Txt></p> : null}
-          <Heading first={first} id={`${s.id}-h`} className="ys-display"><Txt>{p.headline}</Txt></Heading>
+          <Heading first={first} id={`${s.id}-h`} className="ys-display"><HeadTxt>{p.headline}</HeadTxt></Heading>
           {p.subhead ? <p className="ys-lead"><Txt>{p.subhead}</Txt></p> : null}
           {p.primaryCta || p.secondaryCta ? (
             <div className="ys-actions">
@@ -46,7 +46,7 @@ export function AboutSection({ ctx, s, first }: P<'about'>) {
     <section {...wrap(s, img ? 'has-img' : 'no-img')}>
       <div className="ys-wrap ys-about-grid">
         <div className="ys-prose">
-          <Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading>
+          <Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading>
           {s.props.body.length ? <RichTextView ctx={ctx} value={s.props.body} /> : <DraftHint ctx={ctx}>Tell your story here</DraftHint>}
         </div>
         {img ? <div className="ys-about-media"><Img ctx={ctx} image={img} className="ys-cover" sizes="(min-width: 900px) 45vw, 100vw" /></div> : null}
@@ -62,7 +62,7 @@ export function ServicesSection({ ctx, s, first }: P<'services'>) {
     <section {...wrap(s)}>
       <div className="ys-wrap">
         <div className="ys-section-head">
-          <Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading>
+          <Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading>
           {s.props.intro ? <p className="ys-lead"><Txt>{s.props.intro}</Txt></p> : null}
         </div>
         {items.length ? (
@@ -92,7 +92,7 @@ export function MenuSection({ ctx, s, first }: P<'menu'>) {
     <section {...wrap(s)}>
       <div className="ys-wrap">
         <div className="ys-section-head">
-          <Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading>
+          <Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading>
           {s.props.intro ? <p className="ys-lead"><Txt>{s.props.intro}</Txt></p> : null}
         </div>
         {cats.length ? cats.map((cat, ci) => (
@@ -138,7 +138,7 @@ export function ScheduleSection({ ctx, s, first }: P<'schedule'>) {
     <section {...wrap(s)}>
       <div className="ys-wrap">
         <div className="ys-section-head">
-          <Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading>
+          <Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading>
           {s.props.intro ? <p className="ys-lead"><Txt>{s.props.intro}</Txt></p> : null}
           {off ? <p className="ys-today-flag" role="status">{ctx.today!.headline}</p> : null}
         </div>
@@ -181,7 +181,7 @@ export function GallerySection({ ctx, s, first }: P<'gallery'>) {
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap">
-        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Photos</span>}
+        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Photos</span>}
         {images.length ? (
           <ul className="ys-gallery-grid">
             {images.map((im, i) => <li key={i}><Img ctx={ctx} image={im} className={s.variant === 'grid' ? 'ys-cover' : undefined} sizes="(min-width: 900px) 33vw, 50vw" /></li>)}
@@ -199,7 +199,7 @@ export function TestimonialsSection({ ctx, s, first }: P<'testimonials'>) {
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap">
-        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Reviews</span>}
+        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Reviews</span>}
         {shown.length ? (
           <ul className="ys-quotes">
             {shown.map((q, i) => (
@@ -223,7 +223,7 @@ export function FaqSection({ ctx, s, first }: P<'faq'>) {
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap ys-narrow">
-        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Questions</span>}
+        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Questions</span>}
         {items.length ? items.map((it, i) => (
           <details key={i} className="ys-faq-item">
             <summary><Txt>{it.q}</Txt></summary>
@@ -245,7 +245,7 @@ export function TeamSection({ ctx, s, first }: P<'team'>) {
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap">
-        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Team</span>}
+        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Team</span>}
         {members.length ? (
           <ul className="ys-team-grid">
             {members.map((m, i) => (
@@ -270,7 +270,7 @@ export function CtaBandSection({ ctx, s, first }: P<'cta_band'>) {
     <section {...wrap(s)}>
       <div className="ys-wrap ys-cta-inner">
         <div>
-          <Heading first={first} id={`${s.id}-h`}><Txt>{s.props.headline}</Txt></Heading>
+          <Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.headline}</HeadTxt></Heading>
           {s.props.body ? <p><Txt>{s.props.body}</Txt></p> : null}
         </div>
         <Link ctx={ctx} to={s.props.cta.target} className={`ys-btn ${s.variant === 'solid' ? 'ys-btn-on-primary' : 'ys-btn-primary'}`}>{s.props.cta.label}</Link>
@@ -290,21 +290,21 @@ export function TodaySection({ ctx, s }: P<'today'>) {
       if (ctx.mode !== 'draft') return null
       // In a draft the section stays findable (and clickable in the editor); the live site shows nothing.
       return (
-        <section className={`ys-s ys-today ys-v-${s.variant} is-empty`} id={s.id} aria-label={s.props.heading || 'Today'}>
+        <section className={`ys-s ys-today ys-v-${s.variant} is-empty`} id={s.id} aria-label={plainText(s.props.heading || 'Today')}>
           <div className="ys-wrap"><p className="ys-hint">Your Today update shows here when you post one. Until then this section is hidden on your site.</p></div>
         </section>
       )
     }
     return (
-      <section className={`ys-s ys-today ys-v-${s.variant} is-empty`} id={s.id} aria-label={s.props.heading || 'Today'}>
+      <section className={`ys-s ys-today ys-v-${s.variant} is-empty`} id={s.id} aria-label={plainText(s.props.heading || 'Today')}>
         <div className="ys-wrap"><p className="ys-today-text"><Txt>{s.props.emptyText}</Txt></p></div>
       </section>
     )
   }
   return (
-    <section className={`ys-s ys-today ys-v-${s.variant}`} id={s.id} aria-label={s.props.heading || 'Today'}>
+    <section className={`ys-s ys-today ys-v-${s.variant}`} id={s.id} aria-label={plainText(s.props.heading || 'Today')}>
       <div className="ys-wrap">
-        <p className="ys-today-label">{s.props.heading || 'Today'}</p>
+        <p className="ys-today-label">{plainText(s.props.heading || 'Today')}</p>
         <p className="ys-today-headline">{t.headline}</p>
         {t.lines.map((l, i) => <p key={i} className="ys-today-text">{l}</p>)}
       </div>

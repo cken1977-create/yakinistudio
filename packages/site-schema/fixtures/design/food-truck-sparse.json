@@ -487,7 +487,7 @@
     "siteTitle": "Founding Test Tacos",
     "description": "Founding Test Tacos: food truck. Menu, weekly schedule and catering."
   },
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "brand": {
     "colors": {
       "primary": "#B4361B",
@@ -496,6 +496,13 @@
     },
     "colorsSource": "kit-default",
     "fontPair": "friendly"
+  },
+  "style": {
+    "preset": "signature",
+    "surface": "dark",
+    "fontPair": "signature",
+    "radius": "round",
+    "motion": "subtle"
   },
   "integrations": {
     "bookingEnabled": false,

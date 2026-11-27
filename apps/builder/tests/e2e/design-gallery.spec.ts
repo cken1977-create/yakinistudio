@@ -17,7 +17,8 @@ test.skip(!!process.env.E2E_BASE_URL, 'The design gallery needs the local test-m
 
 const OUT = join(process.env.GALLERY_DIR || join(process.cwd(), 'design-gallery'), process.env.GALLERY_LABEL || 'current')
 const WIDTHS = [390, 1440] as const
-const set = process.env.GALLERY_V1 ? [...DESIGN_FIXTURES, ...V1_FIXTURES] : DESIGN_FIXTURES
+// GALLERY_SET=v1 renders only the v1 fixtures (the pixel-identity check); GALLERY_V1=1 adds them to the design set.
+const set = process.env.GALLERY_SET === 'v1' ? V1_FIXTURES : process.env.GALLERY_V1 ? [...DESIGN_FIXTURES, ...V1_FIXTURES] : DESIGN_FIXTURES
 
 for (const f of set) {
   test(`gallery: ${f.name}`, async ({ page }, info) => {

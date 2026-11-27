@@ -529,7 +529,7 @@
     "siteTitle": "Permian Well Services",
     "description": "Permian Well Services: oilfield services. Services, safety, careers and service requests."
   },
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "brand": {
     "colors": {
       "primary": "#1F3A5F",
@@ -538,6 +538,13 @@
     },
     "colorsSource": "kit-default",
     "fontPair": "modern"
+  },
+  "style": {
+    "preset": "classic",
+    "surface": "light",
+    "fontPair": "modern",
+    "radius": "round",
+    "motion": "off"
   },
   "integrations": {
     "bookingEnabled": false,

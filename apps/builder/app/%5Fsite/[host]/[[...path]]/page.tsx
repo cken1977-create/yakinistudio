@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
 import { connection } from 'next/server'
-import { SiteView } from '@yakini/sections'
+import { SiteView, metaFor } from '@yakini/sections'
 import '@yakini/sections/fonts.css'
 import '@yakini/sections/styles.css'
 import { liveContext, thanksPage } from '@/lib/site/live'
@@ -24,9 +24,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const v = await siteView(decodeURIComponent(host), path)
   if (v.kind !== 'page' && v.kind !== 'thanks') return { title: { absolute: v.kind === 'updating' ? 'This site is being updated' : 'This site is unavailable' }, description: null, robots: { index: false, follow: false }, icons: { icon: 'data:,' } }
   const { doc, page, canonicalHost, indexable } = v
-  const title = v.kind === 'thanks' ? `Thank you · ${doc.business.name}` : page.slug === '' ? (doc.seo.siteTitle || doc.business.name) : `${page.seo?.title || page.title} · ${doc.business.name}`
+  // Plain text only (the headline accent marker never reaches a title or description, plan 6.2).
   // Never fall back to the studio's own description on a client site.
-  const description = page.seo?.description || doc.seo.description || doc.business.tagline || null
+  const meta = metaFor(doc, page)
+  const title = v.kind === 'thanks' ? `Thank you · ${doc.business.name}` : meta.title
+  const description = meta.description
   const url = `https://${canonicalHost}${page.slug ? `/${page.slug}` : ''}`
   const og = doc.seo.ogImageAssetId ? [`https://${canonicalHost}/assets/${doc.seo.ogImageAssetId}`] : undefined
   return {

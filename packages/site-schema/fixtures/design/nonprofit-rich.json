@@ -611,7 +611,7 @@
     "description": "Westside Food Partners in Phoenix. Making sure no family on the west side goes hungry.",
     "ogImageAssetId": "7a1e0000-0000-4000-8000-000000000701"
   },
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "brand": {
     "colors": {
       "primary": "#6B2D5C",
@@ -620,6 +620,13 @@
     },
     "colorsSource": "kit-default",
     "fontPair": "friendly"
+  },
+  "style": {
+    "preset": "classic",
+    "surface": "light",
+    "fontPair": "friendly",
+    "radius": "round",
+    "motion": "off"
   },
   "integrations": {
     "bookingEnabled": false,

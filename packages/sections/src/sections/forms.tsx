@@ -1,5 +1,5 @@
 import type { FormField, SectionOf } from '@yakini/site-schema'
-import { Txt, formatPhone, type RenderContext } from '../context'
+import { HeadTxt, Txt, formatPhone, type RenderContext } from '../context'
 import { Heading } from './heading'
 
 /** The form a booking section posts (spec 11.3: request mode until portal booking, Phase 6). */
@@ -37,7 +37,7 @@ function FormSection({ ctx, s, first }: { ctx: RenderContext; s: SectionOf<'cont
     <section className={`ys-s ys-form ys-${s.type.replace('_', '-')} ys-v-${s.variant}`} id={s.id} aria-labelledby={`${s.id}-h`}>
       <div className={`ys-wrap ${wide ? 'ys-form-grid' : 'ys-narrow'}`}>
         <div className="ys-section-head">
-          <Heading first={first} id={`${s.id}-h`}><Txt>{p.heading}</Txt></Heading>
+          <Heading first={first} id={`${s.id}-h`}><HeadTxt>{p.heading}</HeadTxt></Heading>
           {p.intro ? <p className="ys-lead"><Txt>{p.intro}</Txt></p> : null}
           {wide && (b.phone || b.email) ? (
             <ul className="ys-contact-points">
@@ -106,7 +106,7 @@ export function BookingSection({ ctx, s, first }: { ctx: RenderContext; s: Secti
     <section className={`ys-s ys-form ys-booking ys-v-${s.variant}`} id={s.id} aria-labelledby={`${s.id}-h`}>
       <div className="ys-wrap ys-narrow">
         <div className="ys-section-head">
-          <Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading>
+          <Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading>
           {s.props.body ? <p className="ys-lead"><Txt>{s.props.body}</Txt></p> : null}
         </div>
         <FormBody ctx={ctx} idBase={s.id} action={action} fields={BOOKING_FIELDS}

@@ -581,7 +581,7 @@
     "siteTitle": "Mesa Ridge Realty",
     "description": "Mesa Ridge Realty: real estate. Listings, help buying and selling, and a free home value review."
   },
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "brand": {
     "colors": {
       "primary": "#22577A",
@@ -590,6 +590,13 @@
     },
     "colorsSource": "kit-default",
     "fontPair": "editorial"
+  },
+  "style": {
+    "preset": "classic",
+    "surface": "light",
+    "fontPair": "editorial",
+    "radius": "round",
+    "motion": "off"
   },
   "integrations": {
     "bookingEnabled": false,
