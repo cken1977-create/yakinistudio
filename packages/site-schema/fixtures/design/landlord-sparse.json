@@ -58,7 +58,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Rentals",
-            "headline": "Northgate Homes",
+            "headline": "Find your *next home* here.",
             "subhead": "Clean, quiet apartments near the university, managed by people who answer the phone.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000000401",
@@ -151,6 +151,16 @@
                 "pageId": "rentals"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
           }
         },
         {

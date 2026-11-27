@@ -22,7 +22,7 @@ export function Canvas({ doc, page, view, selected, changed, onSelect, onPage, i
   preview?: boolean
 }) {
   const ctx = useMemo<RenderContext>(() => ({
-    doc, page, mode: 'draft',
+    doc, page, mode: 'draft', editing: true, // the only place [[fill this in]] spots and empty sections show
     hrefForPage: (p) => `#page-${p.id}`,
     image: (id) => { const src = imageUrl(id); return src ? { src, width: 1600, height: 1000 } : null },
     formAction: () => null,

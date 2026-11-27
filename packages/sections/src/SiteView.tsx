@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { plainText, type Section, type SiteDoc } from '@yakini/site-schema'
-import type { RenderContext } from './context'
+import { liveSectionEmpty, withoutPlaceholders, type RenderContext } from './context'
 import { FooterSection, HeaderSection } from './sections/chrome'
 import {
   AboutSection, CtaBandSection, FaqSection, GallerySection, HeroSection, MenuSection, ScheduleSection, ServicesSection,
@@ -38,10 +38,14 @@ const NOT_MAIN = new Set(['header', 'footer', 'today'])
  * One page of a client site (spec 7.3). Pure server rendering: every section reads correctly with
  * JavaScript off, and nothing loads from outside the site (no scripts, fonts, iframes or embeds).
  */
-export function SiteView({ ctx }: { ctx: RenderContext }) {
+export function SiteView({ ctx: given }: { ctx: RenderContext }) {
+  // A visitor never sees a placeholder: outside the editor the doc is rendered without them (D1 step 5).
+  const ctx = given.editing ? given : visitorView(given)
   const style = ctx.doc.style
   const { vars } = themeFor(ctx.doc.brand, style.fontPair, style)
-  const sections = ctx.page.sections.filter((s) => !s.hidden)
+  // Outside the editor a section with nothing to show is left out entirely, so the page's one h1
+  // always lands on a section a visitor can see.
+  const sections = ctx.page.sections.filter((s) => !s.hidden && (given.editing || NOT_MAIN.has(s.type) || !liveSectionEmpty(ctx.doc, s, Boolean(ctx.today))))
   const firstMain = sections.findIndex((s) => !NOT_MAIN.has(s.type))
   const header = sections.filter((s) => s.type === 'header')
   const footer = sections.filter((s) => s.type === 'footer')
@@ -54,6 +58,10 @@ export function SiteView({ ctx }: { ctx: RenderContext }) {
       {header.map((s) => <div key={s.id} className="ys-slot" {...mark(s)}>{renderSection(ctx, s, false)}</div>)}
       <main id="ys-main" tabIndex={-1}>
         {body.map((s) => <div key={s.id} className="ys-slot" {...mark(s)}>{renderSection(ctx, s, sections.indexOf(s) === firstMain)}</div>)}
+        {/* Draft preview of a page with nothing filled in yet: its title, so the page is never blank. */}
+        {ctx.mode === 'draft' && !given.editing && firstMain < 0 ? (
+          <section className="ys-s ys-page-title" aria-labelledby="ys-page-title-h"><div className="ys-wrap"><h1 id="ys-page-title-h" className="ys-display">{ctx.page.title}</h1></div></section>
+        ) : null}
       </main>
       {footer.map((s) => <div key={s.id} className="ys-slot" {...mark(s)}>{renderSection(ctx, s, false)}</div>)}
       {ctx.mode !== 'draft' ? <JsonLd doc={ctx.doc} /> : null}
@@ -62,6 +70,21 @@ export function SiteView({ ctx }: { ctx: RenderContext }) {
 }
 
 /** LocalBusiness / Restaurant structured data from validated business info only (spec 11.4). */
+/** True when a page has at least one main section a visitor would see. */
+function pageHasContent(doc: SiteDoc, page: SiteDoc['pages'][number], hasToday: boolean): boolean {
+  return page.sections.some((s) => !s.hidden && !NOT_MAIN.has(s.type) && !liveSectionEmpty(doc, s, hasToday))
+}
+
+function visitorView(ctx: RenderContext): RenderContext {
+  let doc = withoutPlaceholders(ctx.doc)
+  // Draft preview only (published output is unchanged): pages with nothing to show yet leave the menu.
+  if (ctx.mode === 'draft') {
+    const keep = new Set(doc.pages.filter((p) => p.slug === '' || pageHasContent(doc, p, Boolean(ctx.today))).map((p) => p.id))
+    doc = { ...doc, nav: { ...doc.nav, items: doc.nav.items.filter((i) => keep.has(i.pageId)) } }
+  }
+  return { ...ctx, doc, page: doc.pages.find((p) => p.id === ctx.page.id) ?? ctx.page }
+}
+
 /** The home page's first hero headline as plain text (no accent marker), when it says more than the name. */
 export function homeSlogan(doc: SiteDoc): string | null {
   const home = doc.pages.find((p) => p.slug === '')

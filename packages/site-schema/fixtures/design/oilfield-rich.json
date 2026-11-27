@@ -105,7 +105,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Oilfield services in Midland",
-            "headline": "Permian Well Services",
+            "headline": "Crews and equipment *for the job at hand.*",
             "subhead": "Well servicing and roustabout crews across the Permian Basin, around the clock.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000001003",
@@ -203,6 +203,49 @@
                 "sectionId": "service-form"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "A closer look",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000001001",
+                "alt": "A pumpjack silhouetted against a sunset"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000001002",
+                "alt": "Two workers in hard hats working on a wellhead"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000001003",
+                "alt": "A tall drilling rig at a well site in the desert"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000001004",
+                "alt": "Service pickups and a tank truck on a dusty lease road"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000001005",
+                "alt": "A worker’s gloved hands turning a valve with a pipe wrench"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000001006",
+                "alt": "Storage tanks and separators at a well site at sunset"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              }
+            ]
           }
         },
         {

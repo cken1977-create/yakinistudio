@@ -10,20 +10,25 @@ import { SiteView, type RenderContext } from './index'
  * `__snapshots__/v1-classic` holds the HTML the renderer produced for every v1 fixture page, live
  * and draft, BEFORE schema v2 (captured from the D1 step 1 commit). Each v1 doc must load through
  * the migration as `classic` and render the same markup. The only allowed differences are the new
- * root attributes (data-preset, data-surface) and the JSON-LD `slogan`. Pixel identity is checked
+ * root attributes (data-preset, data-surface), the JSON-LD `slogan`, and an empty section wrapper
+ * that is no longer emitted for a section with nothing to show. Pixel identity is checked
  * separately by the design gallery (before/after screenshots).
  */
 const V1 = join(__dirname, '..', '..', 'site-schema', 'fixtures', 'v1')
 const SNAP = join(__dirname, '__snapshots__', 'v1-classic')
 
+// The pre-v2 draft render was what the editor shows (placeholders and hints); since D1 step 5 that
+// is the editing view, and the visitor preview hides them.
 const ctx = (doc: SiteDoc, page: Page, mode: 'live' | 'draft'): RenderContext => ({
-  doc, page, mode, hrefForPage: (p) => `/${p.slug}`,
+  doc, page, mode, editing: mode === 'draft', hrefForPage: (p) => `/${p.slug}`,
   image: (id) => ({ src: `/img/${id}`, width: 800, height: 600 }),
   formAction: (k) => `/f/${k}`, reportUrl: '/report', today: null,
 })
 const normalize = (h: string) => h
   .replace(/ data-preset="classic" data-surface="light"/, '')
   .replace(/,"slogan":"[^"]*"/, '')
+  // Since D1 step 5 a section with nothing to show gets no (empty) wrapper on a visitor's page.
+  .replace(/<div class="ys-slot"><\/div>/g, '')
   .trim()
 
 describe('v1 docs render exactly as before under the classic preset', () => {

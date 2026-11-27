@@ -101,7 +101,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Local business in Santa Fe",
-            "headline": "Brightside Cleaning Co.",
+            "headline": "Good work, *done right.*",
             "subhead": "Say what you do and who you do it for in one sentence.",
             "primaryCta": {
               "label": "Get in touch",
@@ -191,6 +191,49 @@
                 "sectionId": "contact-form"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "A closer look",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000303",
+                "alt": "An electrician in gloves testing an open breaker panel"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000304",
+                "alt": "A cleaner in gloves wiping down a kitchen island"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000305",
+                "alt": "A plumber tightening a fitting under a bathroom sink"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000306",
+                "alt": "A homeowner signing a tablet held by a service worker at the door"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              }
+            ]
           }
         },
         {

@@ -54,7 +54,7 @@
           "variant": "minimal",
           "hidden": false,
           "props": {
-            "headline": "Brightside Cleaning Co.",
+            "headline": "Good work, *done right.*",
             "subhead": "Home and office cleaning you can count on, every week.",
             "primaryCta": {
               "label": "Get in touch",
@@ -144,6 +144,16 @@
                 "sectionId": "contact-form"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
           }
         },
         {

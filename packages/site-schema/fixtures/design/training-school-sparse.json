@@ -59,7 +59,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Training",
-            "headline": "Southwest Trade Academy",
+            "headline": "Learn the trade. *Start the career.*",
             "subhead": "Hands-on welding and CDL training that gets you hired.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000000801",
@@ -157,6 +157,16 @@
                 "sectionId": "enroll-form"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
           }
         },
         {

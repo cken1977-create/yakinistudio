@@ -38,13 +38,75 @@ export type RenderContext = {
   /** The "Report this site" link (7.3), or null where it is not shown. */
   reportUrl: string | null
   today: TodayUpdate
+  /**
+   * True only in the editor canvas: [[fill this in]] spots show as ghost text and empty sections
+   * stay visible to click on. Everywhere else (the draft preview, share previews, the live site)
+   * a site never shows a placeholder or an empty section (D1 step 5).
+   */
+  editing?: boolean
 }
+
+/** Whether empty sections and their "add this" hints are shown: only while editing a draft. */
+export const showEmpty = (ctx: RenderContext) => ctx.mode === 'draft' && ctx.editing === true
 
 export const PLACEHOLDER_RE = /\[\[([^\]]{1,200})\]\]/g
 
 export function hasPlaceholder(text: string): boolean {
   PLACEHOLDER_RE.lastIndex = 0
   return PLACEHOLDER_RE.test(text)
+}
+
+/** Text with every [[placeholder]] removed (what a visitor sees). */
+export function stripPlaceholders(text: string): string {
+  if (!text.includes('[[')) return text // untouched: spacing between rich-text runs matters
+  return text.replace(PLACEHOLDER_RE, '').replace(/[ \t]{2,}/g, ' ').trim()
+}
+
+export function richTextHasWords(value: RichText): boolean {
+  return value.some((b) => b.children.some((c) => c.text.trim().length > 0))
+}
+
+/** Keys that make a list item worth showing: without them the item is dropped from a preview. */
+const ITEM_KEYS = ['title', 'name', 'q', 'quote'] as const
+
+function strip(value: unknown): unknown {
+  if (typeof value === 'string') return stripPlaceholders(value)
+  if (Array.isArray(value)) {
+    const out = value.map(strip)
+    // Rich text: drop empty runs, then empty blocks.
+    if (out.every((b) => b && typeof b === 'object' && 'type' in (b as object) && Array.isArray((b as { children?: unknown }).children))) {
+      return (out as { children: { text: string }[] }[])
+        .map((b) => ({ ...b, children: b.children.filter((c) => c.text.length > 0) }))
+        .filter((b) => b.children.length > 0)
+    }
+    // Lists (services, FAQ, reviews, team, menu items): drop items whose main text was only a placeholder.
+    return out.filter((item) => {
+      if (!item || typeof item !== 'object') return true
+      const o = item as Record<string, unknown>
+      if (ITEM_KEYS.some((k) => k in o && o[k] === '')) return false
+      if ('q' in o && Array.isArray(o.a) && o.a.length === 0) return false
+      return true
+    })
+  }
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value as Record<string, unknown>).map(([k, v]) => [k, strip(v)]))
+  }
+  return value
+}
+
+/**
+ * The site as a visitor sees it (D1 step 5): every [[placeholder]] removed from section content
+ * and business details, list items with nothing real in them dropped. Sections left with nothing
+ * to show are then hidden by each section's own empty rule. Render-only: never stored.
+ */
+export function withoutPlaceholders(doc: SiteDoc): SiteDoc {
+  return {
+    ...doc,
+    business: strip(doc.business) as SiteDoc['business'],
+    nav: strip(doc.nav) as SiteDoc['nav'],
+    footer: strip(doc.footer) as SiteDoc['footer'],
+    pages: doc.pages.map((p) => ({ ...p, sections: p.sections.map((sec) => ({ ...sec, props: strip(sec.props) }) as typeof sec) })),
+  }
 }
 
 /** Text with [[placeholders]] shown as highlighted prompts for the owner. Always escaped by React. */
@@ -107,6 +169,7 @@ export function liveSectionEmpty(doc: SiteDoc, s: Page['sections'][number], hasT
   if (s.hidden) return true
   const b = doc.business
   switch (s.type) {
+    case 'about': return !s.props.image && !richTextHasWords(s.props.body)
     case 'services': case 'testimonials': case 'faq': return s.props.items.length === 0
     case 'menu': return !s.props.categories.some((c) => c.items.length > 0)
     case 'schedule': return s.props.stops.length === 0
@@ -123,7 +186,8 @@ export function resolveLink(ctx: RenderContext, link: LinkTarget): ResolvedLink 
     if (!target) return null
     const section = target.page.sections.find((x) => x.id === target.sectionId)
     const pageHref = target.page.id === ctx.page.id ? '' : ctx.hrefForPage(target.page)
-    if (ctx.mode !== 'draft' && (!section || liveSectionEmpty(ctx.doc, section, Boolean(ctx.today)))) {
+    // Outside the editor an empty section isn't drawn, so a link to it goes to its page instead.
+    if (!showEmpty(ctx) && (!section || liveSectionEmpty(ctx.doc, section, Boolean(ctx.today)))) {
       return { href: pageHref || ctx.hrefForPage(target.page), external: false }
     }
     return { href: `${pageHref}#${target.sectionId}`, external: false }
@@ -246,8 +310,8 @@ export function formatPhone(e164: string): string {
   return m ? `(${m[1]}) ${m[2]}-${m[3]}` : e164
 }
 
-/** A dashed "add this" hint, shown only in the draft preview for an empty section. */
+/** An "add this" hint for an empty section, shown only while editing (never in a preview). */
 export function DraftHint({ ctx, children }: { ctx: RenderContext; children: string }) {
-  if (ctx.mode !== 'draft') return null
+  if (!showEmpty(ctx)) return null
   return <p className="ys-hint"><Txt>{`[[${children}]]`}</Txt></p>
 }

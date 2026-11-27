@@ -10,7 +10,7 @@
  */
 
 .ys-site[data-preset='signature'] {
-  --ys-font-label: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ys-font-label: 'JetBrains Mono Variable', 'JetBrains Mono Fallback', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --ys-radius: 22px;
   --ys-radius-sm: 14px;
   --ys-gap: 18px;

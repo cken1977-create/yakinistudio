@@ -104,7 +104,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Food truck in El Paso",
-            "headline": "Founding Test Tacos",
+            "headline": "Street food, *made right here.*",
             "subhead": "Fresh street tacos made to order.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000000104",
@@ -190,6 +190,49 @@
                 "pageId": "menu"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "A closer look",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000104",
+                "alt": "A colorful food truck at sunset with customers lined up at the window"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000105",
+                "alt": "Smoked brisket sandwiches and loaded fries on a food truck counter"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000106",
+                "alt": "Tacos being topped with onion and cilantro on a flat-top griddle"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000107",
+                "alt": "A box of glazed ribs and cornbread handed through a food truck window"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000108",
+                "alt": "Burgers, street corn, wings, fries and lemonade on a picnic table"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000303",
+                "alt": "An electrician in gloves testing an open breaker panel"
+              }
+            ]
           }
         },
         {

@@ -11,10 +11,13 @@ export const TRUCKING_SAMPLES: readonly SampleImage[] = [
   photoSample('trucking', 'pre-trip', '7a1e0000-0000-4000-8000-000000000905', 'A driver checking trailer tires with a flashlight at dawn', 'approved set #53'),
   photoSample('trucking', 'desert-highway', '7a1e0000-0000-4000-8000-000000000906', 'An aerial view of a semi truck on a desert highway', 'approved set #54'),
 ]
+/** Home headline (D1 step 5): the kit's default line, never just the name (the name is in the header). */
+export const HOME_HEADLINE = 'Your freight, *in good hands.*'
+
 const sample = (key: string) => TRUCKING_SAMPLES.find((s) => s.key === key)
 
 const PAGES = [
-  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'services', 'about', 'cta_band', 'testimonials', 'footer'] },
+  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'services', 'about', 'cta_band', 'gallery', 'testimonials', 'footer'] },
   { id: 'services', slug: 'services', title: 'Services', navLabel: 'Services', sectionTypes: ['header', 'services', 'gallery', 'faq', 'cta_band', 'footer'] },
   { id: 'drivers', slug: 'drivers', title: 'Drive with us', navLabel: 'Drivers', sectionTypes: ['header', 'hero', 'services', 'faq', 'contact_form', 'footer'] },
   { id: 'about', slug: 'about', title: 'About', navLabel: 'About', sectionTypes: ['header', 'about', 'team', 'footer'] },
@@ -39,7 +42,7 @@ function template(ctx: TemplateContext): SiteDocContent {
           header('bar', ctx, 'Get a quote'),
           section('hero', 'hero', 'fullbleed', {
             eyebrow: trimTo(`Trucking${inCity(ctx)}`, 60),
-            headline: trimTo(name, 90),
+            headline: HOME_HEADLINE,
             subhead: '[[Say what you haul and where, like "Flatbed and dry van freight across the Southwest, on time and communicated."]]',
             ...(hero ? { image: hero } : {}),
             primaryCta: { label: 'Get a quote', target: quote },
@@ -60,6 +63,7 @@ function template(ctx: TemplateContext): SiteDocContent {
             ...(imageOr(ctx, sample('pre-trip')) ? { image: imageOr(ctx, sample('pre-trip')) } : {}),
           }),
           section('cta_band', 'quote-cta', 'solid', { headline: 'Have a load to move?', body: 'Send the pickup, delivery and dates. We’ll get back to you with a quote.', cta: { label: 'Get a quote', target: quote } }),
+          section('gallery', 'home-photos', 'grid', { heading: 'A closer look', images: (ctx.gallery ?? []).slice(0, 6) }, (ctx.gallery ?? []).length < 3),
           section('testimonials', 'reviews', 'cards', { heading: 'What shippers say', items: [] }),
           footer(),
         ],

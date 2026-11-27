@@ -9,7 +9,7 @@ Plan: DESIGN_UPGRADE_PLAN.md, D1 "Signature look, the never-empty preview, and t
 | 2. Schema v2 + migrate-on-read, `*accent*` marker | Done |
 | 3. Tokens, Signature preset, fonts, surface contrast | Done |
 | 4. Cinematic hero | Done |
-| 5. Never-empty draft preview, "Finish your site" strip, kit headlines | Can start any time |
+| 5. Never-empty draft preview, "Finish your site" strip, kit headlines | Done |
 
 ## Step 1: quality harness
 
@@ -103,6 +103,69 @@ general (`service`) kit has 6 photos of its own, so its gallery repeats two to r
   surface tokens. The styles live in `variants/hero-cinematic.css`, which only styles
   cinematic-hero selectors, so the classic stylesheet stays byte for byte.
 - axe now also fails any page that scrolls sideways (this caught a first version that did).
+
+## Step 5: never-empty draft preview
+
+- `RenderContext.editing` is true only in the editor canvas. Everywhere else (the draft preview,
+  share previews, the live site, exports) `SiteView` renders `withoutPlaceholders(doc)`:
+  - every `[[…]]` is removed;
+  - list items whose title, name, question or quote was only a placeholder are dropped;
+  - rich text loses its empty runs and blocks;
+  - sections with nothing to show are left out, so the page's one h1 always lands on a visible section;
+  - links to a hidden section go to its page instead.
+- Draft preview only: pages with nothing filled in yet leave the menu, and opening one directly
+  shows the page title as its h1. Published output is unchanged.
+- In the editor, placeholders and "add this" hints are subtle ghost text with a dotted underline
+  (`editor.css`, more specific than the original rules, which stay byte for byte).
+- "Finish your site" strip in the draft preview banner (`lib/draft/finish.ts`): the top 3 missing
+  pieces, in order (menu, weekly stops, 3 photos, services, story, hours, reviews, last
+  details). Each links to `/sites/<id>/edit?page=…&section=…`, which opens the editor with that
+  section selected and in view.
+- Kit headlines: each kit's Home H1 is a default line with an accent phrase (food truck "Street
+  food, *made right here.*"). The name stays in the header. Copy improves in D6.
+- Each kit's Home also gets a photo strip ("A closer look", up to 6 of the owner's photos, hidden
+  under 3).
+- Fallback fonts sized to match (Cormorant roman and italic, Inter, JetBrains Mono; local system
+  fonts, no download): layout shift on the Signature kits went from 0.059 / 0.010 to **0**.
+
+## Final numbers (2026-11-27)
+
+- **Design lint baseline: empty** (was 30).
+- **axe:** 0 serious/critical on every design fixture page, published and preview, at 390 and
+  1280. One classic-only item remains (faint "No stop" schedule days, where classic must not change).
+- **v1 under classic:** the pixel diff of all 18 published pages (390 and 1440) before and after is
+  **0**. Draft previews of v1 fixtures change by design (step 5: no placeholders or hints).
+- **0 KB client JavaScript from the renderer** (no client components, hooks or handlers; pages
+  carry only JSON-LD).
+- **Lighthouse** (median of 3, phone, throttled):
+
+| Fixture | Look | Perf | A11y | BP | SEO | CLS |
+|---|---|---|---|---|---|---|
+| food-truck-rich | Signature | 0.84 | 1 | 1 | 1 | 0 |
+| restaurant-rich | Signature | 0.83 | 1 | 1 | 1 | 0 |
+| landlord-rich | classic | 0.92 | 1 | 1 | 1 | 0 |
+| real-estate-rich | classic | 0.94 | 1 | 1 | 1 | 0 |
+| tree-lawn-rich | classic | 0.92 | 1 | 1 | 1 | **0.106** |
+| nonprofit-rich | classic | 0.94 | 1 | 1 | 1 | 0.001 |
+| training-school-rich | classic | 0.99 | 1 | 1 | 1 | 0 |
+| trucking-rich | classic | 0.91 | 1 | 1 | 1 | 0 |
+| oilfield-rich | classic | 0.96 | 1 | 1 | 1 | 0 |
+| service-rich | classic | 1.00 | 1 | 1 | 1 | 0 |
+
+### Open: budgets not yet met
+- **Performance >= 0.95:** met by 3 of 10. The simulated slow-4G LCP is 3 to 4.7 s. The real
+  (unthrottled) LCP breakdown shows the hero photo painted in about 160 ms; the simulation is held
+  back by bandwidth:
+  - the Next.js runtime that every page ships (about 193 KB of scripts, not renderer JS);
+  - on Signature, four high-priority font files (164 KB) ahead of the 62 KB hero photo.
+  - Options, needing a decision:
+    - serve client sites without the framework runtime (static HTML for published pages);
+    - drop JetBrains Mono for system monospace (saves 40 KB);
+    - load only the Latin italic when a headline has an accent;
+    - lower the font priority below the hero.
+- **CLS < 0.02:** met by everything except tree-lawn (classic, 0.106): Nunito swapping in shifts
+  the header and hero. Classic must stay byte for byte, so this clears when the kit moves to a v2
+  preset in D3 (or with a fallback face if you allow that change to classic's font stack).
 
 ## Baseline found on 2026-11-27 (the "before")
 

@@ -104,7 +104,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Serving Phoenix",
-            "headline": "Westside Food Partners",
+            "headline": "Stronger together, *starting here.*",
             "subhead": "Making sure no family in our county goes hungry.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000000703",
@@ -196,6 +196,49 @@
                 "pageId": "involved"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "A closer look",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000701",
+                "alt": "Volunteers packing fresh produce and canned food into boxes"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000702",
+                "alt": "Community members sitting in a circle during a group meeting"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000703",
+                "alt": "Volunteers in matching shirts planting a neighborhood garden"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000303",
+                "alt": "An electrician in gloves testing an open breaker panel"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000304",
+                "alt": "A cleaner in gloves wiping down a kitchen island"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000305",
+                "alt": "A plumber tightening a fitting under a bathroom sink"
+              }
+            ]
           }
         },
         {

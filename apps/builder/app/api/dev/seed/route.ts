@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto'
 import { brandFor, buildKitDraft, kitDefinition } from '@yakini/kits'
+import { designFixtures } from '@yakini/kits/design-fixtures'
 import { loadSiteDoc } from '@yakini/site-schema'
 import foodTruckEvery from '@yakini/site-schema/fixtures/v1/food-truck-every-section.json'
 import restaurantEvery from '@yakini/site-schema/fixtures/v1/restaurant-every-section.json'
@@ -42,7 +43,9 @@ const FIXTURES: Record<string, () => unknown> = {
 export async function POST(request: Request): Promise<Response> {
   if (!isTestMode()) return new Response('Not found', { status: 404 })
   const name = new URL(request.url).searchParams.get('fixture') ?? ''
-  const make = FIXTURES[name]
+  // Design-quality fixtures (D1): `design:<kit>-rich` / `design:<kit>-sparse`.
+  const design = name.startsWith('design:') ? designFixtures()[name.slice(7)] : undefined
+  const make = design ? () => design : FIXTURES[name]
   if (!make) return new Response('Unknown fixture', { status: 400 })
   const rt = getRuntime()
   const doc = loadSiteDoc(structuredClone(make())).doc

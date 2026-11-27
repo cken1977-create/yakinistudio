@@ -16,10 +16,13 @@ export const SERVICE_SAMPLES: readonly SampleImage[] = [
   photoSample('service', 'pipe-fitting', '7a1e0000-0000-4000-8000-000000000305', 'A plumber tightening a fitting under a bathroom sink', 'approved set #47'),
   photoSample('service', 'tablet-signoff', '7a1e0000-0000-4000-8000-000000000306', 'A homeowner signing a tablet held by a service worker at the door', 'approved set #48'),
 ]
+/** Home headline (D1 step 5): the kit's default line, never just the name (the name is in the header). */
+export const HOME_HEADLINE = 'Good work, *done right.*'
+
 const sample = (key: string | undefined) => (key ? SERVICE_SAMPLES.find((s) => s.key === key) : undefined)
 
 const PAGES = [
-  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'about', 'services', 'cta_band', 'testimonials', 'footer'] },
+  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'about', 'services', 'cta_band', 'gallery', 'testimonials', 'footer'] },
   { id: 'services', slug: 'services', title: 'Services', navLabel: 'Services', sectionTypes: ['header', 'services', 'faq', 'cta_band', 'footer'] },
   { id: 'about', slug: 'about', title: 'About', navLabel: 'About', sectionTypes: ['header', 'about', 'team', 'gallery', 'footer'] },
   { id: 'contact', slug: 'contact', title: 'Contact', navLabel: 'Contact', sectionTypes: ['header', 'contact_form', 'hours_location', 'footer'] },
@@ -56,7 +59,7 @@ function template(ctx: TemplateContext): SiteDocContent {
           header('bar', ctx, 'Get in touch'),
           section('hero', 'hero', hero ? 'split' : 'minimal', {
             ...(kind || ctx.city ? { eyebrow: trimTo(`${kind ?? 'Local business'}${inCity(ctx)}`, 60) } : {}),
-            headline: trimTo(name, 90),
+            headline: HOME_HEADLINE,
             subhead: '[[Say what you do and who you do it for in one sentence.]]',
             ...(hero ? { image: hero } : {}),
             primaryCta: { label: 'Get in touch', target: contact },
@@ -73,6 +76,7 @@ function template(ctx: TemplateContext): SiteDocContent {
             body: 'Tell us what you need and we will get back to you.',
             cta: { label: 'Get in touch', target: contact },
           }),
+          section('gallery', 'home-photos', 'grid', { heading: 'A closer look', images: (ctx.gallery ?? []).slice(0, 6) }, (ctx.gallery ?? []).length < 3),
           section('testimonials', 'reviews', 'cards', { heading: 'What clients say', items: [] }),
           footer(),
         ],

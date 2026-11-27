@@ -105,7 +105,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Tree and lawn care in Lubbock",
-            "headline": "Greenline Tree and Lawn",
+            "headline": "Healthy trees, *tidy yards.*",
             "subhead": "Safe tree removal, trimming and weekly mowing, done right the first time.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000000601",
@@ -203,6 +203,49 @@
                 "sectionId": "estimate-form"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "A closer look",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000601",
+                "alt": "An arborist in a helmet and harness cutting a large branch"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000602",
+                "alt": "A freshly mowed striped lawn in front of a stone house"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000603",
+                "alt": "A bucket truck and wood chipper at a home while a worker feeds branches"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000604",
+                "alt": "A landscaper edging the lawn along a stone garden path"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000605",
+                "alt": "A crane lifting a cut tree section over a house as the crew watches"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000606",
+                "alt": "A landscaped backyard with fresh mulch, trimmed shrubs and a patio"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              }
+            ]
           }
         },
         {

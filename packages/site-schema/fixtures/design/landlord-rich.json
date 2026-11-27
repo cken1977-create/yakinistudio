@@ -104,7 +104,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Rentals in Tucson",
-            "headline": "Northgate Homes",
+            "headline": "Find your *next home* here.",
             "subhead": "Clean, quiet apartments near downtown, managed by people who answer the phone.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000000401",
@@ -197,6 +197,49 @@
                 "pageId": "rentals"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "A closer look",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000401",
+                "alt": "A well-kept three-story apartment building with balconies and a green lawn"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000402",
+                "alt": "A bright, empty apartment living room with wood floors and a city view"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000403",
+                "alt": "A set of house keys handed to a new tenant at the front door"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000404",
+                "alt": "A maintenance worker fixing the pipes under a kitchen sink"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000405",
+                "alt": "A row of tidy two-story homes with front porches on a tree-lined street"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000303",
+                "alt": "An electrician in gloves testing an open breaker panel"
+              }
+            ]
           }
         },
         {

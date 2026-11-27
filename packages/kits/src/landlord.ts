@@ -11,10 +11,13 @@ export const LANDLORD_SAMPLES: readonly SampleImage[] = [
   photoSample('landlord', 'under-sink-repair', '7a1e0000-0000-4000-8000-000000000404', 'A maintenance worker fixing the pipes under a kitchen sink', 'approved set #16'),
   photoSample('landlord', 'duplex-row', '7a1e0000-0000-4000-8000-000000000405', 'A row of tidy two-story homes with front porches on a tree-lined street', 'approved set #17'),
 ]
+/** Home headline (D1 step 5): the kit's default line, never just the name (the name is in the header). */
+export const HOME_HEADLINE = 'Find your *next home* here.'
+
 const sample = (key: string) => LANDLORD_SAMPLES.find((s) => s.key === key)
 
 const PAGES = [
-  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'about', 'services', 'cta_band', 'testimonials', 'footer'] },
+  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'about', 'services', 'cta_band', 'gallery', 'testimonials', 'footer'] },
   { id: 'rentals', slug: 'rentals', title: 'Rentals', navLabel: 'Rentals', sectionTypes: ['header', 'services', 'gallery', 'faq', 'contact_form', 'footer'] },
   { id: 'residents', slug: 'residents', title: 'Residents', navLabel: 'Residents', sectionTypes: ['header', 'hero', 'services', 'contact_form', 'faq', 'footer'] },
   { id: 'about', slug: 'about', title: 'About', navLabel: 'About', sectionTypes: ['header', 'about', 'team', 'footer'] },
@@ -38,7 +41,7 @@ function template(ctx: TemplateContext): SiteDocContent {
           header('bar', ctx, 'See rentals'),
           section('hero', 'hero', 'split', {
             eyebrow: trimTo(`Rentals${inCity(ctx)}`, 60),
-            headline: trimTo(name, 90),
+            headline: HOME_HEADLINE,
             subhead: '[[Say what you rent and where, like "Clean, quiet apartments near downtown, managed by people who answer the phone."]]',
             ...(hero ? { image: hero } : {}),
             primaryCta: { label: 'See rentals', target: { kind: 'page', pageId: 'rentals' } },
@@ -58,6 +61,7 @@ function template(ctx: TemplateContext): SiteDocContent {
             ],
           }),
           section('cta_band', 'rentals-cta', 'solid', { headline: 'Looking for a place?', body: 'See what’s open now and ask us about a showing.', cta: { label: 'See rentals', target: { kind: 'page', pageId: 'rentals' } } }),
+          section('gallery', 'home-photos', 'grid', { heading: 'A closer look', images: (ctx.gallery ?? []).slice(0, 6) }, (ctx.gallery ?? []).length < 3),
           section('testimonials', 'reviews', 'cards', { heading: 'What residents say', items: [] }),
           footer(),
         ],

@@ -105,7 +105,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Trucking in Amarillo",
-            "headline": "Red Mesa Freight",
+            "headline": "Your freight, *in good hands.*",
             "subhead": "Flatbed and dry van freight across the Southwest, on time and communicated.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000000901",
@@ -203,6 +203,49 @@
                 "sectionId": "quote-form"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "A closer look",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000901",
+                "alt": "A white semi truck on the highway at sunset"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000902",
+                "alt": "A row of semi trucks parked at a terminal at dusk"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000903",
+                "alt": "A driver’s hands on the wheel on a mountain highway"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000904",
+                "alt": "A flatbed loaded with strapped lumber and steel pipe at a dock"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000905",
+                "alt": "A driver checking trailer tires with a flashlight at dawn"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000906",
+                "alt": "An aerial view of a semi truck on a desert highway"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              }
+            ]
           }
         },
         {

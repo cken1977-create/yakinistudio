@@ -10,13 +10,15 @@
  */
 const KITS = ['food-truck', 'restaurant', 'landlord', 'real-estate', 'tree-lawn', 'nonprofit', 'training-school', 'trucking', 'oilfield', 'service']
 const PORT = Number(process.env.LHCI_PORT || 3200)
+// LHCI_ONLY=food-truck,restaurant limits the run to some kits.
+const ONLY = process.env.LHCI_ONLY ? process.env.LHCI_ONLY.split(',') : null
 
 module.exports = {
   ci: {
     collect: {
       startServerCommand: `BUILDER_TEST_MODE=1 OPERATOR_EMAIL=ops@yakini.example npx next start -p ${PORT}`,
       startServerReadyPattern: 'Ready',
-      url: KITS.map((k) => `http://localhost:${PORT}/dev-site/${k}-rich`),
+      url: KITS.filter((k) => !ONLY || ONLY.includes(k)).map((k) => `http://localhost:${PORT}/dev-site/${k}-rich`),
       numberOfRuns: Number(process.env.LHCI_RUNS || 3),
       settings: { chromeFlags: '--no-sandbox --headless=new', skipAudits: ['is-crawlable'], ...(process.env.CHROME_PATH ? { chromePath: process.env.CHROME_PATH } : {}) },
     },

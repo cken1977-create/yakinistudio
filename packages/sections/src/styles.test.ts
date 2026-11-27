@@ -15,7 +15,7 @@ const read = (f: string) => readFileSync(join(dir, f), 'utf8')
 
 describe('stylesheet parts', () => {
   it('classic = the original stylesheet, byte for byte', () => {
-    const classic = imports.filter((f) => f !== 'tokens.css' && !f.startsWith('presets/') && !f.startsWith('variants/'))
+    const classic = imports.filter((f) => f !== 'tokens.css' && f !== 'editor.css' && !f.startsWith('presets/') && !f.startsWith('variants/'))
     expect(classic.join('') ? classic.map(read).join('') : '').toBe(read('__snapshots__/styles-v1.css'))
   })
   it('tokens.css only sets custom properties on .ys-site', () => {
@@ -33,6 +33,11 @@ describe('stylesheet parts', () => {
     const css = read('variants/hero-cinematic.css').replace(/\/\*[\s\S]*?\*\//g, '')
     const selectors = [...css.matchAll(/(^|[}\n])\s*([^@{}\s][^{}]*?)\s*\{/g)].map((m) => m[2].trim())
     for (const sel of selectors) for (const part of sel.split(/,(?![^(]*\))/)) expect(part.trim(), sel).toMatch(/ys-v-cinematic|ys-cine-/)
+  })
+  it('editor.css only restyles the editor-only placeholder marks and hints', () => {
+    const css = read('editor.css').replace(/\/\*[\s\S]*?\*\//g, '')
+    const selectors = [...css.matchAll(/(^|[}\n])\s*([^@{}\s][^{}]*?)\s*\{/g)].map((m) => m[2].trim())
+    expect(selectors).toEqual(['.ys-site mark.ys-ph', '.ys-site p.ys-hint'])
   })
   it('no third-party URLs anywhere (R2)', () => {
     for (const f of ['styles.css', 'fonts.css', ...imports]) expect(read(f), f).not.toMatch(/url\(\s*['"]?https?:/i)

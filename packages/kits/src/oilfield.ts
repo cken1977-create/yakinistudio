@@ -11,10 +11,13 @@ export const OILFIELD_SAMPLES: readonly SampleImage[] = [
   photoSample('oilfield', 'valve-wrench', '7a1e0000-0000-4000-8000-000000001005', 'A worker’s gloved hands turning a valve with a pipe wrench', 'approved set #59'),
   photoSample('oilfield', 'tank-battery', '7a1e0000-0000-4000-8000-000000001006', 'Storage tanks and separators at a well site at sunset', 'approved set #60'),
 ]
+/** Home headline (D1 step 5): the kit's default line, never just the name (the name is in the header). */
+export const HOME_HEADLINE = 'Crews and equipment *for the job at hand.*'
+
 const sample = (key: string) => OILFIELD_SAMPLES.find((s) => s.key === key)
 
 const PAGES = [
-  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'services', 'about', 'cta_band', 'testimonials', 'footer'] },
+  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'services', 'about', 'cta_band', 'gallery', 'testimonials', 'footer'] },
   { id: 'services', slug: 'services', title: 'Services', navLabel: 'Services', sectionTypes: ['header', 'services', 'gallery', 'cta_band', 'footer'] },
   { id: 'safety', slug: 'safety', title: 'Safety', navLabel: 'Safety', sectionTypes: ['header', 'about', 'services', 'faq', 'footer'] },
   { id: 'careers', slug: 'careers', title: 'Careers', navLabel: 'Careers', sectionTypes: ['header', 'hero', 'services', 'contact_form', 'footer'] },
@@ -38,7 +41,7 @@ function template(ctx: TemplateContext): SiteDocContent {
           header('bar', ctx, 'Request service'),
           section('hero', 'hero', 'fullbleed', {
             eyebrow: trimTo(`Oilfield services${inCity(ctx)}`, 60),
-            headline: trimTo(name, 90),
+            headline: HOME_HEADLINE,
             subhead: '[[Say what you do and where, like "Well servicing and roustabout crews across the Permian Basin, around the clock."]]',
             ...(hero ? { image: hero } : {}),
             primaryCta: { label: 'Request service', target: request },
@@ -59,6 +62,7 @@ function template(ctx: TemplateContext): SiteDocContent {
             ...(imageOr(ctx, sample('wellhead-crew')) ? { image: imageOr(ctx, sample('wellhead-crew')) } : {}),
           }),
           section('cta_band', 'service-cta', 'solid', { headline: 'Need a crew?', body: 'Tell us the location and the job. We’ll call you back.', cta: { label: 'Request service', target: request } }),
+          section('gallery', 'home-photos', 'grid', { heading: 'A closer look', images: (ctx.gallery ?? []).slice(0, 6) }, (ctx.gallery ?? []).length < 3),
           section('testimonials', 'reviews', 'cards', { heading: 'What operators say', items: [] }),
           footer(),
         ],

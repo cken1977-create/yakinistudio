@@ -43,7 +43,7 @@ export const FONT_STACKS: Record<FontPair, FontStack> = {
   modern: { display: "'Inter Variable', ui-sans-serif, system-ui, sans-serif", body: "'Inter Variable', ui-sans-serif, system-ui, sans-serif", displayWeight: 750, displayTracking: '-0.025em' },
   friendly: { display: "'Nunito Variable', ui-rounded, ui-sans-serif, system-ui, sans-serif", body: "'Nunito Variable', ui-rounded, ui-sans-serif, system-ui, sans-serif", displayWeight: 850, displayTracking: '-0.01em' },
   classic: { display: "'Playfair Display Variable', Georgia, 'Times New Roman', serif", body: "'Lora Variable', Georgia, 'Times New Roman', serif", displayWeight: 650, displayTracking: '0' },
-  signature: { display: "'Cormorant Garamond Variable', 'Cormorant Garamond', Georgia, 'Times New Roman', serif", body: "'Inter Variable', ui-sans-serif, system-ui, sans-serif", displayWeight: 500, displayTracking: '-0.02em' },
+  signature: { display: "'Cormorant Garamond Variable', 'Cormorant Fallback', Georgia, 'Times New Roman', serif", body: "'Inter Variable', 'Inter Fallback', ui-sans-serif, system-ui, sans-serif", displayWeight: 500, displayTracking: '-0.02em' },
 }
 
 export type ThemeReport = {

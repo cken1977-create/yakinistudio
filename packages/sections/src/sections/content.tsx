@@ -1,5 +1,5 @@
 import { plainText, type SectionOf, type SectionType } from '@yakini/site-schema'
-import { DAY_NAMES, DAY_ORDER, DraftHint, Img, Link, RichTextView, HeadTxt, Txt, timeRange, type RenderContext } from '../context'
+import { DAY_NAMES, DAY_ORDER, DraftHint, Img, Link, RichTextView, HeadTxt, Txt, timeRange, type RenderContext, showEmpty } from '../context'
 import { Heading } from './heading'
 import { Icon } from './icons'
 
@@ -115,7 +115,7 @@ export function AboutSection({ ctx, s, first }: P<'about'>) {
 
 export function ServicesSection({ ctx, s, first }: P<'services'>) {
   const items = s.props.items
-  if (!items.length && ctx.mode !== 'draft') return null
+  if (!items.length && !showEmpty(ctx)) return null
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap">
@@ -144,8 +144,8 @@ export function ServicesSection({ ctx, s, first }: P<'services'>) {
 const TAG_LABELS = { veg: 'Vegetarian', spicy: 'Spicy', gf: 'Gluten-free' } as const
 
 export function MenuSection({ ctx, s, first }: P<'menu'>) {
-  const cats = s.props.categories.filter((c) => c.items.length > 0 || ctx.mode === 'draft')
-  if (!cats.length && ctx.mode !== 'draft') return null
+  const cats = s.props.categories.filter((c) => c.items.length > 0 || showEmpty(ctx))
+  if (!cats.length && !showEmpty(ctx)) return null
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap">
@@ -190,7 +190,7 @@ export function MenuSection({ ctx, s, first }: P<'menu'>) {
 
 export function ScheduleSection({ ctx, s, first }: P<'schedule'>) {
   const stops = [...s.props.stops].sort((a, b) => DAY_ORDER.indexOf(a.day) - DAY_ORDER.indexOf(b.day) || a.start.localeCompare(b.start))
-  if (!stops.length && ctx.mode !== 'draft') return null
+  if (!stops.length && !showEmpty(ctx)) return null
   const off = ctx.today && ctx.today.kind === 'off'
   return (
     <section {...wrap(s)}>
@@ -235,7 +235,7 @@ export function ScheduleSection({ ctx, s, first }: P<'schedule'>) {
 
 export function GallerySection({ ctx, s, first }: P<'gallery'>) {
   const images = s.props.images.filter((im) => ctx.image(im.assetId))
-  if (!images.length && ctx.mode !== 'draft') return null
+  if (!images.length && !showEmpty(ctx)) return null
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap">
@@ -252,7 +252,7 @@ export function GallerySection({ ctx, s, first }: P<'gallery'>) {
 
 export function TestimonialsSection({ ctx, s, first }: P<'testimonials'>) {
   const items = s.props.items
-  if (!items.length && ctx.mode !== 'draft') return null
+  if (!items.length && !showEmpty(ctx)) return null
   const shown = s.variant === 'single' ? items.slice(0, 1) : items
   return (
     <section {...wrap(s)}>
@@ -277,7 +277,7 @@ export function TestimonialsSection({ ctx, s, first }: P<'testimonials'>) {
 
 export function FaqSection({ ctx, s, first }: P<'faq'>) {
   const items = s.props.items
-  if (!items.length && ctx.mode !== 'draft') return null
+  if (!items.length && !showEmpty(ctx)) return null
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap ys-narrow">
@@ -299,7 +299,7 @@ function initials(name: string): string {
 
 export function TeamSection({ ctx, s, first }: P<'team'>) {
   const members = s.props.members
-  if (!members.length && ctx.mode !== 'draft') return null
+  if (!members.length && !showEmpty(ctx)) return null
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap">
@@ -345,8 +345,8 @@ export function TodaySection({ ctx, s }: P<'today'>) {
   const t = ctx.today
   if (!t) {
     if (s.props.emptyBehavior === 'hide' || !s.props.emptyText) {
-      if (ctx.mode !== 'draft') return null
-      // In a draft the section stays findable (and clickable in the editor); the live site shows nothing.
+      if (!showEmpty(ctx)) return null
+      // While editing the section stays findable (and clickable in the editor); the live site shows nothing.
       return (
         <section className={`ys-s ys-today ys-v-${s.variant} is-empty`} id={s.id} aria-label={plainText(s.props.heading || 'Today')}>
           <div className="ys-wrap"><p className="ys-hint">Your Today update shows here when you post one. Until then this section is hidden on your site.</p></div>

@@ -59,7 +59,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Real estate",
-            "headline": "Mesa Ridge Realty",
+            "headline": "Your next move, *made simple.*",
             "subhead": "Helping families buy and sell homes on the west side.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000000501",
@@ -153,6 +153,16 @@
                 "sectionId": "home-value"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
           }
         },
         {

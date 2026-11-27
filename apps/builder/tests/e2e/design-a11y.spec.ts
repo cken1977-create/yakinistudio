@@ -11,14 +11,13 @@ test.skip(!!process.env.E2E_BASE_URL, 'Needs the local test-mode server')
 
 /**
  * Baseline found by the first run (2026-11-27), each owned by a later D1 step that must remove it:
- * - draft preview placeholder hints (.ys-hint) are too faint: step 5 stops showing them on the site;
+ * - (cleared in step 5: draft preview placeholder hints, which no longer appear outside the editor)
  * - schedule days with no stop (.is-off .ys-muted) are too faint in the CLASSIC look only. Classic
  *   must stay byte for byte (plan 7.4), so it clears when those kits move to a v2 preset (D3).
  *   Signature fixes it (checked: no Signature page may hit it, see below).
  * Anything else serious or critical fails now.
  */
 const BASELINE: { rule: string; target: RegExp; owner: string }[] = [
-  { rule: 'color-contrast', target: /\.ys-hint\b/, owner: 'D1 step 5' },
   { rule: 'color-contrast', target: /\.is-off\b.*\.ys-muted\b/, owner: 'D3 (classic kits move to a v2 preset)' },
 ]
 const inBaseline = (rule: string, target: string, preset: string) =>

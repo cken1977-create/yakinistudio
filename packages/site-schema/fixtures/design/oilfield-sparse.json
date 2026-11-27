@@ -59,7 +59,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Oilfield services",
-            "headline": "Permian Well Services",
+            "headline": "Crews and equipment *for the job at hand.*",
             "subhead": "Well servicing and roustabout crews across the Permian Basin, around the clock.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000001003",
@@ -157,6 +157,16 @@
                 "sectionId": "service-form"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
           }
         },
         {

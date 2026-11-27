@@ -105,7 +105,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Real estate in Albuquerque",
-            "headline": "Mesa Ridge Realty",
+            "headline": "Your next move, *made simple.*",
             "subhead": "Helping families buy and sell homes on the west side.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000000501",
@@ -199,6 +199,49 @@
                 "sectionId": "home-value"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "A closer look",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000501",
+                "alt": "A two-story family home with a green lawn at sunset"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000502",
+                "alt": "A bright open living room and kitchen with a lake view"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000503",
+                "alt": "An agent showing a couple through a sunny living room"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000504",
+                "alt": "An aerial view of a leafy suburban neighborhood near a lake"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000505",
+                "alt": "A staged primary bedroom with a large window and mountain view"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000506",
+                "alt": "A modern backyard with a lit pool and patio at dusk"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              }
+            ]
           }
         },
         {

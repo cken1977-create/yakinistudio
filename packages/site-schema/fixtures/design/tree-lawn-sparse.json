@@ -59,7 +59,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Tree and lawn care",
-            "headline": "Greenline Tree and Lawn",
+            "headline": "Healthy trees, *tidy yards.*",
             "subhead": "Safe tree removal, trimming and weekly mowing, done right the first time.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000000601",
@@ -157,6 +157,16 @@
                 "sectionId": "estimate-form"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
           }
         },
         {

@@ -59,7 +59,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Restaurant",
-            "headline": "Casa Lupita Kitchen",
+            "headline": "Pull up a chair, *we’ll handle the rest.*",
             "subhead": "Family recipes from northern New Mexico, cooked from scratch.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000000204",
@@ -135,6 +135,16 @@
           "hidden": false,
           "props": {
             "heading": "Visit us"
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
           }
         },
         {

@@ -105,7 +105,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Training in Odessa",
-            "headline": "Southwest Trade Academy",
+            "headline": "Learn the trade. *Start the career.*",
             "subhead": "Hands-on welding training that gets you job-ready in 12 weeks.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000000801",
@@ -203,6 +203,49 @@
                 "sectionId": "enroll-form"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "A closer look",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000801",
+                "alt": "Adult students at desks watching an instructor at the whiteboard"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000802",
+                "alt": "A student welding steel at a shop table while an instructor watches"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000803",
+                "alt": "A training truck driving through a cone course in a practice yard"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000804",
+                "alt": "A student taking notes from a textbook next to a laptop"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000805",
+                "alt": "Graduates in caps and gowns tossing their caps in the air"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000806",
+                "alt": "A student taking blood pressure on a training manikin in a lab"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              }
+            ]
           }
         },
         {

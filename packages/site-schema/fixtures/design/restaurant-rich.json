@@ -105,7 +105,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Restaurant in Las Cruces",
-            "headline": "Casa Lupita Kitchen",
+            "headline": "Pull up a chair, *we’ll handle the rest.*",
             "subhead": "Wood-fired Italian, made from scratch.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000000204",
@@ -181,6 +181,49 @@
           "hidden": false,
           "props": {
             "heading": "Visit us"
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "A closer look",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000204",
+                "alt": "A corner restaurant with a lit patio and potted plants at dusk"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000205",
+                "alt": "A warm, candlelit dining room with wine glasses on a wooden table"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000206",
+                "alt": "A chef finishing a plate of seared fish with fresh herbs"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000207",
+                "alt": "Fried chicken, mac and cheese, collard greens and cornbread served family style"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000208",
+                "alt": "A bartender pouring a cocktail into a coupe glass at a candlelit bar"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000303",
+                "alt": "An electrician in gloves testing an open breaker panel"
+              }
+            ]
           }
         },
         {

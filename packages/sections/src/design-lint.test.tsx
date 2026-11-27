@@ -88,10 +88,15 @@ describe('design lint (published mode)', () => {
   })
   it('the lint catches what it should (self-check)', () => {
     const f = fixtures.find((x) => x.name === 'food-truck-sparse')!
-    const home = f.doc.pages.find((p) => p.slug === '')!
-    const v = lintPage('x', f.doc, home)
-    expect(v.some((s) => s.endsWith('h1-is-business-name'))).toBe(true)
+    const doc = structuredClone(f.doc)
+    const home = doc.pages.find((p) => p.slug === '')!
+    const hero = home.sections.find((s) => s.type === 'hero')!
+    ;(hero.props as { headline: string }).headline = doc.business.name
+    expect(lintPage('x', doc, home).some((s) => s.endsWith('h1-is-business-name'))).toBe(true)
     const rich = fixtures.find((x) => x.name === 'food-truck-rich')!
-    expect(lintPage('y', rich.doc, rich.doc.pages.find((p) => p.id === 'menu')!).filter((s) => s.includes('placeholder'))).toEqual([])
+    const bare = structuredClone(rich.doc)
+    const bareHome = bare.pages.find((p) => p.slug === '')!
+    bareHome.sections = bareHome.sections.filter((s) => s.type !== 'gallery' && s.type !== 'hero')
+    expect(lintPage('food-truck-rich', bare, bareHome).some((s) => s.includes('home-images'))).toBe(true)
   })
 })

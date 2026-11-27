@@ -54,6 +54,7 @@ export default async function EditPage({ params, searchParams }: Props) {
       anonymous={a.kind === 'anonymous'} canManageVersions={canManageVersions(a)}
       welcome={q.welcome === '1'} publish={publish}
       initialPageId={typeof q.page === 'string' ? q.page : undefined}
+      initialSectionId={typeof q.section === 'string' && /^[a-z0-9-]{1,40}$/.test(q.section) ? q.section : undefined}
       tutorialDone={tutorialDone} tourStep={typeof q.tour === 'string' ? q.tour : undefined}
     />
   )

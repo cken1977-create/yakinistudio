@@ -57,7 +57,7 @@
           "variant": "split",
           "hidden": false,
           "props": {
-            "headline": "Westside Food Partners",
+            "headline": "Stronger together, *starting here.*",
             "subhead": "Making sure no family on the west side goes hungry.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000000703",
@@ -149,6 +149,16 @@
                 "pageId": "involved"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
           }
         },
         {

@@ -58,7 +58,7 @@
           "hidden": false,
           "props": {
             "eyebrow": "Food truck",
-            "headline": "Founding Test Tacos",
+            "headline": "Street food, *made right here.*",
             "subhead": "Street tacos and aguas frescas, made fresh on the truck.",
             "image": {
               "assetId": "7a1e0000-0000-4000-8000-000000000104",
@@ -117,6 +117,16 @@
                 "pageId": "menu"
               }
             }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
           }
         },
         {

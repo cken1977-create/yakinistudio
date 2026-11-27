@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { SiteView } from '@yakini/sections'
+import { finishHref, finishItems } from '@/lib/draft/finish'
 import '@yakini/sections/fonts.css'
 import '@yakini/sections/styles.css'
 import { loadSiteDoc, SiteDocError } from '@yakini/site-schema'
@@ -47,6 +48,7 @@ export default async function DraftPreview({ params, searchParams }: Props) {
   const here = `/d/${siteId}${page.slug ? `/${page.slug}` : ''}`
   const unread = one(query.note) === 'unread'
   const kit = kitName(doc)
+  const finish = finishItems(doc)
 
   return (
     <div className="min-h-screen bg-[#1a1714]">
@@ -75,6 +77,14 @@ export default async function DraftPreview({ params, searchParams }: Props) {
             {unread && <p>We couldn’t read that website, so we started from our {kit} design with your name. You can add details next.</p>}
             {doc.brand.colorsSource === 'kit-default' && <p>Default colors — replace with yours anytime.</p>}
           </div>
+        )}
+        {finish.length > 0 && (
+          <nav aria-label="Finish your site" className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-3 gap-y-2 px-4 pb-3 text-sm sm:px-6" data-testid="finish-strip">
+            <span className="font-semibold text-paper">Finish your site:</span>
+            {finish.map((f) => (
+              <a key={f.sectionId} href={finishHref(siteId, f)} className="inline-flex min-h-10 items-center rounded-full border border-gold/50 px-3 text-paper hover:border-gold hover:bg-gold/10">{f.label}</a>
+            ))}
+          </nav>
         )}
         {!member && <p className="sr-only">Your draft is kept in this browser for 14 days.</p>}
       </header>
