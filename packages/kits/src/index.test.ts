@@ -204,7 +204,7 @@ describe('industries (what the owner picks on /new)', () => {
     expect(hero.props).toMatchObject({ eyebrow: 'Holding company or investments in Albuquerque' })
     expect(JSON.stringify(law)).not.toMatch(/7a1e0000-0000-4000-8000-0000000003/)
     const plumber = svc.template({ name: 'Rio Plumbing', industry: { label: 'Plumber', photo: 'pipe-fitting' } })
-    expect(plumber.pages[0].sections.find((s) => s.type === 'hero')).toMatchObject({ variant: 'split', props: { image: { assetId: '7a1e0000-0000-4000-8000-000000000305' } } })
+    expect(plumber.pages[0].sections.find((s) => s.type === 'hero')).toMatchObject({ variant: 'cinematic', props: { image: { assetId: '7a1e0000-0000-4000-8000-000000000305' } } })
   })
 })
 

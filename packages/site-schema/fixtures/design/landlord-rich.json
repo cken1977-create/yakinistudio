@@ -100,7 +100,7 @@
         {
           "id": "hero",
           "type": "hero",
-          "variant": "split",
+          "variant": "cinematic",
           "hidden": false,
           "props": {
             "eyebrow": "Rentals in Tucson",
@@ -138,22 +138,29 @@
           }
         },
         {
-          "id": "welcome",
-          "type": "about",
-          "variant": "text-only",
+          "id": "ticker",
+          "type": "ticker",
+          "variant": "marquee",
           "hidden": false,
           "props": {
-            "heading": "A place you’ll want to stay",
-            "body": [
-              {
-                "type": "p",
-                "children": [
-                  {
-                    "text": "Write two or three sentences about your homes and how you take care of them and your residents."
-                  }
-                ]
-              }
+            "label": "What we do",
+            "items": [
+              "Fast repairs",
+              "Clear terms",
+              "Repairs",
+              "Paying rent",
+              "Moving out"
             ]
+          }
+        },
+        {
+          "id": "features",
+          "type": "feature_rows",
+          "variant": "alternating",
+          "hidden": false,
+          "props": {
+            "heading": "What sets us *apart*",
+            "items": []
           }
         },
         {
@@ -183,26 +190,66 @@
           }
         },
         {
-          "id": "rentals-cta",
-          "type": "cta_band",
-          "variant": "solid",
+          "id": "welcome",
+          "type": "about",
+          "variant": "left-image",
           "hidden": false,
           "props": {
-            "headline": "Looking for a place?",
-            "body": "See what’s open now and ask us about a showing.",
-            "cta": {
-              "label": "See rentals",
-              "target": {
-                "kind": "page",
-                "pageId": "rentals"
+            "heading": "A place you’ll want to stay",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Write two or three sentences about your homes and how you take care of them and your residents."
+                  }
+                ]
               }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000404",
+              "alt": "A maintenance worker fixing the pipes under a kitchen sink"
             }
+          }
+        },
+        {
+          "id": "stats",
+          "type": "stats",
+          "variant": "band",
+          "hidden": false,
+          "props": {
+            "heading": "By the *numbers*",
+            "items": []
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "big-quote",
+          "hidden": false,
+          "props": {
+            "heading": "What residents say",
+            "items": [
+              {
+                "quote": "Repairs get done the same week, every time.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "The application was simple and they explained every step.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "Three years here and I have never had to chase anyone for anything.",
+                "name": "Dana L."
+              }
+            ]
           }
         },
         {
           "id": "home-photos",
           "type": "gallery",
-          "variant": "grid",
+          "variant": "mosaic",
           "hidden": false,
           "props": {
             "heading": "A closer look",
@@ -243,33 +290,30 @@
           }
         },
         {
-          "id": "reviews",
-          "type": "testimonials",
-          "variant": "cards",
+          "id": "rentals-cta",
+          "type": "cta_band",
+          "variant": "image",
           "hidden": false,
           "props": {
-            "heading": "What residents say",
-            "items": [
-              {
-                "quote": "Repairs get done the same week, every time.",
-                "name": "Maria G.",
-                "source": "Google"
-              },
-              {
-                "quote": "The application was simple and they explained every step.",
-                "name": "Sam T."
-              },
-              {
-                "quote": "Three years here and I have never had to chase anyone for anything.",
-                "name": "Dana L."
+            "headline": "Looking for a place?",
+            "body": "See what’s open now and ask us about a showing.",
+            "cta": {
+              "label": "See rentals",
+              "target": {
+                "kind": "page",
+                "pageId": "rentals"
               }
-            ]
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000403",
+              "alt": "A set of house keys handed to a new tenant at the front door"
+            }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -428,7 +472,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -452,7 +496,7 @@
         {
           "id": "residents-hero",
           "type": "hero",
-          "variant": "minimal",
+          "variant": "split",
           "hidden": false,
           "props": {
             "eyebrow": "For residents",
@@ -465,6 +509,10 @@
                 "pageId": "residents",
                 "sectionId": "maintenance"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000403",
+              "alt": "A set of house keys handed to a new tenant at the front door"
             }
           }
         },
@@ -541,7 +589,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -615,7 +663,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -666,7 +714,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }

@@ -138,6 +138,30 @@
           }
         },
         {
+          "id": "ticker",
+          "type": "ticker",
+          "variant": "marquee",
+          "hidden": false,
+          "props": {
+            "label": "What we do",
+            "items": [
+              "Truck at your event",
+              "Drop-off trays",
+              "Custom menu"
+            ]
+          }
+        },
+        {
+          "id": "features",
+          "type": "feature_rows",
+          "variant": "alternating",
+          "hidden": false,
+          "props": {
+            "heading": "What sets us *apart*",
+            "items": []
+          }
+        },
+        {
           "id": "schedule",
           "type": "schedule",
           "variant": "week",
@@ -176,26 +200,19 @@
           }
         },
         {
-          "id": "menu-cta",
-          "type": "cta_band",
-          "variant": "solid",
+          "id": "stats",
+          "type": "stats",
+          "variant": "band",
           "hidden": false,
           "props": {
-            "headline": "Hungry yet?",
-            "body": "See everything we make, from the favorites to the specials.",
-            "cta": {
-              "label": "See the menu",
-              "target": {
-                "kind": "page",
-                "pageId": "menu"
-              }
-            }
+            "heading": "By the *numbers*",
+            "items": []
           }
         },
         {
           "id": "home-photos",
           "type": "gallery",
-          "variant": "grid",
+          "variant": "mosaic",
           "hidden": false,
           "props": {
             "heading": "A closer look",
@@ -238,7 +255,7 @@
         {
           "id": "reviews",
           "type": "testimonials",
-          "variant": "cards",
+          "variant": "big-quote",
           "hidden": false,
           "props": {
             "heading": "What people say",
@@ -260,9 +277,30 @@
           }
         },
         {
+          "id": "menu-cta",
+          "type": "cta_band",
+          "variant": "image",
+          "hidden": false,
+          "props": {
+            "headline": "Hungry yet?",
+            "body": "See everything we make, from the favorites to the specials.",
+            "cta": {
+              "label": "See the menu",
+              "target": {
+                "kind": "page",
+                "pageId": "menu"
+              }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000106",
+              "alt": "Tacos being topped with onion and cilantro on a flat-top griddle"
+            }
+          }
+        },
+        {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -360,7 +398,7 @@
         {
           "id": "catering-cta",
           "type": "cta_band",
-          "variant": "outline",
+          "variant": "image",
           "hidden": false,
           "props": {
             "headline": "Feeding a crowd?",
@@ -371,13 +409,17 @@
                 "kind": "page",
                 "pageId": "catering"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000107",
+              "alt": "A box of glazed ribs and cornbread handed through a food truck window"
             }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -517,7 +559,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -541,7 +583,7 @@
         {
           "id": "catering-hero",
           "type": "hero",
-          "variant": "minimal",
+          "variant": "split",
           "hidden": false,
           "props": {
             "eyebrow": "Catering and events",
@@ -553,6 +595,10 @@
                 "kind": "form",
                 "formKey": "catering"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000106",
+              "alt": "Tacos being topped with onion and cilantro on a flat-top griddle"
             }
           }
         },
@@ -643,7 +689,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -696,7 +742,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }

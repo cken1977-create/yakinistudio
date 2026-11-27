@@ -92,6 +92,30 @@
           }
         },
         {
+          "id": "ticker",
+          "type": "ticker",
+          "variant": "marquee",
+          "hidden": false,
+          "props": {
+            "label": "What we do",
+            "items": [
+              "Truck at your event",
+              "Drop-off trays",
+              "Custom menu"
+            ]
+          }
+        },
+        {
+          "id": "features",
+          "type": "feature_rows",
+          "variant": "alternating",
+          "hidden": false,
+          "props": {
+            "heading": "What sets us *apart*",
+            "items": []
+          }
+        },
+        {
           "id": "schedule",
           "type": "schedule",
           "variant": "week",
@@ -103,9 +127,39 @@
           }
         },
         {
+          "id": "stats",
+          "type": "stats",
+          "variant": "band",
+          "hidden": false,
+          "props": {
+            "heading": "By the *numbers*",
+            "items": []
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "big-quote",
+          "hidden": false,
+          "props": {
+            "heading": "What people say",
+            "items": []
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "mosaic",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
+          }
+        },
+        {
           "id": "menu-cta",
           "type": "cta_band",
-          "variant": "solid",
+          "variant": "image",
           "hidden": false,
           "props": {
             "headline": "Hungry yet?",
@@ -116,33 +170,17 @@
                 "kind": "page",
                 "pageId": "menu"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000106",
+              "alt": "Tacos being topped with onion and cilantro on a flat-top griddle"
             }
-          }
-        },
-        {
-          "id": "home-photos",
-          "type": "gallery",
-          "variant": "grid",
-          "hidden": true,
-          "props": {
-            "heading": "A closer look",
-            "images": []
-          }
-        },
-        {
-          "id": "reviews",
-          "type": "testimonials",
-          "variant": "cards",
-          "hidden": false,
-          "props": {
-            "heading": "What people say",
-            "items": []
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -195,7 +233,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -302,7 +340,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -326,7 +364,7 @@
         {
           "id": "catering-hero",
           "type": "hero",
-          "variant": "minimal",
+          "variant": "split",
           "hidden": false,
           "props": {
             "eyebrow": "Catering and events",
@@ -338,6 +376,10 @@
                 "kind": "form",
                 "formKey": "catering"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000106",
+              "alt": "Tacos being topped with onion and cilantro on a flat-top griddle"
             }
           }
         },
@@ -428,7 +470,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -481,7 +523,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }

@@ -11,9 +11,10 @@
  * and checked against this file on every test run.
  */
 import type { SiteKitId as KitId } from '@yakini/pricing'
-import type { SiteDocInput } from '@yakini/site-schema'
+import type { SiteDocContent, SiteDocInput } from '@yakini/site-schema'
 import { brandFor, buildKitDraft, BUILDER_KITS, offeredSamples } from './index'
 import { SERVICE_SAMPLES } from './service'
+import { composeHome } from './composer'
 import type { KitDefinition } from './types'
 
 type KitCopy = {
@@ -139,7 +140,9 @@ export function designFixtures(): Record<string, SiteDocInput> {
     if (!c) throw new Error(`design fixtures: no copy for kit ${id}`)
     const brand = brandFor(kit, { colors: null })
     const rich = structuredClone(buildKitDraft(kit, { name: c.name, city: c.city, phone: BUSINESS.phone, email: BUSINESS.email }, brand)) as unknown as Json
-    out[`${id}-rich`] = enrich(kit, rich, c) as unknown as SiteDocInput
+    // Like a real draft: the layout pass runs on the finished content, photos included.
+    const full = enrich(kit, rich, c) as unknown as SiteDocInput & SiteDocContent
+    out[`${id}-rich`] = { ...full, ...composeHome(kit, full, {}) } as SiteDocInput
     const thin = structuredClone(buildKitDraft(kit, { name: c.name }, brand)) as unknown as Json
     out[`${id}-sparse`] = sparse(thin, c) as unknown as SiteDocInput
   }

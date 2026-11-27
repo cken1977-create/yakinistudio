@@ -84,6 +84,16 @@
           }
         },
         {
+          "id": "features",
+          "type": "feature_rows",
+          "variant": "alternating",
+          "hidden": false,
+          "props": {
+            "heading": "What sets us *apart*",
+            "items": []
+          }
+        },
+        {
           "id": "intro",
           "type": "about",
           "variant": "text-only",
@@ -129,6 +139,36 @@
           }
         },
         {
+          "id": "stats",
+          "type": "stats",
+          "variant": "band",
+          "hidden": false,
+          "props": {
+            "heading": "By the *numbers*",
+            "items": []
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "big-quote",
+          "hidden": false,
+          "props": {
+            "heading": "What clients say",
+            "items": []
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "mosaic",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
+          }
+        },
+        {
           "id": "contact-cta",
           "type": "cta_band",
           "variant": "solid",
@@ -147,29 +187,9 @@
           }
         },
         {
-          "id": "home-photos",
-          "type": "gallery",
-          "variant": "grid",
-          "hidden": true,
-          "props": {
-            "heading": "A closer look",
-            "images": []
-          }
-        },
-        {
-          "id": "reviews",
-          "type": "testimonials",
-          "variant": "cards",
-          "hidden": false,
-          "props": {
-            "heading": "What clients say",
-            "items": []
-          }
-        },
-        {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -275,7 +295,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -338,7 +358,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -391,7 +411,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }

@@ -93,6 +93,30 @@
           }
         },
         {
+          "id": "ticker",
+          "type": "ticker",
+          "variant": "marquee",
+          "hidden": false,
+          "props": {
+            "label": "What we do",
+            "items": [
+              "Private dining",
+              "Group menus",
+              "Catering"
+            ]
+          }
+        },
+        {
+          "id": "features",
+          "type": "feature_rows",
+          "variant": "alternating",
+          "hidden": false,
+          "props": {
+            "heading": "What sets us *apart*",
+            "items": []
+          }
+        },
+        {
           "id": "welcome",
           "type": "about",
           "variant": "text-only",
@@ -112,9 +136,48 @@
           }
         },
         {
+          "id": "visit",
+          "type": "hours_location",
+          "variant": "card",
+          "hidden": false,
+          "props": {
+            "heading": "Visit us"
+          }
+        },
+        {
+          "id": "stats",
+          "type": "stats",
+          "variant": "band",
+          "hidden": false,
+          "props": {
+            "heading": "By the *numbers*",
+            "items": []
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "big-quote",
+          "hidden": false,
+          "props": {
+            "heading": "From our guests",
+            "items": []
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "mosaic",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
+          }
+        },
+        {
           "id": "menu-cta",
           "type": "cta_band",
-          "variant": "solid",
+          "variant": "image",
           "hidden": false,
           "props": {
             "headline": "See what’s cooking",
@@ -125,42 +188,17 @@
                 "kind": "page",
                 "pageId": "menu"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000206",
+              "alt": "A chef finishing a plate of seared fish with fresh herbs"
             }
-          }
-        },
-        {
-          "id": "visit",
-          "type": "hours_location",
-          "variant": "card",
-          "hidden": false,
-          "props": {
-            "heading": "Visit us"
-          }
-        },
-        {
-          "id": "home-photos",
-          "type": "gallery",
-          "variant": "grid",
-          "hidden": true,
-          "props": {
-            "heading": "A closer look",
-            "images": []
-          }
-        },
-        {
-          "id": "reviews",
-          "type": "testimonials",
-          "variant": "single",
-          "hidden": false,
-          "props": {
-            "heading": "From our guests",
-            "items": []
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -213,7 +251,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -280,7 +318,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -304,7 +342,7 @@
         {
           "id": "events-hero",
           "type": "hero",
-          "variant": "minimal",
+          "variant": "split",
           "hidden": false,
           "props": {
             "eyebrow": "Private events",
@@ -316,6 +354,10 @@
                 "kind": "form",
                 "formKey": "events"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000206",
+              "alt": "A chef finishing a plate of seared fish with fresh herbs"
             }
           }
         },
@@ -406,7 +448,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -469,7 +511,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }

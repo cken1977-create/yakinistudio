@@ -101,7 +101,7 @@
         {
           "id": "hero",
           "type": "hero",
-          "variant": "split",
+          "variant": "cinematic",
           "hidden": false,
           "props": {
             "eyebrow": "Training in Odessa",
@@ -136,6 +136,16 @@
           "props": {
             "heading": "Today",
             "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "features",
+          "type": "feature_rows",
+          "variant": "alternating",
+          "hidden": false,
+          "props": {
+            "heading": "What sets us *apart*",
+            "items": []
           }
         },
         {
@@ -188,27 +198,43 @@
           }
         },
         {
-          "id": "enroll-cta",
-          "type": "cta_band",
-          "variant": "solid",
+          "id": "stats",
+          "type": "stats",
+          "variant": "band",
           "hidden": false,
           "props": {
-            "headline": "Ready to start?",
-            "body": "Ask about the next class and how to enroll.",
-            "cta": {
-              "label": "Enroll",
-              "target": {
-                "kind": "section",
-                "pageId": "enroll",
-                "sectionId": "enroll-form"
+            "heading": "By the *numbers*",
+            "items": []
+          }
+        },
+        {
+          "id": "grads",
+          "type": "testimonials",
+          "variant": "big-quote",
+          "hidden": false,
+          "props": {
+            "heading": "What graduates say",
+            "items": [
+              {
+                "quote": "I finished the welding program and started work two weeks later.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "Instructors who have done the job and teach it straight.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "Night classes let me keep my job while I trained.",
+                "name": "Dana L."
               }
-            }
+            ]
           }
         },
         {
           "id": "home-photos",
           "type": "gallery",
-          "variant": "grid",
+          "variant": "mosaic",
           "hidden": false,
           "props": {
             "heading": "A closer look",
@@ -249,33 +275,31 @@
           }
         },
         {
-          "id": "grads",
-          "type": "testimonials",
-          "variant": "cards",
+          "id": "enroll-cta",
+          "type": "cta_band",
+          "variant": "image",
           "hidden": false,
           "props": {
-            "heading": "What graduates say",
-            "items": [
-              {
-                "quote": "I finished the welding program and started work two weeks later.",
-                "name": "Maria G.",
-                "source": "Google"
-              },
-              {
-                "quote": "Instructors who have done the job and teach it straight.",
-                "name": "Sam T."
-              },
-              {
-                "quote": "Night classes let me keep my job while I trained.",
-                "name": "Dana L."
+            "headline": "Ready to start?",
+            "body": "Ask about the next class and how to enroll.",
+            "cta": {
+              "label": "Enroll",
+              "target": {
+                "kind": "section",
+                "pageId": "enroll",
+                "sectionId": "enroll-form"
               }
-            ]
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000802",
+              "alt": "A student welding steel at a shop table while an instructor watches"
+            }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -358,7 +382,7 @@
         {
           "id": "programs-cta",
           "type": "cta_band",
-          "variant": "outline",
+          "variant": "image",
           "hidden": false,
           "props": {
             "headline": "Questions about a program?",
@@ -370,13 +394,17 @@
                 "pageId": "enroll",
                 "sectionId": "enroll-form"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000805",
+              "alt": "Graduates in caps and gowns tossing their caps in the air"
             }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -438,7 +466,7 @@
         {
           "id": "schedule-cta",
           "type": "cta_band",
-          "variant": "solid",
+          "variant": "image",
           "hidden": false,
           "props": {
             "headline": "Save your seat",
@@ -449,13 +477,17 @@
                 "pageId": "enroll",
                 "sectionId": "enroll-form"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000805",
+              "alt": "Graduates in caps and gowns tossing their caps in the air"
             }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -572,7 +604,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -596,12 +628,16 @@
         {
           "id": "enroll-hero",
           "type": "hero",
-          "variant": "minimal",
+          "variant": "split",
           "hidden": false,
           "props": {
             "eyebrow": "Enroll",
             "headline": "Start your training",
-            "subhead": "Tell us which program you want. We’ll reply with next steps and start dates."
+            "subhead": "Tell us which program you want. We’ll reply with next steps and start dates.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000802",
+              "alt": "A student welding steel at a shop table while an instructor watches"
+            }
           }
         },
         {
@@ -659,7 +695,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
