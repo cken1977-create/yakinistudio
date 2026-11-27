@@ -301,3 +301,43 @@ its own headline typeface inside the HTML, so the brand headline shows even on a
 - Slow 4G first visit, empty cache: the real headline typeface on all 10 kits, every run (body text
   shows the size-matched fallback until the next page). Lighthouse: CLS 0 on all kits; performance
   0.95 (restaurant) to 1.00.
+
+## D2: premium section library (branch `feat/design-d2-sections`)
+
+**New variants:**
+- hero: `editorial-split`, `collage`
+- about: `chapters`
+- menu: `editorial`
+- gallery: `mosaic`, `filmstrip`
+- testimonials: `big-quote`
+- cta_band: `image`
+- footer: `statement`
+
+**New section types:**
+- `ticker`: a moving strip of 3 to 8 short phrases, with a still, readable list for screen readers and reduced motion.
+- `stats`: shows only with 2 or more of the owner's numbers.
+- `feature_rows`: alternating photo and text rows.
+
+Each has zod props, a server component, inspector fields and fixture coverage (a "showcase" page in both v2 every-section fixtures). Each reads fully with JavaScript off.
+
+**Layout composer** (`packages/kits/src/composer.ts`) runs on every kit's template and again on the finished draft (`assembleDoc`), so it sees the draft's photos:
+- **Home order:** cinematic hero → ticker → feature rows (the kit's own highlights wait in that slot until the owner adds rows) → stats → big quote → mosaic gallery → image call-to-action → statement footer.
+- **Rule 1:** no two photo-less sections touch on Home whenever the draft has a photo to use. The composer reorders as little as possible. A text-only about section or hero, or the call-to-action band, may borrow one of the draft's own photos. Other pages keep their kit order and only get a photo where one fits.
+- **Rule 2:** at most one full-bleed moment besides the hero on every page, and exactly one on Home when there is a photo.
+- **Rule 3:** neighbouring sections alternate surface depth on design-v2 looks (`data-depth="raised"`). Classic markup is unchanged.
+- **Nothing invented:**
+  - Stats and feature rows start empty.
+  - The ticker repeats only the site's own service names.
+  - The writer's stats are dropped by the sanitizer.
+  - Photos are the owner's, or ones already in the draft.
+- **Tests:** `composer.test.ts`, all kits, rich and sparse fixtures (order, rules 1 and 2, nothing invented, composing twice changes nothing).
+
+**Default look** (decision 2026-11-27): Signature for restaurant, food truck and nonprofit; Classic for the rest until D3.
+
+**"Try the new look"** (editor, Edit tab):
+- Only on classic sites, and never switched automatically.
+- Previewing changes the draft, and the page in the middle shows it at once. The live site changes only on publish.
+- "Undo" restores the old look in one click; "Keep the new look" keeps it. Ctrl+Z works too.
+- Built on a `set_style` edit that the owner's clicks and undo may send, but the AI's chat edits never can. Brand colors and logo are untouched (R6).
+
+**Accessibility:** the filmstrip is a named, focusable region ("<heading>, photo strip") that scrolls with the arrow keys from the first photo to the last and back. Each photo is announced as "Photo n of N" with its alt text (`tests/e2e/filmstrip.spec.ts`, JavaScript on and off). axe: 44 of 44 fixture pages pass.
