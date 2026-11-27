@@ -7,3 +7,5 @@ test-results/
 design-gallery/
 lhci-report/
 .lighthouseci/
+public/_site-assets/
+.site-renderer/

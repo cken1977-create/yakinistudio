@@ -1,5 +1,17 @@
 # Changelog: Yakini Builder
 
+## Published sites without framework JavaScript (2026-11-27, branch `perf/static-published-sites`)
+
+- Published client pages are plain HTML from a route handler: a standalone renderer bundle with its
+  own React, one first-party stylesheet and self-hosted fonts. No framework JavaScript (was about
+  193 KB per page); the only script is JSON-LD. The studio and editor are unchanged.
+- Room for D7: first-party, nonce-tagged "islands" can be added per site; none today.
+- If the renderer bundle were ever missing, published pages show "This site is being updated"
+  (503) and Sentry is told.
+- Lighthouse (phone, throttled): 9 of 10 rich sites now score 0.95 or higher (was 3).
+- Tests: unit (every fixture page has no script but JSON-LD; D7 hook), browser (0 script requests
+  on every page of a published site; forms submit with JavaScript off).
+
 ## Phase 5a: your own domain (2026-11-26, branch `feat/builder-phase5-domains`)
 
 Spec: `docs/spec/phase-5.md`.

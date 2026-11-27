@@ -167,6 +167,42 @@ general (`service`) kit has 6 photos of its own, so its gallery repeats two to r
   the header and hero. Classic must stay byte for byte, so this clears when the kit moves to a v2
   preset in D3 (or with a fallback face if you allow that change to classic's font stack).
 
+## Published sites without framework JavaScript (2026-11-27, Clarence's decision)
+
+Published pages (`/_site/<host>/…`) are served by a route handler as plain HTML. The studio and
+editor stay on Next.js pages.
+- `lib/site/render-entry.tsx` is bundled at build time with its own React
+  (`scripts/build-site-renderer.mjs` → `.site-renderer/render.cjs`) and loaded at runtime
+  (`lib/site/renderer.ts`), because App Router code may not import `react-dom/server`.
+- One first-party stylesheet plus self-hosted fonts, built by `scripts/build-site-css.mjs` into
+  `public/_site-assets/` and linked as `site.css?v=<deploy>`.
+- Published HTML carries no script except JSON-LD. Forms are plain HTML posts.
+- D7 hook: `islands` (first-party, nonce-tagged scripts) is empty for every site today.
+- Tests:
+  - `tests/unit/published-html.test.ts`: every page of every design fixture, the thank-you page
+    and the neutral page;
+  - `tests/e2e/published-static.spec.ts`: a real published site, every page, 0 script requests;
+    forms submit with JavaScript off.
+- `/dev-site` (the harness) uses the same renderer, so Lighthouse measures what visitors get.
+
+**Lighthouse after** (median of 3, phone, throttled; scripts on the page in brackets):
+
+| Fixture | Perf | A11y | BP | SEO | CLS | LCP |
+|---|---|---|---|---|---|---|
+| food-truck-rich | 0.96 (was 0.84) | 1 | 1 | 1 | 0 | 2.8 s |
+| restaurant-rich | 0.93 (was 0.83) | 1 | 1 | 1 | 0 | 3.2 s |
+| landlord-rich | 0.98 | 1 | 1 | 1 | 0 | 2.4 s |
+| real-estate-rich | 0.97 | 1 | 1 | 1 | 0 | 2.6 s |
+| tree-lawn-rich | 0.97 | 1 | 1 | 1 | **0.106** (classic) | 1.8 s |
+| nonprofit-rich | 1.00 | 1 | 1 | 1 | 0.001 | 1.7 s |
+| training-school-rich | 1.00 | 1 | 1 | 1 | 0 | 1.2 s |
+| trucking-rich | 1.00 | 1 | 1 | 1 | 0 | 1.7 s |
+| oilfield-rich | 1.00 | 1 | 1 | 1 | 0 | 1.4 s |
+| service-rich | 1.00 | 1 | 1 | 1 | 0 | 0.8 s |
+
+Script on every page: 0 KB (was 193 KB). Still open: restaurant 0.93 (the full-bleed hero photo is
+the LCP; D4's image work targets it), and tree-lawn CLS (classic font swap; clears in D3).
+
 ## Baseline found on 2026-11-27 (the "before")
 
 Each later step must clear its own entries. The tests fail on anything new and on any entry that

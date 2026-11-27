@@ -32,6 +32,8 @@ export function decideHost(rawHost: string | null | undefined, pathname: string,
   if (pathname.startsWith('/api/f/')) return { kind: 'form' }
   // Kit sample photos are plain files in the studio's public folder, shared by every site.
   if (pathname.startsWith('/kit-samples/')) return { kind: 'static' }
+  // The published-site stylesheet and fonts (built by scripts/build-site-css.mjs), shared by every site.
+  if (pathname.startsWith('/_site-assets/')) return { kind: 'static' }
   // Next reserves a sitemap.xml folder for its own sitemap convention, so the route lives at sitemap-xml.
   const path = pathname === '/' ? '' : pathname === '/sitemap.xml' ? '/sitemap-xml' : pathname
   return { kind: 'site', host, rewriteTo: `/_site/${encodeURIComponent(host)}${path}` }
