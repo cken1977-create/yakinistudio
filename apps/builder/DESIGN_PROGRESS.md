@@ -212,20 +212,22 @@ editor stay on Next.js pages.
 The CI failures were reproduced locally by hiding the system Inter font (CI machines don't have
 it): tree-lawn 0.114, oilfield 0.115, nonprofit 0.036 before; 0 after.
 
-**Lighthouse after** (3 runs, phone, throttled, CI-like fonts, fonts confirmed loading; lowest score shown):
+**Lighthouse after** (3 runs, phone, throttled, CI-like fonts, fonts confirmed drawn; lowest score shown):
 
 | Fixture | Perf | A11y | BP | SEO | CLS | LCP |
 |---|---|---|---|---|---|---|
 | food-truck-rich | 0.97 (was 0.84) | 1 | 1 | 1 | 0 | 2.6 s |
 | restaurant-rich | 0.94 (was 0.83) | 1 | 1 | 1 | 0 | 3.1 s |
-| landlord-rich | 1.00 | 1 | 1 | 1 | 0 | 1.8 s |
-| real-estate-rich | 0.98 | 1 | 1 | 1 | 0 | 2.3 s |
-| tree-lawn-rich | 0.99 | 1 | 1 | 1 | 0 (was 0.114) | 2.0 s |
-| nonprofit-rich | 0.98 | 1 | 1 | 1 | 0 (was 0.036) | 2.3 s |
-| training-school-rich | 1.00 | 1 | 1 | 1 | 0 | 1.2 s |
-| trucking-rich | 1.00 | 1 | 1 | 1 | 0 | 1.4 s |
-| oilfield-rich | 1.00 | 1 | 1 | 1 | 0 (was 0.115) | 1.5 s |
+| landlord-rich | 0.99 | 1 | 1 | 1 | 0 | 2.0 s |
+| real-estate-rich | 0.97 | 1 | 1 | 1 | 0 | 2.6 s |
+| tree-lawn-rich | 0.95 | 1 | 1 | 1 | 0 (was 0.114) | 2.9 s |
+| nonprofit-rich | 1.00 | 1 | 1 | 1 | 0 (was 0.036) | 1.7 s |
+| training-school-rich | 1.00 | 1 | 1 | 1 | 0 | 1.3 s |
+| trucking-rich | 1.00 | 1 | 1 | 1 | 0 | 1.5 s |
+| oilfield-rich | 0.99 | 1 | 1 | 1 | 0 (was 0.115) | 2.0 s |
 | service-rich | 1.00 | 1 | 1 | 1 | 0 | 0.8 s |
+
+With every font held back 1.5 s: layout shift 0.0000 on all 10 kits at 390, 412 and 1350 wide.
 
 Script on every page: 0 KB (was 193 KB). Restaurant keeps a recorded performance floor of 0.90 in
 `lighthouserc.cjs` until D4 (its hero photo is the slowest LCP; it scored 0.92-0.93 on CI before
