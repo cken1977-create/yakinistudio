@@ -77,9 +77,9 @@ export class EditSession {
    * into one undo step and one saved operation, so typing a word is one change, not twelve.
    */
   apply(ops: EditOp[], opts: { label: string; source?: 'click' | 'chat'; coalesceKey?: string }): { ok: true } | { ok: false; error: string } {
-    const r = applyOps(this.doc, ops, this.ctx)
-    if (!r.ok) return { ok: false, error: r.error }
     const source = opts.source ?? 'click'
+    const r = applyOps(this.doc, ops, this.ctx, { owner: source === 'click' })
+    if (!r.ok) return { ok: false, error: r.error }
     const key = opts.coalesceKey
     const t = this.now()
     const fold = key && this.lastEdit?.key === key && t - this.lastEdit.at < COALESCE_MS && this.history.future.length === 0

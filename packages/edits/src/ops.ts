@@ -3,7 +3,7 @@ import { kitDefinition, type KitDefinition } from '@yakini/kits'
 import { isEditablePath, INSPECTORS } from '@yakini/sections/inspectors'
 import { pageAssetIds, structureProblems } from './guard'
 import {
-  Id, SECTION_DEFS, SECTION_TYPES, validateNewDoc, type Page, type Section, type SectionType, type SiteDoc,
+  Id, SECTION_DEFS, SECTION_TYPES, Style, validateNewDoc, type Page, type Section, type SectionType, type SiteDoc,
 } from '@yakini/site-schema'
 import { getAt, setAt } from './pointer'
 
@@ -51,7 +51,13 @@ const InternalEditOp = z.discriminatedUnion('op', [
   z.object({ op: z.literal('set_seo_raw'), pageId: Id.nullable(), seo: z.record(z.string(), z.unknown()).nullable() }).strict(),
   z.object({ op: z.literal('rename_page_raw'), pageId: Id, title: z.string(), slug: z.string(), navLabel: z.string().nullable() }).strict(),
 ])
-export const EditOp = z.union([PublicEditOp, InternalEditOp])
+/**
+ * "Try the new look" (design D2): the owner switches the draft's look, and back, from the editor.
+ * Only the look: brand colors and logo stay exactly as they are (R6). Accepted from the owner's own
+ * clicks and undo/redo, never from the AI's chat edits.
+ */
+const OwnerEditOp = z.object({ op: z.literal('set_style'), style: Style }).strict()
+export const EditOp = z.union([PublicEditOp, InternalEditOp, OwnerEditOp])
 export type EditOp = z.infer<typeof EditOp>
 
 export type EditContext = {
@@ -287,6 +293,12 @@ function applyOne(doc: SiteDoc, op: EditOp, ctx: EditContext, changed: Set<strin
       changed.add('nav')
       return { applied: { ...op, toIndex: to }, inverse: [{ op: 'move_page', pageId: page.id, toIndex: from }] }
     }
+    case 'set_style': {
+      const before = clone(doc.style)
+      doc.style = clone(op.style)
+      changed.add('style')
+      return { applied: op, inverse: [{ op: 'set_style', style: before }] }
+    }
     case 'set_seo':
     case 'set_seo_raw': {
       if (op.pageId === null) {
@@ -319,13 +331,13 @@ function pathMatches(pattern: string, path: string): boolean {
  * Apply a batch of ops to a copy of `doc`. All or nothing: if any op is refused, or the result
  * is not a valid site, the original doc is untouched and a plain-English reason comes back.
  */
-export function applyOps(doc: SiteDoc, ops: readonly unknown[], ctx: EditContext, opts: { internal?: boolean } = {}): ApplyResult {
+export function applyOps(doc: SiteDoc, ops: readonly unknown[], ctx: EditContext, opts: { internal?: boolean; owner?: boolean } = {}): ApplyResult {
   const work = clone(doc)
   const applied: EditOp[] = []
   const inverse: EditOp[] = []
   const changed = new Set<string>()
   for (let i = 0; i < ops.length; i++) {
-    const parsed = (opts.internal ? EditOp : PublicEditOp).safeParse(ops[i])
+    const parsed = (opts.internal ? EditOp : opts.owner ? z.union([PublicEditOp, OwnerEditOp]) : PublicEditOp).safeParse(ops[i])
     if (!parsed.success) return { ok: false, error: parsed.error.issues.map((x) => `${x.path.join('.') || 'op'}: ${x.message}`).slice(0, 5).join('; '), opIndex: i }
     try {
       const r = applyOne(work, parsed.data, ctx, changed)

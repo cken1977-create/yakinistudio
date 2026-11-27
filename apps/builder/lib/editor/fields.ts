@@ -173,11 +173,15 @@ export const SECTION_LABELS: Record<SectionType, string> = {
   header: 'Header', hero: 'Big welcome', about: 'About', services: 'Services', menu: 'Menu', schedule: 'Where we’ll be',
   gallery: 'Photo gallery', hours_location: 'Hours and location', testimonials: 'Reviews', faq: 'Questions', team: 'Team',
   cta_band: 'Call to action', contact_form: 'Contact form', booking: 'Booking', catering_request: 'Catering request', today: 'Today', footer: 'Footer',
+  ticker: 'Moving strip', stats: 'Numbers', feature_rows: 'Feature rows',
 }
 
 export const VARIANT_LABELS: Record<string, string> = {
   bar: 'Bar', centered: 'Centered', split: 'Side by side', fullbleed: 'Full photo', minimal: 'Simple', 'left-image': 'Photo on the left',
   'right-image': 'Photo on the right', 'text-only': 'Text only', cards: 'Cards', list: 'List', columns: 'Columns', week: 'Week', grid: 'Grid',
-  masonry: 'Mosaic', card: 'Card', single: 'One at a time', accordion: 'Fold-out', solid: 'Solid', outline: 'Outline', simple: 'Simple',
+  masonry: 'Staggered', card: 'Card', single: 'One at a time', accordion: 'Fold-out', solid: 'Solid', outline: 'Outline', simple: 'Simple',
   'with-details': 'With your details', banner: 'Banner',
+  cinematic: 'Big photo, big words', 'editorial-split': 'Magazine', collage: 'Collage', chapters: 'Chapters', editorial: 'Magazine list',
+  mosaic: 'Photo mosaic', filmstrip: 'Filmstrip', 'big-quote': 'One big quote', image: 'Photo band', statement: 'Statement',
+  marquee: 'Moving', band: 'Band', alternating: 'Alternating',
 }

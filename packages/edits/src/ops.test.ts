@@ -160,3 +160,29 @@ describe('whole-site rules hold for any batch, even forged undo/restore ops', ()
     expect(over.ok).toBe(true)
   })
 })
+
+describe('set_style: "Try the new look" (design D2)', () => {
+  const look = { preset: 'signature', surface: 'dark', fontPair: 'signature', radius: 'round', motion: 'subtle' } as const
+  it('switches only the look, from the owner\'s own clicks, and undo puts the old look back exactly', () => {
+    const doc = base()
+    expect(doc.style.preset).toBe('classic')
+    const r = applyOps(doc, [{ op: 'set_style', style: look }], ctx, { owner: true })
+    if (!r.ok) throw new Error(r.error)
+    expect(r.doc.style).toEqual(look)
+    expect(r.doc.brand).toEqual(doc.brand) // colors and logo untouched (R6)
+    expect(r.doc.pages).toEqual(doc.pages)
+    const back = applyOps(r.doc, r.inverse, ctx, { internal: true })
+    if (!back.ok) throw new Error(back.error)
+    expect(back.doc).toEqual(doc)
+    expect(describeOp(doc, r.applied[0])).toBe('Switched to the new look')
+    expect(describeOp(r.doc, r.inverse[0])).toBe('Went back to your original look')
+  })
+  it('is never accepted from the AI (chat edits use the public ops only)', () => {
+    const r = applyOps(base(), [{ op: 'set_style', style: look }], ctx)
+    expect(r.ok).toBe(false)
+  })
+  it('cannot carry brand colors or anything else', () => {
+    const r = applyOps(base(), [{ op: 'set_style', style: { ...look, colors: { primary: '#ff0000' } } }], ctx, { owner: true })
+    expect(r.ok).toBe(false)
+  })
+})
