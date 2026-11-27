@@ -50,7 +50,9 @@ type Subset = (font: Buffer, text: string, opts: { targetFormat: 'woff2'; variat
 let subsetFont: Subset | null = null
 const cache = new Map<string, string>()
 let cuts = 0
-/** How many fonts this process has cut (tests prove a page view cuts none). */
+/** Test mode only (never on Vercel): the counter is off in production. */
+const counting = () => process.env.BUILDER_TEST_MODE === '1' && !process.env.VERCEL && !process.env.VERCEL_ENV
+/** How many fonts this process has cut, in test mode (tests prove a page view cuts none). Always 0 in production. */
 export const headlineCuts = () => cuts
 /** Tests only: forget cut fonts, as a fresh server instance would. */
 export const clearHeadlineCuts = () => cache.clear()
@@ -59,7 +61,7 @@ async function cut(file: string, text: string, weight: number): Promise<string> 
   const key = `${file}|${weight}|${text}`
   const hit = cache.get(key)
   if (hit) return hit
-  cuts++
+  if (counting()) cuts++
   subsetFont ??= createRequire(join(process.cwd(), 'package.json'))('subset-font') as Subset
   const src = readFileSync(join(process.env.SITE_ASSETS_DIR ?? join(process.cwd(), 'public', '_site-assets'), 'fonts', file))
   let out: Buffer

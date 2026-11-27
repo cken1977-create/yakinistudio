@@ -294,6 +294,10 @@ its own headline typeface inside the HTML, so the brand headline shows even on a
   fresh instance cut nothing; only new content makes a new one) and
   `tests/e2e/published-static.spec.ts` (a real published site: first view, repeat view and another
   page all report a cache hit; test-mode-only `x-headline-font` header).
+- Production stays clean (`tests/unit/site-route-headers.test.ts`): the published-site route run as
+  production (no test mode; and on Vercel even with the test-mode switch set by mistake) sends no
+  `x-headline-font` header, the dev-site harness answers 404, and the font-cut counter stays at 0
+  (it only counts in test mode).
 - Slow 4G first visit, empty cache: the real headline typeface on all 10 kits, every run (body text
   shows the size-matched fallback until the next page). Lighthouse: CLS 0 on all kits; performance
   0.95 (restaurant) to 1.00.
