@@ -1,0 +1,14 @@
+/* ---------------------------------------------------------------- today */
+.ys-today { padding-block: 0; }
+.ys-today.ys-v-banner { background: var(--ys-accent); color: var(--ys-on-accent); }
+.ys-today.ys-v-banner .ys-wrap { padding-block: 16px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; }
+.ys-today.ys-v-card { padding-block: 28px 0; }
+.ys-today.ys-v-card .ys-wrap > * { max-width: 720px; }
+.ys-today.ys-v-card .ys-wrap { display: grid; gap: 6px; }
+.ys-today.ys-v-card .ys-wrap::before { content: ''; display: none; }
+.ys-today.ys-v-card .ys-today-label { color: var(--ys-primary-text); }
+.ys-today.ys-v-card .ys-wrap { border-left: 4px solid var(--ys-accent); padding-left: 18px; margin-left: 20px; }
+.ys-today-label { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
+.ys-today-headline { font-size: 1.35rem; }
+.ys-today-flag { display: inline-block; justify-self: start; background: var(--ys-ink); color: #fff; font-weight: 700; padding: 6px 12px; border-radius: 999px; font-size: 0.9375rem; }
+

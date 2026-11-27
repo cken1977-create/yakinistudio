@@ -10,13 +10,12 @@ test.skip(!!process.env.E2E_BASE_URL, 'Needs the local test-mode server')
 
 /**
  * Baseline found by the first run (2026-11-27), each owned by a later D1 step that must remove it:
- * - draft preview placeholder hints (.ys-hint) are too faint: step 5 stops showing them on the site;
- * - schedule days with no stop (.is-off .ys-muted) are too faint: step 3 (tokens, surface contrast).
+ * - draft preview placeholder hints (.ys-hint) are too faint: step 5 stops showing them on the site.
+ * (Cleared: schedule days with no stop were too faint; fixed by step 3's surface-aware muted color.)
  * Anything else serious or critical fails now.
  */
 const BASELINE: { rule: string; target: RegExp; owner: string }[] = [
   { rule: 'color-contrast', target: /\.ys-hint\b/, owner: 'D1 step 5' },
-  { rule: 'color-contrast', target: /\.is-off\b.*\.ys-muted\b/, owner: 'D1 step 3' },
 ]
 const inBaseline = (rule: string, target: string) => BASELINE.some((b) => b.rule === rule && b.target.test(target))
 

@@ -1,0 +1,20 @@
+/* ---------------------------------------------------------------- forms */
+.ys-form { background: var(--ys-tint); }
+.ys-form-body { display: grid; gap: 16px; background: var(--ys-surface); border: 1px solid var(--ys-line); border-radius: var(--ys-radius); padding: 22px; }
+.ys-field { display: grid; gap: 6px; }
+.ys-field label { font-weight: 650; }
+.ys-optional { font-weight: 400; color: var(--ys-muted); }
+.ys-field input, .ys-field textarea {
+  width: 100%; min-height: 48px; padding: 12px 14px; font: inherit; color: var(--ys-ink); background: #fff;
+  border: 1.5px solid color-mix(in srgb, var(--ys-ink) 28%, transparent); border-radius: var(--ys-radius-sm);
+}
+.ys-field textarea { min-height: 132px; resize: vertical; }
+.ys-field input:focus-visible, .ys-field textarea:focus-visible { outline: 3px solid color-mix(in srgb, var(--ys-primary) 55%, transparent); outline-offset: 1px; border-color: var(--ys-primary); }
+.ys-field input:disabled, .ys-field textarea:disabled { background: color-mix(in srgb, var(--ys-ink) 4%, #fff); cursor: not-allowed; }
+.ys-consent { font-size: 0.875rem; color: var(--ys-muted); }
+.ys-form-note { font-size: 0.9375rem; font-weight: 650; color: var(--ys-ink); background: var(--ys-tint-strong); border-radius: 10px; padding: 10px 14px; }
+.ys-form-body .ys-btn { justify-self: start; }
+.ys-hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.ys-contact-points { display: grid; gap: 14px; margin-top: 8px; }
+.ys-contact-points a { font-weight: 700; font-size: 1.125rem; text-decoration: none; display: inline-flex; min-height: 44px; align-items: center; }
+

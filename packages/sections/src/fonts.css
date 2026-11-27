@@ -6,3 +6,8 @@
 @import '@fontsource-variable/nunito/wght.css';
 @import '@fontsource-variable/playfair-display/wght.css';
 @import '@fontsource-variable/lora/wght.css';
+/* Design v2 Signature pair (SIL OFL 1.1, see FONT_LICENSES.md): Cormorant Garamond (display, with
+   its italic for the accent phrase), JetBrains Mono (labels); Inter (body) is imported above. */
+@import '@fontsource-variable/cormorant-garamond/wght.css';
+@import '@fontsource-variable/cormorant-garamond/wght-italic.css';
+@import '@fontsource-variable/jetbrains-mono/wght.css';

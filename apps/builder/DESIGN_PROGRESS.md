@@ -7,7 +7,7 @@ Plan: DESIGN_UPGRADE_PLAN.md, D1 "Signature look, the never-empty preview, and t
 |---|---|
 | 1. Quality harness | Done (this branch) |
 | 2. Schema v2 + migrate-on-read, `*accent*` marker | Done |
-| 3. Tokens, Signature preset, fonts, surface contrast | Waiting for plan 6.2 / 6.3 |
+| 3. Tokens, Signature preset, fonts, surface contrast | Done |
 | 4. Cinematic hero | After step 3 |
 | 5. Never-empty draft preview, "Finish your site" strip, kit headlines | Can start any time |
 
@@ -49,6 +49,41 @@ general (`service`) kit has 6 photos of its own, so its gallery repeats two to r
     the two new root attributes and the JSON-LD slogan.
   - The pixel diff of the 26 v1 gallery screenshots (390 and 1440) before and after is **0**.
 
+## Step 3: tokens and the Signature preset
+
+- `styles.css` is now an entry file that imports, in order: `tokens.css`, `base.css`,
+  `sections/*.css`, `responsive.css`, `presets/classic.css` and `presets/signature.css`.
+  - `styles.test.ts` checks that base + sections + responsive equal the pre-v2 stylesheet byte
+    for byte (`__snapshots__/styles-v1.css`).
+  - `classic.css` adds no rules: classic is the unscoped base, and presets not built yet fall back
+    to it.
+  - Every Signature selector is scoped to `.ys-site[data-preset='signature']`.
+  - v1 pixel diff after the split is still **0** (26 screenshots).
+- Tokens (plan 6.2): type steps −1 to 7, label, spacing, section padding, container widths,
+  shadows, and a 1 KB inline SVG grain. All are custom properties only.
+- Fonts: Cormorant Garamond (roman and italic) and JetBrains Mono are self-hosted with
+  `@fontsource-variable`; Inter was already there. All are SIL OFL 1.1 (`packages/sections/FONT_LICENSES.md`).
+- Signature:
+  - dark surface from `brand.colors.secondary` as stored, with primary and accent glows and grain beside it;
+  - hairline glass cards with a solid fallback;
+  - mono labels with a 24px leading rule;
+  - a glowing pill CTA;
+  - a sticky header that turns to glass on scroll (CSS scroll-driven, inside `@supports`, off for
+    reduced motion);
+  - a CSS-only section rise, also off for reduced motion and when motion is `off`.
+- `themeFor()` is surface-aware (plan 6.3), through `surfaceTheme()`:
+  - surfaces 0 to 3 are computed from the base;
+  - muted text is darkened or lightened until it passes;
+  - each brand role is used as text only where it passes 4.5:1 (3:1 for display) on surfaces 0
+    to 2, otherwise ink, and those roles are reported in `lowContrast`.
+  - Classic output is unchanged.
+  - `contrast.test.ts` covers all 16 colour presets and all 10 kit default palettes, on both
+    surfaces.
+- axe: the schedule "No stop" contrast baseline item is cleared. Signature no longer dims those
+  days, and schedules only appear on the Signature kits.
+- **Known, by rule:** v1 drafts still on classic keep the old faint "No stop" days, because classic
+  must not change. They clear when a site moves to a v2 preset.
+
 ## Baseline found on 2026-11-27 (the "before")
 
 Each later step must clear its own entries. The tests fail on anything new and on any entry that
@@ -61,7 +96,7 @@ stops happening.
 
 **axe** (2 known, serious):
 - Draft preview placeholder hints (`.ys-hint`) are below 4.5:1. Owner: step 5, which removes them from the site.
-- Schedule days with no stop (`.is-off .ys-muted`) are below 4.5:1, a real published-mode bug. Owner: step 3.
+- ~~Schedule days with no stop (`.is-off .ys-muted`) are below 4.5:1.~~ Cleared in step 3 (Signature).
 
 **Lighthouse** (one run each, phone, throttled):
 

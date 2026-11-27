@@ -8,7 +8,7 @@ export {
   PLACEHOLDER_RE, hasPlaceholder, resolveLink, liveSectionEmpty, time12, timeRange, formatPhone,
   type RenderContext, type RenderMode, type ResolvedImage, type TodayUpdate,
 } from './context'
-export { themeFor, contrastRatio, readableInk, luminance, FONT_STACKS, AA, INK, PAGE_BG, type ThemeReport } from './theme'
+export { themeFor, surfaceTheme, onSurfaceInk, mixHex, contrastRatio, readableInk, luminance, FONT_STACKS, AA, AA_LARGE, INK, PAGE_BG, type ThemeReport, type SurfaceTheme } from './theme'
 export { INSPECTORS, isEditablePath, type InspectorField, type FieldKind } from './inspectors'
 export { mapsUrl } from './sections/hours'
 export { BOOKING_FORM_KEY, HONEYPOT_FIELD } from './sections/forms'

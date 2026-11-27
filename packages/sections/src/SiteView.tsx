@@ -40,7 +40,7 @@ const NOT_MAIN = new Set(['header', 'footer', 'today'])
  */
 export function SiteView({ ctx }: { ctx: RenderContext }) {
   const style = ctx.doc.style
-  const { vars } = themeFor(ctx.doc.brand, style.fontPair)
+  const { vars } = themeFor(ctx.doc.brand, style.fontPair, style)
   const sections = ctx.page.sections.filter((s) => !s.hidden)
   const firstMain = sections.findIndex((s) => !NOT_MAIN.has(s.type))
   const header = sections.filter((s) => s.type === 'header')
@@ -49,7 +49,7 @@ export function SiteView({ ctx }: { ctx: RenderContext }) {
   // In a draft each section is marked so the editor can select it with a click; live pages carry no ids.
   const mark = (s: Section) => (ctx.mode === 'draft' ? { 'data-ys-section': s.id } : {})
   return (
-    <div className="ys-site" data-preset={style.preset} data-surface={style.surface} data-font={style.fontPair} data-kit={ctx.doc.kitId} style={vars as CSSProperties}>
+    <div className="ys-site" data-preset={style.preset} data-surface={style.surface} data-font={style.fontPair} {...(style.preset === 'classic' ? {} : { 'data-motion': style.motion, 'data-radius': style.radius })} data-kit={ctx.doc.kitId} style={vars as CSSProperties}>
       <a className="ys-skip" href="#ys-main">Skip to content</a>
       {header.map((s) => <div key={s.id} className="ys-slot" {...mark(s)}>{renderSection(ctx, s, false)}</div>)}
       <main id="ys-main" tabIndex={-1}>

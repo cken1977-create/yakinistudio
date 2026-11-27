@@ -1,0 +1,41 @@
+/*
+ * Design v2 tokens (plan 6.2), shared by every design-v2 preset. Custom properties only: nothing
+ * here changes how a classic site looks. Colors arrive from themeFor() as --ys-surface-0..3,
+ * --ys-on-surface, --ys-muted and per-role text colors (surface-aware contrast, plan 6.3).
+ * Sizes follow the SITE's width (container query units), so the phone preview is exact.
+ */
+.ys-site {
+  /* Fluid type scale: ratio ~1.333 on a phone, ~1.5 on a desktop. */
+  --ys-step--1: clamp(0.83rem, 0.8rem + 0.2cqi, 0.9rem);
+  --ys-step-0: clamp(1rem, 0.96rem + 0.2cqi, 1.0625rem);
+  --ys-step-1: clamp(1.15rem, 1.05rem + 0.45cqi, 1.35rem);
+  --ys-step-2: clamp(1.33rem, 1.15rem + 0.9cqi, 1.8rem);
+  --ys-step-3: clamp(1.6rem, 1.25rem + 1.6cqi, 2.45rem);
+  --ys-step-4: clamp(1.95rem, 1.3rem + 2.8cqi, 3.3rem);
+  --ys-step-5: clamp(2.35rem, 1.2rem + 4.6cqi, 4.6rem);
+  --ys-step-6: clamp(2.8rem, 1.1rem + 7.2cqi, 6.6rem);
+  --ys-step-7: clamp(3.4rem, 1rem + 11cqi, 9.5rem);
+  --ys-track-display: -0.03em;
+  --ys-leading-display: 0.96;
+
+  /* Labels: mono, small, wide tracking, uppercase, optional 24px leading rule. */
+  --ys-label-size: 0.72rem;
+  --ys-label-track: 0.18em;
+  --ys-label-rule: 24px;
+
+  /* Space: 4px base. */
+  --ys-space-1: 4px; --ys-space-2: 8px; --ys-space-3: 12px; --ys-space-4: 16px; --ys-space-6: 24px;
+  --ys-space-8: 32px; --ys-space-12: 48px; --ys-space-16: 64px;
+  --ys-section-pad: clamp(80px, 10cqi, 192px);
+  --ys-container-narrow: 640px;
+  --ys-container: 1120px;
+  --ys-container-wide: 1360px;
+
+  /* Depth. */
+  --ys-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.18);
+  --ys-shadow-2: 0 2px 4px rgba(0, 0, 0, 0.16), 0 12px 28px -12px rgba(0, 0, 0, 0.45);
+  --ys-shadow-3: 0 4px 10px rgba(0, 0, 0, 0.18), 0 32px 64px -24px rgba(0, 0, 0, 0.6);
+
+  /* Texture: a ~1 KB SVG grain as a data URI (first-party, no request). */
+  --ys-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}

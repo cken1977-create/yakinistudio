@@ -1,0 +1,18 @@
+/* ---------------------------------------------------------------- menu */
+.ys-menu-cat + .ys-menu-cat { margin-top: 40px; }
+.ys-menu-cat-name { font-size: 1.5rem; padding-bottom: 10px; margin-bottom: 8px; border-bottom: 2px solid var(--ys-accent); }
+.ys-menu-items { display: grid; gap: 4px 40px; }
+.ys-menu-item { padding-block: 14px; border-bottom: 1px dashed var(--ys-line); }
+.ys-menu-line { display: flex; align-items: baseline; gap: 10px; }
+.ys-menu-name { font-weight: 700; font-size: 1.0625rem; }
+.ys-menu-line .ys-price { margin-left: auto; }
+.ys-menu.ys-v-columns .ys-menu-line::after { content: none; }
+.ys-menu-desc { color: var(--ys-muted); font-size: 0.975rem; margin-top: 2px; }
+.ys-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.ys-tags li { font-size: 0.75rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--ys-tint-strong); color: var(--ys-ink); }
+.ys-menu.ys-v-cards .ys-menu-items { gap: var(--ys-gap); }
+.ys-menu.ys-v-cards .ys-menu-item { background: var(--ys-surface); border: 1px solid var(--ys-line); border-radius: var(--ys-radius); padding: 18px; overflow: hidden; }
+.ys-menu.ys-v-cards .ys-menu-item.has-img { padding: 0; }
+.ys-menu.ys-v-cards .ys-menu-item.has-img .ys-menu-body { padding: 16px 18px 18px; }
+.ys-menu-img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+

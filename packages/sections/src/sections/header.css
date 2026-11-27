@@ -1,0 +1,32 @@
+/* ---------------------------------------------------------------- header */
+.ys-header { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--ys-bg) 94%, transparent); border-bottom: 1px solid var(--ys-line); backdrop-filter: saturate(1.4) blur(8px); }
+.ys-header-row { display: flex; align-items: center; gap: 16px; min-height: 68px; }
+.ys-brand { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none; margin-right: auto; min-width: 0; }
+.ys-logo { width: auto; max-width: 150px; max-height: 44px; object-fit: contain; }
+.ys-brand-name { font-size: 1.25rem; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.ys-header-actions { display: flex; align-items: center; gap: 10px; }
+.ys-header-phone { display: none; min-height: 44px; align-items: center; font-weight: 650; text-decoration: none; }
+.ys-header-cta { display: none; min-height: 44px; padding: 0 18px; font-size: 0.9375rem; }
+.ys-nav-wide { display: none; }
+.ys-nav-list { display: flex; gap: 4px; }
+.ys-nav-list a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 999px; text-decoration: none; font-weight: 600; }
+.ys-nav-list a:hover { background: var(--ys-tint); }
+.ys-nav-list a[aria-current='page'] { background: var(--ys-tint-strong); }
+.ys-nav-narrow { position: static; }
+.ys-nav-narrow > summary {
+  list-style: none; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; min-width: 44px; padding: 0 14px;
+  border: 1.5px solid var(--ys-line); border-radius: 999px; font-weight: 650; cursor: pointer; user-select: none;
+}
+.ys-nav-narrow > summary::-webkit-details-marker { display: none; }
+.ys-burger, .ys-burger::before, .ys-burger::after { display: block; width: 16px; height: 2px; border-radius: 2px; background: currentColor; }
+.ys-burger { position: relative; }
+.ys-burger::before, .ys-burger::after { content: ''; position: absolute; left: 0; }
+.ys-burger::before { top: -5px; }
+.ys-burger::after { top: 5px; }
+.ys-nav-narrow[open] > nav {
+  position: absolute; left: 0; right: 0; top: 100%; background: var(--ys-bg); border-bottom: 1px solid var(--ys-line);
+  box-shadow: 0 18px 30px -18px rgba(0, 0, 0, 0.3); padding: 8px 12px 16px;
+}
+.ys-nav-narrow .ys-nav-list { flex-direction: column; gap: 2px; }
+.ys-nav-narrow .ys-nav-list a { width: 100%; border-radius: 12px; padding: 0 14px; font-size: 1.0625rem; }
+

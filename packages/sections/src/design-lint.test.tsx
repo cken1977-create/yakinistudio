@@ -19,7 +19,7 @@ import { SiteView, type RenderContext } from './index'
  */
 const DIR = join(__dirname, '..', '..', 'site-schema', 'fixtures', 'design')
 const BASELINE_FILE = join(__dirname, 'design-lint-baseline.json')
-/** Smallest allowed display (H1) size, in rem. Step 3 moves this to the type tokens. */
+/** Smallest allowed display (H1) size, in rem, in any look (classic, and the v2 display steps). */
 export const DISPLAY_MIN_REM = 2.25
 
 const fixtures = readdirSync(DIR).filter((f) => f.endsWith('.json')).sort()
@@ -56,17 +56,27 @@ export function lintPage(name: string, doc: SiteDoc, page: Page): string[] {
   return out
 }
 
-function displayMinRem(): number {
-  const css = readFileSync(join(__dirname, 'styles.css'), 'utf8')
-  const m = /\.ys-display\s*\{[^}]*font-size:\s*clamp\(\s*([\d.]+)rem/.exec(css)
-  return m ? Number(m[1]) : 0
+/** Smallest display size each look can produce: classic's .ys-display, and the v2 display steps. */
+function displayMins(): Record<string, number> {
+  const base = readFileSync(join(__dirname, 'base.css'), 'utf8')
+  const tokens = readFileSync(join(__dirname, 'tokens.css'), 'utf8')
+  const sig = readFileSync(join(__dirname, 'presets', 'signature.css'), 'utf8')
+  const min = (re: RegExp, css: string) => Number(re.exec(css)?.[1] ?? 0)
+  const step = (n: number) => min(new RegExp(`--ys-step-${n}:\\s*clamp\\(\\s*([\\d.]+)rem`), tokens)
+  const sigDisplay = /\.ys-display\s*\{[^}]*font-size:\s*var\(--ys-step-(\d)\)/.exec(sig)?.[1]
+  return {
+    classic: min(/\.ys-display\s*\{[^}]*font-size:\s*clamp\(\s*([\d.]+)rem/, base),
+    'signature display': sigDisplay ? step(Number(sigDisplay)) : 0,
+    'step-6': step(6),
+    'step-7': step(7),
+  }
 }
 
 describe('design lint (published mode)', () => {
   const actual = fixtures.flatMap((f) => f.doc.pages.flatMap((p) => lintPage(f.name, f.doc, p))).sort()
 
   it('the display size is never below the token minimum', () => {
-    expect(displayMinRem()).toBeGreaterThanOrEqual(DISPLAY_MIN_REM)
+    for (const [look, rem] of Object.entries(displayMins())) expect(rem, look).toBeGreaterThanOrEqual(DISPLAY_MIN_REM)
   })
   it('no violations beyond the recorded baseline, and the baseline only shrinks', () => {
     if (process.env.UPDATE_BASELINE === '1') writeFileSync(BASELINE_FILE, `${JSON.stringify(actual, null, 2)}\n`)

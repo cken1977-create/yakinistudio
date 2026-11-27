@@ -16,13 +16,15 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@yakini/site-schema": "*",
+    "@fontsource-variable/cormorant-garamond": "^5.3.0",
     "@fontsource-variable/fraunces": "^5.3.0",
     "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@fontsource-variable/lora": "^5.3.0",
     "@fontsource-variable/nunito": "^5.3.0",
     "@fontsource-variable/playfair-display": "^5.3.0",
-    "@fontsource-variable/source-sans-3": "^5.3.1"
+    "@fontsource-variable/source-sans-3": "^5.3.1",
+    "@yakini/site-schema": "*"
   },
   "peerDependencies": {
     "react": "^19"
@@ -32,10 +34,10 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@yakini/ai": "*",
+    "@yakini/kits": "*",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "typescript": "^5",
-    "vitest": "^5.1.0",
-    "@yakini/kits": "*"
+    "vitest": "^5.1.0"
   }
 }
