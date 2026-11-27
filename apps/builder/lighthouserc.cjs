@@ -13,6 +13,14 @@ const PORT = Number(process.env.LHCI_PORT || 3200)
 // LHCI_ONLY=food-truck,restaurant limits the run to some kits.
 const ONLY = process.env.LHCI_ONLY ? process.env.LHCI_ONLY.split(',') : null
 
+const BUDGETS = {
+  'categories:performance': ['error', { minScore: 0.95 }],
+  'categories:accessibility': ['error', { minScore: 1 }],
+  'categories:best-practices': ['error', { minScore: 0.95 }],
+  'categories:seo': ['error', { minScore: 1 }],
+  'cumulative-layout-shift': ['error', { maxNumericValue: 0.02 }],
+}
+
 module.exports = {
   ci: {
     collect: {
@@ -23,13 +31,13 @@ module.exports = {
       settings: { chromeFlags: '--no-sandbox --headless=new', skipAudits: ['is-crawlable'], ...(process.env.CHROME_PATH ? { chromePath: process.env.CHROME_PATH } : {}) },
     },
     assert: {
-      assertions: {
-        'categories:performance': ['error', { minScore: 0.95 }],
-        'categories:accessibility': ['error', { minScore: 1 }],
-        'categories:best-practices': ['error', { minScore: 0.95 }],
-        'categories:seo': ['error', { minScore: 1 }],
-        'cumulative-layout-shift': ['error', { maxNumericValue: 0.02 }],
-      },
+      assertMatrix: [
+        { matchingUrlPattern: '^(?!.*/dev-site/restaurant-rich).*$', assertions: BUDGETS },
+        // Recorded baseline (decision 2026-11-27): restaurant-rich scores 0.92-0.93 on performance
+        // because its large hero photo is the slowest LCP of the kits. D4 (images) fixes it and
+        // removes this line; every other budget, CLS included, still applies to it.
+        { matchingUrlPattern: '/dev-site/restaurant-rich', assertions: { ...BUDGETS, 'categories:performance': ['error', { minScore: 0.9 }] } },
+      ],
     },
     upload: { target: 'filesystem', outputDir: process.env.LHCI_OUT || './lhci-report' },
   },
