@@ -1,5 +1,6 @@
 import { plainText, type SectionOf, type SectionType } from '@yakini/site-schema'
 import { DAY_NAMES, DAY_ORDER, DraftHint, Img, Link, RichTextView, HeadTxt, Txt, timeRange, type RenderContext, showEmpty } from '../context'
+import { BigQuoteTestimonials, ChaptersAbout, CollageHero, EditorialMenu, EditorialSplitHero, FilmstripGallery, ImageCtaBand, MosaicGallery } from './d2'
 import { Heading } from './heading'
 import { Icon } from './icons'
 
@@ -70,6 +71,8 @@ function CinematicHero({ ctx, s, first }: P<'hero'>) {
 
 export function HeroSection({ ctx, s, first }: P<'hero'>) {
   if (s.variant === 'cinematic') return <CinematicHero ctx={ctx} s={s} first={first} />
+  if (s.variant === 'editorial-split') return <EditorialSplitHero ctx={ctx} s={s} first={first} />
+  if (s.variant === 'collage') return <CollageHero ctx={ctx} s={s} first={first} />
   const p = s.props
   const img = p.image && ctx.image(p.image.assetId) ? p.image : undefined
   const variant = s.variant === 'fullbleed' && !img ? 'minimal' : s.variant
@@ -99,6 +102,7 @@ export function HeroSection({ ctx, s, first }: P<'hero'>) {
 }
 
 export function AboutSection({ ctx, s, first }: P<'about'>) {
+  if (s.variant === 'chapters') return <ChaptersAbout ctx={ctx} s={s} first={first} />
   const img = s.variant !== 'text-only' && s.props.image && ctx.image(s.props.image.assetId) ? s.props.image : undefined
   return (
     <section {...wrap(s, img ? 'has-img' : 'no-img')}>
@@ -144,6 +148,7 @@ export function ServicesSection({ ctx, s, first }: P<'services'>) {
 const TAG_LABELS = { veg: 'Vegetarian', spicy: 'Spicy', gf: 'Gluten-free' } as const
 
 export function MenuSection({ ctx, s, first }: P<'menu'>) {
+  if (s.variant === 'editorial') return <EditorialMenu ctx={ctx} s={s} first={first} />
   const cats = s.props.categories.filter((c) => c.items.length > 0 || showEmpty(ctx))
   if (!cats.length && !showEmpty(ctx)) return null
   return (
@@ -234,6 +239,8 @@ export function ScheduleSection({ ctx, s, first }: P<'schedule'>) {
 }
 
 export function GallerySection({ ctx, s, first }: P<'gallery'>) {
+  if (s.variant === 'mosaic') return <MosaicGallery ctx={ctx} s={s} first={first} />
+  if (s.variant === 'filmstrip') return <FilmstripGallery ctx={ctx} s={s} first={first} />
   const images = s.props.images.filter((im) => ctx.image(im.assetId))
   if (!images.length && !showEmpty(ctx)) return null
   return (
@@ -251,6 +258,7 @@ export function GallerySection({ ctx, s, first }: P<'gallery'>) {
 }
 
 export function TestimonialsSection({ ctx, s, first }: P<'testimonials'>) {
+  if (s.variant === 'big-quote') return <BigQuoteTestimonials ctx={ctx} s={s} first={first} />
   const items = s.props.items
   if (!items.length && !showEmpty(ctx)) return null
   const shown = s.variant === 'single' ? items.slice(0, 1) : items
@@ -324,6 +332,7 @@ export function TeamSection({ ctx, s, first }: P<'team'>) {
 }
 
 export function CtaBandSection({ ctx, s, first }: P<'cta_band'>) {
+  if (s.variant === 'image') return <ImageCtaBand ctx={ctx} s={s} first={first} />
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap ys-cta-inner">

@@ -138,6 +138,8 @@ export const HeroProps = z.object({
   headline: headlineText(1, 90),
   subhead: text(1, 200).optional(),
   image: ImageRef.optional(),
+  /** Collage variant (D2): up to two more photos, stacked at angles with the main one. */
+  images: z.array(ImageRef).max(2).optional(),
   primaryCta: Cta.optional(),
   secondaryCta: Cta.optional(),
 }).strict()
@@ -146,6 +148,8 @@ export const AboutProps = z.object({
   heading: headlineText(1, 80),
   body: richTextMax(1500),
   image: ImageRef.optional(),
+  /** Chapters variant (D2): one line from the story, set large. The owner's words only. */
+  pullQuote: text(1, 200).optional(),
 }).strict()
 
 export const ServicesProps = z.object({
@@ -227,6 +231,8 @@ export const CtaBandProps = z.object({
   headline: headlineText(1, 90),
   body: text(1, 200).optional(),
   cta: Cta,
+  /** Image variant (D2): full-bleed photo behind the band. */
+  image: ImageRef.optional(),
 }).strict()
 
 export const ContactFormProps = z.object({
@@ -255,25 +261,57 @@ export const TodayProps = z.object({
 
 export const FooterProps = z.object({}).strict()
 
+/**
+ * Ticker (D2): 3 to 8 short phrases (services, neighborhoods) that scroll by. Owner-entered or the
+ * site's own service names; read as a plain list when motion is off.
+ */
+export const TickerProps = z.object({
+  label: text(1, 60).optional(),
+  items: z.array(text(1, 40)).min(3).max(8),
+}).strict()
+
+/**
+ * Stats (D2): 2 to 4 numbers with labels ("12 years on Mesa St"). Owner-entered facts only: the AI
+ * may never create or change them (the generate pipeline drops any it sends).
+ */
+export const StatsProps = z.object({
+  heading: headlineText(1, 80).optional(),
+  items: z.array(z.object({ value: text(1, 12), label: text(1, 60) }).strict()).max(4),
+}).strict()
+
+/** Feature rows (D2): 2 to 4 alternating image/text rows with numbered labels. */
+export const FeatureRowsProps = z.object({
+  heading: headlineText(1, 80).optional(),
+  items: z.array(z.object({
+    title: headlineText(1, 80),
+    body: text(1, 400),
+    label: text(1, 40).optional(),
+    image: ImageRef.optional(),
+  }).strict()).max(4),
+}).strict()
+
 /** Every section type, its props schema and its variants. Order is the library order. */
 export const SECTION_DEFS = {
   header: { props: HeaderProps, variants: ['bar', 'centered'] },
-  hero: { props: HeroProps, variants: ['split', 'fullbleed', 'minimal', 'cinematic'] },
-  about: { props: AboutProps, variants: ['left-image', 'right-image', 'text-only'] },
+  hero: { props: HeroProps, variants: ['split', 'fullbleed', 'minimal', 'cinematic', 'editorial-split', 'collage'] },
+  about: { props: AboutProps, variants: ['left-image', 'right-image', 'text-only', 'chapters'] },
   services: { props: ServicesProps, variants: ['cards', 'list'] },
-  menu: { props: MenuProps, variants: ['columns', 'cards'] },
+  menu: { props: MenuProps, variants: ['columns', 'cards', 'editorial'] },
   schedule: { props: ScheduleProps, variants: ['list', 'week'] },
-  gallery: { props: GalleryProps, variants: ['grid', 'masonry'] },
+  gallery: { props: GalleryProps, variants: ['grid', 'masonry', 'mosaic', 'filmstrip'] },
   hours_location: { props: HoursLocationProps, variants: ['split', 'card'] },
-  testimonials: { props: TestimonialsProps, variants: ['cards', 'single'] },
+  testimonials: { props: TestimonialsProps, variants: ['cards', 'single', 'big-quote'] },
   faq: { props: FaqProps, variants: ['accordion'] },
   team: { props: TeamProps, variants: ['grid'] },
-  cta_band: { props: CtaBandProps, variants: ['solid', 'outline'] },
+  cta_band: { props: CtaBandProps, variants: ['solid', 'outline', 'image'] },
   contact_form: { props: ContactFormProps, variants: ['simple', 'with-details'] },
   booking: { props: BookingProps, variants: ['card'] },
   catering_request: { props: CateringRequestProps, variants: ['simple'] },
   today: { props: TodayProps, variants: ['banner', 'card'] },
-  footer: { props: FooterProps, variants: ['simple'] },
+  footer: { props: FooterProps, variants: ['simple', 'statement'] },
+  ticker: { props: TickerProps, variants: ['marquee'] },
+  stats: { props: StatsProps, variants: ['band'] },
+  feature_rows: { props: FeatureRowsProps, variants: ['alternating'] },
 } as const
 
 export type SectionDefs = typeof SECTION_DEFS
@@ -306,6 +344,7 @@ export const Section = z.discriminatedUnion('type', [
   sectionSchema('cta_band', D.cta_band), sectionSchema('contact_form', D.contact_form),
   sectionSchema('booking', D.booking), sectionSchema('catering_request', D.catering_request),
   sectionSchema('today', D.today), sectionSchema('footer', D.footer),
+  sectionSchema('ticker', D.ticker), sectionSchema('stats', D.stats), sectionSchema('feature_rows', D.feature_rows),
 ])
 export type Section = z.infer<typeof Section>
 /** A section narrowed to one type, e.g. SectionOf<'hero'>. */

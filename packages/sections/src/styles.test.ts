@@ -29,10 +29,18 @@ describe('stylesheet parts', () => {
     expect(selectors.length).toBeGreaterThan(40)
     for (const sel of selectors) for (const part of sel.split(/,(?![^(]*\))/)) expect(part.trim(), sel).toMatch(/^\.ys-site\[data-preset='signature'\]/)
   })
-  it('variant files only style variants that did not exist in v1', () => {
-    const css = read('variants/hero-cinematic.css').replace(/\/\*[\s\S]*?\*\//g, '')
-    const selectors = [...css.matchAll(/(^|[}\n])\s*([^@{}\s][^{}]*?)\s*\{/g)].map((m) => m[2].trim())
-    for (const sel of selectors) for (const part of sel.split(/,(?![^(]*\))/)) expect(part.trim(), sel).toMatch(/ys-v-cinematic|ys-cine-/)
+  it('variant files only style variants and types that did not exist in v1', () => {
+    const NEW = {
+      'variants/hero-cinematic.css': /ys-v-cinematic|ys-cine-/,
+      // D2: editorial-split, collage, chapters, editorial menu, mosaic, filmstrip, big-quote, image band, statement footer, ticker, stats, feature rows.
+      'variants/d2.css': /ys-v-(editorial-split|collage|chapters|editorial|mosaic|filmstrip|big-quote|image|statement)\b|ys-(ed|collage|chapter|pullquote|mosaic|film|bigquote|cta-(media|scrim|image-inner|headline)|footer-wordmark|ticker|stat|feature)/,
+    }
+    for (const [file, re] of Object.entries(NEW)) {
+      expect(imports, file).toContain(file)
+      const css = read(file).replace(/\/\*[\s\S]*?\*\//g, '')
+      const selectors = [...css.matchAll(/(^|[}\n])\s*([^@{}\s][^{}]*?)\s*\{/g)].map((m) => m[2].trim()).filter((s) => !/^(from|to|\d+%)$/.test(s))
+      for (const sel of selectors) for (const part of sel.split(/,(?![^(]*\))/)) expect(part.trim(), `${file}: ${sel}`).toMatch(re)
+    }
   })
   it('editor.css only restyles the editor-only placeholder marks and hints', () => {
     const css = read('editor.css').replace(/\/\*[\s\S]*?\*\//g, '')

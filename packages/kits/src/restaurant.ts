@@ -181,7 +181,7 @@ export const restaurant: KitDefinition = {
   id: 'restaurant',
   name: 'Restaurant',
   pageTemplates: PAGES,
-  allowedSections: ['header', 'hero', 'about', 'services', 'menu', 'schedule', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'booking', 'catering_request', 'today', 'footer'],
+  allowedSections: ['header', 'hero', 'about', 'services', 'menu', 'schedule', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'booking', 'catering_request', 'today', 'footer', 'ticker', 'stats', 'feature_rows'],
   defaultVariants: {
     header: 'centered', hero: 'cinematic', about: 'right-image', services: 'list', menu: 'columns', schedule: 'list', gallery: 'masonry',
     hours_location: 'split', testimonials: 'single', faq: 'accordion', team: 'grid', cta_band: 'solid', contact_form: 'simple',

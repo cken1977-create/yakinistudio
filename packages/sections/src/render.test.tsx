@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { lintCopy } from '@yakini/ai'
-import { loadSiteDoc, type Page, type SiteDoc } from '@yakini/site-schema'
+import { SECTION_TYPES, loadSiteDoc, type Page, type SiteDoc } from '@yakini/site-schema'
 import {
   AA, INSPECTORS, SiteView, contrastRatio, formatPhone, isEditablePath, jsonLdFor, readableInk, themeFor, time12,
   type RenderContext, type RenderMode,
@@ -173,7 +173,7 @@ describe('helpers', () => {
 
 describe('inspectors (spec 7.2, 8.7 allow-list)', () => {
   it('defines editable fields for every section type', () => {
-    expect(Object.keys(INSPECTORS)).toHaveLength(17)
+    expect(Object.keys(INSPECTORS).sort()).toEqual([...SECTION_TYPES].sort())
   })
   it('allows listed paths and paths inside them, nothing else', () => {
     expect(isEditablePath('hero', '/headline')).toBe(true)

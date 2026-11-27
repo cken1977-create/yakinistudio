@@ -18,23 +18,27 @@ import { trainingSchool } from './training-school'
 import { treeLawn } from './tree-lawn'
 import { trucking } from './trucking'
 import type { KitDefinition, Palette, SampleImage, TemplateContext } from './types'
+import { composeHome } from './composer'
 
 export * from './types'
 export { paragraphs } from './common'
 export * from './industries'
 export * from './color-presets'
 
+/** Every kit's template runs through the layout composer (design D2): one Home rhythm for all. */
+const composed = (kit: KitDefinition): KitDefinition => ({ ...kit, template: (ctx) => composeHome(kit, kit.template(ctx), ctx) })
+
 export const BUILDER_KITS: Partial<Record<KitId, KitDefinition>> = {
-  'food-truck': foodTruck,
-  restaurant,
-  landlord,
-  'real-estate': realEstate,
-  'tree-lawn': treeLawn,
-  nonprofit,
-  'training-school': trainingSchool,
-  trucking,
-  oilfield,
-  service,
+  'food-truck': composed(foodTruck),
+  restaurant: composed(restaurant),
+  landlord: composed(landlord),
+  'real-estate': composed(realEstate),
+  'tree-lawn': composed(treeLawn),
+  nonprofit: composed(nonprofit),
+  'training-school': composed(trainingSchool),
+  trucking: composed(trucking),
+  oilfield: composed(oilfield),
+  service: composed(service),
 }
 
 export const BUILDER_KIT_IDS = Object.keys(BUILDER_KITS) as KitId[]

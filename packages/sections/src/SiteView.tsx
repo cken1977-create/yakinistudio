@@ -7,6 +7,7 @@ import {
   TeamSection, TestimonialsSection, TodaySection,
 } from './sections/content'
 import { BookingSection, CateringRequestSection, ContactFormSection } from './sections/forms'
+import { FeatureRowsSection, StatsSection, TickerSection } from './sections/d2'
 import { HoursLocationSection } from './sections/hours'
 import { themeFor } from './theme'
 
@@ -29,6 +30,9 @@ function renderSection(ctx: RenderContext, s: Section, first: boolean): ReactNod
     case 'catering_request': return <CateringRequestSection ctx={ctx} s={s} first={first} />
     case 'today': return <TodaySection ctx={ctx} s={s} first={false} />
     case 'footer': return <FooterSection ctx={ctx} s={s} />
+    case 'ticker': return <TickerSection ctx={ctx} s={s} />
+    case 'stats': return <StatsSection ctx={ctx} s={s} first={first} />
+    case 'feature_rows': return <FeatureRowsSection ctx={ctx} s={s} first={first} />
   }
 }
 

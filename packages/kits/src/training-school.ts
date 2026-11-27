@@ -137,7 +137,7 @@ export const trainingSchool: KitDefinition = {
   id: 'training-school',
   name: 'Training school',
   pageTemplates: PAGES,
-  allowedSections: ['header', 'hero', 'about', 'services', 'schedule', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'booking', 'today', 'footer'],
+  allowedSections: ['header', 'hero', 'about', 'services', 'schedule', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'booking', 'today', 'footer', 'ticker', 'stats', 'feature_rows'],
   defaultVariants: { header: 'bar', hero: 'split', about: 'left-image', services: 'cards', schedule: 'week', gallery: 'grid', hours_location: 'split', testimonials: 'cards', faq: 'accordion', team: 'grid', cta_band: 'solid', contact_form: 'with-details', booking: 'card', today: 'banner', footer: 'simple' },
   fontPairs: ['modern', 'friendly', 'classic'],
   copyTone: 'Encouraging and direct, like an instructor on the first day. Say what students learn, how long it takes and what it prepares them for. Never promise jobs, pay, pass rates, licenses or financial aid; only name approvals the school really has.',
