@@ -52,7 +52,7 @@ function template(ctx: TemplateContext): SiteDocContent {
         id: 'home', slug: '', title: 'Home',
         sections: [
           header('centered', ctx, 'Book a table'),
-          section('hero', 'hero', 'fullbleed', {
+          section('hero', 'hero', 'cinematic', {
             eyebrow: trimTo(`Restaurant${inCity(ctx)}`, 60),
             headline: trimTo(name, 90),
             subhead: '[[Say what you serve in one sentence, like "Wood-fired Italian, made from scratch."]]',
@@ -179,7 +179,7 @@ export const restaurant: KitDefinition = {
   pageTemplates: PAGES,
   allowedSections: ['header', 'hero', 'about', 'services', 'menu', 'schedule', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'booking', 'catering_request', 'today', 'footer'],
   defaultVariants: {
-    header: 'centered', hero: 'fullbleed', about: 'right-image', services: 'list', menu: 'columns', schedule: 'list', gallery: 'masonry',
+    header: 'centered', hero: 'cinematic', about: 'right-image', services: 'list', menu: 'columns', schedule: 'list', gallery: 'masonry',
     hours_location: 'split', testimonials: 'single', faq: 'accordion', team: 'grid', cta_band: 'solid', contact_form: 'simple',
     booking: 'card', catering_request: 'simple', today: 'card', footer: 'simple',
   },

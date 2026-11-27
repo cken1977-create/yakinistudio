@@ -101,7 +101,7 @@
         {
           "id": "hero",
           "type": "hero",
-          "variant": "fullbleed",
+          "variant": "cinematic",
           "hidden": false,
           "props": {
             "eyebrow": "Restaurant in Las Cruces",

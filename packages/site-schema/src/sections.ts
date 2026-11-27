@@ -258,7 +258,7 @@ export const FooterProps = z.object({}).strict()
 /** Every section type, its props schema and its variants. Order is the library order. */
 export const SECTION_DEFS = {
   header: { props: HeaderProps, variants: ['bar', 'centered'] },
-  hero: { props: HeroProps, variants: ['split', 'fullbleed', 'minimal'] },
+  hero: { props: HeroProps, variants: ['split', 'fullbleed', 'minimal', 'cinematic'] },
   about: { props: AboutProps, variants: ['left-image', 'right-image', 'text-only'] },
   services: { props: ServicesProps, variants: ['cards', 'list'] },
   menu: { props: MenuProps, variants: ['columns', 'cards'] },

@@ -10,6 +10,8 @@ import foodTruckEvery from '@yakini/site-schema/fixtures/v1/food-truck-every-sec
 import foodTruckMinimal from '@yakini/site-schema/fixtures/v1/food-truck-minimal.json'
 import restaurantEvery from '@yakini/site-schema/fixtures/v1/restaurant-every-section.json'
 import restaurantMinimal from '@yakini/site-schema/fixtures/v1/restaurant-minimal.json'
+import foodTruckEveryV2 from '@yakini/site-schema/fixtures/v2/food-truck-every-section.json'
+import restaurantEveryV2 from '@yakini/site-schema/fixtures/v2/restaurant-every-section.json'
 import { draftImage } from '@/lib/draft/preview'
 import { isTestMode } from '@/lib/server/runtime'
 
@@ -25,6 +27,7 @@ export const metadata: Metadata = { robots: { index: false, follow: false }, ico
 const V1: Record<string, unknown> = {
   'food-truck-every-section': foodTruckEvery, 'food-truck-minimal': foodTruckMinimal,
   'restaurant-every-section': restaurantEvery, 'restaurant-minimal': restaurantMinimal,
+  'v2-food-truck-every-section': foodTruckEveryV2, 'v2-restaurant-every-section': restaurantEveryV2,
 }
 const FALLBACK_IMAGE = '7a1e0000-0000-4000-8000-000000000101'
 

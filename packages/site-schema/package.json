@@ -8,7 +8,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./fixtures/v1/*.json": "./fixtures/v1/*.json",
-    "./fixtures/design/*.json": "./fixtures/design/*.json"
+    "./fixtures/design/*.json": "./fixtures/design/*.json",
+    "./fixtures/v2/*.json": "./fixtures/v2/*.json"
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p .",

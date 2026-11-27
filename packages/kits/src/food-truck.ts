@@ -51,7 +51,7 @@ function template(ctx: TemplateContext): SiteDocContent {
         id: 'home', slug: '', title: 'Home',
         sections: [
           header('bar', ctx, 'Book catering'),
-          section('hero', 'hero', 'split', {
+          section('hero', 'hero', 'cinematic', {
             eyebrow: trimTo(`Food truck${inCity(ctx)}`, 60),
             headline: trimTo(name, 90),
             subhead: '[[Say what you serve in one sentence, like "Fresh street tacos made to order."]]',
@@ -183,7 +183,7 @@ export const foodTruck: KitDefinition = {
   pageTemplates: PAGES,
   allowedSections: ['header', 'hero', 'about', 'services', 'menu', 'schedule', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'booking', 'catering_request', 'today', 'footer'],
   defaultVariants: {
-    header: 'bar', hero: 'split', about: 'left-image', services: 'cards', menu: 'cards', schedule: 'week', gallery: 'grid',
+    header: 'bar', hero: 'cinematic', about: 'left-image', services: 'cards', menu: 'cards', schedule: 'week', gallery: 'grid',
     hours_location: 'split', testimonials: 'cards', faq: 'accordion', team: 'grid', cta_band: 'solid', contact_form: 'simple',
     booking: 'card', catering_request: 'simple', today: 'banner', footer: 'simple',
   },

@@ -23,5 +23,6 @@
 @import './sections/hours.css';
 @import './sections/footer.css';
 @import './responsive.css';
+@import './variants/hero-cinematic.css';
 @import './presets/classic.css';
 @import './presets/signature.css';

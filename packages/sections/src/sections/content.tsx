@@ -11,7 +11,65 @@ const wrap = (s: { id: string; type: string; variant: string }, extra = '') => (
   'aria-labelledby': `${s.id}-h`,
 })
 
+/**
+ * Up to two facts for the cinematic hero's floating badges, taken only from the business's own
+ * details (never invented): what it offers (its first services list) and where it is.
+ */
+export function heroFacts(doc: RenderContext['doc']): string[] {
+  const out: string[] = []
+  const services = doc.pages.flatMap((p) => p.sections).find((x) => x.type === 'services' && !x.hidden && x.props.items.length > 0)
+  if (services && services.type === 'services') {
+    const titles = services.props.items.map((i) => i.title.trim()).filter((t) => t && !t.includes('[[')).slice(0, 3)
+    if (titles.length) out.push(titles.join(' · '))
+  }
+  const a = doc.business.address
+  if (a?.city) out.push(a.region ? `${a.city}, ${a.region}` : a.city)
+  return out.slice(0, 2)
+}
+
+/**
+ * Cinematic hero (design v2, plan D1 step 4): a full-bleed photo framed 4:5 on a phone and 16:9 on
+ * a desktop around the photo's focal point, a layered scrim, the display headline with its accent
+ * phrase, a glowing primary and a ghost CTA, and up to two fact badges. With no photo it becomes a
+ * typographic hero: a large ghosted initial and a glow on the surface, never a flat panel.
+ */
+function CinematicHero({ ctx, s, first }: P<'hero'>) {
+  const p = s.props
+  const img = p.image && ctx.image(p.image.assetId) ? p.image : undefined
+  const facts = heroFacts(ctx.doc)
+  const initial = ctx.doc.business.name.trim().charAt(0).toUpperCase()
+  return (
+    <section {...wrap(s, img ? 'has-img' : 'no-img')}>
+      {img ? (
+        <div className="ys-cine-media">
+          <Img ctx={ctx} image={img} className="ys-cine-img" sizes="100vw" priority={first} />
+        </div>
+      ) : <span className="ys-cine-initial" aria-hidden="true">{initial}</span>}
+      <div className="ys-cine-scrim" aria-hidden="true" />
+      <div className="ys-wrap ys-cine-inner">
+        <div className="ys-hero-copy ys-cine-copy">
+          {p.eyebrow ? <p className="ys-eyebrow"><Txt>{p.eyebrow}</Txt></p> : null}
+          <Heading first={first} id={`${s.id}-h`} className="ys-display ys-cine-headline"><HeadTxt>{p.headline}</HeadTxt></Heading>
+          {p.subhead ? <p className="ys-lead"><Txt>{p.subhead}</Txt></p> : null}
+          {p.primaryCta || p.secondaryCta ? (
+            <div className="ys-actions">
+              {p.primaryCta ? <Link ctx={ctx} to={p.primaryCta.target} className="ys-btn ys-btn-primary">{p.primaryCta.label}</Link> : null}
+              {p.secondaryCta ? <Link ctx={ctx} to={p.secondaryCta.target} className="ys-btn ys-btn-ghost">{p.secondaryCta.label}</Link> : null}
+            </div>
+          ) : null}
+        </div>
+        {facts.length ? (
+          <ul className="ys-cine-facts" aria-label="At a glance">
+            {facts.map((f) => <li key={f} className="ys-cine-fact">{f}</li>)}
+          </ul>
+        ) : null}
+      </div>
+    </section>
+  )
+}
+
 export function HeroSection({ ctx, s, first }: P<'hero'>) {
+  if (s.variant === 'cinematic') return <CinematicHero ctx={ctx} s={s} first={first} />
   const p = s.props
   const img = p.image && ctx.image(p.image.assetId) ? p.image : undefined
   const variant = s.variant === 'fullbleed' && !img ? 'minimal' : s.variant

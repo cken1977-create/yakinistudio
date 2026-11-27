@@ -54,7 +54,7 @@
         {
           "id": "hero",
           "type": "hero",
-          "variant": "split",
+          "variant": "cinematic",
           "hidden": false,
           "props": {
             "eyebrow": "Food truck",

@@ -8,7 +8,7 @@ Plan: DESIGN_UPGRADE_PLAN.md, D1 "Signature look, the never-empty preview, and t
 | 1. Quality harness | Done (this branch) |
 | 2. Schema v2 + migrate-on-read, `*accent*` marker | Done |
 | 3. Tokens, Signature preset, fonts, surface contrast | Done |
-| 4. Cinematic hero | After step 3 |
+| 4. Cinematic hero | Done |
 | 5. Never-empty draft preview, "Finish your site" strip, kit headlines | Can start any time |
 
 ## Step 1: quality harness
@@ -84,6 +84,26 @@ general (`service`) kit has 6 photos of its own, so its gallery repeats two to r
 - **Known, by rule:** v1 drafts still on classic keep the old faint "No stop" days, because classic
   must not change. They clear when a site moves to a v2 preset.
 
+## Step 4: cinematic hero
+
+- New hero variant `cinematic`. It's the Home hero for food-truck and restaurant (the Signature
+  kits), and fixture coverage is in `packages/site-schema/fixtures/v2/*-every-section.json`. v1
+  fixtures stay as stored; the coverage test reads v1 and v2 together.
+- With a photo:
+  - a full-bleed `<picture>` (WebP first), framed around the image's stored focal point;
+  - at least 4:5 of the site's width and 78svh tall on a phone, and 16:9 and 92svh on a desktop.
+  - The frame is a CSS crop of the same file: there's no server-side image cropping yet.
+  - A layered scrim from the surface, eyebrow label, step-7 display headline with its accent
+    phrase, subhead, a glowing primary and a ghost CTA.
+  - Up to two fact badges, taken only from the business's own facts: its first services list
+    (up to 3 titles) and its city.
+- Without a photo: a typographic hero with a large ghosted initial and glows. It's never a flat
+  panel.
+- Works under any preset: it falls back to the brand Dark color and its ink when there are no
+  surface tokens. The styles live in `variants/hero-cinematic.css`, which only styles
+  cinematic-hero selectors, so the classic stylesheet stays byte for byte.
+- axe now also fails any page that scrolls sideways (this caught a first version that did).
+
 ## Baseline found on 2026-11-27 (the "before")
 
 Each later step must clear its own entries. The tests fail on anything new and on any entry that
@@ -96,7 +116,7 @@ stops happening.
 
 **axe** (2 known, serious):
 - Draft preview placeholder hints (`.ys-hint`) are below 4.5:1. Owner: step 5, which removes them from the site.
-- ~~Schedule days with no stop (`.is-off .ys-muted`) are below 4.5:1.~~ Cleared in step 3 (Signature).
+- Schedule days with no stop (`.is-off .ys-muted`) are below 4.5:1 in the **classic** look only (kits with a schedule page, still on classic). Fixed in Signature (step 3). Classic must not change, so this clears when those kits move to a v2 preset in D3; the axe baseline applies only to classic pages.
 
 **Lighthouse** (one run each, phone, throttled):
 

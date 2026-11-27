@@ -1,0 +1,904 @@
+{
+  "schemaVersion": 2,
+  "kitId": "restaurant",
+  "locale": "en-US",
+  "business": {
+    "name": "Casa Verde Kitchen",
+    "tagline": "New Mexican food, made from scratch",
+    "phone": "+15055550142",
+    "email": "hello@example.com",
+    "address": {
+      "line1": "100 Central Ave SW",
+      "city": "Albuquerque",
+      "region": "NM",
+      "postal": "87102",
+      "country": "US"
+    },
+    "hours": [
+      {
+        "day": "mon",
+        "closed": true
+      },
+      {
+        "day": "tue",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "wed",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "thu",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "fri",
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": "sat",
+        "open": "10:00",
+        "close": "22:00"
+      },
+      {
+        "day": "sun",
+        "closed": true
+      }
+    ],
+    "serviceArea": "Albuquerque and Rio Rancho",
+    "social": [
+      {
+        "kind": "instagram",
+        "url": "https://instagram.com/example"
+      },
+      {
+        "kind": "facebook",
+        "url": "https://facebook.com/example"
+      }
+    ]
+  },
+  "brand": {
+    "logo": {
+      "assetId": "3f2a1b9c-4d5e-4f60-8a7b-1c2d3e4f5a6b",
+      "alt": "Casa Verde Kitchen logo"
+    },
+    "colors": {
+      "primary": "#1E3A34",
+      "secondary": "#16130F",
+      "accent": "#E8C07A"
+    },
+    "colorsSource": "extracted",
+    "fontPair": "classic"
+  },
+  "nav": {
+    "items": [
+      {
+        "label": "Home",
+        "pageId": "home"
+      },
+      {
+        "label": "Menu",
+        "pageId": "menu"
+      },
+      {
+        "label": "More",
+        "pageId": "more"
+      }
+    ],
+    "cta": {
+      "label": "Call us",
+      "target": {
+        "kind": "tel",
+        "phone": "+15055550142"
+      }
+    }
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "",
+      "title": "Home",
+      "seo": {
+        "title": "Casa Verde Kitchen",
+        "description": "Home page"
+      },
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Order now"
+          }
+        },
+        {
+          "id": "cinema",
+          "type": "hero",
+          "variant": "cinematic",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Restaurant \u00b7 Albuquerque",
+            "headline": "Family recipes, *made from scratch.*",
+            "subhead": "Fresh tortillas, slow-cooked meats and salsas made every morning.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000201",
+              "alt": "Our dining room",
+              "focal": {
+                "x": 0.4,
+                "y": 0.6
+              }
+            },
+            "primaryCta": {
+              "label": "See the menu",
+              "target": {
+                "kind": "page",
+                "pageId": "menu"
+              }
+            },
+            "secondaryCta": {
+              "label": "Call us",
+              "target": {
+                "kind": "tel",
+                "phone": "+15055550142"
+              }
+            }
+          }
+        },
+        {
+          "id": "hero",
+          "type": "hero",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Albuquerque",
+            "headline": "Casa Verde Kitchen",
+            "subhead": "Fresh food, made to order.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000201",
+              "alt": "Our dining room"
+            },
+            "primaryCta": {
+              "label": "See the menu",
+              "target": {
+                "kind": "page",
+                "pageId": "menu"
+              }
+            },
+            "secondaryCta": {
+              "label": "Find us",
+              "target": {
+                "kind": "section",
+                "pageId": "home",
+                "sectionId": "schedule-week"
+              }
+            }
+          }
+        },
+        {
+          "id": "today-banner",
+          "type": "today",
+          "variant": "banner",
+          "hidden": false,
+          "props": {
+            "heading": "Today",
+            "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "today-card",
+          "type": "today",
+          "variant": "card",
+          "hidden": false,
+          "props": {
+            "heading": "Today",
+            "emptyBehavior": "show-text",
+            "emptyText": "Check back for today\u2019s update."
+          }
+        },
+        {
+          "id": "schedule-week",
+          "type": "schedule",
+          "variant": "week",
+          "hidden": false,
+          "props": {
+            "heading": "Where to find us",
+            "intro": "Our regular stops.",
+            "stops": [
+              {
+                "day": "tue",
+                "start": "11:00",
+                "end": "14:00",
+                "place": "Civic Plaza",
+                "address": "1 Civic Plaza NW"
+              },
+              {
+                "day": "fri",
+                "start": "17:00",
+                "end": "21:00",
+                "place": "Brewery row"
+              },
+              {
+                "day": "sat",
+                "start": "10:00",
+                "end": "14:00",
+                "place": "Downtown Growers Market"
+              }
+            ]
+          }
+        },
+        {
+          "id": "schedule-list",
+          "type": "schedule",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "This week",
+            "stops": [
+              {
+                "day": "wed",
+                "start": "11:00",
+                "end": "14:00",
+                "place": "Old Town"
+              }
+            ]
+          }
+        },
+        {
+          "id": "cta-solid",
+          "type": "cta_band",
+          "variant": "solid",
+          "hidden": false,
+          "props": {
+            "headline": "Hungry yet?",
+            "body": "See the full menu.",
+            "cta": {
+              "label": "See the menu",
+              "target": {
+                "kind": "page",
+                "pageId": "menu"
+              }
+            }
+          }
+        },
+        {
+          "id": "cta-outline",
+          "type": "cta_band",
+          "variant": "outline",
+          "hidden": false,
+          "props": {
+            "headline": "Planning an event?",
+            "cta": {
+              "label": "Ask about a date",
+              "target": {
+                "kind": "form",
+                "formKey": "catering"
+              }
+            }
+          }
+        },
+        {
+          "id": "reviews-cards",
+          "type": "testimonials",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "What people say",
+            "items": [
+              {
+                "quote": "Best tacos in town.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "Fast and friendly.",
+                "name": "Sam T."
+              }
+            ]
+          }
+        },
+        {
+          "id": "reviews-single",
+          "type": "testimonials",
+          "variant": "single",
+          "hidden": false,
+          "props": {
+            "items": [
+              {
+                "quote": "We hired them for our wedding and everyone loved it.",
+                "name": "Dana and Lee"
+              }
+            ]
+          }
+        },
+        {
+          "id": "hero-fullbleed",
+          "type": "hero",
+          "variant": "fullbleed",
+          "hidden": false,
+          "props": {
+            "headline": "Made with care",
+            "subhead": "Every day, from scratch.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000203",
+              "alt": "A table set for twelve"
+            },
+            "primaryCta": {
+              "label": "Visit us",
+              "target": {
+                "kind": "page",
+                "pageId": "more"
+              }
+            }
+          }
+        },
+        {
+          "id": "hero-minimal",
+          "type": "hero",
+          "variant": "minimal",
+          "hidden": false,
+          "props": {
+            "headline": "Catering and events",
+            "primaryCta": {
+              "label": "Email us",
+              "target": {
+                "kind": "mailto",
+                "email": "hello@example.com"
+              }
+            }
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "menu",
+      "slug": "menu",
+      "title": "Menu",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "centered",
+          "hidden": false,
+          "props": {
+            "showPhone": false
+          }
+        },
+        {
+          "id": "cinema-type",
+          "type": "hero",
+          "variant": "cinematic",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Our menu",
+            "headline": "Made *the long way.*",
+            "subhead": "Everything cooked to order."
+          }
+        },
+        {
+          "id": "menu-cards",
+          "type": "menu",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "Menu",
+            "intro": "Made fresh to order.",
+            "categories": [
+              {
+                "name": "Starters",
+                "items": [
+                  {
+                    "name": "Elote",
+                    "description": "Grilled steak, onion, cilantro, lime.",
+                    "price": "$4",
+                    "tags": [
+                      "gf"
+                    ],
+                    "image": {
+                      "assetId": "7a1e0000-0000-4000-8000-000000000202",
+                      "alt": "Green chile stew in a bowl"
+                    }
+                  },
+                  {
+                    "name": "Chips and salsa",
+                    "description": "Squash, corn and green chile.",
+                    "price": "$3.50",
+                    "tags": [
+                      "veg",
+                      "spicy"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Drinks",
+                "items": [
+                  {
+                    "name": "Horchata"
+                  },
+                  {
+                    "name": "Agua fresca",
+                    "price": "$3"
+                  }
+                ]
+              }
+            ],
+            "note": "Prices can change."
+          }
+        },
+        {
+          "id": "menu-columns",
+          "type": "menu",
+          "variant": "columns",
+          "hidden": false,
+          "props": {
+            "heading": "Full menu",
+            "intro": "Made fresh to order.",
+            "categories": [
+              {
+                "name": "Starters",
+                "items": [
+                  {
+                    "name": "Elote",
+                    "description": "Grilled steak, onion, cilantro, lime.",
+                    "price": "$4",
+                    "tags": [
+                      "gf"
+                    ],
+                    "image": {
+                      "assetId": "7a1e0000-0000-4000-8000-000000000202",
+                      "alt": "Green chile stew in a bowl"
+                    }
+                  },
+                  {
+                    "name": "Chips and salsa",
+                    "description": "Squash, corn and green chile.",
+                    "price": "$3.50",
+                    "tags": [
+                      "veg",
+                      "spicy"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Drinks",
+                "items": [
+                  {
+                    "name": "Horchata"
+                  },
+                  {
+                    "name": "Agua fresca",
+                    "price": "$3"
+                  }
+                ]
+              }
+            ],
+            "note": "Prices can change."
+          }
+        },
+        {
+          "id": "services-cards",
+          "type": "services",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "Catering options",
+            "intro": "For any size party.",
+            "items": [
+              {
+                "title": "Truck at your event",
+                "body": "We cook on site.",
+                "icon": "truck"
+              },
+              {
+                "title": "Drop-off trays",
+                "body": "Ready to serve.",
+                "price": "From $120",
+                "icon": "utensils"
+              },
+              {
+                "title": "Custom menu",
+                "icon": "star"
+              }
+            ]
+          }
+        },
+        {
+          "id": "services-list",
+          "type": "services",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "Private events",
+            "items": [
+              {
+                "title": "Private room",
+                "body": "Seats 24.",
+                "icon": "users"
+              },
+              {
+                "title": "Group menus"
+              }
+            ]
+          }
+        },
+        {
+          "id": "gallery-grid",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "Photos",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000201",
+                "alt": "Our dining room"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000202",
+                "alt": "Green chile stew in a bowl"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000203",
+                "alt": "A table set for twelve"
+              }
+            ]
+          }
+        },
+        {
+          "id": "gallery-masonry",
+          "type": "gallery",
+          "variant": "masonry",
+          "hidden": false,
+          "props": {
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000202",
+                "alt": "Green chile stew in a bowl"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000203",
+                "alt": "A table set for twelve"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000201",
+                "alt": "Our dining room"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000202",
+                "alt": "Green chile stew in a bowl"
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "more",
+      "slug": "more",
+      "title": "About and contact",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {}
+        },
+        {
+          "id": "about-left",
+          "type": "about",
+          "variant": "left-image",
+          "hidden": false,
+          "props": {
+            "heading": "Our story",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "We started in "
+                  },
+                  {
+                    "text": "2019",
+                    "bold": true
+                  },
+                  {
+                    "text": " with one grill."
+                  }
+                ]
+              },
+              {
+                "type": "h3",
+                "children": [
+                  {
+                    "text": "What we believe"
+                  }
+                ]
+              },
+              {
+                "type": "ul",
+                "children": [
+                  {
+                    "text": "Fresh tortillas"
+                  },
+                  {
+                    "text": "Local beef"
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000202",
+              "alt": "Green chile stew in a bowl"
+            }
+          }
+        },
+        {
+          "id": "about-right",
+          "type": "about",
+          "variant": "right-image",
+          "hidden": false,
+          "props": {
+            "heading": "The kitchen",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Everything is made on site."
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000201",
+              "alt": "Our dining room"
+            }
+          }
+        },
+        {
+          "id": "about-text",
+          "type": "about",
+          "variant": "text-only",
+          "hidden": false,
+          "props": {
+            "heading": "Welcome",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Come say hi. "
+                  },
+                  {
+                    "text": "See the menu",
+                    "link": {
+                      "kind": "page",
+                      "pageId": "menu"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "team",
+          "type": "team",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "The team",
+            "members": [
+              {
+                "name": "Rosa M.",
+                "role": "Owner and cook",
+                "photo": {
+                  "assetId": "7a1e0000-0000-4000-8000-000000000203",
+                  "alt": "A table set for twelve"
+                },
+                "bio": "Grew up cooking with her grandmother."
+              },
+              {
+                "name": "Luis M.",
+                "role": "Front window"
+              }
+            ]
+          }
+        },
+        {
+          "id": "faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Good to know",
+            "items": [
+              {
+                "q": "Do you cater?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Yes, for groups of 20 or more."
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "q": "Do you take cards?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Cards and cash."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "hours-split",
+          "type": "hours_location",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "heading": "Hours and location",
+            "directionsUrl": "https://maps.google.com/?q=100+Central+Ave+SW",
+            "note": "Free parking behind the building."
+          }
+        },
+        {
+          "id": "hours-card",
+          "type": "hours_location",
+          "variant": "card",
+          "hidden": false,
+          "props": {
+            "heading": "Visit us"
+          }
+        },
+        {
+          "id": "booking-request",
+          "type": "booking",
+          "variant": "card",
+          "hidden": false,
+          "props": {
+            "heading": "Book a table",
+            "body": "Tell us your party size and time.",
+            "mode": "request",
+            "buttonLabel": "Request a table"
+          }
+        },
+        {
+          "id": "catering-form",
+          "type": "catering_request",
+          "variant": "simple",
+          "hidden": false,
+          "props": {
+            "heading": "Plan your event",
+            "formKey": "catering",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "event_date",
+              "guest_count",
+              "service",
+              "message"
+            ],
+            "submitLabel": "Send request",
+            "consentText": "By sending this form you agree that Casa Verde Kitchen may contact you."
+          }
+        },
+        {
+          "id": "contact-simple",
+          "type": "contact_form",
+          "variant": "simple",
+          "hidden": false,
+          "props": {
+            "heading": "Send us a message",
+            "intro": "We reply within a day.",
+            "formKey": "contact",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "message"
+            ],
+            "submitLabel": "Send",
+            "consentText": "By sending this form you agree that Casa Verde Kitchen may contact you."
+          }
+        },
+        {
+          "id": "contact-details",
+          "type": "contact_form",
+          "variant": "with-details",
+          "hidden": false,
+          "props": {
+            "heading": "Send us a message",
+            "intro": "We reply within a day.",
+            "formKey": "contact-2",
+            "fields": [
+              "name",
+              "phone",
+              "message"
+            ],
+            "submitLabel": "Send",
+            "consentText": "By sending this form you agree that Casa Verde Kitchen may contact you."
+          }
+        },
+        {
+          "id": "hidden-hero",
+          "type": "hero",
+          "variant": "minimal",
+          "hidden": true,
+          "props": {
+            "headline": "Hidden section"
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    }
+  ],
+  "footer": {
+    "showHours": true,
+    "showAddress": true,
+    "legalName": "Casa Verde Kitchen LLC",
+    "extraLinks": [
+      {
+        "kind": "page",
+        "pageId": "menu"
+      }
+    ],
+    "showSiteByYakini": true
+  },
+  "seo": {
+    "siteTitle": "Casa Verde Kitchen",
+    "description": "Casa Verde Kitchen in Albuquerque.",
+    "ogImageAssetId": "7a1e0000-0000-4000-8000-000000000201"
+  },
+  "integrations": {
+    "bookingEnabled": false,
+    "formsEnabled": true
+  },
+  "style": {
+    "preset": "signature",
+    "surface": "dark",
+    "fontPair": "signature",
+    "radius": "round",
+    "motion": "subtle"
+  }
+}
