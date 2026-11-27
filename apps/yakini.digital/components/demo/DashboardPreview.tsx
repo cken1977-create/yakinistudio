@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useMemo, useState, type CSSProperties } from 'react'
 import type { BrandProfile } from '@/lib/demo/extract-brand'
 import { contrastInk, FALLBACK_COLORS, withAlpha } from '@/lib/demo/extract-brand'
 import { addonCards, PREVIEW_BANNER, previewFor, type PreviewKind, type PreviewRow } from '@/lib/demo/kit-previews'
@@ -68,12 +68,16 @@ export function DashboardPreview({
   const [logoFailed, setLogoFailed] = useState(false)
   const showLogo = brand.logoUrl && !logoFailed
 
-  useEffect(() => {
+  // A different kit starts the preview fresh. Reset while rendering (React's pattern for state that
+  // follows a prop), not in an effect, so there's no extra render with the old kit's state.
+  const [shownKit, setShownKit] = useState(kitId)
+  if (shownKit !== kitId) {
+    setShownKit(kitId)
     setTab(preview.nav[0]?.id)
     setOverrides({})
     setOpened(null)
     setFlash('')
-  }, [kitId, preview.nav])
+  }
 
   const style = {
     '--kd-bg': primary,

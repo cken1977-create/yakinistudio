@@ -29,7 +29,8 @@ export function ChatWidget() {
   const logRef = useRef<HTMLDivElement>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const ctxRef = useRef<AudioContext | null>(null)
-  const analyserRef = useRef<AnalyserNode | null>(null)
+  // The live audio analyser drives the avatar's lip-sync; kept in state so render never reads a ref.
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null)
   const recRef = useRef<Rec | null>(null)
   const barge = useRef(0)
 
@@ -59,12 +60,12 @@ export function ChatWidget() {
     try {
       if (!ctxRef.current) ctxRef.current = new AudioContext()
       const ctx = ctxRef.current
-      const analyser = ctx.createAnalyser()
-      analyser.fftSize = 256
+      const node = ctx.createAnalyser()
+      node.fftSize = 256
       const src = ctx.createMediaElementSource(audio)
-      src.connect(analyser)
-      analyser.connect(ctx.destination)
-      analyserRef.current = analyser
+      src.connect(node)
+      node.connect(ctx.destination)
+      setAnalyser(node)
     } catch {
       /* already connected or blocked */
     }
@@ -136,9 +137,10 @@ export function ChatWidget() {
             if (data.type === 'token' && data.text) {
               full += data.text
               const snapshot = full
+              const snapLinks = links // each update gets its own copy, so later changes to links don't touch it
               setMessages((m) => {
                 const next = m.slice()
-                next[next.length - 1] = { role: 'assistant', text: snapshot, links }
+                next[next.length - 1] = { role: 'assistant', text: snapshot, links: snapLinks }
                 return next
               })
             }
@@ -149,9 +151,10 @@ export function ChatWidget() {
           }
         }
         const finalText = full.trim()
+        const finalLinks = links
         setMessages((m) => {
           const next = m.slice()
-          next[next.length - 1] = { role: 'assistant', text: finalText, links }
+          next[next.length - 1] = { role: 'assistant', text: finalText, links: finalLinks }
           return next
         })
         if (talk && finalText) {
@@ -228,7 +231,7 @@ export function ChatWidget() {
       {open ? (
         <section className="yk-chat-panel" role="dialog" aria-label={`${ASSISTANT.name}, ${ASSISTANT.role}`}>
           <header className="yk-chat-head">
-            <AssistantAvatar size={64} speaking={speaking} analyser={analyserRef.current} />
+            <AssistantAvatar size={64} speaking={speaking} analyser={analyser} />
             <div>
               <h2>{ASSISTANT.name}</h2>
               <p>{ASSISTANT.role}</p>
