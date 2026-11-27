@@ -20,7 +20,6 @@ export const INSPECTORS: Record<SectionType, readonly InspectorField[]> = {
     { path: '/subhead', label: 'Subheading', kind: 'textarea' },
     { path: '/image', label: 'Photo', kind: 'image' },
     { path: '/images', label: 'More photos (collage)', kind: 'list' },
-    { path: '/images/*', label: 'Photo', kind: 'image' },
     { path: '/primaryCta', label: 'Main button', kind: 'link' },
     { path: '/secondaryCta', label: 'Second button', kind: 'link' },
   ],

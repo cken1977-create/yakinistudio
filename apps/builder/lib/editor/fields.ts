@@ -32,7 +32,12 @@ function build(type: SectionType, prefix: string): FieldNode[] {
   return out
 }
 function node(type: SectionType, f: InspectorField, rel: string): FieldNode {
-  return { rel, label: f.label, kind: f.kind, options: f.options, pattern: f.path, children: f.kind === 'list' ? build(type, `${f.path}/*`) : [] }
+  if (f.kind !== 'list') return { rel, label: f.label, kind: f.kind, options: f.options, pattern: f.path, children: [] }
+  // A list of plain values (the ticker's phrases) lists the item itself as `<list>/*`: one child
+  // with an empty relative path, so each row edits the value directly.
+  const self = INSPECTORS[type].find((x) => x.path === `${f.path}/*`)
+  const children = self ? [{ rel: '', label: self.label, kind: self.kind, options: self.options, pattern: self.path, children: [] }] : build(type, `${f.path}/*`)
+  return { rel, label: f.label, kind: f.kind, options: f.options, pattern: f.path, children }
 }
 
 const layouts = new Map<SectionType, FieldNode[]>()
