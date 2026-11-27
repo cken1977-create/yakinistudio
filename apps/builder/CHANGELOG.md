@@ -11,8 +11,9 @@
 - Lighthouse (phone, throttled): 9 of 10 rich sites now score 0.95 or higher (was 3).
 - Tests: unit (every fixture page has no script but JSON-LD; D7 hook), browser (0 script requests
   on every page of a published site; forms submit with JavaScript off).
-- Fonts: no more text moving when fonts load. Each site preloads its own fonts, and every font pair
-  has size-matched local fallbacks for slow connections. Published fonts are subset at build time;
+- Fonts: no more text moving when fonts load. Each site preloads its own fonts and never swaps them
+  in after the page is drawn (font-display: optional); every font pair has size-matched local
+  fallbacks for slow connections. Published fonts are subset at build time;
   at most 100 KB per site, enforced by the build and a test.
 
 ## Phase 5a: your own domain (2026-11-26, branch `feat/builder-phase5-domains`)

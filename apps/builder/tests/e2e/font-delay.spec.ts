@@ -4,8 +4,9 @@ import { RICH, fixtureUrl } from './design-fixtures'
 /**
  * Slow-font check (CLS <= 0.02 even when fonts are late): every rich design fixture at the project
  * width (390 and 1280) with every font file held back 1.5 s, so the page first draws with the
- * size-matched fallbacks and the web fonts swap in afterwards. The layout shifts that swap causes
- * must add up to no more than 0.02 (the D1 budget), and the web fonts must really arrive.
+ * size-matched fallbacks. The fonts must be asked for, and the layout shifts must add up to no more
+ * than 0.02 (the D1 budget). Published pages use font-display: optional, so a late font is not
+ * swapped in on that page view at all.
  */
 test.skip(!!process.env.E2E_BASE_URL, 'Needs the local test-mode server')
 
