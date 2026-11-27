@@ -3,6 +3,8 @@ import { siteRenderer } from '@/lib/site/renderer'
 import { siteView } from '@/lib/site/resolve'
 import { freshFormStamp } from '@/lib/server/form-stamp'
 import { studioOrigin } from '@/lib/server/settings'
+import { getRuntime, isTestMode } from '@/lib/server/runtime'
+import { headlineFor } from '@/lib/site/headline-cache'
 
 /**
  * Multi-tenant renderer (spec 13.5). The proxy rewrites every client host to /_site/<host>/<path>.
@@ -43,16 +45,22 @@ async function render(request: Request, { params }: Ctx): Promise<Response> {
   }
 
   const reportUrl = v.reportLinkHidden ? null : `${studioOrigin()}/report?site=${v.siteId}`
-  // The site's headline font travels with the page; without it the page still reads (fallback font).
+  // The site's headline font travels with the page, made once at publish and read from the cache
+  // here (never cut per view). Without it the page still reads (fallback font).
   let headline = null
-  try { headline = await renderer.headlineFont(v.doc) } catch (e) { Sentry.captureException(e, { tags: { area: 'headline-font' } }) }
+  let headlineCache = 'none'
+  try {
+    const h = await headlineFor(getRuntime(), { siteId: v.siteId, versionId: v.versionId, doc: v.doc })
+    headline = h.font; headlineCache = h.cached ? 'hit' : 'miss'
+  } catch (e) { Sentry.captureException(e, { tags: { area: 'headline-font' } }) }
   const body = renderPublished({
     doc: v.doc, pageId: v.kind === 'page' ? v.page.id : null, thanks: v.kind === 'thanks' ? { formKey: v.formKey } : null,
     siteId: v.siteId, reportUrl, formStamp: freshFormStamp(), canonicalHost: v.canonicalHost, indexable: v.indexable,
     // D7: 3D-plan sites will pass their first-party islands and the request nonce here. None today.
     islands: [], nonce: request.headers.get('x-nonce'), headline,
   })
-  return html(body, 200)
+  // Test mode only: say whether the headline font came from the cache (browser tests check it).
+  return html(body, 200, isTestMode() ? { 'x-headline-font': headlineCache } : {})
 }
 
 export const GET = render

@@ -1,4 +1,5 @@
 import 'server-only'
+import * as Sentry from '@sentry/nextjs'
 import { riskCheck } from '@yakini/abuse'
 import { safeFetch, SafeFetchError } from '@yakini/brand/safe-fetch'
 import { kitDefinition } from '@yakini/kits'
@@ -7,6 +8,7 @@ import { domainCapacity, domainLimitFromEnv } from '@/lib/domain-limit'
 import { docChecks, externalUrls, item, MAX_EXTERNAL_URLS, visibleText, blockingFailures, type CheckItem } from '@/lib/publish/checks'
 import { formsOf } from '@/lib/publish/forms'
 import { hostnameFor, slugError } from '@/lib/publish/slug'
+import { warmHeadline } from '@/lib/site/headline-cache'
 import { currentUser, type SessionUser } from './auth'
 import { docSha256 } from './editor'
 import { serverEnv } from './env'
@@ -178,6 +180,9 @@ export async function goLive(rt: Runtime, p: { siteId: string; doc: SiteDoc; sha
       forms: formsOf(p.doc), actorKind: p.actorKind, overrideReason: p.override,
     })
     await refreshSite(rt, p.siteId, [...before, p.hostname])
+    // Make the new version's headline font now, once, so no page view ever cuts fonts. If it
+    // fails the site is still live; the first view makes it instead.
+    try { await warmHeadline(rt, { siteId: p.siteId, versionId: v.versionId, doc: p.doc }) } catch (e) { Sentry.captureException(e, { tags: { area: 'headline-font' } }) }
     return { status: 'live', url: `https://${p.hostname}`, number: v.number, address }
   } catch (e) {
     if (e instanceof PublishError) return refusal(e)

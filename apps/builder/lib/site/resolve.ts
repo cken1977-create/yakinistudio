@@ -16,7 +16,7 @@ export type SiteView =
   | ({ kind: 'page'; page: Page } & LiveSite)
   | ({ kind: 'thanks'; page: Page; formKey: string | null } & LiveSite)
 
-export type LiveSite = { siteId: string; doc: SiteDoc; canonicalHost: string; indexable: boolean; reportLinkHidden: boolean }
+export type LiveSite = { siteId: string; versionId: string | null; doc: SiteDoc; canonicalHost: string; indexable: boolean; reportLinkHidden: boolean }
 
 const HOST_RE = /^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{1,62}$/
 
@@ -42,7 +42,7 @@ export async function liveSite(host: string): Promise<{ kind: 'site'; site: Live
   const ownDomain = !canonicalHost.endsWith(`.${root}`)
   return {
     kind: 'site', primaryHost: hs.primaryHost,
-    site: { siteId: hs.siteId, doc, canonicalHost, indexable: hs.hasPlan && hs.indexable, reportLinkHidden: hs.reportLinkHidden && hs.hasPlan && ownDomain },
+    site: { siteId: hs.siteId, versionId: hs.versionId, doc, canonicalHost, indexable: hs.hasPlan && hs.indexable, reportLinkHidden: hs.reportLinkHidden && hs.hasPlan && ownDomain },
   }
 }
 

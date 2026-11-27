@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
   // The published-site renderer bundle, plus what the inline headline font needs at runtime: the
   // site's subset font files and the font subsetter (loaded with require, so not traced by itself).
   outputFileTracingIncludes: Object.fromEntries(['/_site/[host]/[[...path]]', '/%5Fsite/[host]/[[...path]]', '/dev-site/[name]/[[...path]]'].map((r) => [r, [
-    './.site-renderer/**', './public/_site-assets/fonts/**',
+    './.site-renderer/**', './public/_site-assets/fonts/**', './public/_site-assets/manifest.json',
     ...['subset-font', 'harfbuzzjs', 'fontverter', 'p-limit', 'yocto-queue', 'wawoff2', 'woff2sfnt-sfnt2woff'].map((m) => `../../node_modules/${m}/**`),
   ]])),
   transpilePackages: ['@yakini/site-schema', '@yakini/sections', '@yakini/edits', '@yakini/kits', '@yakini/brand', '@yakini/ai', '@yakini/pricing', '@yakini/abuse', '@yakini/visits'],

@@ -49,11 +49,17 @@ const fileOf = (key: string) => { const [, family, style] = key.match(/^(.+)-(no
 type Subset = (font: Buffer, text: string, opts: { targetFormat: 'woff2'; variationAxes?: Record<string, number> }) => Promise<Buffer>
 let subsetFont: Subset | null = null
 const cache = new Map<string, string>()
+let cuts = 0
+/** How many fonts this process has cut (tests prove a page view cuts none). */
+export const headlineCuts = () => cuts
+/** Tests only: forget cut fonts, as a fresh server instance would. */
+export const clearHeadlineCuts = () => cache.clear()
 
 async function cut(file: string, text: string, weight: number): Promise<string> {
   const key = `${file}|${weight}|${text}`
   const hit = cache.get(key)
   if (hit) return hit
+  cuts++
   subsetFont ??= createRequire(join(process.cwd(), 'package.json'))('subset-font') as Subset
   const src = readFileSync(join(process.env.SITE_ASSETS_DIR ?? join(process.cwd(), 'public', '_site-assets'), 'fonts', file))
   let out: Buffer
