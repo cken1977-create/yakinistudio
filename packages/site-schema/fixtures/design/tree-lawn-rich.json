@@ -1,0 +1,608 @@
+{
+  "kitId": "tree-lawn",
+  "locale": "en-US",
+  "business": {
+    "name": "Greenline Tree and Lawn",
+    "phone": "+15055550142",
+    "email": "hello@example.com",
+    "hours": [
+      {
+        "day": "mon",
+        "closed": true
+      },
+      {
+        "day": "tue",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "wed",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "thu",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "fri",
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": "sat",
+        "open": "10:00",
+        "close": "22:00"
+      },
+      {
+        "day": "sun",
+        "open": "10:00",
+        "close": "16:00"
+      }
+    ],
+    "tagline": "Safe tree removal, trimming and weekly mowing, done right the first time.",
+    "address": {
+      "line1": "1420 Mesa Street",
+      "city": "Lubbock",
+      "region": "TX",
+      "postal": "79902",
+      "country": "US"
+    }
+  },
+  "nav": {
+    "items": [
+      {
+        "label": "Home",
+        "pageId": "home"
+      },
+      {
+        "label": "Services",
+        "pageId": "services"
+      },
+      {
+        "label": "Our work",
+        "pageId": "work"
+      },
+      {
+        "label": "About",
+        "pageId": "about"
+      },
+      {
+        "label": "Estimate",
+        "pageId": "estimate"
+      }
+    ],
+    "cta": {
+      "label": "Free estimate",
+      "target": {
+        "kind": "section",
+        "pageId": "estimate",
+        "sectionId": "estimate-form"
+      }
+    }
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "",
+      "title": "Home",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Free estimate"
+          }
+        },
+        {
+          "id": "hero",
+          "type": "hero",
+          "variant": "fullbleed",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Tree and lawn care in Lubbock",
+            "headline": "Greenline Tree and Lawn",
+            "subhead": "Safe tree removal, trimming and weekly mowing, done right the first time.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000601",
+              "alt": "An arborist in a helmet and harness cutting a large branch"
+            },
+            "primaryCta": {
+              "label": "Get a free estimate",
+              "target": {
+                "kind": "section",
+                "pageId": "estimate",
+                "sectionId": "estimate-form"
+              }
+            },
+            "secondaryCta": {
+              "label": "Our services",
+              "target": {
+                "kind": "page",
+                "pageId": "services"
+              }
+            }
+          }
+        },
+        {
+          "id": "today",
+          "type": "today",
+          "variant": "banner",
+          "hidden": false,
+          "props": {
+            "heading": "Today",
+            "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "services-summary",
+          "type": "services",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "What we do",
+            "items": [
+              {
+                "title": "Tree trimming and removal",
+                "body": "Say what you handle, from small trims to big removals.",
+                "icon": "leaf"
+              },
+              {
+                "title": "Lawn care",
+                "body": "Mowing, edging and cleanup. Say how often you come.",
+                "icon": "calendar"
+              },
+              {
+                "title": "Landscaping",
+                "body": "Beds, mulch, shrubs or stump grinding, or remove this.",
+                "icon": "star"
+              }
+            ]
+          }
+        },
+        {
+          "id": "why",
+          "type": "about",
+          "variant": "left-image",
+          "hidden": false,
+          "props": {
+            "heading": "Careful crews, clean yards",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Write two or three sentences about your crew, how you work safely and how you leave the yard when you’re done."
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000603",
+              "alt": "A bucket truck and wood chipper at a home while a worker feeds branches"
+            }
+          }
+        },
+        {
+          "id": "estimate-cta",
+          "type": "cta_band",
+          "variant": "solid",
+          "hidden": false,
+          "props": {
+            "headline": "Get a free estimate",
+            "body": "Tell us about your yard and we’ll come take a look.",
+            "cta": {
+              "label": "Get a free estimate",
+              "target": {
+                "kind": "section",
+                "pageId": "estimate",
+                "sectionId": "estimate-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "What neighbors say",
+            "items": [
+              {
+                "quote": "They took down a dead oak next to the house without a scratch.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "Weekly mowing that actually shows up on the same day.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "Fair quote, clean yard, and they hauled everything away.",
+                "name": "Dana L."
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "services",
+      "slug": "services",
+      "title": "Services",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Free estimate"
+          }
+        },
+        {
+          "id": "services",
+          "type": "services",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "Services",
+            "intro": "Serving the east side, March through November.",
+            "items": [
+              {
+                "title": "Tree trimming",
+                "body": "Shaping and thinning for healthy, safe trees.",
+                "icon": "leaf"
+              },
+              {
+                "title": "Tree removal",
+                "body": "Say how you remove trees near homes and wires, and what happens to the wood.",
+                "icon": "truck"
+              },
+              {
+                "title": "Mowing and edging",
+                "body": "Weekly or every other week. Say what’s included.",
+                "icon": "calendar"
+              },
+              {
+                "title": "Seasonal cleanup",
+                "body": "Leaves, storm cleanup or snow, or remove this.",
+                "icon": "clock"
+              }
+            ]
+          }
+        },
+        {
+          "id": "faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Questions",
+            "items": [
+              {
+                "q": "Are you insured?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Say what insurance or licenses you carry."
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "q": "Do you clean up after the job?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Say how you clean up: hauling branches, raking, blowing off drives."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "services-cta",
+          "type": "cta_band",
+          "variant": "outline",
+          "hidden": false,
+          "props": {
+            "headline": "Not sure what you need?",
+            "body": "We’ll look and give you a clear price before any work starts.",
+            "cta": {
+              "label": "Get a free estimate",
+              "target": {
+                "kind": "section",
+                "pageId": "estimate",
+                "sectionId": "estimate-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "work",
+      "slug": "our-work",
+      "title": "Our work",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Free estimate"
+          }
+        },
+        {
+          "id": "gallery",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "Recent work",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000601",
+                "alt": "An arborist in a helmet and harness cutting a large branch"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000602",
+                "alt": "A freshly mowed striped lawn in front of a stone house"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000603",
+                "alt": "A bucket truck and wood chipper at a home while a worker feeds branches"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000604",
+                "alt": "A landscaper edging the lawn along a stone garden path"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000605",
+                "alt": "A crane lifting a cut tree section over a house as the crew watches"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000606",
+                "alt": "A landscaped backyard with fresh mulch, trimmed shrubs and a patio"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "stories",
+          "type": "testimonials",
+          "variant": "single",
+          "hidden": false,
+          "props": {
+            "heading": "From our customers",
+            "items": [
+              {
+                "quote": "They took down a dead oak next to the house without a scratch.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "Weekly mowing that actually shows up on the same day.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "Fair quote, clean yard, and they hauled everything away.",
+                "name": "Dana L."
+              }
+            ]
+          }
+        },
+        {
+          "id": "work-cta",
+          "type": "cta_band",
+          "variant": "solid",
+          "hidden": false,
+          "props": {
+            "headline": "Want your yard to look like this?",
+            "cta": {
+              "label": "Get a free estimate",
+              "target": {
+                "kind": "section",
+                "pageId": "estimate",
+                "sectionId": "estimate-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "about",
+      "slug": "about",
+      "title": "About",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Free estimate"
+          }
+        },
+        {
+          "id": "story",
+          "type": "about",
+          "variant": "right-image",
+          "hidden": false,
+          "props": {
+            "heading": "About us",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Tell your story: how you started, how long you’ve served the area and what you care about."
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "team",
+          "type": "team",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "The crew",
+            "members": [
+              {
+                "name": "Jake Turner",
+                "role": "Owner and certified arborist",
+                "photo": {
+                  "assetId": "7a1e0000-0000-4000-8000-000000000603",
+                  "alt": "A bucket truck and wood chipper at a home while a worker feeds branches"
+                }
+              },
+              {
+                "name": "Ben Ortiz",
+                "role": "Crew lead",
+                "photo": {
+                  "assetId": "7a1e0000-0000-4000-8000-000000000604",
+                  "alt": "A landscaper edging the lawn along a stone garden path"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "estimate",
+      "slug": "estimate",
+      "title": "Free estimate",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Free estimate"
+          }
+        },
+        {
+          "id": "estimate-form",
+          "type": "contact_form",
+          "variant": "with-details",
+          "hidden": false,
+          "props": {
+            "heading": "Get a free estimate",
+            "intro": "Tell us what you need and the address. We’ll reply to set up a time to look.",
+            "formKey": "estimate",
+            "fields": [
+              "name",
+              "phone",
+              "email",
+              "service",
+              "message"
+            ],
+            "submitLabel": "Request estimate",
+            "consentText": "By sending this form you agree that Greenline Tree and Lawn may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "area",
+          "type": "hours_location",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "heading": "Hours and service area"
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    }
+  ],
+  "footer": {
+    "showHours": true,
+    "showAddress": true,
+    "showSiteByYakini": true
+  },
+  "seo": {
+    "siteTitle": "Greenline Tree and Lawn",
+    "description": "Greenline Tree and Lawn in Lubbock. Safe tree removal, trimming and weekly mowing, done right the first time.",
+    "ogImageAssetId": "7a1e0000-0000-4000-8000-000000000601"
+  },
+  "schemaVersion": 1,
+  "brand": {
+    "colors": {
+      "primary": "#2F6B3F",
+      "secondary": "#16241A",
+      "accent": "#E3B341"
+    },
+    "colorsSource": "kit-default",
+    "fontPair": "friendly"
+  },
+  "integrations": {
+    "bookingEnabled": false,
+    "formsEnabled": true
+  }
+}

@@ -1,0 +1,665 @@
+{
+  "kitId": "restaurant",
+  "locale": "en-US",
+  "business": {
+    "name": "Casa Lupita Kitchen",
+    "phone": "+15055550142",
+    "email": "hello@example.com",
+    "hours": [
+      {
+        "day": "mon",
+        "closed": true
+      },
+      {
+        "day": "tue",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "wed",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "thu",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "fri",
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": "sat",
+        "open": "10:00",
+        "close": "22:00"
+      },
+      {
+        "day": "sun",
+        "open": "10:00",
+        "close": "16:00"
+      }
+    ],
+    "tagline": "Family recipes from northern New Mexico, cooked from scratch.",
+    "address": {
+      "line1": "1420 Mesa Street",
+      "city": "Las Cruces",
+      "region": "TX",
+      "postal": "79902",
+      "country": "US"
+    }
+  },
+  "nav": {
+    "items": [
+      {
+        "label": "Home",
+        "pageId": "home"
+      },
+      {
+        "label": "Menu",
+        "pageId": "menu"
+      },
+      {
+        "label": "About",
+        "pageId": "about"
+      },
+      {
+        "label": "Events",
+        "pageId": "events"
+      },
+      {
+        "label": "Contact",
+        "pageId": "contact"
+      }
+    ],
+    "cta": {
+      "label": "Book a table",
+      "target": {
+        "kind": "section",
+        "pageId": "contact",
+        "sectionId": "booking"
+      }
+    }
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "",
+      "title": "Home",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "centered",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Book a table"
+          }
+        },
+        {
+          "id": "hero",
+          "type": "hero",
+          "variant": "fullbleed",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Restaurant in Las Cruces",
+            "headline": "Casa Lupita Kitchen",
+            "subhead": "Wood-fired Italian, made from scratch.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000204",
+              "alt": "A corner restaurant with a lit patio and potted plants at dusk"
+            },
+            "primaryCta": {
+              "label": "View the menu",
+              "target": {
+                "kind": "page",
+                "pageId": "menu"
+              }
+            },
+            "secondaryCta": {
+              "label": "Book a table",
+              "target": {
+                "kind": "section",
+                "pageId": "contact",
+                "sectionId": "booking"
+              }
+            }
+          }
+        },
+        {
+          "id": "today",
+          "type": "today",
+          "variant": "card",
+          "hidden": false,
+          "props": {
+            "heading": "Today",
+            "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "welcome",
+          "type": "about",
+          "variant": "text-only",
+          "hidden": false,
+          "props": {
+            "heading": "Welcome",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Write two or three sentences about your food and what it is like to eat here."
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "menu-cta",
+          "type": "cta_band",
+          "variant": "solid",
+          "hidden": false,
+          "props": {
+            "headline": "See what’s cooking",
+            "body": "Our full menu, from starters to dessert.",
+            "cta": {
+              "label": "View the menu",
+              "target": {
+                "kind": "page",
+                "pageId": "menu"
+              }
+            }
+          }
+        },
+        {
+          "id": "visit",
+          "type": "hours_location",
+          "variant": "card",
+          "hidden": false,
+          "props": {
+            "heading": "Visit us"
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "single",
+          "hidden": false,
+          "props": {
+            "heading": "From our guests",
+            "items": [
+              {
+                "quote": "The green chile stew tastes like my grandmother made it.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "Warm service and the best sopapillas we have had in years.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "We booked the back room for a birthday and they took care of everything.",
+                "name": "Dana L."
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "menu",
+      "slug": "menu",
+      "title": "Menu",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "centered",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Book a table"
+          }
+        },
+        {
+          "id": "menu",
+          "type": "menu",
+          "variant": "columns",
+          "hidden": false,
+          "props": {
+            "heading": "Menu",
+            "intro": "Seasonal dishes from local farms.",
+            "categories": [
+              {
+                "name": "Tacos",
+                "items": [
+                  {
+                    "name": "Al pastor",
+                    "description": "Marinated pork, pineapple, onion and cilantro on corn tortillas.",
+                    "price": "$3.50"
+                  },
+                  {
+                    "name": "Carne asada",
+                    "description": "Grilled steak, salsa roja and lime.",
+                    "price": "$4",
+                    "tags": [
+                      "gf"
+                    ]
+                  },
+                  {
+                    "name": "Calabacitas",
+                    "description": "Squash, corn and green chile with queso fresco.",
+                    "price": "$3.25",
+                    "tags": [
+                      "veg"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Plates",
+                "items": [
+                  {
+                    "name": "Green chile stew",
+                    "description": "Pork, potato and roasted Hatch chile, with a warm tortilla.",
+                    "price": "$11",
+                    "tags": [
+                      "spicy"
+                    ]
+                  },
+                  {
+                    "name": "Enchilada plate",
+                    "description": "Red or green, rice and beans, egg on top if you like.",
+                    "price": "$13"
+                  }
+                ]
+              },
+              {
+                "name": "Drinks",
+                "items": [
+                  {
+                    "name": "Horchata",
+                    "price": "$3.50"
+                  },
+                  {
+                    "name": "Agua fresca",
+                    "description": "Watermelon, jamaica or tamarind.",
+                    "price": "$3.50",
+                    "tags": [
+                      "veg"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "note": "Please tell your server about any allergies. Menu items and prices can change."
+          }
+        },
+        {
+          "id": "events-cta",
+          "type": "cta_band",
+          "variant": "outline",
+          "hidden": false,
+          "props": {
+            "headline": "Planning a celebration?",
+            "body": "Our space works for birthdays, rehearsal dinners and team nights.",
+            "cta": {
+              "label": "Private events",
+              "target": {
+                "kind": "page",
+                "pageId": "events"
+              }
+            }
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "about",
+      "slug": "about",
+      "title": "About",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "centered",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Book a table"
+          }
+        },
+        {
+          "id": "story",
+          "type": "about",
+          "variant": "right-image",
+          "hidden": false,
+          "props": {
+            "heading": "Our story",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Tell your story: how the restaurant started, the food you love to cook and the people behind it."
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000206",
+              "alt": "A chef finishing a plate of seared fish with fresh herbs"
+            }
+          }
+        },
+        {
+          "id": "team",
+          "type": "team",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "The team",
+            "members": [
+              {
+                "name": "Guadalupe Ortiz",
+                "role": "Owner and chef",
+                "photo": {
+                  "assetId": "7a1e0000-0000-4000-8000-000000000206",
+                  "alt": "A chef finishing a plate of seared fish with fresh herbs"
+                }
+              },
+              {
+                "name": "Marco Ortiz",
+                "role": "Front of house",
+                "photo": {
+                  "assetId": "7a1e0000-0000-4000-8000-000000000207",
+                  "alt": "Fried chicken, mac and cheese, collard greens and cornbread served family style"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gallery",
+          "type": "gallery",
+          "variant": "masonry",
+          "hidden": false,
+          "props": {
+            "heading": "Inside",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000204",
+                "alt": "A corner restaurant with a lit patio and potted plants at dusk"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000205",
+                "alt": "A warm, candlelit dining room with wine glasses on a wooden table"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000206",
+                "alt": "A chef finishing a plate of seared fish with fresh herbs"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000207",
+                "alt": "Fried chicken, mac and cheese, collard greens and cornbread served family style"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000208",
+                "alt": "A bartender pouring a cocktail into a coupe glass at a candlelit bar"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000303",
+                "alt": "An electrician in gloves testing an open breaker panel"
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "events",
+      "slug": "events",
+      "title": "Private events",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "centered",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Book a table"
+          }
+        },
+        {
+          "id": "events-hero",
+          "type": "hero",
+          "variant": "minimal",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Private events",
+            "headline": "Celebrate with us",
+            "subhead": "Tell us your date and party size and we will plan the menu with you.",
+            "primaryCta": {
+              "label": "Ask about a date",
+              "target": {
+                "kind": "form",
+                "formKey": "events"
+              }
+            }
+          }
+        },
+        {
+          "id": "options",
+          "type": "services",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "Event options",
+            "items": [
+              {
+                "title": "Private dining",
+                "body": "Describe your private room or space, and how many guests it holds.",
+                "icon": "users"
+              },
+              {
+                "title": "Group menus",
+                "body": "Set menus for groups, planned with our kitchen.",
+                "icon": "utensils"
+              },
+              {
+                "title": "Catering",
+                "body": "Describe your catering or takeout trays, or remove this.",
+                "icon": "gift"
+              }
+            ]
+          }
+        },
+        {
+          "id": "events-form",
+          "type": "catering_request",
+          "variant": "simple",
+          "hidden": false,
+          "props": {
+            "heading": "Plan your event",
+            "intro": "We will reply with availability and menu options.",
+            "formKey": "events",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "event_date",
+              "guest_count",
+              "message"
+            ],
+            "submitLabel": "Send request",
+            "consentText": "By sending this form you agree that Casa Lupita Kitchen may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "events-faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Event questions",
+            "items": [
+              {
+                "q": "How many guests can you host?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Add your largest party size."
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "q": "Can you work with dietary needs?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Tell us about allergies and preferences when you send your request, and the kitchen will plan for them."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "contact",
+      "slug": "contact",
+      "title": "Contact",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "centered",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Book a table"
+          }
+        },
+        {
+          "id": "hours",
+          "type": "hours_location",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "heading": "Hours and location"
+          }
+        },
+        {
+          "id": "booking",
+          "type": "booking",
+          "variant": "card",
+          "hidden": false,
+          "props": {
+            "heading": "Book a table",
+            "body": "Send us your party size and the time you would like, and we will confirm your table.",
+            "mode": "request",
+            "buttonLabel": "Request a table"
+          }
+        },
+        {
+          "id": "contact-form",
+          "type": "contact_form",
+          "variant": "simple",
+          "hidden": false,
+          "props": {
+            "heading": "Send us a message",
+            "formKey": "contact",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "message"
+            ],
+            "submitLabel": "Send message",
+            "consentText": "By sending this form you agree that Casa Lupita Kitchen may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    }
+  ],
+  "footer": {
+    "showHours": true,
+    "showAddress": true,
+    "showSiteByYakini": true
+  },
+  "seo": {
+    "siteTitle": "Casa Lupita Kitchen",
+    "description": "Casa Lupita Kitchen in Las Cruces. Family recipes from northern New Mexico, cooked from scratch.",
+    "ogImageAssetId": "7a1e0000-0000-4000-8000-000000000204"
+  },
+  "schemaVersion": 1,
+  "brand": {
+    "colors": {
+      "primary": "#7A2E2A",
+      "secondary": "#1B1714",
+      "accent": "#C9A14A"
+    },
+    "colorsSource": "kit-default",
+    "fontPair": "classic"
+  },
+  "integrations": {
+    "bookingEnabled": false,
+    "formsEnabled": true
+  }
+}

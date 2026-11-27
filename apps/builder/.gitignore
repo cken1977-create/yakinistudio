@@ -4,3 +4,6 @@ playwright-report/
 test-results/
 *.tsbuildinfo
 .vercel
+design-gallery/
+lhci-report/
+.lighthouseci/

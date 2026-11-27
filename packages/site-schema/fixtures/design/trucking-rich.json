@@ -1,0 +1,657 @@
+{
+  "kitId": "trucking",
+  "locale": "en-US",
+  "business": {
+    "name": "Red Mesa Freight",
+    "phone": "+15055550142",
+    "email": "hello@example.com",
+    "hours": [
+      {
+        "day": "mon",
+        "closed": true
+      },
+      {
+        "day": "tue",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "wed",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "thu",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "fri",
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": "sat",
+        "open": "10:00",
+        "close": "22:00"
+      },
+      {
+        "day": "sun",
+        "open": "10:00",
+        "close": "16:00"
+      }
+    ],
+    "tagline": "Flatbed and dry van freight across the Southwest, on time and communicated.",
+    "address": {
+      "line1": "1420 Mesa Street",
+      "city": "Amarillo",
+      "region": "TX",
+      "postal": "79902",
+      "country": "US"
+    }
+  },
+  "nav": {
+    "items": [
+      {
+        "label": "Home",
+        "pageId": "home"
+      },
+      {
+        "label": "Services",
+        "pageId": "services"
+      },
+      {
+        "label": "Drivers",
+        "pageId": "drivers"
+      },
+      {
+        "label": "About",
+        "pageId": "about"
+      },
+      {
+        "label": "Get a quote",
+        "pageId": "quote"
+      }
+    ],
+    "cta": {
+      "label": "Get a quote",
+      "target": {
+        "kind": "section",
+        "pageId": "quote",
+        "sectionId": "quote-form"
+      }
+    }
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "",
+      "title": "Home",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Get a quote"
+          }
+        },
+        {
+          "id": "hero",
+          "type": "hero",
+          "variant": "fullbleed",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Trucking in Amarillo",
+            "headline": "Red Mesa Freight",
+            "subhead": "Flatbed and dry van freight across the Southwest, on time and communicated.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000901",
+              "alt": "A white semi truck on the highway at sunset"
+            },
+            "primaryCta": {
+              "label": "Get a quote",
+              "target": {
+                "kind": "section",
+                "pageId": "quote",
+                "sectionId": "quote-form"
+              }
+            },
+            "secondaryCta": {
+              "label": "Drive with us",
+              "target": {
+                "kind": "page",
+                "pageId": "drivers"
+              }
+            }
+          }
+        },
+        {
+          "id": "today",
+          "type": "today",
+          "variant": "banner",
+          "hidden": false,
+          "props": {
+            "heading": "Today",
+            "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "services-summary",
+          "type": "services",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "What we haul",
+            "items": [
+              {
+                "title": "Dry van",
+                "body": "What freight you take and the lanes you run.",
+                "icon": "truck"
+              },
+              {
+                "title": "Flatbed",
+                "body": "Equipment, load types and securement.",
+                "icon": "truck"
+              },
+              {
+                "title": "Local or regional",
+                "body": "Your service area and typical turnaround.",
+                "icon": "map-pin"
+              }
+            ]
+          }
+        },
+        {
+          "id": "why",
+          "type": "about",
+          "variant": "left-image",
+          "hidden": false,
+          "props": {
+            "heading": "Freight you can count on",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Write two or three sentences about your fleet, your drivers and how you keep shippers updated."
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000905",
+              "alt": "A driver checking trailer tires with a flashlight at dawn"
+            }
+          }
+        },
+        {
+          "id": "quote-cta",
+          "type": "cta_band",
+          "variant": "solid",
+          "hidden": false,
+          "props": {
+            "headline": "Have a load to move?",
+            "body": "Send the pickup, delivery and dates. We’ll get back to you with a quote.",
+            "cta": {
+              "label": "Get a quote",
+              "target": {
+                "kind": "section",
+                "pageId": "quote",
+                "sectionId": "quote-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "What shippers say",
+            "items": [
+              {
+                "quote": "Loads show up when they say, and dispatch answers at 2 a.m.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "Best carrier we have used for oversize flatbed.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "Clear rates and no surprises on the invoice.",
+                "name": "Dana L."
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "services",
+      "slug": "services",
+      "title": "Services",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Get a quote"
+          }
+        },
+        {
+          "id": "services",
+          "type": "services",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "Services",
+            "intro": "A line about your operating authority and the areas you cover. Only list numbers and credentials you really hold.",
+            "items": [
+              {
+                "title": "Full truckload",
+                "body": "Trailer types, weights and lanes.",
+                "icon": "truck"
+              },
+              {
+                "title": "Expedited or hotshot",
+                "body": "When you can pick up and how fast you deliver.",
+                "icon": "clock"
+              },
+              {
+                "title": "Dedicated runs",
+                "body": "Regular routes for steady shippers, or remove this.",
+                "icon": "calendar"
+              }
+            ]
+          }
+        },
+        {
+          "id": "fleet",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "Our fleet",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000901",
+                "alt": "A white semi truck on the highway at sunset"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000902",
+                "alt": "A row of semi trucks parked at a terminal at dusk"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000903",
+                "alt": "A driver’s hands on the wheel on a mountain highway"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000904",
+                "alt": "A flatbed loaded with strapped lumber and steel pipe at a dock"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000905",
+                "alt": "A driver checking trailer tires with a flashlight at dawn"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000906",
+                "alt": "An aerial view of a semi truck on a desert highway"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Shipper questions",
+            "items": [
+              {
+                "q": "How do I get a rate?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Send the pickup and delivery locations, dates, weight and freight type on the quote form. We’ll reply with a rate."
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "q": "Are loads insured?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Say what cargo and liability coverage you carry."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "services-cta",
+          "type": "cta_band",
+          "variant": "outline",
+          "hidden": false,
+          "props": {
+            "headline": "Let’s move it",
+            "cta": {
+              "label": "Get a quote",
+              "target": {
+                "kind": "section",
+                "pageId": "quote",
+                "sectionId": "quote-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "drivers",
+      "slug": "drivers",
+      "title": "Drive with us",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Get a quote"
+          }
+        },
+        {
+          "id": "drivers-hero",
+          "type": "hero",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Drivers",
+            "headline": "Drive with us",
+            "subhead": "Say what kind of drivers you’re looking for and what home time looks like.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000903",
+              "alt": "A driver’s hands on the wheel on a mountain highway"
+            },
+            "primaryCta": {
+              "label": "Apply to drive",
+              "target": {
+                "kind": "section",
+                "pageId": "drivers",
+                "sectionId": "driver-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "driver-perks",
+          "type": "services",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "What to expect",
+            "items": [
+              {
+                "title": "Home time",
+                "body": "How often drivers get home.",
+                "icon": "clock"
+              },
+              {
+                "title": "Equipment",
+                "body": "The trucks and trailers drivers run.",
+                "icon": "truck"
+              },
+              {
+                "title": "Support",
+                "body": "How dispatch and maintenance back drivers up.",
+                "icon": "phone"
+              }
+            ]
+          }
+        },
+        {
+          "id": "driver-faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Driver questions",
+            "items": [
+              {
+                "q": "What do I need to apply?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "List license class, experience and anything else you require."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "driver-form",
+          "type": "contact_form",
+          "variant": "simple",
+          "hidden": false,
+          "props": {
+            "heading": "Apply to drive",
+            "intro": "Tell us about your license and experience. We’ll call you back.",
+            "formKey": "driver",
+            "fields": [
+              "name",
+              "phone",
+              "email",
+              "message"
+            ],
+            "submitLabel": "Send",
+            "consentText": "By sending this form you agree that Red Mesa Freight may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "about",
+      "slug": "about",
+      "title": "About",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Get a quote"
+          }
+        },
+        {
+          "id": "story",
+          "type": "about",
+          "variant": "right-image",
+          "hidden": false,
+          "props": {
+            "heading": "About us",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Tell your story: how the company started, how many trucks you run, and what you’re known for."
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000902",
+              "alt": "A row of semi trucks parked at a terminal at dusk"
+            }
+          }
+        },
+        {
+          "id": "team",
+          "type": "team",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "The team",
+            "members": [
+              {
+                "name": "Mike Sandoval",
+                "role": "Owner",
+                "photo": {
+                  "assetId": "7a1e0000-0000-4000-8000-000000000903",
+                  "alt": "A driver’s hands on the wheel on a mountain highway"
+                }
+              },
+              {
+                "name": "Lisa Park",
+                "role": "Dispatch manager",
+                "photo": {
+                  "assetId": "7a1e0000-0000-4000-8000-000000000904",
+                  "alt": "A flatbed loaded with strapped lumber and steel pipe at a dock"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "quote",
+      "slug": "quote",
+      "title": "Request a quote",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Get a quote"
+          }
+        },
+        {
+          "id": "quote-form",
+          "type": "contact_form",
+          "variant": "with-details",
+          "hidden": false,
+          "props": {
+            "heading": "Request a quote",
+            "intro": "Include pickup and delivery cities, dates, weight and freight type.",
+            "formKey": "quote",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "service",
+              "message"
+            ],
+            "submitLabel": "Request quote",
+            "consentText": "By sending this form you agree that Red Mesa Freight may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "office",
+          "type": "hours_location",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "heading": "Dispatch hours and yard"
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    }
+  ],
+  "footer": {
+    "showHours": true,
+    "showAddress": true,
+    "showSiteByYakini": true
+  },
+  "seo": {
+    "siteTitle": "Red Mesa Freight",
+    "description": "Red Mesa Freight in Amarillo. Flatbed and dry van freight across the Southwest, on time and communicated.",
+    "ogImageAssetId": "7a1e0000-0000-4000-8000-000000000901"
+  },
+  "schemaVersion": 1,
+  "brand": {
+    "colors": {
+      "primary": "#B22222",
+      "secondary": "#1C1C1C",
+      "accent": "#F2B705"
+    },
+    "colorsSource": "kit-default",
+    "fontPair": "modern"
+  },
+  "integrations": {
+    "bookingEnabled": false,
+    "formsEnabled": true
+  }
+}

@@ -1,0 +1,687 @@
+{
+  "kitId": "food-truck",
+  "locale": "en-US",
+  "business": {
+    "name": "Founding Test Tacos",
+    "phone": "+15055550142",
+    "email": "hello@example.com",
+    "hours": [
+      {
+        "day": "mon",
+        "closed": true
+      },
+      {
+        "day": "tue",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "wed",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "thu",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "fri",
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": "sat",
+        "open": "10:00",
+        "close": "22:00"
+      },
+      {
+        "day": "sun",
+        "open": "10:00",
+        "close": "16:00"
+      }
+    ],
+    "tagline": "Street tacos and aguas frescas, made fresh on the truck.",
+    "address": {
+      "line1": "1420 Mesa Street",
+      "city": "El Paso",
+      "region": "TX",
+      "postal": "79902",
+      "country": "US"
+    }
+  },
+  "nav": {
+    "items": [
+      {
+        "label": "Home",
+        "pageId": "home"
+      },
+      {
+        "label": "Menu",
+        "pageId": "menu"
+      },
+      {
+        "label": "About",
+        "pageId": "about"
+      },
+      {
+        "label": "Catering",
+        "pageId": "catering"
+      },
+      {
+        "label": "Contact",
+        "pageId": "contact"
+      }
+    ],
+    "cta": {
+      "label": "Book catering",
+      "target": {
+        "kind": "page",
+        "pageId": "catering"
+      }
+    }
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "",
+      "title": "Home",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Book catering"
+          }
+        },
+        {
+          "id": "hero",
+          "type": "hero",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Food truck in El Paso",
+            "headline": "Founding Test Tacos",
+            "subhead": "Fresh street tacos made to order.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000104",
+              "alt": "A colorful food truck at sunset with customers lined up at the window"
+            },
+            "primaryCta": {
+              "label": "See the menu",
+              "target": {
+                "kind": "page",
+                "pageId": "menu"
+              }
+            },
+            "secondaryCta": {
+              "label": "Find the truck",
+              "target": {
+                "kind": "section",
+                "pageId": "home",
+                "sectionId": "schedule"
+              }
+            }
+          }
+        },
+        {
+          "id": "today",
+          "type": "today",
+          "variant": "banner",
+          "hidden": false,
+          "props": {
+            "heading": "Today",
+            "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "schedule",
+          "type": "schedule",
+          "variant": "week",
+          "hidden": false,
+          "props": {
+            "heading": "Where to find us",
+            "intro": "Add your regular weekly stops so people know where to find you.",
+            "stops": [
+              {
+                "day": "tue",
+                "start": "11:00",
+                "end": "14:00",
+                "place": "Civic Plaza",
+                "address": "1 Civic Plaza"
+              },
+              {
+                "day": "wed",
+                "start": "11:00",
+                "end": "14:00",
+                "place": "Medical Center",
+                "address": "4800 Alberta Ave"
+              },
+              {
+                "day": "fri",
+                "start": "17:00",
+                "end": "21:00",
+                "place": "Brewery Row"
+              },
+              {
+                "day": "sat",
+                "start": "10:00",
+                "end": "14:00",
+                "place": "Downtown Growers Market"
+              }
+            ]
+          }
+        },
+        {
+          "id": "menu-cta",
+          "type": "cta_band",
+          "variant": "solid",
+          "hidden": false,
+          "props": {
+            "headline": "Hungry yet?",
+            "body": "See everything we make, from the favorites to the specials.",
+            "cta": {
+              "label": "See the menu",
+              "target": {
+                "kind": "page",
+                "pageId": "menu"
+              }
+            }
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "What people say",
+            "items": [
+              {
+                "quote": "The al pastor is the best in town, and the line moves fast.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "They catered our office lunch and everyone asked who made the food.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "Friendly crew, fair prices, and the salsa verde is perfect.",
+                "name": "Dana L."
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "menu",
+      "slug": "menu",
+      "title": "Menu",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Book catering"
+          }
+        },
+        {
+          "id": "menu",
+          "type": "menu",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "Menu",
+            "intro": "Everything is made fresh on the truck.",
+            "categories": [
+              {
+                "name": "Tacos",
+                "items": [
+                  {
+                    "name": "Al pastor",
+                    "description": "Marinated pork, pineapple, onion and cilantro on corn tortillas.",
+                    "price": "$3.50"
+                  },
+                  {
+                    "name": "Carne asada",
+                    "description": "Grilled steak, salsa roja and lime.",
+                    "price": "$4",
+                    "tags": [
+                      "gf"
+                    ]
+                  },
+                  {
+                    "name": "Calabacitas",
+                    "description": "Squash, corn and green chile with queso fresco.",
+                    "price": "$3.25",
+                    "tags": [
+                      "veg"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Plates",
+                "items": [
+                  {
+                    "name": "Green chile stew",
+                    "description": "Pork, potato and roasted Hatch chile, with a warm tortilla.",
+                    "price": "$11",
+                    "tags": [
+                      "spicy"
+                    ]
+                  },
+                  {
+                    "name": "Enchilada plate",
+                    "description": "Red or green, rice and beans, egg on top if you like.",
+                    "price": "$13"
+                  }
+                ]
+              },
+              {
+                "name": "Drinks",
+                "items": [
+                  {
+                    "name": "Horchata",
+                    "price": "$3.50"
+                  },
+                  {
+                    "name": "Agua fresca",
+                    "description": "Watermelon, jamaica or tamarind.",
+                    "price": "$3.50",
+                    "tags": [
+                      "veg"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "note": "Menu and prices can change. Ask at the window for today’s specials."
+          }
+        },
+        {
+          "id": "catering-cta",
+          "type": "cta_band",
+          "variant": "outline",
+          "hidden": false,
+          "props": {
+            "headline": "Feeding a crowd?",
+            "body": "We bring the truck to parties, offices and events.",
+            "cta": {
+              "label": "Plan an event",
+              "target": {
+                "kind": "page",
+                "pageId": "catering"
+              }
+            }
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "about",
+      "slug": "about",
+      "title": "About",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Book catering"
+          }
+        },
+        {
+          "id": "story",
+          "type": "about",
+          "variant": "left-image",
+          "hidden": false,
+          "props": {
+            "heading": "About Founding Test Tacos",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Tell your story: who started the truck, what you cook and why people come back."
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000106",
+              "alt": "Tacos being topped with onion and cilantro on a flat-top griddle"
+            }
+          }
+        },
+        {
+          "id": "gallery",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "From the truck",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000104",
+                "alt": "A colorful food truck at sunset with customers lined up at the window"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000105",
+                "alt": "Smoked brisket sandwiches and loaded fries on a food truck counter"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000106",
+                "alt": "Tacos being topped with onion and cilantro on a flat-top griddle"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000107",
+                "alt": "A box of glazed ribs and cornbread handed through a food truck window"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000108",
+                "alt": "Burgers, street corn, wings, fries and lemonade on a picnic table"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000303",
+                "alt": "An electrician in gloves testing an open breaker panel"
+              }
+            ]
+          }
+        },
+        {
+          "id": "faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Good to know",
+            "items": [
+              {
+                "q": "How do I find the truck today?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Check the schedule on our home page. When plans change, we post it there first."
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "q": "Do you cater private events?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Yes. Send us the date, the place and about how many guests on our catering page, and we will get back to you."
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "q": "What payment do you take?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "List the payment types you take at the window."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "catering",
+      "slug": "catering",
+      "title": "Catering and events",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Book catering"
+          }
+        },
+        {
+          "id": "catering-hero",
+          "type": "hero",
+          "variant": "minimal",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Catering and events",
+            "headline": "We bring the truck to you",
+            "subhead": "Birthdays, office lunches, weddings and block parties. Tell us about your event and we will put together a plan.",
+            "primaryCta": {
+              "label": "Request a date",
+              "target": {
+                "kind": "form",
+                "formKey": "catering"
+              }
+            }
+          }
+        },
+        {
+          "id": "packages",
+          "type": "services",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "Ways we can help",
+            "items": [
+              {
+                "title": "Truck at your event",
+                "body": "We park, cook and serve on site.",
+                "icon": "truck"
+              },
+              {
+                "title": "Drop-off trays",
+                "body": "Describe your drop-off or pickup options, or remove this.",
+                "icon": "utensils"
+              },
+              {
+                "title": "Custom menu",
+                "body": "Pick the dishes your guests will love.",
+                "icon": "star"
+              }
+            ]
+          }
+        },
+        {
+          "id": "catering-form",
+          "type": "catering_request",
+          "variant": "simple",
+          "hidden": false,
+          "props": {
+            "heading": "Tell us about your event",
+            "intro": "We will reply with availability and a quote.",
+            "formKey": "catering",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "event_date",
+              "guest_count",
+              "message"
+            ],
+            "submitLabel": "Send request",
+            "consentText": "By sending this form you agree that Founding Test Tacos may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "catering-faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Catering questions",
+            "items": [
+              {
+                "q": "How far ahead should I book?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Say how much notice you need, like two weeks for most events."
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "q": "Is there a minimum?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Add your minimum guest count or order, or remove this question."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "contact",
+      "slug": "contact",
+      "title": "Contact",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Book catering"
+          }
+        },
+        {
+          "id": "hours",
+          "type": "hours_location",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "heading": "Hours and where we park",
+            "note": "Our spot changes during the week. The schedule on the home page is always up to date."
+          }
+        },
+        {
+          "id": "contact-form",
+          "type": "contact_form",
+          "variant": "with-details",
+          "hidden": false,
+          "props": {
+            "heading": "Send us a message",
+            "intro": "Questions, feedback or special requests. We read every message.",
+            "formKey": "contact",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "message"
+            ],
+            "submitLabel": "Send message",
+            "consentText": "By sending this form you agree that Founding Test Tacos may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    }
+  ],
+  "footer": {
+    "showHours": true,
+    "showAddress": false,
+    "showSiteByYakini": true
+  },
+  "seo": {
+    "siteTitle": "Founding Test Tacos",
+    "description": "Founding Test Tacos in El Paso. Street tacos and aguas frescas, made fresh on the truck.",
+    "ogImageAssetId": "7a1e0000-0000-4000-8000-000000000104"
+  },
+  "schemaVersion": 1,
+  "brand": {
+    "colors": {
+      "primary": "#B4361B",
+      "secondary": "#1F1A17",
+      "accent": "#F2A93B"
+    },
+    "colorsSource": "kit-default",
+    "fontPair": "friendly"
+  },
+  "integrations": {
+    "bookingEnabled": false,
+    "formsEnabled": true
+  }
+}

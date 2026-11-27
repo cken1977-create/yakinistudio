@@ -1,0 +1,526 @@
+{
+  "kitId": "service",
+  "locale": "en-US",
+  "business": {
+    "name": "Brightside Cleaning Co.",
+    "phone": "+15055550142",
+    "email": "hello@example.com",
+    "hours": [
+      {
+        "day": "mon",
+        "closed": true
+      },
+      {
+        "day": "tue",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "wed",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "thu",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "fri",
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": "sat",
+        "open": "10:00",
+        "close": "22:00"
+      },
+      {
+        "day": "sun",
+        "open": "10:00",
+        "close": "16:00"
+      }
+    ],
+    "tagline": "Home and office cleaning you can count on, every week.",
+    "address": {
+      "line1": "1420 Mesa Street",
+      "city": "Santa Fe",
+      "region": "TX",
+      "postal": "79902",
+      "country": "US"
+    }
+  },
+  "nav": {
+    "items": [
+      {
+        "label": "Home",
+        "pageId": "home"
+      },
+      {
+        "label": "Services",
+        "pageId": "services"
+      },
+      {
+        "label": "About",
+        "pageId": "about"
+      },
+      {
+        "label": "Contact",
+        "pageId": "contact"
+      }
+    ],
+    "cta": {
+      "label": "Get in touch",
+      "target": {
+        "kind": "section",
+        "pageId": "contact",
+        "sectionId": "contact-form"
+      }
+    }
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "",
+      "title": "Home",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Get in touch"
+          }
+        },
+        {
+          "id": "hero",
+          "type": "hero",
+          "variant": "minimal",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Local business in Santa Fe",
+            "headline": "Brightside Cleaning Co.",
+            "subhead": "Say what you do and who you do it for in one sentence.",
+            "primaryCta": {
+              "label": "Get in touch",
+              "target": {
+                "kind": "section",
+                "pageId": "contact",
+                "sectionId": "contact-form"
+              }
+            },
+            "secondaryCta": {
+              "label": "Our services",
+              "target": {
+                "kind": "page",
+                "pageId": "services"
+              }
+            }
+          }
+        },
+        {
+          "id": "today",
+          "type": "today",
+          "variant": "banner",
+          "hidden": false,
+          "props": {
+            "heading": "Today",
+            "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "intro",
+          "type": "about",
+          "variant": "text-only",
+          "hidden": false,
+          "props": {
+            "heading": "Who we are",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Write two or three sentences about your business and what makes working with you different."
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "services-summary",
+          "type": "services",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "What we do",
+            "items": [
+              {
+                "title": "Your main service",
+                "body": "One or two sentences on what it includes and who it is for.",
+                "icon": "star"
+              },
+              {
+                "title": "A second service",
+                "body": "What the customer gets and how it works.",
+                "icon": "calendar"
+              },
+              {
+                "title": "A third service",
+                "body": "Add another service, or remove this one.",
+                "icon": "users"
+              }
+            ]
+          }
+        },
+        {
+          "id": "contact-cta",
+          "type": "cta_band",
+          "variant": "solid",
+          "hidden": false,
+          "props": {
+            "headline": "Ready to talk?",
+            "body": "Tell us what you need and we will get back to you.",
+            "cta": {
+              "label": "Get in touch",
+              "target": {
+                "kind": "section",
+                "pageId": "contact",
+                "sectionId": "contact-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "What clients say",
+            "items": [
+              {
+                "quote": "They notice the details everyone else misses.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "Same team every week, always on time.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "Our office has never looked this good.",
+                "name": "Dana L."
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "services",
+      "slug": "services",
+      "title": "Services",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Get in touch"
+          }
+        },
+        {
+          "id": "services",
+          "type": "services",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "Services",
+            "intro": "Clear pricing, on time, and we clean up after ourselves.",
+            "items": [
+              {
+                "title": "Your main service",
+                "body": "One or two sentences on what it includes and who it is for.",
+                "icon": "star"
+              },
+              {
+                "title": "A second service",
+                "body": "What the customer gets and how it works.",
+                "icon": "calendar"
+              },
+              {
+                "title": "A third service",
+                "body": "Add another service, or remove this one.",
+                "icon": "users"
+              }
+            ]
+          }
+        },
+        {
+          "id": "faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Questions",
+            "items": [
+              {
+                "q": "What areas do you serve?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "We work in and around Santa Fe. Add nearby areas you serve."
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "q": "How do I get started?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Send us a message with what you need, and we will reply to set up a time to talk."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "services-cta",
+          "type": "cta_band",
+          "variant": "outline",
+          "hidden": false,
+          "props": {
+            "headline": "Not sure what you need?",
+            "body": "Tell us about it and we will point you in the right direction.",
+            "cta": {
+              "label": "Get in touch",
+              "target": {
+                "kind": "section",
+                "pageId": "contact",
+                "sectionId": "contact-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "about",
+      "slug": "about",
+      "title": "About",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Get in touch"
+          }
+        },
+        {
+          "id": "story",
+          "type": "about",
+          "variant": "text-only",
+          "hidden": false,
+          "props": {
+            "heading": "Our story",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Tell your story: how the business started, who you serve and what you care about."
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "team",
+          "type": "team",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "The team",
+            "members": [
+              {
+                "name": "Tasha Green",
+                "role": "Owner",
+                "photo": {
+                  "assetId": "7a1e0000-0000-4000-8000-000000000303",
+                  "alt": "An electrician in gloves testing an open breaker panel"
+                }
+              },
+              {
+                "name": "Elena Cruz",
+                "role": "Team lead",
+                "photo": {
+                  "assetId": "7a1e0000-0000-4000-8000-000000000304",
+                  "alt": "A cleaner in gloves wiping down a kitchen island"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gallery",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "Our work",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000303",
+                "alt": "An electrician in gloves testing an open breaker panel"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000304",
+                "alt": "A cleaner in gloves wiping down a kitchen island"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000305",
+                "alt": "A plumber tightening a fitting under a bathroom sink"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000306",
+                "alt": "A homeowner signing a tablet held by a service worker at the door"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "contact",
+      "slug": "contact",
+      "title": "Contact",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Get in touch"
+          }
+        },
+        {
+          "id": "contact-form",
+          "type": "contact_form",
+          "variant": "with-details",
+          "hidden": false,
+          "props": {
+            "heading": "Get in touch",
+            "intro": "Tell us a little about what you need. We will reply as soon as we can.",
+            "formKey": "contact",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "service",
+              "message"
+            ],
+            "submitLabel": "Send message",
+            "consentText": "By sending this form you agree that Brightside Cleaning Co. may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "hours",
+          "type": "hours_location",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "heading": "Hours and location"
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    }
+  ],
+  "footer": {
+    "showHours": true,
+    "showAddress": true,
+    "showSiteByYakini": true
+  },
+  "seo": {
+    "siteTitle": "Brightside Cleaning Co.",
+    "description": "Brightside Cleaning Co. in Santa Fe. Home and office cleaning you can count on, every week.",
+    "ogImageAssetId": "7a1e0000-0000-4000-8000-000000000301"
+  },
+  "schemaVersion": 1,
+  "brand": {
+    "colors": {
+      "primary": "#1F4E79",
+      "secondary": "#14202B",
+      "accent": "#E0A526"
+    },
+    "colorsSource": "kit-default",
+    "fontPair": "modern"
+  },
+  "integrations": {
+    "bookingEnabled": false,
+    "formsEnabled": true
+  }
+}

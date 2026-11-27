@@ -1,0 +1,546 @@
+{
+  "kitId": "landlord",
+  "locale": "en-US",
+  "business": {
+    "name": "Northgate Homes"
+  },
+  "nav": {
+    "items": [
+      {
+        "label": "Home",
+        "pageId": "home"
+      },
+      {
+        "label": "Rentals",
+        "pageId": "rentals"
+      },
+      {
+        "label": "Residents",
+        "pageId": "residents"
+      },
+      {
+        "label": "About",
+        "pageId": "about"
+      },
+      {
+        "label": "Contact",
+        "pageId": "contact"
+      }
+    ],
+    "cta": {
+      "label": "See rentals",
+      "target": {
+        "kind": "page",
+        "pageId": "rentals"
+      }
+    }
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "",
+      "title": "Home",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "See rentals"
+          }
+        },
+        {
+          "id": "hero",
+          "type": "hero",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Rentals",
+            "headline": "Northgate Homes",
+            "subhead": "Clean, quiet apartments near the university, managed by people who answer the phone.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000401",
+              "alt": "A well-kept three-story apartment building with balconies and a green lawn"
+            },
+            "primaryCta": {
+              "label": "See rentals",
+              "target": {
+                "kind": "page",
+                "pageId": "rentals"
+              }
+            },
+            "secondaryCta": {
+              "label": "Request a repair",
+              "target": {
+                "kind": "section",
+                "pageId": "residents",
+                "sectionId": "maintenance"
+              }
+            }
+          }
+        },
+        {
+          "id": "today",
+          "type": "today",
+          "variant": "banner",
+          "hidden": false,
+          "props": {
+            "heading": "Today",
+            "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "welcome",
+          "type": "about",
+          "variant": "text-only",
+          "hidden": false,
+          "props": {
+            "heading": "A place you’ll want to stay",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "[[Write two or three sentences about your homes and how you take care of them and your residents.]]"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "why",
+          "type": "services",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "Living with us",
+            "items": [
+              {
+                "title": "Fast repairs",
+                "body": "Send a request any time and we’ll tell you when someone is coming.",
+                "icon": "clock"
+              },
+              {
+                "title": "[[Something residents love]]",
+                "body": "[[Like parking, laundry, a yard or being close to schools.]]",
+                "icon": "heart"
+              },
+              {
+                "title": "Clear terms",
+                "body": "Plain leases and straight answers about rent, deposits and move-out.",
+                "icon": "star"
+              }
+            ]
+          }
+        },
+        {
+          "id": "rentals-cta",
+          "type": "cta_band",
+          "variant": "solid",
+          "hidden": false,
+          "props": {
+            "headline": "Looking for a place?",
+            "body": "See what’s open now and ask us about a showing.",
+            "cta": {
+              "label": "See rentals",
+              "target": {
+                "kind": "page",
+                "pageId": "rentals"
+              }
+            }
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "What residents say",
+            "items": []
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "rentals",
+      "slug": "rentals",
+      "title": "Rentals",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "See rentals"
+          }
+        },
+        {
+          "id": "units",
+          "type": "services",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "Available now",
+            "intro": "[[List each open unit: size, bedrooms and baths, and when it’s ready. Remove any that are rented.]]",
+            "items": [
+              {
+                "title": "[[2 bed, 1 bath apartment]]",
+                "body": "[[Floor, square feet, what’s included and the move-in date.]]",
+                "icon": "map-pin"
+              },
+              {
+                "title": "[[1 bed, 1 bath apartment]]",
+                "body": "[[Floor, square feet, what’s included and the move-in date.]]",
+                "icon": "map-pin"
+              }
+            ]
+          }
+        },
+        {
+          "id": "photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "Take a look",
+            "images": []
+          }
+        },
+        {
+          "id": "rental-faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Renting with us",
+            "items": [
+              {
+                "q": "How do I apply?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Send us a message below with the unit you like, and we’ll send the application and set up a showing."
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "q": "Do you allow pets?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "[[Say your pet policy, or remove this question.]]"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "q": "What do I need to move in?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "[[List what you ask for, like the first month’s rent, a deposit and a signed lease.]]"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "rental-inquiry",
+          "type": "contact_form",
+          "variant": "simple",
+          "hidden": false,
+          "props": {
+            "heading": "Ask about a rental",
+            "intro": "Tell us which home you’re interested in and when you’d like to move.",
+            "formKey": "rental",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "service",
+              "message"
+            ],
+            "submitLabel": "Send",
+            "consentText": "By sending this form you agree that Northgate Homes may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "residents",
+      "slug": "residents",
+      "title": "Residents",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "See rentals"
+          }
+        },
+        {
+          "id": "residents-hero",
+          "type": "hero",
+          "variant": "minimal",
+          "hidden": false,
+          "props": {
+            "eyebrow": "For residents",
+            "headline": "Here when you need us",
+            "subhead": "Repairs, rent and questions, all in one place.",
+            "primaryCta": {
+              "label": "Request a repair",
+              "target": {
+                "kind": "section",
+                "pageId": "residents",
+                "sectionId": "maintenance"
+              }
+            }
+          }
+        },
+        {
+          "id": "resident-help",
+          "type": "services",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "How to reach us",
+            "items": [
+              {
+                "title": "Repairs",
+                "body": "Use the form below. For a flood, fire or gas smell, call 911 first, then call us.",
+                "icon": "phone"
+              },
+              {
+                "title": "Paying rent",
+                "body": "[[Say how residents pay rent and when it’s due.]]",
+                "icon": "calendar"
+              },
+              {
+                "title": "Moving out",
+                "body": "[[Say how much notice you need and how deposits are returned.]]",
+                "icon": "gift"
+              }
+            ]
+          }
+        },
+        {
+          "id": "maintenance",
+          "type": "contact_form",
+          "variant": "simple",
+          "hidden": false,
+          "props": {
+            "heading": "Request a repair",
+            "intro": "Tell us your unit and what’s wrong. We’ll reply with when someone can come.",
+            "formKey": "maintenance",
+            "fields": [
+              "name",
+              "phone",
+              "email",
+              "service",
+              "message"
+            ],
+            "submitLabel": "Send request",
+            "consentText": "By sending this form you agree that Northgate Homes may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "resident-faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Resident questions",
+            "items": [
+              {
+                "q": "What counts as an emergency?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "No heat in winter, no water, a major leak, or a door that won’t lock. Call us right away for these."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "about",
+      "slug": "about",
+      "title": "About",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "See rentals"
+          }
+        },
+        {
+          "id": "story",
+          "type": "about",
+          "variant": "right-image",
+          "hidden": false,
+          "props": {
+            "heading": "About us",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "[[Tell your story: how long you’ve owned or managed homes here and how you look after them.]]"
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000403",
+              "alt": "A set of house keys handed to a new tenant at the front door"
+            }
+          }
+        },
+        {
+          "id": "team",
+          "type": "team",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "Who you’ll work with",
+            "members": []
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "contact",
+      "slug": "contact",
+      "title": "Contact",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "See rentals"
+          }
+        },
+        {
+          "id": "contact-form",
+          "type": "contact_form",
+          "variant": "with-details",
+          "hidden": false,
+          "props": {
+            "heading": "Get in touch",
+            "formKey": "contact",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "message"
+            ],
+            "submitLabel": "Send message",
+            "consentText": "By sending this form you agree that Northgate Homes may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "office",
+          "type": "hours_location",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "heading": "Office hours and location"
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    }
+  ],
+  "footer": {
+    "showHours": true,
+    "showAddress": true,
+    "showSiteByYakini": true
+  },
+  "seo": {
+    "siteTitle": "Northgate Homes",
+    "description": "Northgate Homes: rentals. Available homes, resident repairs and how to reach us."
+  },
+  "schemaVersion": 1,
+  "brand": {
+    "colors": {
+      "primary": "#2E5E4E",
+      "secondary": "#1A2421",
+      "accent": "#D9A441"
+    },
+    "colorsSource": "kit-default",
+    "fontPair": "modern"
+  },
+  "integrations": {
+    "bookingEnabled": false,
+    "formsEnabled": true
+  }
+}

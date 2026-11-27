@@ -1,0 +1,723 @@
+{
+  "kitId": "real-estate",
+  "locale": "en-US",
+  "business": {
+    "name": "Mesa Ridge Realty",
+    "phone": "+15055550142",
+    "email": "hello@example.com",
+    "hours": [
+      {
+        "day": "mon",
+        "closed": true
+      },
+      {
+        "day": "tue",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "wed",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "thu",
+        "open": "11:00",
+        "close": "20:00"
+      },
+      {
+        "day": "fri",
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": "sat",
+        "open": "10:00",
+        "close": "22:00"
+      },
+      {
+        "day": "sun",
+        "open": "10:00",
+        "close": "16:00"
+      }
+    ],
+    "tagline": "Helping families buy and sell homes on the west side.",
+    "address": {
+      "line1": "1420 Mesa Street",
+      "city": "Albuquerque",
+      "region": "TX",
+      "postal": "79902",
+      "country": "US"
+    }
+  },
+  "nav": {
+    "items": [
+      {
+        "label": "Home",
+        "pageId": "home"
+      },
+      {
+        "label": "Listings",
+        "pageId": "listings"
+      },
+      {
+        "label": "Buy",
+        "pageId": "buy"
+      },
+      {
+        "label": "Sell",
+        "pageId": "sell"
+      },
+      {
+        "label": "About",
+        "pageId": "about"
+      }
+    ],
+    "cta": {
+      "label": "Let’s talk",
+      "target": {
+        "kind": "section",
+        "pageId": "about",
+        "sectionId": "contact-form"
+      }
+    }
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "",
+      "title": "Home",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Let’s talk"
+          }
+        },
+        {
+          "id": "hero",
+          "type": "hero",
+          "variant": "fullbleed",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Real estate in Albuquerque",
+            "headline": "Mesa Ridge Realty",
+            "subhead": "Helping families buy and sell homes on the west side.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000501",
+              "alt": "A two-story family home with a green lawn at sunset"
+            },
+            "primaryCta": {
+              "label": "See listings",
+              "target": {
+                "kind": "page",
+                "pageId": "listings"
+              }
+            },
+            "secondaryCta": {
+              "label": "What’s my home worth?",
+              "target": {
+                "kind": "section",
+                "pageId": "sell",
+                "sectionId": "home-value"
+              }
+            }
+          }
+        },
+        {
+          "id": "today",
+          "type": "today",
+          "variant": "banner",
+          "hidden": false,
+          "props": {
+            "heading": "Today",
+            "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "intro",
+          "type": "about",
+          "variant": "text-only",
+          "hidden": false,
+          "props": {
+            "heading": "Your move, handled",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Write two or three sentences about how you work with buyers and sellers and the areas you know best."
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "help",
+          "type": "services",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "How I can help",
+            "items": [
+              {
+                "title": "Buying a home",
+                "body": "Find the right place, make a strong offer and get to closing without surprises.",
+                "icon": "heart"
+              },
+              {
+                "title": "Selling a home",
+                "body": "Price it right, show it well and handle every step to the closing table.",
+                "icon": "star"
+              },
+              {
+                "title": "Another service",
+                "body": "Like first-time buyers, relocation, land or investment property.",
+                "icon": "map-pin"
+              }
+            ]
+          }
+        },
+        {
+          "id": "value-cta",
+          "type": "cta_band",
+          "variant": "solid",
+          "hidden": false,
+          "props": {
+            "headline": "Thinking about selling?",
+            "body": "Ask for a free, no-pressure home value review.",
+            "cta": {
+              "label": "What’s my home worth?",
+              "target": {
+                "kind": "section",
+                "pageId": "sell",
+                "sectionId": "home-value"
+              }
+            }
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "What clients say",
+            "items": [
+              {
+                "quote": "She sold our house in nine days for more than we asked.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "Patient with first-time buyers and honest about every house.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "Knew every street in the neighborhood and it showed.",
+                "name": "Dana L."
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "listings",
+      "slug": "listings",
+      "title": "Listings",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Let’s talk"
+          }
+        },
+        {
+          "id": "listings",
+          "type": "services",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "Featured listings",
+            "intro": "Add your current listings: address or area, beds and baths, and one line about each home. Remove any that have sold.",
+            "items": [
+              {
+                "title": "3 bed, 2 bath on Elm Street",
+                "body": "Square feet, lot, and what makes it special.",
+                "icon": "map-pin"
+              },
+              {
+                "title": "4 bed, 3 bath near the park",
+                "body": "Square feet, lot, and what makes it special.",
+                "icon": "map-pin"
+              }
+            ]
+          }
+        },
+        {
+          "id": "photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "Homes we’ve helped with",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000501",
+                "alt": "A two-story family home with a green lawn at sunset"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000502",
+                "alt": "A bright open living room and kitchen with a lake view"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000503",
+                "alt": "An agent showing a couple through a sunny living room"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000504",
+                "alt": "An aerial view of a leafy suburban neighborhood near a lake"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000505",
+                "alt": "A staged primary bedroom with a large window and mountain view"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000506",
+                "alt": "A modern backyard with a lit pool and patio at dusk"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000301",
+                "alt": "A technician repairing an outdoor air conditioning unit"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000302",
+                "alt": "A clean white service van parked in a driveway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "tour-cta",
+          "type": "cta_band",
+          "variant": "outline",
+          "hidden": false,
+          "props": {
+            "headline": "Want to see one?",
+            "body": "Ask for a showing and I’ll set it up.",
+            "cta": {
+              "label": "Let’s talk",
+              "target": {
+                "kind": "section",
+                "pageId": "about",
+                "sectionId": "contact-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "buy",
+      "slug": "buy",
+      "title": "Buying",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Let’s talk"
+          }
+        },
+        {
+          "id": "buy-hero",
+          "type": "hero",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Buying",
+            "headline": "Find the right home",
+            "subhead": "From the first showing to the keys in your hand.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000503",
+              "alt": "An agent showing a couple through a sunny living room"
+            },
+            "primaryCta": {
+              "label": "Start my search",
+              "target": {
+                "kind": "section",
+                "pageId": "buy",
+                "sectionId": "buyer-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "buy-steps",
+          "type": "services",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "How buying works",
+            "items": [
+              {
+                "title": "Talk it through",
+                "body": "What you need, where, and your budget.",
+                "icon": "phone"
+              },
+              {
+                "title": "Get ready to buy",
+                "body": "Line up your financing so you can move fast when the right home comes up.",
+                "icon": "calendar"
+              },
+              {
+                "title": "Tour and offer",
+                "body": "See homes together, then write an offer that fits the market.",
+                "icon": "map-pin"
+              },
+              {
+                "title": "Close",
+                "body": "Inspections, appraisal and paperwork, handled step by step.",
+                "icon": "star"
+              }
+            ]
+          }
+        },
+        {
+          "id": "buy-faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Buyer questions",
+            "items": [
+              {
+                "q": "Does it cost me to work with you as a buyer?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Explain how your buyer side is paid, in plain words."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "buyer-form",
+          "type": "contact_form",
+          "variant": "simple",
+          "hidden": false,
+          "props": {
+            "heading": "Start my search",
+            "intro": "Tell me where you want to live and what you need.",
+            "formKey": "buyer",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "message"
+            ],
+            "submitLabel": "Send",
+            "consentText": "By sending this form you agree that Mesa Ridge Realty may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "sell",
+      "slug": "sell",
+      "title": "Selling",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Let’s talk"
+          }
+        },
+        {
+          "id": "sell-hero",
+          "type": "hero",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Selling",
+            "headline": "Sell with confidence",
+            "subhead": "Clear pricing, great photos and steady updates until closing.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000505",
+              "alt": "A staged primary bedroom with a large window and mountain view"
+            },
+            "primaryCta": {
+              "label": "What’s my home worth?",
+              "target": {
+                "kind": "section",
+                "pageId": "sell",
+                "sectionId": "home-value"
+              }
+            }
+          }
+        },
+        {
+          "id": "sell-steps",
+          "type": "services",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "How selling works",
+            "items": [
+              {
+                "title": "Price it right",
+                "body": "A home value review based on recent sales nearby.",
+                "icon": "star"
+              },
+              {
+                "title": "Get it ready",
+                "body": "Simple fixes, staging tips and professional photos.",
+                "icon": "heart"
+              },
+              {
+                "title": "Market and show",
+                "body": "Get your home in front of serious buyers.",
+                "icon": "users"
+              },
+              {
+                "title": "Negotiate and close",
+                "body": "Review offers together and handle every step to closing.",
+                "icon": "calendar"
+              }
+            ]
+          }
+        },
+        {
+          "id": "sell-faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Seller questions",
+            "items": [
+              {
+                "q": "How long will it take to sell?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "It depends on price, condition and the market. We’ll look at recent sales near you together."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "home-value",
+          "type": "contact_form",
+          "variant": "simple",
+          "hidden": false,
+          "props": {
+            "heading": "What’s my home worth?",
+            "intro": "Share your address and a little about the home. I’ll send a value review.",
+            "formKey": "home-value",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "message"
+            ],
+            "submitLabel": "Request my review",
+            "consentText": "By sending this form you agree that Mesa Ridge Realty may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "about",
+      "slug": "about",
+      "title": "About",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Let’s talk"
+          }
+        },
+        {
+          "id": "story",
+          "type": "about",
+          "variant": "right-image",
+          "hidden": false,
+          "props": {
+            "heading": "About me",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Tell your story: how long you’ve been in real estate, the neighborhoods you know, and why clients come back."
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "team",
+          "type": "team",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "The team",
+            "members": [
+              {
+                "name": "Angela Brooks",
+                "role": "Broker and owner",
+                "photo": {
+                  "assetId": "7a1e0000-0000-4000-8000-000000000503",
+                  "alt": "An agent showing a couple through a sunny living room"
+                }
+              },
+              {
+                "name": "Tom Reyes",
+                "role": "Buyer specialist",
+                "photo": {
+                  "assetId": "7a1e0000-0000-4000-8000-000000000504",
+                  "alt": "An aerial view of a leafy suburban neighborhood near a lake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "more-reviews",
+          "type": "testimonials",
+          "variant": "single",
+          "hidden": false,
+          "props": {
+            "heading": "Client stories",
+            "items": [
+              {
+                "quote": "She sold our house in nine days for more than we asked.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "Patient with first-time buyers and honest about every house.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "Knew every street in the neighborhood and it showed.",
+                "name": "Dana L."
+              }
+            ]
+          }
+        },
+        {
+          "id": "contact-form",
+          "type": "contact_form",
+          "variant": "with-details",
+          "hidden": false,
+          "props": {
+            "heading": "Let’s talk",
+            "formKey": "contact",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "message"
+            ],
+            "submitLabel": "Send message",
+            "consentText": "By sending this form you agree that Mesa Ridge Realty may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    }
+  ],
+  "footer": {
+    "showHours": false,
+    "showAddress": true,
+    "showSiteByYakini": true
+  },
+  "seo": {
+    "siteTitle": "Mesa Ridge Realty",
+    "description": "Mesa Ridge Realty in Albuquerque. Helping families buy and sell homes on the west side.",
+    "ogImageAssetId": "7a1e0000-0000-4000-8000-000000000501"
+  },
+  "schemaVersion": 1,
+  "brand": {
+    "colors": {
+      "primary": "#22577A",
+      "secondary": "#1B232B",
+      "accent": "#C9A227"
+    },
+    "colorsSource": "kit-default",
+    "fontPair": "editorial"
+  },
+  "integrations": {
+    "bookingEnabled": false,
+    "formsEnabled": true
+  }
+}
