@@ -198,6 +198,12 @@ editor stay on Next.js pages.
   editorial 61.7, friendly 34.7, modern 30.8.
 - `tests/e2e/font-fallback.spec.ts` lays every rich fixture out with the web fonts (checked loaded)
   and with only the fallbacks: same hero, same hero text and buttons, page height within 1%.
+- Headlines: display headlines already balance their lines (`text-wrap: balance` in the base styles;
+  browsers without it wrap normally). In accented headlines a one- or two-letter word stays with
+  the next word (no-break space), so a balanced headline breaks in the same place with either font.
+- Slow fonts: `tests/e2e/font-delay.spec.ts` holds every font file back 1.5 s on every rich fixture
+  (390 and 1280) and requires the swap's layout shift to stay at or under 0.02. Measured: at most
+  0.0008 on any kit at 390, 412 and 1350 wide (trucking was 0.043 before the headline rule).
 
 The CI failures were reproduced locally by hiding the system Inter font (CI machines don't have
 it): tree-lawn 0.114, oilfield 0.115, nonprofit 0.036 before; 0 after.
