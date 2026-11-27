@@ -1,4 +1,4 @@
-import type { RichText, SectionOf, SectionType } from '@yakini/site-schema'
+import { plainText, type RichText, type SectionOf, type SectionType } from '@yakini/site-schema'
 import { DraftHint, HeadTxt, Img, Link, RichTextView, Txt, showEmpty, type RenderContext } from '../context'
 import { Heading } from './heading'
 
@@ -196,14 +196,15 @@ export function MosaicGallery({ ctx, s, first }: P<'gallery'>) {
 export function FilmstripGallery({ ctx, s, first }: P<'gallery'>) {
   const images = s.props.images.filter((im) => ctx.image(im.assetId))
   if (!images.length && !showEmpty(ctx)) return null
-  const label = s.props.heading ? undefined : 'Photos'
+  // Its own name, distinct from the section's, so a screen reader lists "<heading>, photo strip".
+  const label = `${s.props.heading ? plainText(s.props.heading) : 'Photos'}, photo strip`
   return (
     <section className={cls(s)} id={s.id} aria-labelledby={`${s.id}-h`}>
       <div className="ys-wrap">
         <SectionHead ctx={ctx} s={s} first={first} heading={s.props.heading} fallback="Photos" />
       </div>
       {images.length ? (
-        <div className="ys-filmstrip" role="region" tabIndex={0} aria-labelledby={label ? undefined : `${s.id}-h`} aria-label={label}>
+        <div className="ys-filmstrip" role="region" tabIndex={0} aria-label={label}>
           <ul className="ys-film-track">
             {images.map((im, i) => (
               <li key={i} className="ys-film-frame" aria-label={`Photo ${i + 1} of ${images.length}`}>
