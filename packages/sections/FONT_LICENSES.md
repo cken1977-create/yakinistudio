@@ -26,8 +26,8 @@ Checked 2026-11-27 against each package's `license` field and LICENSE file.
 - **No layout shift while fonts load:** `src/fonts.css` gives every web font two local fallbacks
   (Arial/Times/Courier and their metric twins Liberation, Arimo, Tinos and Cousine; then DejaVu),
   resized with `size-adjust` and `ascent-override`/`descent-override` so text takes the same
-  space before and after the web font arrives. Each has a regular face and a bold face measured at
-  the weight the pair uses for headings.
+  space before and after the web font arrives. Each has a regular face and bold faces for three
+  weight bands (600, 700, and the pair's heading weight).
 - **How the numbers are worked out** (redo it if a font changes): instance the variable font at the
   weight used, take the average advance width of English text (letters weighted by how often they
   appear, space included) for the web font and for the local font; `size-adjust` is their ratio,

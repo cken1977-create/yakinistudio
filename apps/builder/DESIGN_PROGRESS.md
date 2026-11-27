@@ -185,23 +185,35 @@ editor stay on Next.js pages.
     forms submit with JavaScript off.
 - `/dev-site` (the harness) uses the same renderer, so Lighthouse measures what visitors get.
 
-**Lighthouse after** (median of 3, phone, throttled; scripts on the page in brackets):
+**Fonts without layout shift** (decision 2026-11-27): every font pair has size-matched local
+fallbacks (`packages/sections/src/fonts.css`: Arial/Times/Courier and their metric twins, then
+DejaVu; a regular face plus bold faces for the 600, 700 and heading weight bands). Published fonts
+are subset at build time to the weights in use; the build and `tests/unit/site-fonts.test.ts`
+hold every pair to 100 KB. Per site: signature 91.3 KB, classic 70.6, editorial 61.7, friendly
+34.7, modern 30.8. `tests/e2e/font-fallback.spec.ts` lays every rich fixture out with and without
+the web fonts and requires the same hero and page height.
+
+The CI failures were reproduced locally by hiding the system Inter font (CI machines don't have
+it): tree-lawn 0.114, oilfield 0.115, nonprofit 0.036 before; 0 after.
+
+**Lighthouse after** (3 runs, phone, throttled, CI-like fonts; lowest score shown):
 
 | Fixture | Perf | A11y | BP | SEO | CLS | LCP |
 |---|---|---|---|---|---|---|
-| food-truck-rich | 0.96 (was 0.84) | 1 | 1 | 1 | 0 | 2.8 s |
-| restaurant-rich | 0.93 (was 0.83) | 1 | 1 | 1 | 0 | 3.2 s |
-| landlord-rich | 0.98 | 1 | 1 | 1 | 0 | 2.4 s |
+| food-truck-rich | 0.98 (was 0.84) | 1 | 1 | 1 | 0 | 2.3 s |
+| restaurant-rich | 0.96 (was 0.83) | 1 | 1 | 1 | 0 | 2.7 s |
+| landlord-rich | 1.00 | 1 | 1 | 1 | 0 | 1.9 s |
 | real-estate-rich | 0.97 | 1 | 1 | 1 | 0 | 2.6 s |
-| tree-lawn-rich | 0.97 | 1 | 1 | 1 | **0.106** (classic) | 1.8 s |
-| nonprofit-rich | 1.00 | 1 | 1 | 1 | 0.001 | 1.7 s |
-| training-school-rich | 1.00 | 1 | 1 | 1 | 0 | 1.2 s |
-| trucking-rich | 1.00 | 1 | 1 | 1 | 0 | 1.7 s |
-| oilfield-rich | 1.00 | 1 | 1 | 1 | 0 | 1.4 s |
+| tree-lawn-rich | 0.99 | 1 | 1 | 1 | 0 (was 0.114) | 2.0 s |
+| nonprofit-rich | 0.98 | 1 | 1 | 1 | 0 (was 0.036) | 2.4 s |
+| training-school-rich | 1.00 | 1 | 1 | 1 | 0 | 1.4 s |
+| trucking-rich | 1.00 | 1 | 1 | 1 | 0 | 1.3 s |
+| oilfield-rich | 1.00 | 1 | 1 | 1 | 0 (was 0.115) | 1.4 s |
 | service-rich | 1.00 | 1 | 1 | 1 | 0 | 0.8 s |
 
-Script on every page: 0 KB (was 193 KB). Still open: restaurant 0.93 (the full-bleed hero photo is
-the LCP; D4's image work targets it), and tree-lawn CLS (classic font swap; clears in D3).
+Script on every page: 0 KB (was 193 KB). Restaurant keeps a recorded performance floor of 0.90 in
+`lighthouserc.cjs` until D4 (its hero photo is the slowest LCP; it scored 0.92-0.93 on CI before
+the font work); all its other budgets, CLS included, apply.
 
 ## Baseline found on 2026-11-27 (the "before")
 
