@@ -77,9 +77,10 @@ describe('published-site fonts', () => {
     expect(face('cormorant-garamond-latin-wght-italic.woff2')).toMatch(/font-weight:\s*400;/)
     expect(face('jetbrains-mono-latin-wght-normal.woff2')).toMatch(/font-weight:\s*500;/)
     expect(face('inter-latin-wght-normal.woff2')).toMatch(/font-weight:\s*400 800;/)
-    // Real fonts always show once they arrive (swap); the size-matched fallbacks keep the layout still.
+    // Published sites never swap fonts after drawing: optional (used if in time, else the fallback stays).
     const web = css.match(/@font-face\s*{[^}]*_site-assets[^}]*}/g) ?? []
     expect(web.length).toBeGreaterThan(10)
-    for (const f of web) expect(f).toMatch(/font-display:\s*swap/)
+    for (const f of web) expect(f).toMatch(/font-display:\s*optional/)
+    expect(css).not.toMatch(/font-display:\s*swap/)
   })
 })

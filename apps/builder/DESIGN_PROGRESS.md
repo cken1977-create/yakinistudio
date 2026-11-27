@@ -188,8 +188,14 @@ editor stay on Next.js pages.
 **Fonts without layout shift** (decision 2026-11-27):
 - Each site preloads its own font pair's Latin files in the page head (`lib/site/font-files.json`), so
   they arrive with the stylesheet and are ready before the first paint: no swap on a normal load.
-- Fonts swap in as they arrive (`font-display: swap`), so a slow first visit still gets the real
-  typefaces (checked on Slow 4G: with `optional` 9 of 10 kits kept the fallback, so it was dropped).
+- Published sites use `font-display: optional`: a font that isn't there in time is not swapped in on
+  that page view (the next page has it from cache), so nothing can move on any browser version. The
+  studio and editor keep `swap`. Checked: on a normal load every kit draws with its web fonts.
+  Trade-off, measured: on a Slow 4G first visit (empty cache) 9 of 10 kits show the size-matched
+  fallback on Home; later pages use the cached real fonts. `swap` was tried and failed CI's
+  1.5 s delayed-font test on CI's newer Chrome (landlord 0.095, restaurant 0.022). Follow-up PR:
+  each site's headline font, subset to that site's characters and sent with the page, so the real
+  headline typeface always shows with no swap.
 - When a font is still late (slow network), size-matched local fallbacks take the same space
   (`packages/sections/src/fonts.css`): Arial/Times/Courier and their metric twins, then DejaVu; a
   regular face plus bold faces for the 600, 700 and heading-weight bands; widths measured in the
@@ -199,8 +205,8 @@ editor stay on Next.js pages.
   `tests/unit/site-fonts.test.ts` hold every pair to 100 KB: signature 91.3 KB, classic 70.6,
   editorial 61.7, friendly 34.7, modern 30.8.
 - `tests/e2e/font-fallback.spec.ts` lays every rich fixture out with the web fonts (checked loaded)
-  and with only the fallbacks: hero within 12%, page within 2% (how close a slow first visit looks
-  before the swap; exact line breaks differ between browser versions).
+  and with only the fallbacks: hero within 12%, page within 2% (how close a slow first visit looks;
+  exact line breaks differ between browser versions, which is why swaps are off).
 - Headlines: display headlines already balance their lines (`text-wrap: balance` in the base styles;
   browsers without it wrap normally). In accented headlines a one- or two-letter word stays with
   the next word (no-break space), so a balanced headline breaks in the same place with either font.
