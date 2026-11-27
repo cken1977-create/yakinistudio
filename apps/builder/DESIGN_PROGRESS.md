@@ -167,6 +167,77 @@ general (`service`) kit has 6 photos of its own, so its gallery repeats two to r
   the header and hero. Classic must stay byte for byte, so this clears when the kit moves to a v2
   preset in D3 (or with a fallback face if you allow that change to classic's font stack).
 
+## Published sites without framework JavaScript (2026-11-27, Clarence's decision)
+
+Published pages (`/_site/<host>/…`) are served by a route handler as plain HTML. The studio and
+editor stay on Next.js pages.
+- `lib/site/render-entry.tsx` is bundled at build time with its own React
+  (`scripts/build-site-renderer.mjs` → `.site-renderer/render.cjs`) and loaded at runtime
+  (`lib/site/renderer.ts`), because App Router code may not import `react-dom/server`.
+- One first-party stylesheet plus self-hosted fonts, built by `scripts/build-site-css.mjs` into
+  `public/_site-assets/` and linked as `site.css?v=<deploy>`.
+- Published HTML carries no script except JSON-LD. Forms are plain HTML posts.
+- D7 hook: `islands` (first-party, nonce-tagged scripts) is empty for every site today.
+- Tests:
+  - `tests/unit/published-html.test.ts`: every page of every design fixture, the thank-you page
+    and the neutral page;
+  - `tests/e2e/published-static.spec.ts`: a real published site, every page, 0 script requests;
+    forms submit with JavaScript off.
+- `/dev-site` (the harness) uses the same renderer, so Lighthouse measures what visitors get.
+
+**Fonts without layout shift** (decision 2026-11-27):
+- Each site preloads its own font pair's Latin files in the page head (`lib/site/font-files.json`), so
+  they arrive with the stylesheet and are ready before the first paint: no swap on a normal load.
+- Published sites use `font-display: optional`: a font that isn't there in time is not swapped in on
+  that page view (the next page has it from cache), so nothing can move on any browser version. The
+  studio and editor keep `swap`. Checked: on a normal load every kit draws with its web fonts.
+  Trade-off, measured: on a Slow 4G first visit (empty cache) 9 of 10 kits show the size-matched
+  fallback on Home; later pages use the cached real fonts. `swap` was tried and failed CI's
+  1.5 s delayed-font test on CI's newer Chrome (landlord 0.095, restaurant 0.022). Follow-up PR:
+  each site's headline font, subset to that site's characters and sent with the page, so the real
+  headline typeface always shows with no swap.
+- When a font is still late (slow network), size-matched local fallbacks take the same space
+  (`packages/sections/src/fonts.css`): Arial/Times/Courier and their metric twins, then DejaVu; a
+  regular face plus bold faces for the 600, 700 and heading-weight bands; widths measured in the
+  browser on the sites' own text; digits sized so `ch` widths (`max-width: 62ch`) match too.
+- Published fonts are subset at build time to the weights in use; every file of a font declares the
+  same weights (a mismatch made browsers skip the Latin file, found and fixed here). The build and
+  `tests/unit/site-fonts.test.ts` hold every pair to 100 KB: signature 91.3 KB, classic 70.6,
+  editorial 61.7, friendly 34.7, modern 30.8.
+- `tests/e2e/font-fallback.spec.ts` lays every rich fixture out with the web fonts (checked loaded)
+  and with only the fallbacks: hero within 12%, page within 2% (how close a slow first visit looks;
+  exact line breaks differ between browser versions, which is why swaps are off).
+- Headlines: display headlines already balance their lines (`text-wrap: balance` in the base styles;
+  browsers without it wrap normally). In accented headlines a one- or two-letter word stays with
+  the next word (no-break space), so a balanced headline breaks in the same place with either font.
+- Slow fonts: `tests/e2e/font-delay.spec.ts` holds every font file back 1.5 s on every rich fixture
+  (390 and 1280) and requires the swap's layout shift to stay at or under 0.02. Measured: at most
+  0.0008 on any kit at 390, 412 and 1350 wide (trucking was 0.043 before the headline rule).
+
+The CI failures were reproduced locally by hiding the system Inter font (CI machines don't have
+it): tree-lawn 0.114, oilfield 0.115, nonprofit 0.036 before; 0 after.
+
+**Lighthouse after** (3 runs, phone, throttled, CI-like fonts, fonts confirmed drawn; lowest score shown):
+
+| Fixture | Perf | A11y | BP | SEO | CLS | LCP |
+|---|---|---|---|---|---|---|
+| food-truck-rich | 0.97 (was 0.84) | 1 | 1 | 1 | 0 | 2.6 s |
+| restaurant-rich | 0.94 (was 0.83) | 1 | 1 | 1 | 0 | 3.1 s |
+| landlord-rich | 0.99 | 1 | 1 | 1 | 0 | 2.0 s |
+| real-estate-rich | 0.97 | 1 | 1 | 1 | 0 | 2.6 s |
+| tree-lawn-rich | 0.95 | 1 | 1 | 1 | 0 (was 0.114) | 2.9 s |
+| nonprofit-rich | 1.00 | 1 | 1 | 1 | 0 (was 0.036) | 1.7 s |
+| training-school-rich | 1.00 | 1 | 1 | 1 | 0 | 1.3 s |
+| trucking-rich | 1.00 | 1 | 1 | 1 | 0 | 1.5 s |
+| oilfield-rich | 0.99 | 1 | 1 | 1 | 0 (was 0.115) | 2.0 s |
+| service-rich | 1.00 | 1 | 1 | 1 | 0 | 0.8 s |
+
+With every font held back 1.5 s: layout shift 0.0000 on all 10 kits at 390, 412 and 1350 wide.
+
+Script on every page: 0 KB (was 193 KB). Restaurant keeps a recorded performance floor of 0.90 in
+`lighthouserc.cjs` until D4 (its hero photo is the slowest LCP; it scored 0.92-0.93 on CI before
+the font work); all its other budgets, CLS included, apply.
+
 ## Baseline found on 2026-11-27 (the "before")
 
 Each later step must clear its own entries. The tests fail on anything new and on any entry that

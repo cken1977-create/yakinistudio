@@ -130,7 +130,20 @@ export function Txt({ children }: { children: string }): ReactNode {
 export function HeadTxt({ children }: { children: string }): ReactNode {
   const parts = splitAccent(children)
   if (!parts) return <Txt>{children}</Txt>
-  return <>{parts.before ? <Txt>{parts.before}</Txt> : null}<em className="ys-accent"><Txt>{parts.accent}</Txt></em>{parts.after ? <Txt>{parts.after}</Txt> : null}</>
+  const before = glueShortWords(parts.before), accent = glueShortWords(parts.accent), after = glueShortWords(parts.after)
+  return <>{before ? <Txt>{before}</Txt> : null}<em className="ys-accent"><Txt>{accent}</Txt></em>{after ? <Txt>{after}</Txt> : null}</>
+}
+
+/**
+ * Headline typesetting for accented headlines (design v2): a one- or two-letter word ("in", "a",
+ * "to") is kept with the word after it by a no-break space, so it never hangs alone at the end of a
+ * line. Besides reading better, this keeps balanced headlines breaking in the same place whether
+ * the web font or its fallback is showing, so nothing moves when the font arrives (CLS). Only
+ * accented headlines (never in an old site), so classic pages keep their exact markup.
+ */
+export function glueShortWords(s: string): string {
+  if (!s || s.includes('[[')) return s
+  return s.replace(/(^|[\s\u00A0])([^\s\u00A0]{1,2}) (?=\S)/g, '$1$2\u00A0').replace(/(^|[\s\u00A0])([^\s\u00A0]{1,2}) (?=\S)/g, '$1$2\u00A0')
 }
 
 export function pageById(doc: SiteDoc, id: string): Page | undefined {

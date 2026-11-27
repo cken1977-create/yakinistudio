@@ -39,11 +39,11 @@ export const AA = 4.5
 export type FontStack = { display: string; body: string; displayWeight: number; displayTracking: string }
 
 export const FONT_STACKS: Record<FontPair, FontStack> = {
-  editorial: { display: "'Fraunces Variable', Georgia, 'Times New Roman', serif", body: "'Source Sans 3 Variable', ui-sans-serif, system-ui, sans-serif", displayWeight: 600, displayTracking: '-0.01em' },
-  modern: { display: "'Inter Variable', ui-sans-serif, system-ui, sans-serif", body: "'Inter Variable', ui-sans-serif, system-ui, sans-serif", displayWeight: 750, displayTracking: '-0.025em' },
-  friendly: { display: "'Nunito Variable', ui-rounded, ui-sans-serif, system-ui, sans-serif", body: "'Nunito Variable', ui-rounded, ui-sans-serif, system-ui, sans-serif", displayWeight: 850, displayTracking: '-0.01em' },
-  classic: { display: "'Playfair Display Variable', Georgia, 'Times New Roman', serif", body: "'Lora Variable', Georgia, 'Times New Roman', serif", displayWeight: 650, displayTracking: '0' },
-  signature: { display: "'Cormorant Garamond Variable', 'Cormorant Fallback', Georgia, 'Times New Roman', serif", body: "'Inter Variable', 'Inter Fallback', ui-sans-serif, system-ui, sans-serif", displayWeight: 500, displayTracking: '-0.02em' },
+  editorial: { display: "'Fraunces Variable', 'Fraunces Fallback', 'Fraunces Fallback DV', Georgia, 'Times New Roman', serif", body: "'Source Sans 3 Variable', 'Source Sans 3 Fallback', 'Source Sans 3 Fallback DV', ui-sans-serif, system-ui, sans-serif", displayWeight: 600, displayTracking: '-0.01em' },
+  modern: { display: "'Inter Variable', 'Inter Fallback', 'Inter Fallback DV', ui-sans-serif, system-ui, sans-serif", body: "'Inter Variable', 'Inter Fallback', 'Inter Fallback DV', ui-sans-serif, system-ui, sans-serif", displayWeight: 750, displayTracking: '-0.025em' },
+  friendly: { display: "'Nunito Variable', 'Nunito Fallback', 'Nunito Fallback DV', ui-rounded, ui-sans-serif, system-ui, sans-serif", body: "'Nunito Variable', 'Nunito Fallback', 'Nunito Fallback DV', ui-rounded, ui-sans-serif, system-ui, sans-serif", displayWeight: 850, displayTracking: '-0.01em' },
+  classic: { display: "'Playfair Display Variable', 'Playfair Display Fallback', 'Playfair Display Fallback DV', Georgia, 'Times New Roman', serif", body: "'Lora Variable', 'Lora Fallback', 'Lora Fallback DV', Georgia, 'Times New Roman', serif", displayWeight: 650, displayTracking: '0' },
+  signature: { display: "'Cormorant Garamond Variable', 'Cormorant Fallback', 'Cormorant Fallback DV', Georgia, 'Times New Roman', serif", body: "'Inter Variable', 'Inter Fallback', 'Inter Fallback DV', ui-sans-serif, system-ui, sans-serif", displayWeight: 500, displayTracking: '-0.02em' },
 }
 
 export type ThemeReport = {

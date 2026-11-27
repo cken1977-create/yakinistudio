@@ -1,0 +1,7 @@
+{
+  "editorial": ["fraunces-normal", "source-sans-3-normal"],
+  "modern": ["inter-normal"],
+  "friendly": ["nunito-normal"],
+  "classic": ["playfair-display-normal", "lora-normal"],
+  "signature": ["cormorant-garamond-normal", "cormorant-garamond-italic", "inter-normal", "jetbrains-mono-normal"]
+}

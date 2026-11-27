@@ -15,7 +15,10 @@
     "check:client-env": "node scripts/check-client-env.mjs",
     "eval": "tsx --conditions=react-server --tsconfig tsconfig.json scripts/eval-generate.ts && tsx --conditions=react-server --tsconfig tsconfig.json scripts/eval-edits.ts",
     "lhci": "lhci autorun --config=lighthouserc.cjs",
-    "design:gallery": "DESIGN_GALLERY=1 playwright test tests/e2e/design-gallery.spec.ts --trace off"
+    "design:gallery": "DESIGN_GALLERY=1 playwright test tests/e2e/design-gallery.spec.ts --trace off",
+    "prebuild": "npm run build:site",
+    "predev": "npm run build:site",
+    "build:site": "node scripts/build-site-css.mjs && node scripts/build-site-renderer.mjs"
   },
   "dependencies": {
     "@sentry/nextjs": "^11.11.0",
@@ -48,8 +51,10 @@
     "@types/qrcode": "^1.5.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "esbuild": "0.28.2",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
+    "subset-font": "^2.9.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^5.1.0"

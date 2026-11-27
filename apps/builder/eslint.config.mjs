@@ -14,6 +14,9 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "playwright-report/**",
     "test-results/**",
+    // Generated at build time (published-site renderer bundle and stylesheet), never committed.
+    ".site-renderer/**",
+    "public/_site-assets/**",
   ]),
 ]);
 

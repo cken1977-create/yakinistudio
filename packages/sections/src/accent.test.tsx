@@ -34,7 +34,7 @@ describe('accent phrase', () => {
       const h = all(doc, mode)
       expect(h).toContain('Street food, <em class="ys-accent">made right here.</em>')
       expect(h).toContain('Hungry <em class="ys-accent">yet?</em>')
-      expect(h).toContain('Good <em class="ys-accent">to know</em>')
+      expect(h).toContain('Good <em class="ys-accent">to\u00A0know</em>') // short words stay with the next word
       expect(strip(h)).not.toMatch(/\*/)
     }
   })
@@ -53,5 +53,17 @@ describe('accent phrase', () => {
     expect(JSON.stringify(ld)).not.toContain('*')
     const live = renderToStaticMarkup(<SiteView ctx={ctx(doc, doc.pages[0])} />)
     expect(live.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)![1]).not.toContain('*')
+  })
+})
+
+describe('short words stay with the next word in accented headlines (no hanging "in" at a line end)', () => {
+  it('glues one- and two-letter words, including runs of them and across the accent edge', async () => {
+    const { glueShortWords } = await import('./context')
+    const NB = '\u00A0'
+    expect(glueShortWords('in good hands.')).toBe(`in${NB}good hands.`)
+    expect(glueShortWords('Built to last a lifetime')).toBe(`Built to${NB}last a${NB}lifetime`)
+    expect(glueShortWords('We ')).toBe(`We `) // the edge before the accent is left to the next segment
+    expect(glueShortWords('go to a show')).toBe(`go${NB}to${NB}a${NB}show`)
+    expect(glueShortWords('[[Add a headline]]')).toBe('[[Add a headline]]')
   })
 })

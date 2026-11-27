@@ -8,9 +8,17 @@ import { withSentryConfig } from '@sentry/nextjs/config'
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Published pages are rendered by a standalone bundle loaded at runtime (lib/site/renderer.ts);
+  // make sure the deployed function carries it.
+  outputFileTracingIncludes: { '/_site/[host]/[[...path]]': ['./.site-renderer/**'], '/%5Fsite/[host]/[[...path]]': ['./.site-renderer/**'] },
   transpilePackages: ['@yakini/site-schema', '@yakini/sections', '@yakini/edits', '@yakini/kits', '@yakini/brand', '@yakini/ai', '@yakini/pricing', '@yakini/abuse', '@yakini/visits'],
   async headers() {
     return [
+      {
+        // Published-site stylesheet and fonts: the page links site.css?v=<deploy>, so a day is safe.
+        source: '/_site-assets/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }],
+      },
       {
         source: '/:path*',
         headers: [

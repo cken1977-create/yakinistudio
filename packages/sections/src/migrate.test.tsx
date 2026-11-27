@@ -10,8 +10,10 @@ import { SiteView, type RenderContext } from './index'
  * `__snapshots__/v1-classic` holds the HTML the renderer produced for every v1 fixture page, live
  * and draft, BEFORE schema v2 (captured from the D1 step 1 commit). Each v1 doc must load through
  * the migration as `classic` and render the same markup. The only allowed differences are the new
- * root attributes (data-preset, data-surface), the JSON-LD `slogan`, and an empty section wrapper
- * that is no longer emitted for a section with nothing to show. Pixel identity is checked
+ * root attributes (data-preset, data-surface), the JSON-LD `slogan`, an empty section wrapper
+ * that is no longer emitted for a section with nothing to show, and the metric-matched fallback
+ * fonts added to each font stack (PR 140: they only show while the web fonts load, so text no
+ * longer moves when they arrive; the fonts a visitor finally sees are unchanged). Pixel identity is checked
  * separately by the design gallery (before/after screenshots).
  */
 const V1 = join(__dirname, '..', '..', 'site-schema', 'fixtures', 'v1')
@@ -29,6 +31,8 @@ const normalize = (h: string) => h
   .replace(/,"slogan":"[^"]*"/, '')
   // Since D1 step 5 a section with nothing to show gets no (empty) wrapper on a visitor's page.
   .replace(/<div class="ys-slot"><\/div>/g, '')
+  // PR 140: fallback faces sit right after the web font in each stack.
+  .replace(/, &#x27;[A-Za-z0-9 ]+ Fallback(?: DV)?&#x27;/g, '')
   .trim()
 
 describe('v1 docs render exactly as before under the classic preset', () => {
