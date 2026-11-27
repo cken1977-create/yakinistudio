@@ -28,8 +28,10 @@ Checked 2026-11-27 against each package's `license` field and LICENSE file.
   resized with `size-adjust` and `ascent-override`/`descent-override` so text takes the same
   space before and after the web font arrives. Each has a regular face and bold faces for three
   weight bands (600, 700, and the pair's heading weight).
-- **How the numbers are worked out** (redo it if a font changes): instance the variable font at the
-  weight used, take the average advance width of English text (letters weighted by how often they
-  appear, space included) for the web font and for the local font; `size-adjust` is their ratio,
-  and each vertical override is the web font's ascent, descent or line gap divided by `size-adjust`.
-  This is the same method Next.js and Capsize use.
+- **How the numbers are worked out** (redo it if a font changes): in a browser, draw the sites' own
+  text (from the rich design fixtures, grouped by font and weight band) in the web font and in the
+  local font; `size-adjust` is the ratio of the two widths. Each vertical override is the web font's
+  ascent, descent or line gap (from its tables, at that weight) divided by `size-adjust`. Digit faces
+  use the ratio of the two fonts' "0" widths, because CSS `ch` units are measured on "0".
+- **Preload:** each published page preloads its own pair's Latin files (`apps/builder/lib/site/font-files.json`),
+  so on a normal connection the web fonts are ready before the first paint and the fallbacks never show.

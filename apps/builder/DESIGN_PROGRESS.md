@@ -185,30 +185,36 @@ editor stay on Next.js pages.
     forms submit with JavaScript off.
 - `/dev-site` (the harness) uses the same renderer, so Lighthouse measures what visitors get.
 
-**Fonts without layout shift** (decision 2026-11-27): every font pair has size-matched local
-fallbacks (`packages/sections/src/fonts.css`: Arial/Times/Courier and their metric twins, then
-DejaVu; a regular face plus bold faces for the 600, 700 and heading weight bands). Published fonts
-are subset at build time to the weights in use; the build and `tests/unit/site-fonts.test.ts`
-hold every pair to 100 KB. Per site: signature 91.3 KB, classic 70.6, editorial 61.7, friendly
-34.7, modern 30.8. `tests/e2e/font-fallback.spec.ts` lays every rich fixture out with and without
-the web fonts and requires the same hero and page height.
+**Fonts without layout shift** (decision 2026-11-27):
+- Each site preloads its own font pair's Latin files in the page head (`lib/site/font-files.json`), so
+  they arrive with the stylesheet and are ready before the first paint: no swap on a normal load.
+- When a font is still late (slow network), size-matched local fallbacks take the same space
+  (`packages/sections/src/fonts.css`): Arial/Times/Courier and their metric twins, then DejaVu; a
+  regular face plus bold faces for the 600, 700 and heading-weight bands; widths measured in the
+  browser on the sites' own text; digits sized so `ch` widths (`max-width: 62ch`) match too.
+- Published fonts are subset at build time to the weights in use; every file of a font declares the
+  same weights (a mismatch made browsers skip the Latin file, found and fixed here). The build and
+  `tests/unit/site-fonts.test.ts` hold every pair to 100 KB: signature 91.3 KB, classic 70.6,
+  editorial 61.7, friendly 34.7, modern 30.8.
+- `tests/e2e/font-fallback.spec.ts` lays every rich fixture out with the web fonts (checked loaded)
+  and with only the fallbacks: same hero, same hero text and buttons, page height within 1%.
 
 The CI failures were reproduced locally by hiding the system Inter font (CI machines don't have
 it): tree-lawn 0.114, oilfield 0.115, nonprofit 0.036 before; 0 after.
 
-**Lighthouse after** (3 runs, phone, throttled, CI-like fonts; lowest score shown):
+**Lighthouse after** (3 runs, phone, throttled, CI-like fonts, fonts confirmed loading; lowest score shown):
 
 | Fixture | Perf | A11y | BP | SEO | CLS | LCP |
 |---|---|---|---|---|---|---|
-| food-truck-rich | 0.98 (was 0.84) | 1 | 1 | 1 | 0 | 2.3 s |
-| restaurant-rich | 0.96 (was 0.83) | 1 | 1 | 1 | 0 | 2.7 s |
-| landlord-rich | 1.00 | 1 | 1 | 1 | 0 | 1.9 s |
-| real-estate-rich | 0.97 | 1 | 1 | 1 | 0 | 2.6 s |
+| food-truck-rich | 0.97 (was 0.84) | 1 | 1 | 1 | 0 | 2.6 s |
+| restaurant-rich | 0.94 (was 0.83) | 1 | 1 | 1 | 0 | 3.1 s |
+| landlord-rich | 1.00 | 1 | 1 | 1 | 0 | 1.8 s |
+| real-estate-rich | 0.98 | 1 | 1 | 1 | 0 | 2.3 s |
 | tree-lawn-rich | 0.99 | 1 | 1 | 1 | 0 (was 0.114) | 2.0 s |
-| nonprofit-rich | 0.98 | 1 | 1 | 1 | 0 (was 0.036) | 2.4 s |
-| training-school-rich | 1.00 | 1 | 1 | 1 | 0 | 1.4 s |
-| trucking-rich | 1.00 | 1 | 1 | 1 | 0 | 1.3 s |
-| oilfield-rich | 1.00 | 1 | 1 | 1 | 0 (was 0.115) | 1.4 s |
+| nonprofit-rich | 0.98 | 1 | 1 | 1 | 0 (was 0.036) | 2.3 s |
+| training-school-rich | 1.00 | 1 | 1 | 1 | 0 | 1.2 s |
+| trucking-rich | 1.00 | 1 | 1 | 1 | 0 | 1.4 s |
+| oilfield-rich | 1.00 | 1 | 1 | 1 | 0 (was 0.115) | 1.5 s |
 | service-rich | 1.00 | 1 | 1 | 1 | 0 | 0.8 s |
 
 Script on every page: 0 KB (was 193 KB). Restaurant keeps a recorded performance floor of 0.90 in

@@ -58,6 +58,19 @@ describe('published-site fonts', () => {
     }
   })
 
+  it('every file of a font (each script) declares the same weights, so the browser treats it as one font', () => {
+    // A mismatch splits the font in two and the browser can skip the Latin file entirely.
+    const seen = new Map<string, Set<string>>()
+    for (const [face] of css.matchAll(/@font-face\s*{[^}]*}/g)) {
+      const family = face.match(/font-family:\s*'([^']+)'/)![1]
+      if (family.includes('Fallback')) continue
+      const key = `${family} ${face.match(/font-style:\s*(\w+)/)?.[1] ?? 'normal'}`
+      seen.set(key, (seen.get(key) ?? new Set()).add(face.match(/font-weight:\s*([^;]+);/)![1]))
+    }
+    expect(seen.size).toBeGreaterThan(8)
+    for (const [key, weights] of seen) expect([...weights], key).toHaveLength(1)
+  })
+
   it('fonts cut to one weight say so, so the browser never fakes other weights from them', () => {
     const face = (file: string) => css.match(new RegExp(`@font-face\\s*{[^}]*${file}[^}]*}`))?.[0] ?? ''
     expect(face('cormorant-garamond-latin-wght-normal.woff2')).toMatch(/font-weight:\s*500;/)

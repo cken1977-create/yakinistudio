@@ -1,8 +1,10 @@
 /* eslint-disable @next/next/no-head-element -- a plain HTML document rendered outside Next.js pages, not a Next page head */
 import type { ReactNode } from 'react'
+import { preload } from 'react-dom'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { SiteView, metaFor, type RenderContext } from '@yakini/sections'
 import type { Page, SiteDoc } from '@yakini/site-schema'
+import FONT_FILES from './font-files.json'
 
 /**
  * Published client pages as plain HTML (perf decision 2026-11-27, spec 7.3, 13.5). No framework
@@ -22,9 +24,20 @@ export function siteCssHref(): string {
   return `/_site-assets/site.css?v=${v}`
 }
 
-type Head = { title: string; description: string | null; canonical: string | null; robots: 'index' | 'noindex'; og?: { url: string; siteName: string; image?: string } }
+/**
+ * The site's own Latin font files (its font pair), preloaded so they arrive with the stylesheet and
+ * are ready before the first paint: no swap, so nothing moves (CLS). Same files the page downloads
+ * anyway, within the 100 KB font budget; nothing from another site.
+ */
+export function fontPreloads(pair: string): string[] {
+  const keys = (FONT_FILES as Record<string, string[]>)[pair] ?? []
+  return keys.map((k) => { const [, family, style] = k.match(/^(.+)-(normal|italic)$/)!; return `/_site-assets/fonts/${family}-latin-wght-${style}.woff2` })
+}
+
+type Head = { fonts?: string[]; title: string; description: string | null; canonical: string | null; robots: 'index' | 'noindex'; og?: { url: string; siteName: string; image?: string } }
 
 function Document({ head, children, islands, nonce }: { head: Head; children: ReactNode; islands: SiteIsland[]; nonce: string | null }) {
+  for (const f of head.fonts ?? []) preload(f, { as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' })
   return (
     <html lang="en">
       <head>
@@ -67,6 +80,7 @@ export function publishedPageHtml(o: {
   const title = o.thanks ? `Thank you · ${o.doc.business.name}` : meta.title
   const url = `https://${o.canonicalHost}${o.page.slug ? `/${o.page.slug}` : ''}`
   const head: Head = {
+    fonts: fontPreloads(o.doc.style.fontPair),
     title, description: meta.description, canonical: url,
     robots: o.indexable && !o.thanks && !o.page.seo?.noindex ? 'index' : 'noindex',
     og: { url, siteName: o.doc.business.name, ...(o.doc.seo.ogImageAssetId ? { image: `https://${o.canonicalHost}/assets/${o.doc.seo.ogImageAssetId}` } : {}) },

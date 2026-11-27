@@ -41,14 +41,8 @@ const WEIGHTS = {
   'cormorant-garamond-italic': 400,
   'jetbrains-mono-normal': 500,
 }
-/** The Latin files each font pair's site downloads. */
-const PAIRS = {
-  editorial: ['fraunces-normal', 'source-sans-3-normal'],
-  modern: ['inter-normal'],
-  friendly: ['nunito-normal'],
-  classic: ['playfair-display-normal', 'lora-normal'],
-  signature: ['cormorant-garamond-normal', 'cormorant-garamond-italic', 'inter-normal', 'jetbrains-mono-normal'],
-}
+/** The Latin files each font pair's site downloads (shared with the page head, which preloads them). */
+const PAIRS = JSON.parse(readFileSync(join(app, 'lib', 'site', 'font-files.json'), 'utf8'))
 
 /** Code points listed in a unicode-range descriptor. */
 function codePoints(range) {
@@ -86,9 +80,14 @@ function inline(file) {
     } else copyFileSync(src, join(FONTS, name))
     return `url(/_site-assets/fonts/${name})`
   }).replace(/font-weight:\s*[^;]+;/, (decl) => {
-    // A font cut to one weight says so, so the browser never stretches it to fake other weights.
-    const m = block.match(/files\/(.+)-latin-wght-(normal|italic)\.woff2/)
-    const w = m && WEIGHTS[`${m[1]}-${m[2]}`]
+    // Every file of a font (all its scripts) declares the same weights as its subset Latin file, so
+    // the browser sees one font and uses the right file for each letter; a font cut to one weight
+    // says so, so the browser never stretches it to fake other weights.
+    const key = Object.keys(WEIGHTS).find((k) => {
+      const [, family, style] = k.match(/^(.+)-(normal|italic)$/)
+      return new RegExp(`files/${family}-[a-z]+(?:-ext)?-wght-${style}\\.woff2`).test(block)
+    })
+    const w = key && WEIGHTS[key]
     return typeof w === 'number' ? `font-weight: ${w};` : w ? `font-weight: ${w.min} ${w.max};` : decl
   }))
   return css.replace(/@import\s+['"]([^'"]+)['"]\s*;/g, (_m, spec) => inline(resolveImport(spec, file)))

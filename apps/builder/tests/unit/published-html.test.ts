@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { designFixtures } from '@yakini/kits/design-fixtures'
 import { loadSiteDoc } from '@yakini/site-schema'
 import { neutralHtml, renderPublished } from '@/lib/site/render-entry'
+import { fontPreloads } from '@/lib/site/html'
+import FONT_FILES from '@/lib/site/font-files.json'
 
 /**
  * Published pages ship no framework JavaScript (perf decision 2026-11-27). Every page of every
@@ -51,5 +53,19 @@ describe('published pages are plain HTML', () => {
     const html = renderPublished({ ...base, doc: f.doc, pageId: f.doc.pages[0].id, thanks: null, islands: [{ src: '/_site-assets/3d/hero.js' }], nonce: 'abc123' })
     // React hoists an async script to <head>; order doesn't matter.
     expect(scripts(html).sort()).toEqual(['<script src="/_site-assets/3d/hero.js" type="module" async="" nonce="abc123">', '<script type="application/ld+json">'].sort())
+  })
+})
+
+describe('font preloads (no swap, no layout shift)', () => {
+  it('every page preloads exactly its own font pair\'s Latin files, first-party, and nothing else', () => {
+    for (const f of fixtures) {
+      const html = renderPublished({ ...base, doc: f.doc, pageId: f.doc.pages[0].id, thanks: null })
+      const head = html.match(/<head>[\s\S]*?<\/head>/)![0]
+      const fonts = [...head.matchAll(/<link rel="preload" href="([^"]+)" as="font"[^>]*>/g)].map((m) => m[1])
+      expect(fonts, f.name).toEqual(fontPreloads(f.doc.style.fontPair))
+      expect(fonts.length, f.name).toBe((FONT_FILES as Record<string, string[]>)[f.doc.style.fontPair].length)
+      for (const u of fonts) expect(u).toMatch(/^\/_site-assets\/fonts\/[a-z0-9-]+-latin-wght-(normal|italic)\.woff2$/)
+      for (const tag of head.match(/<link rel="preload"[^>]*as="font"[^>]*>/g) ?? []) expect(tag).toMatch(/crossorigin=""/)
+    }
   })
 })
