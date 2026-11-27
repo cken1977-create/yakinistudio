@@ -26,7 +26,7 @@ export type GenerateResult = {
   lastIssues: string[]
 }
 
-const SERVER_KEYS = new Set(['brand', 'integrations', 'schemaVersion'])
+const SERVER_KEYS = new Set(['brand', 'integrations', 'schemaVersion', 'style'])
 
 let cachedSchema: Record<string, unknown> | null = null
 const toolSchema = () => (cachedSchema ??= siteDocContentJsonSchema())
@@ -91,7 +91,7 @@ export async function generateContent(args: {
       messages.push({ role: 'assistant', content: res.content ?? '' }, { role: 'user', content: result.lastIssues[0] })
       continue
     }
-    // Brand, integrations and schemaVersion are the server's to set (spec 8.5). If the model sends
+    // Brand, style, integrations and schemaVersion are the server's to set (spec 8.5). If the model sends
     // them anyway they are dropped here, unread, rather than costing a retry.
     const submitted = call.arguments && typeof call.arguments === 'object' && !Array.isArray(call.arguments)
       ? Object.fromEntries(Object.entries(call.arguments as Record<string, unknown>).filter(([k]) => !SERVER_KEYS.has(k)))

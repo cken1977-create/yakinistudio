@@ -8,10 +8,13 @@ export const NONPROFIT_SAMPLES: readonly SampleImage[] = [
   photoSample('nonprofit', 'community-circle', '7a1e0000-0000-4000-8000-000000000702', 'Community members sitting in a circle during a group meeting', 'approved set #32'),
   photoSample('nonprofit', 'garden-volunteers', '7a1e0000-0000-4000-8000-000000000703', 'Volunteers in matching shirts planting a neighborhood garden', 'approved set #34'),
 ]
+/** Home headline (D1 step 5): the kit's default line, never just the name (the name is in the header). */
+export const HOME_HEADLINE = 'Stronger together, *starting here.*'
+
 const sample = (key: string) => NONPROFIT_SAMPLES.find((s) => s.key === key)
 
 const PAGES = [
-  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'about', 'services', 'cta_band', 'testimonials', 'footer'] },
+  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'about', 'services', 'cta_band', 'gallery', 'testimonials', 'footer'] },
   { id: 'programs', slug: 'programs', title: 'Programs', navLabel: 'Programs', sectionTypes: ['header', 'services', 'schedule', 'faq', 'footer'] },
   { id: 'involved', slug: 'get-involved', title: 'Get involved', navLabel: 'Get involved', sectionTypes: ['header', 'hero', 'services', 'contact_form', 'footer'] },
   { id: 'about', slug: 'about', title: 'About', navLabel: 'About', sectionTypes: ['header', 'about', 'team', 'gallery', 'footer'] },
@@ -36,7 +39,7 @@ function template(ctx: TemplateContext): SiteDocContent {
           header('bar', ctx, 'Get involved'),
           section('hero', 'hero', 'split', {
             ...(ctx.city ? { eyebrow: trimTo(`Serving ${ctx.city}`, 60) } : {}),
-            headline: trimTo(name, 90),
+            headline: HOME_HEADLINE,
             subhead: '[[State your mission in one sentence, like "Making sure no family in our county goes hungry."]]',
             ...(hero ? { image: hero } : {}),
             primaryCta: { label: 'Get involved', target: involved },
@@ -53,6 +56,7 @@ function template(ctx: TemplateContext): SiteDocContent {
             ],
           }),
           section('cta_band', 'involved-cta', 'solid', { headline: 'Join us', body: 'Volunteer, give or partner with us. Every bit helps.', cta: { label: 'Get involved', target: involved } }),
+          section('gallery', 'home-photos', 'grid', { heading: 'A closer look', images: (ctx.gallery ?? []).slice(0, 6) }, (ctx.gallery ?? []).length < 3),
           section('testimonials', 'stories', 'single', { heading: 'Stories from our community', items: [] }),
           footer(),
         ],

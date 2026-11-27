@@ -1,0 +1,17 @@
+/*
+ * Editor-only marks (D1 step 5). [[fill this in]] spots and "add this" hints now render only in
+ * the editor canvas (RenderContext.editing); previews and live sites never contain them. There
+ * they read as subtle ghost text with a dotted underline instead of yellow highlights and dashed
+ * boxes. Selectors are more specific than the original .ys-ph / .ys-hint rules in base.css, which
+ * stay untouched (classic is the original stylesheet byte for byte).
+ */
+.ys-site mark.ys-ph {
+  background: transparent; color: inherit; opacity: 0.62; outline: none; padding: 0; border-radius: 0;
+  font-style: italic;
+  text-decoration: underline dotted color-mix(in srgb, currentColor 70%, transparent);
+  text-decoration-thickness: 1.5px; text-underline-offset: 0.22em;
+}
+.ys-site p.ys-hint {
+  border: 1px dotted color-mix(in srgb, currentColor 35%, transparent); border-radius: var(--ys-radius);
+  background: transparent; padding: 18px; text-align: center; color: inherit; opacity: 0.72; font-style: italic;
+}

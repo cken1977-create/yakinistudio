@@ -1,0 +1,11 @@
+/* ---------------------------------------------------------------- testimonials */
+.ys-quotes { display: grid; gap: var(--ys-gap); }
+.ys-quote { background: var(--ys-surface); border: 1px solid var(--ys-line); border-radius: var(--ys-radius); padding: 24px; display: grid; gap: 14px; height: 100%; }
+.ys-quote blockquote p { font-size: 1.125rem; line-height: 1.5; }
+.ys-quote blockquote p::before { content: '\201C'; }
+.ys-quote blockquote p::after { content: '\201D'; }
+.ys-quote figcaption { font-weight: 700; }
+.ys-testimonials.ys-v-single .ys-quote { background: none; border: 0; text-align: center; max-width: 820px; margin-inline: auto; padding: 0; }
+.ys-testimonials.ys-v-single .ys-quote blockquote p { font-family: var(--ys-font-display); font-size: clamp(1.5rem, 5cqi, 2.25rem); line-height: 1.25; }
+.ys-testimonials.ys-v-single .ys-section-head { margin-inline: auto; text-align: center; }
+

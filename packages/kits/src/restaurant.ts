@@ -3,6 +3,9 @@ import { HHMM, type SiteDocContent } from '@yakini/site-schema'
 import { consentText, footer, header, imageOr, inCity, paragraphs, section, trimTo, photoSample } from './common'
 import type { KitDefinition, SampleImage, TemplateContext } from './types'
 
+/** Home headline (D1 step 5): the kit's default line, never just the name (the name is in the header). */
+export const HOME_HEADLINE = 'Pull up a chair, *we’ll handle the rest.*'
+
 const YAKINI_DRAWN = {
   kind: 'yakini-owned',
   source: 'Illustration drawn by Yakini Digital for the restaurant kit, Nov 2026',
@@ -23,7 +26,7 @@ export const RESTAURANT_SAMPLES: readonly SampleImage[] = [
 const sample = (key: string) => RESTAURANT_SAMPLES.find((s) => s.key === key)
 
 const PAGES = [
-  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'about', 'cta_band', 'hours_location', 'testimonials', 'footer'] },
+  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'about', 'cta_band', 'hours_location', 'gallery', 'testimonials', 'footer'] },
   { id: 'menu', slug: 'menu', title: 'Menu', navLabel: 'Menu', sectionTypes: ['header', 'menu', 'cta_band', 'footer'] },
   { id: 'about', slug: 'about', title: 'About', navLabel: 'About', sectionTypes: ['header', 'about', 'team', 'gallery', 'footer'] },
   { id: 'events', slug: 'events', title: 'Private events', navLabel: 'Events', sectionTypes: ['header', 'hero', 'services', 'catering_request', 'faq', 'footer'] },
@@ -52,9 +55,9 @@ function template(ctx: TemplateContext): SiteDocContent {
         id: 'home', slug: '', title: 'Home',
         sections: [
           header('centered', ctx, 'Book a table'),
-          section('hero', 'hero', 'fullbleed', {
+          section('hero', 'hero', 'cinematic', {
             eyebrow: trimTo(`Restaurant${inCity(ctx)}`, 60),
-            headline: trimTo(name, 90),
+            headline: HOME_HEADLINE,
             subhead: '[[Say what you serve in one sentence, like "Wood-fired Italian, made from scratch."]]',
             ...(hero ? { image: hero } : {}),
             primaryCta: { label: 'View the menu', target: { kind: 'page', pageId: 'menu' } },
@@ -71,6 +74,7 @@ function template(ctx: TemplateContext): SiteDocContent {
             cta: { label: 'View the menu', target: { kind: 'page', pageId: 'menu' } },
           }),
           section('hours_location', 'visit', 'card', { heading: 'Visit us' }),
+          section('gallery', 'home-photos', 'grid', { heading: 'A closer look', images: (ctx.gallery ?? []).slice(0, 6) }, (ctx.gallery ?? []).length < 3),
           section('testimonials', 'reviews', 'single', { heading: 'From our guests', items: [] }),
           footer(),
         ],
@@ -179,7 +183,7 @@ export const restaurant: KitDefinition = {
   pageTemplates: PAGES,
   allowedSections: ['header', 'hero', 'about', 'services', 'menu', 'schedule', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'booking', 'catering_request', 'today', 'footer'],
   defaultVariants: {
-    header: 'centered', hero: 'fullbleed', about: 'right-image', services: 'list', menu: 'columns', schedule: 'list', gallery: 'masonry',
+    header: 'centered', hero: 'cinematic', about: 'right-image', services: 'list', menu: 'columns', schedule: 'list', gallery: 'masonry',
     hours_location: 'split', testimonials: 'single', faq: 'accordion', team: 'grid', cta_band: 'solid', contact_form: 'simple',
     booking: 'card', catering_request: 'simple', today: 'card', footer: 'simple',
   },

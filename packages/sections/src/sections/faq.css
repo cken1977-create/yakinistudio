@@ -1,0 +1,12 @@
+/* ---------------------------------------------------------------- faq */
+.ys-faq-item { border-bottom: 1px solid var(--ys-line); }
+.ys-faq-item summary {
+  list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  min-height: 56px; padding-block: 14px; font-weight: 700; font-size: 1.0625rem;
+}
+.ys-faq-item summary::-webkit-details-marker { display: none; }
+.ys-faq-item summary::after { content: '+'; font-size: 1.5rem; line-height: 1; color: var(--ys-primary-text); transition: transform 0.2s ease; }
+.ys-faq-item[open] summary::after { transform: rotate(45deg); }
+.ys-faq-item .ys-prose { padding-bottom: 18px; color: var(--ys-muted); }
+@media (prefers-reduced-motion: reduce) { .ys-faq-item summary::after { transition: none; } }
+

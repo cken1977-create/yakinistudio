@@ -1,0 +1,7 @@
+/* ---------------------------------------------------------------- cta band */
+.ys-cta-band.ys-v-solid { background: var(--ys-primary); color: var(--ys-on-primary); }
+.ys-cta-inner { display: grid; gap: 22px; align-items: center; }
+.ys-cta-inner p { margin-top: 8px; opacity: 0.9; max-width: 56ch; }
+.ys-cta-band.ys-v-outline .ys-cta-inner { border: 2px solid var(--ys-primary-text); border-radius: calc(var(--ys-radius) + 8px); padding: 32px 24px; }
+.ys-cta-band .ys-ph { color: #4a3600; }
+

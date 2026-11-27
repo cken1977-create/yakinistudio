@@ -1,0 +1,4 @@
+/* ---------------------------------------------------------------- booking */
+.ys-booking-card { display: grid; gap: 18px; background: var(--ys-surface); border: 1px solid var(--ys-line); border-radius: var(--ys-radius); padding: 26px; box-shadow: 0 1px 0 var(--ys-line), 0 24px 40px -32px rgba(0, 0, 0, 0.35); }
+.ys-booking-card p { color: var(--ys-muted); margin-top: 8px; }
+

@@ -12,10 +12,13 @@ export const REAL_ESTATE_SAMPLES: readonly SampleImage[] = [
   photoSample('real-estate', 'staged-bedroom', '7a1e0000-0000-4000-8000-000000000505', 'A staged primary bedroom with a large window and mountain view', 'approved set #23'),
   photoSample('real-estate', 'pool-dusk', '7a1e0000-0000-4000-8000-000000000506', 'A modern backyard with a lit pool and patio at dusk', 'approved set #24'),
 ]
+/** Home headline (D1 step 5): the kit's default line, never just the name (the name is in the header). */
+export const HOME_HEADLINE = 'Your next move, *made simple.*'
+
 const sample = (key: string) => REAL_ESTATE_SAMPLES.find((s) => s.key === key)
 
 const PAGES = [
-  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'about', 'services', 'cta_band', 'testimonials', 'footer'] },
+  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'about', 'services', 'cta_band', 'gallery', 'testimonials', 'footer'] },
   { id: 'listings', slug: 'listings', title: 'Listings', navLabel: 'Listings', sectionTypes: ['header', 'services', 'gallery', 'cta_band', 'footer'] },
   { id: 'buy', slug: 'buy', title: 'Buying', navLabel: 'Buy', sectionTypes: ['header', 'hero', 'services', 'faq', 'contact_form', 'footer'] },
   { id: 'sell', slug: 'sell', title: 'Selling', navLabel: 'Sell', sectionTypes: ['header', 'hero', 'services', 'faq', 'contact_form', 'footer'] },
@@ -40,7 +43,7 @@ function template(ctx: TemplateContext): SiteDocContent {
           header('bar', ctx, 'Let’s talk'),
           section('hero', 'hero', 'fullbleed', {
             eyebrow: trimTo(`Real estate${inCity(ctx)}`, 60),
-            headline: trimTo(name, 90),
+            headline: HOME_HEADLINE,
             subhead: '[[Say who you help and where, like "Helping families buy and sell homes on the west side."]]',
             ...(hero ? { image: hero } : {}),
             primaryCta: { label: 'See listings', target: { kind: 'page', pageId: 'listings' } },
@@ -57,6 +60,7 @@ function template(ctx: TemplateContext): SiteDocContent {
             ],
           }),
           section('cta_band', 'value-cta', 'solid', { headline: 'Thinking about selling?', body: 'Ask for a free, no-pressure home value review.', cta: { label: 'What’s my home worth?', target: value } }),
+          section('gallery', 'home-photos', 'grid', { heading: 'A closer look', images: (ctx.gallery ?? []).slice(0, 6) }, (ctx.gallery ?? []).length < 3),
           section('testimonials', 'reviews', 'cards', { heading: 'What clients say', items: [] }),
           footer(),
         ],

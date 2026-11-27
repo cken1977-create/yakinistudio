@@ -11,10 +11,13 @@ export const TRAINING_SCHOOL_SAMPLES: readonly SampleImage[] = [
   photoSample('training-school', 'graduation', '7a1e0000-0000-4000-8000-000000000805', 'Graduates in caps and gowns tossing their caps in the air', 'approved set #41'),
   photoSample('training-school', 'vitals-lab', '7a1e0000-0000-4000-8000-000000000806', 'A student taking blood pressure on a training manikin in a lab', 'approved set #42'),
 ]
+/** Home headline (D1 step 5): the kit's default line, never just the name (the name is in the header). */
+export const HOME_HEADLINE = 'Learn the trade. *Start the career.*'
+
 const sample = (key: string) => TRAINING_SCHOOL_SAMPLES.find((s) => s.key === key)
 
 const PAGES = [
-  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'services', 'about', 'cta_band', 'testimonials', 'footer'] },
+  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'services', 'about', 'cta_band', 'gallery', 'testimonials', 'footer'] },
   { id: 'programs', slug: 'programs', title: 'Programs', navLabel: 'Programs', sectionTypes: ['header', 'services', 'faq', 'cta_band', 'footer'] },
   { id: 'schedule', slug: 'schedule', title: 'Class schedule', navLabel: 'Schedule', sectionTypes: ['header', 'schedule', 'cta_band', 'footer'] },
   { id: 'about', slug: 'about', title: 'About', navLabel: 'About', sectionTypes: ['header', 'about', 'team', 'gallery', 'footer'] },
@@ -38,7 +41,7 @@ function template(ctx: TemplateContext): SiteDocContent {
           header('bar', ctx, 'Enroll'),
           section('hero', 'hero', 'split', {
             eyebrow: trimTo(`Training${inCity(ctx)}`, 60),
-            headline: trimTo(name, 90),
+            headline: HOME_HEADLINE,
             subhead: '[[Say what students learn and where it leads, like "Hands-on welding training that gets you job-ready in 12 weeks."]]',
             ...(hero ? { image: hero } : {}),
             primaryCta: { label: 'Enroll', target: enroll },
@@ -59,6 +62,7 @@ function template(ctx: TemplateContext): SiteDocContent {
             ...(imageOr(ctx, sample('welding')) ? { image: imageOr(ctx, sample('welding')) } : {}),
           }),
           section('cta_band', 'enroll-cta', 'solid', { headline: 'Ready to start?', body: 'Ask about the next class and how to enroll.', cta: { label: 'Enroll', target: enroll } }),
+          section('gallery', 'home-photos', 'grid', { heading: 'A closer look', images: (ctx.gallery ?? []).slice(0, 6) }, (ctx.gallery ?? []).length < 3),
           section('testimonials', 'grads', 'cards', { heading: 'What graduates say', items: [] }),
           footer(),
         ],

@@ -112,8 +112,20 @@ export function allText(v: Json, out: string[] = []): string[] {
  * appears in injection attempts. Returns issues for a model retry. The business's own legitimate
  * text that trips the lint (a cafe called "React Coffee") can be kept by the owner in Phase 2.
  */
+/**
+ * The `*accent*` marker (design v2) is for headlines and headings only. Anywhere else it would show
+ * raw asterisks, or leak into plain-text uses (titles, meta, JSON-LD), so it is sent back as an issue.
+ */
+export function accentMisuse(value: unknown, key = ''): string[] {
+  if (typeof value === 'string') return key !== 'headline' && key !== 'heading' && /\*[^*\s][^*\n]*\*/.test(value) ? [value] : []
+  if (Array.isArray(value)) return value.flatMap((v) => accentMisuse(v, key))
+  if (value && typeof value === 'object') return Object.entries(value).flatMap(([k, v]) => accentMisuse(v, k))
+  return []
+}
+
 export function copyIssues(content: SiteDocContent): string[] {
   const issues: string[] = []
+  for (const s of accentMisuse(content)) issues.push(`Only a headline or heading can mark an *accent phrase*; remove the asterisks from: "${s.slice(0, 80)}"`)
   const name = content.business.name.toLowerCase()
   for (const s of allText({ ...content, business: { ...content.business, name: '' } })) {
     const lint = lintCopy(s).filter((h) => !name.includes(h.term.toLowerCase()))

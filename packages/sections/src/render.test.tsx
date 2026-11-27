@@ -42,9 +42,9 @@ describe.each(fixtures.map((f) => [f.name, f.doc] as const))('rendering %s', (_n
       for (const m of h.matchAll(/<img [^>]*>/g)) expect(m[0]).toMatch(/ alt="[^"]+"/)
       for (const m of h.matchAll(/<a [^>]*href="https:[^"]*"[^>]*>/g)) expect(m[0]).toMatch(/rel="(noopener|noopener noreferrer|nofollow)"/)
     })
-    it(`page "${page.id}" has exactly one h1`, () => {
-      const h = html(ctxFor(doc, page, 'draft'))
-      expect((h.match(/<h1[ >]/g) ?? []).length).toBe(1)
+    it(`page "${page.id}" has exactly one h1 while editing, and never more than one for visitors`, () => {
+      expect((html(ctxFor(doc, page, 'draft', { editing: true })).match(/<h1[ >]/g) ?? []).length).toBe(1)
+      for (const mode of ['draft', 'live'] as const) expect((html(ctxFor(doc, page, mode)).match(/<h1[ >]/g) ?? []).length).toBeLessThanOrEqual(1)
     })
     it(`page "${page.id}" names no vendors and never says AI-built (R7, R8)`, () => {
       expect(lintCopy(text(html(ctxFor(doc, page, 'live'))))).toEqual([])
@@ -82,10 +82,11 @@ describe('modes', () => {
     const withUpdate = html(ctxFor(doc, home, 'live', { today: { kind: 'stop', headline: 'Civic Plaza until 2 PM', lines: ['Green chile cheeseburgers'] } }))
     expect(withUpdate).toContain('Civic Plaza until 2 PM')
   })
-  it('in a draft, a hidden-when-empty Today section shows a note so the owner can find and edit it', () => {
-    const d = html(ctxFor(doc, home, 'draft'))
+  it('while editing, a hidden-when-empty Today section shows a note so the owner can find it; previews never do', () => {
+    const d = html(ctxFor(doc, home, 'draft', { editing: true }))
     expect(d).toContain('id="today-banner"')
     expect(d).toContain('Your Today update shows here when you post one.')
+    expect(html(ctxFor(doc, home, 'draft'))).not.toContain('Your Today update shows here')
     expect(html(ctxFor(doc, home, 'export'))).not.toContain('Your Today update shows here')
   })
   it('offers WebP first with the JPEG as the fallback when the image has a WebP copy', () => {
@@ -115,18 +116,22 @@ describe('modes', () => {
 })
 
 describe('kit templates render as drafts with visible placeholders', () => {
-  it('shows [[ ]] prompts as highlighted marks, and empty lists as hints only in drafts', async () => {
+  it('shows [[ ]] prompts as ghost marks and empty lists as hints only while editing; a preview never shows them', async () => {
     const { BUILDER_KITS, buildKitDraft, brandFor } = await import('@yakini/kits')
     for (const kit of Object.values(BUILDER_KITS)) {
       const doc = loadSiteDoc(buildKitDraft(kit!, { name: 'Test Kitchen' }, brandFor(kit!, { colors: null }))).doc
       for (const page of doc.pages) {
-        const d = html(ctxFor(doc, page, 'draft'))
-        expect(d).not.toContain('[[')
-        const l = html(ctxFor(doc, page, 'live'))
-        expect(l).not.toContain('class="ys-hint"')
-        expect((d.match(/<h1[ >]/g) ?? []).length).toBe(1)
+        const editing = html(ctxFor(doc, page, 'draft', { editing: true }))
+        expect(editing).not.toContain('[[')
+        expect((editing.match(/<h1[ >]/g) ?? []).length).toBe(1)
+        for (const mode of ['draft', 'live'] as const) {
+          const v = html(ctxFor(doc, page, mode))
+          expect(v, `${kit!.id} ${page.id} ${mode}`).not.toContain('class="ys-hint"')
+          expect(v, `${kit!.id} ${page.id} ${mode}`).not.toContain('class="ys-ph"')
+          expect(text(v)).not.toContain('[[')
+        }
       }
-      expect(doc.pages.some((p) => html(ctxFor(doc, p, 'draft')).includes('class="ys-ph"')), kit!.id).toBe(true)
+      expect(doc.pages.some((p) => html(ctxFor(doc, p, 'draft', { editing: true })).includes('class="ys-ph"')), kit!.id).toBe(true)
     }
   })
 })
@@ -180,5 +185,27 @@ describe('inspectors (spec 7.2, 8.7 allow-list)', () => {
     expect(isEditablePath('contact_form', '/formKey')).toBe(false)
     expect(isEditablePath('footer', '/anything')).toBe(false)
     expect(isEditablePath('hero', 'headline')).toBe(false)
+  })
+})
+
+describe('never-empty draft preview (D1 step 5)', () => {
+  it('a page with nothing filled in leaves the preview menu and still shows its title as the h1; live output is unchanged', async () => {
+    const { BUILDER_KITS, buildKitDraft, brandFor } = await import('@yakini/kits')
+    let checked = 0
+    for (const kit of Object.values(BUILDER_KITS)) {
+      const doc = loadSiteDoc(buildKitDraft(kit!, { name: 'Test Co' }, brandFor(kit!, { colors: null }))).doc
+      for (const page of doc.pages) {
+        const preview = html(ctxFor(doc, page, 'draft'))
+        expect((preview.match(/<h1[ >]/g) ?? []).length, `${kit!.id} ${page.id}`).toBe(1)
+        if (preview.includes('ys-page-title')) {
+          checked++
+          expect(preview).toContain(`>${page.title}</h1>`)
+          // Not linked from the preview menu.
+          expect(preview).not.toMatch(new RegExp(`<ul class="ys-nav-list">[\\s\\S]*?href="/d/site/${page.slug}"`))
+          expect(html(ctxFor(doc, page, 'live'))).not.toContain('ys-page-title')
+        }
+      }
+    }
+    expect(checked).toBeGreaterThan(0)
   })
 })

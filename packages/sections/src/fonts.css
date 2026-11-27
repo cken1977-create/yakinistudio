@@ -6,3 +6,33 @@
 @import '@fontsource-variable/nunito/wght.css';
 @import '@fontsource-variable/playfair-display/wght.css';
 @import '@fontsource-variable/lora/wght.css';
+/* Design v2 Signature pair (SIL OFL 1.1, see FONT_LICENSES.md): Cormorant Garamond (display, with
+   its italic for the accent phrase), JetBrains Mono (labels); Inter (body) is imported above. */
+@import '@fontsource-variable/cormorant-garamond/wght.css';
+@import '@fontsource-variable/cormorant-garamond/wght-italic.css';
+@import '@fontsource-variable/jetbrains-mono/wght.css';
+
+/* Metric-matched fallbacks for the Signature pair (no download: local system fonts, resized), so
+   text keeps its size while the web fonts load and nothing jumps when they swap in (CLS). Measured
+   against Times New Roman and Arial: Cormorant Garamond is 97% as wide, Inter 107%. */
+@font-face {
+  font-family: 'Cormorant Fallback';
+  src: local('Times New Roman'), local('Times'), local('Liberation Serif'), local('DejaVu Serif');
+  size-adjust: 97%; ascent-override: 94.8%; descent-override: 29.9%; line-gap-override: 0%;
+}
+/* The accent phrase is italic, and Cormorant's italic is much narrower than a synthetic one (88%). */
+@font-face {
+  font-family: 'Cormorant Fallback'; font-style: italic;
+  src: local('Times New Roman Italic'), local('Times-Italic'), local('Liberation Serif Italic'), local('DejaVu Serif Italic');
+  size-adjust: 88.2%; ascent-override: 104.3%; descent-override: 32.9%; line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial'), local('Helvetica'), local('Liberation Sans'), local('DejaVu Sans');
+  size-adjust: 107%; ascent-override: 90.6%; descent-override: 22.4%; line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'JetBrains Mono Fallback';
+  src: local('Courier New'), local('Liberation Mono'), local('DejaVu Sans Mono');
+  size-adjust: 100%; ascent-override: 102%; descent-override: 30%; line-gap-override: 0%;
+}

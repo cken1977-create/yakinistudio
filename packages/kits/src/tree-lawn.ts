@@ -11,6 +11,9 @@ export const TREE_LAWN_SAMPLES: readonly SampleImage[] = [
   photoSample('tree-lawn', 'crane-lift', '7a1e0000-0000-4000-8000-000000000605', 'A crane lifting a cut tree section over a house as the crew watches', 'approved set #29'),
   photoSample('tree-lawn', 'backyard-beds', '7a1e0000-0000-4000-8000-000000000606', 'A landscaped backyard with fresh mulch, trimmed shrubs and a patio', 'approved set #30'),
 ]
+/** Home headline (D1 step 5): the kit's default line, never just the name (the name is in the header). */
+export const HOME_HEADLINE = 'Healthy trees, *tidy yards.*'
+
 const sample = (key: string) => TREE_LAWN_SAMPLES.find((s) => s.key === key)
 const img = (key: string) => {
   const s = sample(key)
@@ -18,7 +21,7 @@ const img = (key: string) => {
 }
 
 const PAGES = [
-  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'services', 'about', 'cta_band', 'testimonials', 'footer'] },
+  { id: 'home', slug: '', title: 'Home', navLabel: 'Home', sectionTypes: ['header', 'hero', 'today', 'services', 'about', 'cta_band', 'gallery', 'testimonials', 'footer'] },
   { id: 'services', slug: 'services', title: 'Services', navLabel: 'Services', sectionTypes: ['header', 'services', 'faq', 'cta_band', 'footer'] },
   { id: 'work', slug: 'our-work', title: 'Our work', navLabel: 'Our work', sectionTypes: ['header', 'gallery', 'testimonials', 'cta_band', 'footer'] },
   { id: 'about', slug: 'about', title: 'About', navLabel: 'About', sectionTypes: ['header', 'about', 'team', 'footer'] },
@@ -43,7 +46,7 @@ function template(ctx: TemplateContext): SiteDocContent {
           header('bar', ctx, 'Free estimate'),
           section('hero', 'hero', 'fullbleed', {
             eyebrow: trimTo(`Tree and lawn care${inCity(ctx)}`, 60),
-            headline: trimTo(name, 90),
+            headline: HOME_HEADLINE,
             subhead: '[[Say what you do in one sentence, like "Safe tree removal, trimming and weekly mowing, done right the first time."]]',
             ...(hero ? { image: hero } : {}),
             primaryCta: { label: 'Get a free estimate', target: estimate },
@@ -64,6 +67,7 @@ function template(ctx: TemplateContext): SiteDocContent {
             ...(img('chipper-crew') ? { image: img('chipper-crew') } : {}),
           }),
           section('cta_band', 'estimate-cta', 'solid', { headline: 'Get a free estimate', body: 'Tell us about your yard and we’ll come take a look.', cta: { label: 'Get a free estimate', target: estimate } }),
+          section('gallery', 'home-photos', 'grid', { heading: 'A closer look', images: (ctx.gallery ?? []).slice(0, 6) }, (ctx.gallery ?? []).length < 3),
           section('testimonials', 'reviews', 'cards', { heading: 'What neighbors say', items: [] }),
           footer(),
         ],

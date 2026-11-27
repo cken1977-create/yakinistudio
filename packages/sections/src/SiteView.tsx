@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
-import type { Section, SiteDoc } from '@yakini/site-schema'
-import type { RenderContext } from './context'
+import { plainText, type Section, type SiteDoc } from '@yakini/site-schema'
+import { liveSectionEmpty, withoutPlaceholders, type RenderContext } from './context'
 import { FooterSection, HeaderSection } from './sections/chrome'
 import {
   AboutSection, CtaBandSection, FaqSection, GallerySection, HeroSection, MenuSection, ScheduleSection, ServicesSection,
@@ -38,9 +38,14 @@ const NOT_MAIN = new Set(['header', 'footer', 'today'])
  * One page of a client site (spec 7.3). Pure server rendering: every section reads correctly with
  * JavaScript off, and nothing loads from outside the site (no scripts, fonts, iframes or embeds).
  */
-export function SiteView({ ctx }: { ctx: RenderContext }) {
-  const { vars } = themeFor(ctx.doc.brand)
-  const sections = ctx.page.sections.filter((s) => !s.hidden)
+export function SiteView({ ctx: given }: { ctx: RenderContext }) {
+  // A visitor never sees a placeholder: outside the editor the doc is rendered without them (D1 step 5).
+  const ctx = given.editing ? given : visitorView(given)
+  const style = ctx.doc.style
+  const { vars } = themeFor(ctx.doc.brand, style.fontPair, style)
+  // Outside the editor a section with nothing to show is left out entirely, so the page's one h1
+  // always lands on a section a visitor can see.
+  const sections = ctx.page.sections.filter((s) => !s.hidden && (given.editing || NOT_MAIN.has(s.type) || !liveSectionEmpty(ctx.doc, s, Boolean(ctx.today))))
   const firstMain = sections.findIndex((s) => !NOT_MAIN.has(s.type))
   const header = sections.filter((s) => s.type === 'header')
   const footer = sections.filter((s) => s.type === 'footer')
@@ -48,11 +53,15 @@ export function SiteView({ ctx }: { ctx: RenderContext }) {
   // In a draft each section is marked so the editor can select it with a click; live pages carry no ids.
   const mark = (s: Section) => (ctx.mode === 'draft' ? { 'data-ys-section': s.id } : {})
   return (
-    <div className="ys-site" data-font={ctx.doc.brand.fontPair} data-kit={ctx.doc.kitId} style={vars as CSSProperties}>
+    <div className="ys-site" data-preset={style.preset} data-surface={style.surface} data-font={style.fontPair} {...(style.preset === 'classic' ? {} : { 'data-motion': style.motion, 'data-radius': style.radius })} data-kit={ctx.doc.kitId} style={vars as CSSProperties}>
       <a className="ys-skip" href="#ys-main">Skip to content</a>
       {header.map((s) => <div key={s.id} className="ys-slot" {...mark(s)}>{renderSection(ctx, s, false)}</div>)}
       <main id="ys-main" tabIndex={-1}>
         {body.map((s) => <div key={s.id} className="ys-slot" {...mark(s)}>{renderSection(ctx, s, sections.indexOf(s) === firstMain)}</div>)}
+        {/* Draft preview of a page with nothing filled in yet: its title, so the page is never blank. */}
+        {ctx.mode === 'draft' && !given.editing && firstMain < 0 ? (
+          <section className="ys-s ys-page-title" aria-labelledby="ys-page-title-h"><div className="ys-wrap"><h1 id="ys-page-title-h" className="ys-display">{ctx.page.title}</h1></div></section>
+        ) : null}
       </main>
       {footer.map((s) => <div key={s.id} className="ys-slot" {...mark(s)}>{renderSection(ctx, s, false)}</div>)}
       {ctx.mode !== 'draft' ? <JsonLd doc={ctx.doc} /> : null}
@@ -61,14 +70,50 @@ export function SiteView({ ctx }: { ctx: RenderContext }) {
 }
 
 /** LocalBusiness / Restaurant structured data from validated business info only (spec 11.4). */
+/** True when a page has at least one main section a visitor would see. */
+function pageHasContent(doc: SiteDoc, page: SiteDoc['pages'][number], hasToday: boolean): boolean {
+  return page.sections.some((s) => !s.hidden && !NOT_MAIN.has(s.type) && !liveSectionEmpty(doc, s, hasToday))
+}
+
+function visitorView(ctx: RenderContext): RenderContext {
+  let doc = withoutPlaceholders(ctx.doc)
+  // Draft preview only (published output is unchanged): pages with nothing to show yet leave the menu.
+  if (ctx.mode === 'draft') {
+    const keep = new Set(doc.pages.filter((p) => p.slug === '' || pageHasContent(doc, p, Boolean(ctx.today))).map((p) => p.id))
+    doc = { ...doc, nav: { ...doc.nav, items: doc.nav.items.filter((i) => keep.has(i.pageId)) } }
+  }
+  return { ...ctx, doc, page: doc.pages.find((p) => p.id === ctx.page.id) ?? ctx.page }
+}
+
+/** The home page's first hero headline as plain text (no accent marker), when it says more than the name. */
+export function homeSlogan(doc: SiteDoc): string | null {
+  const home = doc.pages.find((p) => p.slug === '')
+  const hero = home?.sections.find((s) => s.type === 'hero' && !s.hidden)
+  if (!hero || hero.type !== 'hero') return null
+  const line = plainText(hero.props.headline).trim()
+  return line && !line.includes('[[') && line.toLowerCase() !== doc.business.name.trim().toLowerCase() ? line : null
+}
+
+/**
+ * Page <title> and meta description for a client site, as plain text: an accent marker never
+ * reaches a title, a description or JSON-LD (plan 6.2).
+ */
+export function metaFor(doc: SiteDoc, page: { slug: string; title: string; seo?: { title?: string; description?: string } }): { title: string; description: string | null } {
+  const title = page.slug === '' ? (doc.seo.siteTitle || doc.business.name) : `${page.seo?.title || page.title} · ${doc.business.name}`
+  const description = page.seo?.description || doc.seo.description || doc.business.tagline || homeSlogan(doc) || null
+  return { title: plainText(title).slice(0, 120), description: description ? plainText(description) : null }
+}
+
 export function jsonLdFor(doc: SiteDoc): Record<string, unknown> {
   const b = doc.business
+  const slogan = homeSlogan(doc)
   const days: Record<string, string> = { mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday', sat: 'Saturday', sun: 'Sunday' }
   return {
     '@context': 'https://schema.org',
     '@type': doc.kitId === 'restaurant' ? 'Restaurant' : doc.kitId === 'food-truck' ? 'FoodEstablishment' : 'LocalBusiness',
     name: b.name,
     ...(b.tagline ? { description: b.tagline } : {}),
+    ...(slogan ? { slogan } : {}),
     ...(b.phone ? { telephone: b.phone } : {}),
     ...(b.email ? { email: b.email } : {}),
     ...(b.address ? {

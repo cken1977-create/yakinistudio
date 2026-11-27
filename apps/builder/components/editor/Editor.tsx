@@ -35,6 +35,8 @@ export type EditorProps = {
   welcome: boolean
   /** Open on this page (links from the tutorial and tests). */
   initialPageId?: string
+  /** Open with this section selected and in view (links from the preview's "Finish your site" strip). */
+  initialSectionId?: string
   /** Tour steps this person has finished on this site (members; drafts keep theirs in the browser). */
   tutorialDone: string[]
   /** Start the tour at this step ("Show me" on the written tutorial). */
@@ -68,7 +70,16 @@ export function Editor(props: EditorProps) {
   const snap = useSyncExternalStore(session.subscribe, session.getSnapshot, session.getSnapshot)
   const doc = snap.doc
   const [pageId, setPageId] = useState(props.initialPageId && doc.pages.some((p) => p.id === props.initialPageId) ? props.initialPageId : doc.pages[0].id)
-  const [selected, setSelected] = useState<string | null>(null)
+  const [selected, setSelected] = useState<string | null>(() => {
+    const start = doc.pages.find((p) => p.id === (props.initialPageId ?? doc.pages[0].id))
+    return props.initialSectionId && start?.sections.some((x) => x.id === props.initialSectionId) ? props.initialSectionId : null
+  })
+  // Bring a section opened from a link into view once the canvas is drawn.
+  useEffect(() => {
+    if (!props.initialSectionId) return
+    const el = document.querySelector(`[data-ys-section="${CSS.escape(props.initialSectionId)}"]`)
+    el?.scrollIntoView({ block: 'center' })
+  }, [props.initialSectionId])
   const [view, setView] = useState<'desktop' | 'phone'>('desktop')
   const [tab, setTab] = useState<Tab>('edit')
   const [sheet, setSheet] = useState<null | 'pages' | 'edit' | 'chat' | 'publish'>(null)

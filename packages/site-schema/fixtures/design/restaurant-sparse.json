@@ -1,0 +1,509 @@
+{
+  "kitId": "restaurant",
+  "locale": "en-US",
+  "business": {
+    "name": "Casa Lupita Kitchen"
+  },
+  "nav": {
+    "items": [
+      {
+        "label": "Home",
+        "pageId": "home"
+      },
+      {
+        "label": "Menu",
+        "pageId": "menu"
+      },
+      {
+        "label": "About",
+        "pageId": "about"
+      },
+      {
+        "label": "Events",
+        "pageId": "events"
+      },
+      {
+        "label": "Contact",
+        "pageId": "contact"
+      }
+    ],
+    "cta": {
+      "label": "Book a table",
+      "target": {
+        "kind": "section",
+        "pageId": "contact",
+        "sectionId": "booking"
+      }
+    }
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "",
+      "title": "Home",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "centered",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Book a table"
+          }
+        },
+        {
+          "id": "hero",
+          "type": "hero",
+          "variant": "cinematic",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Restaurant",
+            "headline": "Pull up a chair, *we’ll handle the rest.*",
+            "subhead": "Family recipes from northern New Mexico, cooked from scratch.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000204",
+              "alt": "A corner restaurant with a lit patio and potted plants at dusk"
+            },
+            "primaryCta": {
+              "label": "View the menu",
+              "target": {
+                "kind": "page",
+                "pageId": "menu"
+              }
+            },
+            "secondaryCta": {
+              "label": "Book a table",
+              "target": {
+                "kind": "section",
+                "pageId": "contact",
+                "sectionId": "booking"
+              }
+            }
+          }
+        },
+        {
+          "id": "today",
+          "type": "today",
+          "variant": "card",
+          "hidden": false,
+          "props": {
+            "heading": "Today",
+            "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "welcome",
+          "type": "about",
+          "variant": "text-only",
+          "hidden": false,
+          "props": {
+            "heading": "Welcome",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "[[Write two or three sentences about your food and what it is like to eat here.]]"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "menu-cta",
+          "type": "cta_band",
+          "variant": "solid",
+          "hidden": false,
+          "props": {
+            "headline": "See what’s cooking",
+            "body": "Our full menu, from starters to dessert.",
+            "cta": {
+              "label": "View the menu",
+              "target": {
+                "kind": "page",
+                "pageId": "menu"
+              }
+            }
+          }
+        },
+        {
+          "id": "visit",
+          "type": "hours_location",
+          "variant": "card",
+          "hidden": false,
+          "props": {
+            "heading": "Visit us"
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "single",
+          "hidden": false,
+          "props": {
+            "heading": "From our guests",
+            "items": []
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "menu",
+      "slug": "menu",
+      "title": "Menu",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "centered",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Book a table"
+          }
+        },
+        {
+          "id": "menu",
+          "type": "menu",
+          "variant": "columns",
+          "hidden": false,
+          "props": {
+            "heading": "Menu",
+            "intro": "[[Add a line about your kitchen, like \"Seasonal dishes from local farms.\"]]",
+            "categories": [],
+            "note": "Please tell your server about any allergies. Menu items and prices can change."
+          }
+        },
+        {
+          "id": "events-cta",
+          "type": "cta_band",
+          "variant": "outline",
+          "hidden": false,
+          "props": {
+            "headline": "Planning a celebration?",
+            "body": "Our space works for birthdays, rehearsal dinners and team nights.",
+            "cta": {
+              "label": "Private events",
+              "target": {
+                "kind": "page",
+                "pageId": "events"
+              }
+            }
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "about",
+      "slug": "about",
+      "title": "About",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "centered",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Book a table"
+          }
+        },
+        {
+          "id": "story",
+          "type": "about",
+          "variant": "right-image",
+          "hidden": false,
+          "props": {
+            "heading": "Our story",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "[[Tell your story: how the restaurant started, the food you love to cook and the people behind it.]]"
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000206",
+              "alt": "A chef finishing a plate of seared fish with fresh herbs"
+            }
+          }
+        },
+        {
+          "id": "team",
+          "type": "team",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "The team",
+            "members": []
+          }
+        },
+        {
+          "id": "gallery",
+          "type": "gallery",
+          "variant": "masonry",
+          "hidden": true,
+          "props": {
+            "heading": "Inside",
+            "images": []
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "events",
+      "slug": "events",
+      "title": "Private events",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "centered",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Book a table"
+          }
+        },
+        {
+          "id": "events-hero",
+          "type": "hero",
+          "variant": "minimal",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Private events",
+            "headline": "Celebrate with us",
+            "subhead": "Tell us your date and party size and we will plan the menu with you.",
+            "primaryCta": {
+              "label": "Ask about a date",
+              "target": {
+                "kind": "form",
+                "formKey": "events"
+              }
+            }
+          }
+        },
+        {
+          "id": "options",
+          "type": "services",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "Event options",
+            "items": [
+              {
+                "title": "Private dining",
+                "body": "[[Describe your private room or space, and how many guests it holds.]]",
+                "icon": "users"
+              },
+              {
+                "title": "Group menus",
+                "body": "Set menus for groups, planned with our kitchen.",
+                "icon": "utensils"
+              },
+              {
+                "title": "Catering",
+                "body": "[[Describe your catering or takeout trays, or remove this.]]",
+                "icon": "gift"
+              }
+            ]
+          }
+        },
+        {
+          "id": "events-form",
+          "type": "catering_request",
+          "variant": "simple",
+          "hidden": false,
+          "props": {
+            "heading": "Plan your event",
+            "intro": "We will reply with availability and menu options.",
+            "formKey": "events",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "event_date",
+              "guest_count",
+              "message"
+            ],
+            "submitLabel": "Send request",
+            "consentText": "By sending this form you agree that Casa Lupita Kitchen may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "events-faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Event questions",
+            "items": [
+              {
+                "q": "How many guests can you host?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "[[Add your largest party size.]]"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "q": "Can you work with dietary needs?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Tell us about allergies and preferences when you send your request, and the kitchen will plan for them."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "contact",
+      "slug": "contact",
+      "title": "Contact",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "centered",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Book a table"
+          }
+        },
+        {
+          "id": "hours",
+          "type": "hours_location",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "heading": "Hours and location"
+          }
+        },
+        {
+          "id": "booking",
+          "type": "booking",
+          "variant": "card",
+          "hidden": false,
+          "props": {
+            "heading": "Book a table",
+            "body": "Send us your party size and the time you would like, and we will confirm your table.",
+            "mode": "request",
+            "buttonLabel": "Request a table"
+          }
+        },
+        {
+          "id": "contact-form",
+          "type": "contact_form",
+          "variant": "simple",
+          "hidden": false,
+          "props": {
+            "heading": "Send us a message",
+            "formKey": "contact",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "message"
+            ],
+            "submitLabel": "Send message",
+            "consentText": "By sending this form you agree that Casa Lupita Kitchen may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    }
+  ],
+  "footer": {
+    "showHours": true,
+    "showAddress": true,
+    "showSiteByYakini": true
+  },
+  "seo": {
+    "siteTitle": "Casa Lupita Kitchen",
+    "description": "Casa Lupita Kitchen: restaurant. Menu, hours, reservations and private events."
+  },
+  "schemaVersion": 2,
+  "brand": {
+    "colors": {
+      "primary": "#7A2E2A",
+      "secondary": "#1B1714",
+      "accent": "#C9A14A"
+    },
+    "colorsSource": "kit-default",
+    "fontPair": "classic"
+  },
+  "style": {
+    "preset": "signature",
+    "surface": "dark",
+    "fontPair": "signature",
+    "radius": "round",
+    "motion": "subtle"
+  },
+  "integrations": {
+    "bookingEnabled": false,
+    "formsEnabled": true
+  }
+}

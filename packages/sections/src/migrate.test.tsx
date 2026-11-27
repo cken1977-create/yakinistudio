@@ -2,92 +2,67 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { loadSiteDoc, SiteDoc, SiteDocError, type DocValidator, type Migration, type Page } from '@yakini/site-schema'
+import { MIGRATIONS, loadSiteDoc, SiteDocError, type Page, type SiteDoc } from '@yakini/site-schema'
 import { SiteView, type RenderContext } from './index'
 
 /**
- * "Old versions keep rendering" (spec 15.3, 7.4). A TEST-ONLY format bump: v2 renames the hero's
- * `headline` to `title`. With CURRENT=2, every v1 fixture and a stored v1 snapshot must load
- * through the migration, render exactly as before, leave the stored bytes untouched, and restore
- * as a v2 draft. In a real bump the renderer learns the new name in the same change; here
- * `asRenderable` stands in for that one-line renderer update.
+ * "Old versions keep rendering" (spec 15.3, 7.4) for the real v1 → v2 bump (design v2, plan 6.1).
+ * `__snapshots__/v1-classic` holds the HTML the renderer produced for every v1 fixture page, live
+ * and draft, BEFORE schema v2 (captured from the D1 step 1 commit). Each v1 doc must load through
+ * the migration as `classic` and render the same markup. The only allowed differences are the new
+ * root attributes (data-preset, data-surface), the JSON-LD `slogan`, and an empty section wrapper
+ * that is no longer emitted for a section with nothing to show. Pixel identity is checked
+ * separately by the design gallery (before/after screenshots).
  */
 const V1 = join(__dirname, '..', '..', 'site-schema', 'fixtures', 'v1')
-type Raw = Record<string, unknown>
+const SNAP = join(__dirname, '__snapshots__', 'v1-classic')
 
-const mapHeroes = (doc: Raw, fn: (props: Raw) => Raw): Raw => ({
-  ...doc,
-  pages: (doc.pages as Raw[]).map((p) => ({
-    ...p,
-    sections: (p.sections as Raw[]).map((s) => (s.type === 'hero' ? { ...s, props: fn(s.props as Raw) } : s)),
-  })),
-})
-
-const v1_to_v2: Migration = {
-  from: 1, to: 2,
-  up: (doc) => mapHeroes(doc as Raw, ({ headline, ...rest }) => ({ ...rest, title: headline })),
-}
-/** v2 → the shape today's renderer reads (the "renderer update" of a real bump). */
-const asRenderable = (doc: Raw): Raw => ({ ...mapHeroes(doc, ({ title, ...rest }) => ({ ...rest, headline: title })), schemaVersion: 1 })
-/** The v2 schema: a v2 doc is valid when its renderable form is a valid v1 doc and no hero keeps the old key. */
-const SiteDocV2: DocValidator = {
-  safeParse: (v) => {
-    const doc = v as Raw
-    if (doc.schemaVersion !== 2) return { success: false }
-    const oldKey = (doc.pages as Raw[]).some((p) => (p.sections as Raw[]).some((s) => s.type === 'hero' && 'headline' in (s.props as Raw)))
-    if (oldKey) return { success: false }
-    const r = SiteDoc.safeParse(asRenderable(doc))
-    return r.success ? { success: true, data: doc as never } : { success: false }
-  },
-}
-const loadV2 = (raw: unknown) => loadSiteDoc(raw, [v1_to_v2], 2, SiteDocV2)
-
-const ctx = (doc: SiteDoc, page: Page, width: 390 | 1280): RenderContext => ({
-  doc, page, mode: 'live',
-  hrefForPage: (p) => `/${p.slug}?w=${width}`,
+// The pre-v2 draft render was what the editor shows (placeholders and hints); since D1 step 5 that
+// is the editing view, and the visitor preview hides them.
+const ctx = (doc: SiteDoc, page: Page, mode: 'live' | 'draft'): RenderContext => ({
+  doc, page, mode, editing: mode === 'draft', hrefForPage: (p) => `/${p.slug}`,
   image: (id) => ({ src: `/img/${id}`, width: 800, height: 600 }),
-  formAction: (k) => `/f/${k}`,
-  reportUrl: '/report',
-  today: null,
+  formAction: (k) => `/f/${k}`, reportUrl: '/report', today: null,
 })
-const render = (doc: SiteDoc, width: 390 | 1280) => doc.pages.map((p) => renderToStaticMarkup(<SiteView ctx={ctx(doc, p, width)} />))
+const normalize = (h: string) => h
+  .replace(/ data-preset="classic" data-surface="light"/, '')
+  .replace(/,"slogan":"[^"]*"/, '')
+  // Since D1 step 5 a section with nothing to show gets no (empty) wrapper on a visitor's page.
+  .replace(/<div class="ys-slot"><\/div>/g, '')
+  .trim()
 
-describe('old versions keep rendering after a format bump (test-only v1 → v2)', () => {
-  const files = readdirSync(V1)
-
-  it.each(files)('%s loads as v2 and renders exactly as v1 at 390 and 1280', (f) => {
+describe('v1 docs render exactly as before under the classic preset', () => {
+  const files = readdirSync(V1).filter((f) => f.endsWith('.json'))
+  it.each(files)('%s', (f) => {
     const raw = JSON.parse(readFileSync(join(V1, f), 'utf8'))
-    const v1 = loadSiteDoc(raw).doc
-    const { doc: v2, migratedFrom } = loadV2(raw)
+    const { doc, migratedFrom } = loadSiteDoc(raw)
     expect(migratedFrom).toBe(1)
-    expect(v2.schemaVersion).toBe(2)
-    const renderable = SiteDoc.parse(asRenderable(v2 as unknown as Raw))
-    for (const w of [390, 1280] as const) expect(render(renderable, w)).toEqual(render(v1, w))
+    expect(doc.style.preset).toBe('classic')
+    for (const page of doc.pages) for (const mode of ['live', 'draft'] as const) {
+      const before = readFileSync(join(SNAP, `${f.replace('.json', '')}--${page.id}--${mode}.html`), 'utf8')
+      const now = renderToStaticMarkup(<SiteView ctx={ctx(doc, page, mode)} />)
+      expect(normalize(now), `${f} ${page.id} ${mode}`).toBe(normalize(before))
+    }
   })
 
-  it('a stored v1 snapshot is never rewritten, and restoring it makes a v2 draft', () => {
+  it('a stored v1 snapshot is never rewritten, and restoring it makes a v2 classic draft', () => {
     const stored = readFileSync(join(V1, 'food-truck-every-section.json'), 'utf8') // the site_versions row, as stored
-    const before = stored
-    const restored = loadV2(JSON.parse(stored)).doc // restore = load through the chain, then save as the new draft
-    const newDraft = JSON.parse(JSON.stringify(restored))
-    expect(stored).toBe(before)
+    const restored = JSON.parse(JSON.stringify(loadSiteDoc(JSON.parse(stored)).doc)) // restore = load, then save as the new draft
     expect(JSON.parse(stored).schemaVersion).toBe(1)
-    expect(newDraft.schemaVersion).toBe(2)
-    const heroes = (newDraft.pages as Raw[]).flatMap((p) => (p.sections as Raw[]).filter((s) => s.type === 'hero'))
-    expect(heroes.length).toBeGreaterThan(0)
-    for (const h of heroes) { expect(h.props).not.toHaveProperty('headline'); expect(h.props).toHaveProperty('title') }
+    expect(restored.schemaVersion).toBe(2)
+    expect(restored.style).toMatchObject({ preset: 'classic', fontPair: JSON.parse(stored).brand.fontPair })
   })
 
-  it('the migration is pure: same output twice, input not mutated', () => {
+  it('the migration chain is pure: same output twice, input not mutated', () => {
     const raw = JSON.parse(readFileSync(join(V1, 'restaurant-every-section.json'), 'utf8'))
     const copy = JSON.stringify(raw)
-    expect(JSON.stringify(v1_to_v2.up(raw))).toBe(JSON.stringify(v1_to_v2.up(raw)))
+    for (const m of MIGRATIONS) expect(JSON.stringify(m.up(raw))).toBe(JSON.stringify(m.up(raw)))
     expect(JSON.stringify(raw)).toBe(copy)
   })
 
   it('a doc newer than the code is refused with a plain message, never rendered', () => {
     const raw = { ...JSON.parse(readFileSync(join(V1, 'restaurant-minimal.json'), 'utf8')), schemaVersion: 3 }
-    expect(() => loadV2(raw)).toThrowError(SiteDocError)
-    expect(() => loadV2(raw)).toThrow('This site was saved by a newer version of the editor. Please refresh and try again.')
+    expect(() => loadSiteDoc(raw)).toThrowError(SiteDocError)
+    expect(() => loadSiteDoc(raw)).toThrow('This site was saved by a newer version of the editor. Please refresh and try again.')
   })
 })

@@ -13,13 +13,31 @@ import { Day, E164, HexColor, HHMM, HttpsUrl, Id, LinkTarget, Section } from './
 
 export * from './sections'
 
-export const CURRENT_SCHEMA_VERSION = 1 as const
+export const CURRENT_SCHEMA_VERSION = 2 as const
 
 const kitIds = [...KITS.map((k) => k.id), ...SITE_ONLY_KIT_IDS] as unknown as [SiteKitId, ...SiteKitId[]]
 export const KitIdSchema = z.enum(kitIds)
 
-export const FONT_PAIRS = ['editorial', 'modern', 'friendly', 'classic'] as const
+/** `signature`: Cormorant Garamond display, Inter body, JetBrains Mono labels (design v2). */
+export const FONT_PAIRS = ['editorial', 'modern', 'friendly', 'classic', 'signature'] as const
 export type FontPair = (typeof FONT_PAIRS)[number]
+
+/**
+ * Art direction (design v2, plan 6.1). `classic` is the original look, given to every v1 doc on
+ * read. Presets never change brand colors (R6) or content.
+ */
+export const STYLE_PRESETS = ['classic', 'signature', 'editorial', 'poster', 'craft', 'clean'] as const
+export type StylePreset = (typeof STYLE_PRESETS)[number]
+export const Style = z.object({
+  preset: z.enum(STYLE_PRESETS),
+  /** Page ground. `dark` uses brand.colors.secondary exactly as stored. */
+  surface: z.enum(['dark', 'light']),
+  /** Moves here from brand; brand.fontPair stays for v1 docs. */
+  fontPair: z.enum(FONT_PAIRS),
+  radius: z.enum(['none', 'soft', 'round']),
+  motion: z.enum(['full', 'subtle', 'off']),
+}).strict()
+export type Style = z.infer<typeof Style>
 
 export const SOCIAL_KINDS = ['facebook', 'instagram', 'tiktok', 'youtube', 'x', 'linkedin', 'yelp', 'google'] as const
 
@@ -169,17 +187,24 @@ function checkIntegrity(doc: DocLike, ctx: z.RefinementCtx): void {
 
 export const SiteDocV1 = SiteDocV1Object.superRefine(checkIntegrity)
 
-export const SiteDoc = SiteDocV1
+/** Version 2 (design v2): adds `style`. v1 docs migrate on read to the classic look (7.4). */
+const SiteDocV2Object = SiteDocV1Object.extend({
+  schemaVersion: z.literal(2),
+  style: Style,
+})
+export const SiteDocV2 = SiteDocV2Object.superRefine(checkIntegrity)
+
+export const SiteDoc = SiteDocV2
 export type SiteDoc = z.infer<typeof SiteDoc>
 /** The shape before defaults are applied (what callers may pass in). */
 export type SiteDocInput = z.input<typeof SiteDoc>
 
 /**
- * What the AI fills in (spec 8.5): the SiteDoc minus `brand`, `integrations` and
+ * What the AI fills in (spec 8.5): the SiteDoc minus `brand`, `integrations`, `style` and
  * `schemaVersion`. The server sets those itself, so the model cannot change colors or the logo
  * even if it tries (R6).
  */
-export const SiteDocContent = SiteDocV1Object.omit({ schemaVersion: true, brand: true, integrations: true }).superRefine(checkIntegrity)
+export const SiteDocContent = SiteDocV2Object.omit({ schemaVersion: true, brand: true, integrations: true, style: true }).superRefine(checkIntegrity)
 export type SiteDocContent = z.infer<typeof SiteDocContent>
 
 /** Max stored size of a draft doc (matches the DB check on sites.draft_doc). */
@@ -187,7 +212,7 @@ export const MAX_DOC_BYTES = 200 * 1024
 
 /** JSON Schema for the AI tools (spec 7.1). */
 export function siteDocJsonSchema(): Record<string, unknown> {
-  return z.toJSONSchema(SiteDocV1, { unrepresentable: 'any', io: 'input' }) as Record<string, unknown>
+  return z.toJSONSchema(SiteDoc, { unrepresentable: 'any', io: 'input' }) as Record<string, unknown>
 }
 
 /** JSON Schema for the `submit_site` tool parameters (spec 8.5). */

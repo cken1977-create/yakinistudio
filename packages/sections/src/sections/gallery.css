@@ -1,0 +1,7 @@
+/* ---------------------------------------------------------------- gallery */
+.ys-gallery-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.ys-gallery.ys-v-grid img { width: 100%; aspect-ratio: 1; border-radius: var(--ys-radius-sm); }
+.ys-gallery.ys-v-masonry .ys-gallery-grid { display: block; columns: 2; column-gap: 10px; }
+.ys-gallery.ys-v-masonry li { break-inside: avoid; margin-bottom: 10px; }
+.ys-gallery.ys-v-masonry img { width: 100%; border-radius: var(--ys-radius-sm); }
+

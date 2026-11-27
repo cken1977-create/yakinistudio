@@ -1,0 +1,246 @@
+/*
+ * Signature preset (design v2, plan 6.1/6.2): inspired by yakini.digital and brsafoundation.org.
+ * - Dark surface: brand.colors.secondary exactly as stored (R6). Glows, grain and glass are computed
+ *   beside it with color-mix(); nothing is written back.
+ * - Cormorant Garamond display (italic accent phrase), Inter body, JetBrains Mono labels.
+ * - Hairline glass cards, a glowing pill CTA, a sticky header that turns to glass on scroll.
+ * - Motion is CSS only (scroll-driven animation inside @supports). Content is fully visible without
+ *   it, with JavaScript off, and with prefers-reduced-motion.
+ * Every rule is scoped to .ys-site[data-preset='signature'] (shortened to `.ys-site[data-preset='signature']` below).
+ */
+
+.ys-site[data-preset='signature'] {
+  --ys-font-label: 'JetBrains Mono Variable', 'JetBrains Mono Fallback', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ys-radius: 22px;
+  --ys-radius-sm: 14px;
+  --ys-gap: 18px;
+  --ys-line: color-mix(in srgb, var(--ys-on-surface) 12%, transparent);
+  --ys-line-strong: color-mix(in srgb, var(--ys-on-surface) 22%, transparent);
+  --ys-tint: var(--ys-surface-1);
+  --ys-tint-strong: var(--ys-surface-2);
+  --ys-surface: color-mix(in srgb, var(--ys-surface-1) 60%, transparent);
+  --ys-glow: 0 0 0 6px color-mix(in srgb, var(--ys-accent) 18%, transparent), 0 14px 44px -12px color-mix(in srgb, var(--ys-accent) 60%, transparent);
+  --ys-glow-hover: 0 0 0 8px color-mix(in srgb, var(--ys-accent) 24%, transparent), 0 18px 56px -10px color-mix(in srgb, var(--ys-accent) 70%, transparent);
+  background-color: var(--ys-surface-0);
+  background-image:
+    radial-gradient(60rem 40rem at 85% -10%, color-mix(in srgb, var(--ys-primary) 26%, transparent), transparent 70%),
+    radial-gradient(48rem 32rem at -10% 30%, color-mix(in srgb, var(--ys-accent) 12%, transparent), transparent 70%);
+  background-repeat: no-repeat;
+  color: var(--ys-on-surface);
+  font-size: var(--ys-step-0);
+  line-height: 1.65;
+  isolation: isolate;
+}
+.ys-site[data-preset='signature'][data-surface='light'] {
+  background-image:
+    radial-gradient(60rem 40rem at 85% -10%, color-mix(in srgb, var(--ys-primary) 10%, transparent), transparent 70%),
+    radial-gradient(48rem 32rem at -10% 30%, color-mix(in srgb, var(--ys-accent) 10%, transparent), transparent 70%);
+  --ys-shadow-2: 0 1px 2px rgba(20, 16, 12, 0.06), 0 12px 28px -14px rgba(20, 16, 12, 0.18);
+}
+/* Grain over the whole page, under the content. */
+.ys-site[data-preset='signature']::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: var(--ys-noise); background-size: 160px 160px; opacity: 0.05;
+}
+.ys-site[data-preset='signature'][data-surface='light']::before { opacity: 0.035; mix-blend-mode: multiply; }
+
+/* ---------------------------------------------------------------- layout + type */
+.ys-site[data-preset='signature'] .ys-wrap { max-width: var(--ys-container); }
+.ys-site[data-preset='signature'] .ys-s { padding-block: var(--ys-section-pad); }
+.ys-site[data-preset='signature'] .ys-section-head { gap: 16px; margin-bottom: clamp(32px, 5cqi, 64px); max-width: 820px; }
+.ys-site[data-preset='signature'] :is(.ys-display, .ys-h2, .ys-brand-name, .ys-footer-name, .ys-menu-cat-name, .ys-today-headline) {
+  font-weight: 500;
+  letter-spacing: var(--ys-track-display);
+  line-height: var(--ys-leading-display);
+}
+.ys-site[data-preset='signature'] .ys-display { font-size: var(--ys-step-6); line-height: 0.94; }
+.ys-site[data-preset='signature'] .ys-h2 { font-size: var(--ys-step-5); line-height: 1; }
+.ys-site[data-preset='signature'] .ys-h3 { font-family: var(--ys-font-body); font-weight: 600; font-size: var(--ys-step-1); letter-spacing: -0.01em; }
+.ys-site[data-preset='signature'] .ys-lead { font-size: var(--ys-step-1); line-height: 1.55; color: var(--ys-muted); }
+.ys-site[data-preset='signature'] .ys-accent {
+  font-family: var(--ys-font-display); font-style: italic; font-weight: 400;
+  color: var(--ys-accent-display); letter-spacing: -0.01em;
+}
+
+/* Labels: mono, wide tracking, with a leading rule. */
+.ys-site[data-preset='signature'] :is(.ys-eyebrow, .ys-label, .ys-week-day, .ys-footer-head, .ys-today-label, .ys-tags li) {
+  font-family: var(--ys-font-label); font-size: var(--ys-label-size); font-weight: 500;
+  letter-spacing: var(--ys-label-track); text-transform: uppercase;
+}
+.ys-site[data-preset='signature'] .ys-eyebrow { display: inline-flex; align-items: center; gap: 12px; color: var(--ys-accent-text); }
+.ys-site[data-preset='signature'] .ys-eyebrow::before { content: ''; width: var(--ys-label-rule); height: 1px; background: currentColor; flex: none; }
+.ys-site[data-preset='signature'] .ys-label { color: var(--ys-muted); }
+
+/* ---------------------------------------------------------------- buttons */
+.ys-site[data-preset='signature'] .ys-btn { min-height: 52px; padding: 0 28px; font-weight: 600; letter-spacing: 0.01em; transition: box-shadow 0.25s ease, transform 0.25s ease, background-color 0.2s ease; }
+.ys-site[data-preset='signature'] .ys-btn:hover { filter: none; transform: translateY(-1px); }
+.ys-site[data-preset='signature'] .ys-btn-primary { box-shadow: var(--ys-glow); }
+.ys-site[data-preset='signature'] .ys-btn-primary:hover { box-shadow: var(--ys-glow-hover); }
+.ys-site[data-preset='signature'] .ys-btn-ghost { border: 1px solid var(--ys-line-strong); color: var(--ys-on-surface); background: color-mix(in srgb, var(--ys-on-surface) 4%, transparent); }
+.ys-site[data-preset='signature'] .ys-btn-ghost:hover { border-color: color-mix(in srgb, var(--ys-on-surface) 45%, transparent); }
+.ys-site[data-preset='signature'] .ys-btn-outline { border: 1px solid var(--ys-line-strong); color: var(--ys-on-surface); }
+.ys-site[data-preset='signature'] .ys-btn-on-primary { box-shadow: var(--ys-glow); }
+
+/* ---------------------------------------------------------------- glass cards */
+.ys-site[data-preset='signature'] :is(.ys-services.ys-v-cards .ys-service, .ys-quote, .ys-menu.ys-v-cards .ys-menu-item, .ys-week > li, .ys-form-body, .ys-booking-card, .ys-hours.ys-v-card .ys-hours-grid) {
+  background: var(--ys-surface);
+  border: 1px solid var(--ys-line);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ys-on-surface) 6%, transparent), var(--ys-shadow-2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .ys-site[data-preset='signature'] :is(.ys-services.ys-v-cards .ys-service, .ys-quote, .ys-menu.ys-v-cards .ys-menu-item, .ys-week > li, .ys-form-body, .ys-booking-card, .ys-hours.ys-v-card .ys-hours-grid) {
+    background: var(--ys-surface-1);
+  }
+}
+.ys-site[data-preset='signature'] .ys-service-icon { background: color-mix(in srgb, var(--ys-accent) 14%, transparent); color: var(--ys-accent-text); border: 1px solid color-mix(in srgb, var(--ys-accent) 30%, transparent); }
+
+/* ---------------------------------------------------------------- header: sticky, glass once scrolled */
+.ys-site[data-preset='signature'] .ys-header {
+  background: color-mix(in srgb, var(--ys-surface-0) 72%, transparent);
+  border-bottom: 1px solid var(--ys-line);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  backdrop-filter: blur(18px) saturate(1.3);
+}
+.ys-site[data-preset='signature'] .ys-header-row { min-height: 76px; }
+.ys-site[data-preset='signature'] .ys-brand-name { font-size: var(--ys-step-2); }
+.ys-site[data-preset='signature'] .ys-nav-list a { font-weight: 500; color: color-mix(in srgb, var(--ys-on-surface) 86%, transparent); }
+.ys-site[data-preset='signature'] .ys-nav-list a:hover { background: color-mix(in srgb, var(--ys-on-surface) 8%, transparent); color: var(--ys-on-surface); }
+.ys-site[data-preset='signature'] .ys-nav-list a[aria-current='page'] { background: color-mix(in srgb, var(--ys-on-surface) 12%, transparent); color: var(--ys-on-surface); }
+.ys-site[data-preset='signature'] .ys-nav-narrow > summary { border: 1px solid var(--ys-line-strong); font-weight: 500; }
+.ys-site[data-preset='signature'] .ys-nav-narrow[open] > nav { background: var(--ys-surface-1); border-bottom: 1px solid var(--ys-line); box-shadow: var(--ys-shadow-3); }
+.ys-site[data-preset='signature'] .ys-header-cta { min-height: 44px; padding: 0 20px; box-shadow: none; }
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ys-site[data-preset='signature']:not([data-motion='off']) .ys-header {
+      animation: ys-sig-header linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 96px;
+    }
+  }
+}
+@keyframes ys-sig-header {
+  from { background-color: transparent; border-bottom-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  to { background-color: color-mix(in srgb, var(--ys-surface-0) 72%, transparent); border-bottom-color: var(--ys-line); }
+}
+
+/* ---------------------------------------------------------------- hero (split, minimal, fullbleed) */
+.ys-site[data-preset='signature'] .ys-hero { background: transparent; }
+.ys-site[data-preset='signature'] .ys-hero.ys-v-split { padding-block: clamp(56px, 8cqi, 120px); }
+.ys-site[data-preset='signature'] .ys-hero-copy { gap: 22px; }
+.ys-site[data-preset='signature'] .ys-hero-media { position: relative; }
+.ys-site[data-preset='signature'] .ys-hero-media::after {
+  content: ''; position: absolute; inset: -18%; z-index: -1; pointer-events: none;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--ys-primary) 38%, transparent), transparent);
+}
+.ys-site[data-preset='signature'] .ys-hero-media img, .ys-site[data-preset='signature'] .ys-hero-panel {
+  aspect-ratio: 4 / 5; border-radius: var(--ys-radius); border: 1px solid var(--ys-line); box-shadow: var(--ys-shadow-3);
+}
+.ys-site[data-preset='signature'] .ys-hero.ys-v-minimal { background: transparent; padding-block: clamp(72px, 10cqi, 160px); }
+.ys-site[data-preset='signature'] .ys-hero.ys-v-minimal .ys-eyebrow::before { display: none; }
+.ys-site[data-preset='signature'] .ys-hero.ys-v-fullbleed::before {
+  background: linear-gradient(20deg, color-mix(in srgb, var(--ys-surface-0) 92%, transparent) 0%, color-mix(in srgb, var(--ys-surface-0) 40%, transparent) 60%, transparent 100%);
+}
+
+/* ---------------------------------------------------------------- today */
+.ys-site[data-preset='signature'] .ys-today.ys-v-banner { background: linear-gradient(90deg, var(--ys-accent), color-mix(in srgb, var(--ys-accent) 82%, var(--ys-primary))); }
+.ys-site[data-preset='signature'] .ys-today.ys-v-card .ys-today-label { color: var(--ys-accent-text); }
+.ys-site[data-preset='signature'] .ys-today-flag { background: var(--ys-accent); color: var(--ys-on-accent); }
+
+/* ---------------------------------------------------------------- about + gallery + team */
+.ys-site[data-preset='signature'] .ys-about-media img { aspect-ratio: 4 / 5; border-radius: var(--ys-radius); border: 1px solid var(--ys-line); box-shadow: var(--ys-shadow-3); }
+.ys-site[data-preset='signature'] .ys-gallery.ys-v-grid img, .ys-site[data-preset='signature'] .ys-gallery.ys-v-masonry img { border-radius: var(--ys-radius-sm); border: 1px solid var(--ys-line); }
+.ys-site[data-preset='signature'] .ys-avatar { border: 1px solid var(--ys-line-strong); box-shadow: var(--ys-shadow-2); }
+.ys-site[data-preset='signature'] .ys-avatar-initials { background: var(--ys-surface-2); color: var(--ys-accent-text); }
+
+/* ---------------------------------------------------------------- menu */
+.ys-site[data-preset='signature'] .ys-menu-cat-name { font-size: var(--ys-step-4); border-bottom: 1px solid var(--ys-line-strong); padding-bottom: 14px; margin-bottom: 4px; }
+.ys-site[data-preset='signature'] .ys-menu-item { border-bottom: 1px solid var(--ys-line); padding-block: 18px; }
+.ys-site[data-preset='signature'] .ys-menu-name { font-weight: 600; }
+.ys-site[data-preset='signature'] .ys-price { font-family: var(--ys-font-label); font-weight: 500; letter-spacing: 0.02em; color: var(--ys-accent-text); }
+.ys-site[data-preset='signature'] .ys-tags li { background: transparent; border: 1px solid var(--ys-line-strong); color: var(--ys-muted); padding: 2px 8px; font-size: 0.66rem; }
+
+/* ---------------------------------------------------------------- schedule */
+.ys-site[data-preset='signature'] .ys-week > li.is-on { border-color: color-mix(in srgb, var(--ys-accent) 45%, var(--ys-line)); box-shadow: inset 0 2px 0 var(--ys-accent), var(--ys-shadow-2); }
+/* No dimming: "No stop" days keep full-contrast muted text (WCAG AA). */
+.ys-site[data-preset='signature'] .ys-week > li.is-off { opacity: 1; background: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; border-style: dashed; }
+.ys-site[data-preset='signature'] .ys-week-day { color: var(--ys-accent-text); }
+.ys-site[data-preset='signature'] .ys-week > li.is-off .ys-week-day { color: var(--ys-muted); }
+
+/* ---------------------------------------------------------------- testimonials + faq */
+.ys-site[data-preset='signature'] .ys-quote blockquote p { font-family: var(--ys-font-display); font-size: var(--ys-step-2); line-height: 1.3; letter-spacing: -0.01em; }
+.ys-site[data-preset='signature'] .ys-quote figcaption { font-family: var(--ys-font-label); font-size: var(--ys-label-size); letter-spacing: var(--ys-label-track); text-transform: uppercase; font-weight: 500; color: var(--ys-muted); }
+.ys-site[data-preset='signature'] .ys-testimonials.ys-v-single .ys-quote { padding: clamp(28px, 6cqi, 56px); }
+.ys-site[data-preset='signature'] .ys-testimonials.ys-v-single .ys-quote blockquote p { font-size: var(--ys-step-4); }
+.ys-site[data-preset='signature'] .ys-faq-item { border-bottom-color: var(--ys-line); }
+.ys-site[data-preset='signature'] .ys-faq-item summary { font-weight: 500; font-size: var(--ys-step-1); min-height: 64px; }
+.ys-site[data-preset='signature'] .ys-faq-item summary::after { color: var(--ys-accent-text); font-weight: 300; }
+
+/* ---------------------------------------------------------------- cta band */
+.ys-site[data-preset='signature'] .ys-cta-band.ys-v-solid { background: transparent; color: var(--ys-on-surface); }
+.ys-site[data-preset='signature'] .ys-cta-band .ys-cta-inner {
+  position: relative; overflow: hidden; border: 1px solid var(--ys-line); border-radius: calc(var(--ys-radius) + 10px);
+  padding: clamp(32px, 6cqi, 72px) clamp(24px, 6cqi, 72px);
+  background:
+    radial-gradient(40rem 20rem at 100% 0%, color-mix(in srgb, var(--ys-primary) 45%, transparent), transparent 70%),
+    radial-gradient(30rem 18rem at 0% 100%, color-mix(in srgb, var(--ys-accent) 18%, transparent), transparent 70%),
+    var(--ys-surface-1);
+  box-shadow: var(--ys-shadow-3);
+}
+.ys-site[data-preset='signature'] .ys-cta-band .ys-cta-inner p { color: var(--ys-muted); opacity: 1; }
+.ys-site[data-preset='signature'] .ys-cta-band .ys-btn-on-primary { background: var(--ys-primary); color: var(--ys-on-primary); }
+.ys-site[data-preset='signature'] .ys-cta-band.ys-v-outline .ys-cta-inner { border: 1px solid var(--ys-line-strong); }
+
+/* ---------------------------------------------------------------- forms */
+.ys-site[data-preset='signature'] .ys-form { background: transparent; }
+.ys-site[data-preset='signature'] .ys-field label { font-weight: 500; }
+.ys-site[data-preset='signature'] .ys-field input, .ys-site[data-preset='signature'] .ys-field textarea {
+  background: color-mix(in srgb, var(--ys-surface-0) 70%, transparent); color: var(--ys-on-surface);
+  border: 1px solid var(--ys-line-strong); border-radius: var(--ys-radius-sm);
+}
+.ys-site[data-preset='signature'] .ys-field input:focus-visible, .ys-site[data-preset='signature'] .ys-field textarea:focus-visible { outline-color: color-mix(in srgb, var(--ys-accent) 60%, transparent); border-color: var(--ys-accent); }
+.ys-site[data-preset='signature'] .ys-field input:disabled, .ys-site[data-preset='signature'] .ys-field textarea:disabled { background: var(--ys-surface-1); }
+.ys-site[data-preset='signature'] .ys-form-note { background: var(--ys-surface-2); color: var(--ys-on-surface); }
+.ys-site[data-preset='signature'] .ys-contact-points a { font-family: var(--ys-font-display); font-size: var(--ys-step-3); font-weight: 500; }
+
+/* ---------------------------------------------------------------- hours */
+.ys-site[data-preset='signature'] .ys-hours-table :is(th, td) { border-bottom-color: var(--ys-line); }
+.ys-site[data-preset='signature'] .ys-hours-table th { font-weight: 500; }
+
+/* ---------------------------------------------------------------- footer */
+.ys-site[data-preset='signature'] .ys-footer {
+  background: color-mix(in srgb, var(--ys-surface-0) 82%, #000);
+  color: var(--ys-on-surface); border-top: 1px solid var(--ys-line); padding-block: 72px 32px;
+}
+.ys-site[data-preset='signature'][data-surface='light'] .ys-footer { background: var(--ys-surface-1); }
+.ys-site[data-preset='signature'] .ys-footer-name { font-size: var(--ys-step-4); }
+.ys-site[data-preset='signature'] .ys-footer-head { opacity: 1; color: var(--ys-muted); }
+.ys-site[data-preset='signature'] .ys-footer-tagline, .ys-site[data-preset='signature'] .ys-hours-mini dd { opacity: 1; color: var(--ys-muted); }
+.ys-site[data-preset='signature'] .ys-footer-base { border-top-color: var(--ys-line); opacity: 1; color: var(--ys-muted); }
+
+/* ---------------------------------------------------------------- radius setting */
+.ys-site[data-preset='signature'][data-radius='none'] { --ys-radius: 0px; --ys-radius-sm: 0px; }
+.ys-site[data-preset='signature'][data-radius='soft'] { --ys-radius: 10px; --ys-radius-sm: 6px; }
+
+/* ---------------------------------------------------------------- motion (CSS only, progressive) */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ys-site[data-preset='signature']:is([data-motion='subtle'], [data-motion='full']) main .ys-s:not(:first-child) :is(.ys-section-head, .ys-hero-copy, .ys-cta-inner, .ys-about-grid) {
+      animation: ys-sig-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+@keyframes ys-sig-rise {
+  from { opacity: 0.001; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ================================================================ wider sites */
+@container site (min-width: 900px) {
+  .ys-site[data-preset='signature'] .ys-wrap { padding-inline: 40px; }
+  .ys-site[data-preset='signature'] .ys-hero.ys-v-split .ys-hero-inner { grid-template-columns: 1.1fr 0.9fr; gap: 72px; }
+  .ys-site[data-preset='signature'] .ys-quotes { gap: 20px; }
+}

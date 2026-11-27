@@ -1,0 +1,11 @@
+/* ---------------------------------------------------------------- services */
+.ys-services-list { display: grid; gap: var(--ys-gap); }
+.ys-service { display: flex; gap: 16px; align-items: flex-start; }
+.ys-services.ys-v-cards .ys-service { background: var(--ys-surface); border: 1px solid var(--ys-line); border-radius: var(--ys-radius); padding: 22px; flex-direction: column; }
+.ys-services.ys-v-list .ys-service { padding-block: 18px; border-bottom: 1px solid var(--ys-line); }
+.ys-service p { color: var(--ys-muted); margin-top: 6px; }
+.ys-service-icon { display: inline-grid; place-items: center; width: 48px; height: 48px; flex: none; border-radius: 14px; background: var(--ys-tint-strong); color: var(--ys-primary-text); }
+.ys-icon { width: 24px; height: 24px; }
+.ys-price { font-family: var(--ys-font-body); font-weight: 700; white-space: nowrap; color: var(--ys-primary-text); font-size: 1rem; }
+.ys-service .ys-h3 { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+

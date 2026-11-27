@@ -1,0 +1,6 @@
+/* ---------------------------------------------------------------- about */
+.ys-about-grid { display: grid; gap: 32px; align-items: center; }
+.ys-about-media img { width: 100%; aspect-ratio: 5 / 4; border-radius: var(--ys-radius); }
+.ys-about.ys-v-text-only .ys-about-grid { max-width: 760px; }
+.ys-about.ys-v-text-only { text-align: left; }
+

@@ -1,0 +1,11 @@
+/* ---------------------------------------------------------------- hours + location */
+.ys-hours-grid { display: grid; gap: 32px; }
+.ys-hours-copy { display: grid; gap: 16px; align-content: start; }
+.ys-hours-table { border-collapse: collapse; width: 100%; max-width: 460px; }
+.ys-hours-table th, .ys-hours-table td { text-align: left; padding: 10px 0; border-bottom: 1px solid var(--ys-line); vertical-align: top; }
+.ys-hours-table th { font-weight: 650; padding-right: 20px; }
+.ys-hours-table td { text-align: right; color: var(--ys-muted); }
+.ys-hours-place { display: grid; gap: 18px; align-content: start; justify-items: start; }
+.ys-hours-place a:not(.ys-btn) { font-weight: 700; }
+.ys-hours.ys-v-card .ys-hours-grid { background: var(--ys-surface); border: 1px solid var(--ys-line); border-radius: var(--ys-radius); padding: 26px; }
+

@@ -1,0 +1,65 @@
+name: design-quality
+# Yakini Builder design quality harness (DESIGN_UPGRADE D1). Never deploys.
+# - design-gallery: every design fixture at 390 and 1440, full page (artifact "design-gallery").
+#   On a pull request the screenshots are labelled "after"; on main they are labelled "main" and are
+#   the "before" set for the next pull request.
+# - axe: 0 serious/critical violations on every fixture page (published and draft preview).
+# - Lighthouse CI on the rich fixtures with the D1 budgets (artifact "lighthouse").
+on:
+  pull_request:
+    paths: ['apps/builder/**', 'packages/**', '.github/workflows/design-quality.yml']
+  push:
+    branches: [main]
+    paths: ['apps/builder/**', 'packages/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: design-quality-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
+jobs:
+  design:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Build builder (test mode)
+        run: BUILDER_TEST_MODE=1 npx turbo build --filter=builder
+      - name: Install Chromium
+        working-directory: apps/builder
+        run: npx playwright install --with-deps chromium
+      - name: Accessibility (axe) on every design fixture
+        working-directory: apps/builder
+        run: npx playwright test tests/e2e/design-a11y.spec.ts --trace off
+      - name: Design gallery (390 and 1440, full page)
+        if: always()
+        working-directory: apps/builder
+        env:
+          DESIGN_GALLERY: '1'
+          GALLERY_V1: '1'
+          GALLERY_DIR: ${{ github.workspace }}/design-gallery
+          GALLERY_LABEL: ${{ github.event_name == 'pull_request' && 'after' || 'main' }}
+        run: npx playwright test tests/e2e/design-gallery.spec.ts --trace off
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: design-gallery
+          path: design-gallery
+          retention-days: 30
+      - name: Lighthouse CI (rich fixtures, D1 budgets)
+        if: always()
+        working-directory: apps/builder
+        env:
+          LHCI_OUT: ${{ github.workspace }}/lighthouse
+        run: CHROME_PATH=$(node -e "console.log(require('@playwright/test').chromium.executablePath())") npm run lhci
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse
+          path: lighthouse
+          retention-days: 30

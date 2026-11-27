@@ -36,6 +36,33 @@ const text = (min: number, max: number) =>
   // eslint-disable-next-line no-control-regex
   z.string().min(min).max(max).regex(/^[^\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]*$/, 'Text contains characters that are not allowed')
 
+/**
+ * Accent phrase (design v2, plan 6.2): a headline may mark ONE phrase as `*phrase*`. The renderer
+ * shows it as <em class="ys-accent">; every plain-text use (title, meta, JSON-LD) strips the
+ * asterisks with plainText(). A lone or extra asterisk is refused, so what the owner typed is
+ * never silently half-styled.
+ */
+const ACCENT_PAIR = /\*([^*\s](?:[^*\n]*[^*\s])?)\*/
+export type AccentParts = { before: string; accent: string; after: string }
+/** Splits a headline at its accent phrase, or null when it has none. */
+export function splitAccent(s: string): AccentParts | null {
+  const m = ACCENT_PAIR.exec(s)
+  if (!m) return null
+  return { before: s.slice(0, m.index), accent: m[1], after: s.slice(m.index + m[0].length) }
+}
+/** The headline as plain text: the accent marker removed, the words kept. */
+export function plainText(s: string): string {
+  const p = splitAccent(s)
+  return p ? `${p.before}${p.accent}${p.after}` : s
+}
+/** True when a headline has no asterisks, or exactly one well-formed `*phrase*`. */
+export function validAccent(s: string): boolean {
+  const stars = (s.match(/\*/g) ?? []).length
+  return stars === 0 || (stars === 2 && splitAccent(s) !== null)
+}
+const headlineText = (min: number, max: number) =>
+  text(min, max).refine(validAccent, 'A headline can mark one phrase as *accent*, with an asterisk on each side')
+
 export const LinkTarget = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('page'), pageId: Id }).strict(),
   z.object({ kind: z.literal('section'), pageId: Id, sectionId: Id }).strict(),
@@ -108,7 +135,7 @@ export const HeaderProps = z.object({
 
 export const HeroProps = z.object({
   eyebrow: text(1, 60).optional(),
-  headline: text(1, 90),
+  headline: headlineText(1, 90),
   subhead: text(1, 200).optional(),
   image: ImageRef.optional(),
   primaryCta: Cta.optional(),
@@ -116,13 +143,13 @@ export const HeroProps = z.object({
 }).strict()
 
 export const AboutProps = z.object({
-  heading: text(1, 80),
+  heading: headlineText(1, 80),
   body: richTextMax(1500),
   image: ImageRef.optional(),
 }).strict()
 
 export const ServicesProps = z.object({
-  heading: text(1, 80),
+  heading: headlineText(1, 80),
   intro: text(1, 300).optional(),
   items: z.array(z.object({
     title: text(1, 80),
@@ -134,7 +161,7 @@ export const ServicesProps = z.object({
 
 export const MENU_TAGS = ['veg', 'spicy', 'gf'] as const
 export const MenuProps = z.object({
-  heading: text(1, 80),
+  heading: headlineText(1, 80),
   intro: text(1, 300).optional(),
   categories: z.array(z.object({
     name: text(1, 60),
@@ -150,7 +177,7 @@ export const MenuProps = z.object({
 }).strict()
 
 export const ScheduleProps = z.object({
-  heading: text(1, 80),
+  heading: headlineText(1, 80),
   intro: text(1, 300).optional(),
   stops: z.array(z.object({
     day: Day,
@@ -162,18 +189,18 @@ export const ScheduleProps = z.object({
 }).strict()
 
 export const GalleryProps = z.object({
-  heading: text(1, 80).optional(),
+  heading: headlineText(1, 80).optional(),
   images: z.array(ImageRef).max(24),
 }).strict()
 
 export const HoursLocationProps = z.object({
-  heading: text(1, 80),
+  heading: headlineText(1, 80),
   directionsUrl: HttpsUrl.optional(),
   note: text(1, 200).optional(),
 }).strict()
 
 export const TestimonialsProps = z.object({
-  heading: text(1, 80).optional(),
+  heading: headlineText(1, 80).optional(),
   items: z.array(z.object({
     quote: text(1, 400),
     name: text(1, 60),
@@ -182,12 +209,12 @@ export const TestimonialsProps = z.object({
 }).strict()
 
 export const FaqProps = z.object({
-  heading: text(1, 80).optional(),
+  heading: headlineText(1, 80).optional(),
   items: z.array(z.object({ q: text(1, 160), a: richTextMax(800) }).strict()).max(20),
 }).strict()
 
 export const TeamProps = z.object({
-  heading: text(1, 80).optional(),
+  heading: headlineText(1, 80).optional(),
   members: z.array(z.object({
     name: text(1, 60),
     role: text(1, 60).optional(),
@@ -197,13 +224,13 @@ export const TeamProps = z.object({
 }).strict()
 
 export const CtaBandProps = z.object({
-  headline: text(1, 90),
+  headline: headlineText(1, 90),
   body: text(1, 200).optional(),
   cta: Cta,
 }).strict()
 
 export const ContactFormProps = z.object({
-  heading: text(1, 80),
+  heading: headlineText(1, 80),
   intro: text(1, 200).optional(),
   formKey: Id,
   fields: formFields,
@@ -212,7 +239,7 @@ export const ContactFormProps = z.object({
 }).strict()
 
 export const BookingProps = z.object({
-  heading: text(1, 80),
+  heading: headlineText(1, 80),
   body: text(1, 300).optional(),
   mode: z.enum(['link', 'request']),
   buttonLabel: text(1, 30).optional(),
@@ -221,7 +248,7 @@ export const BookingProps = z.object({
 export const CateringRequestProps = ContactFormProps
 
 export const TodayProps = z.object({
-  heading: text(1, 60).optional(),
+  heading: headlineText(1, 60).optional(),
   emptyBehavior: z.enum(['hide', 'show-text']),
   emptyText: text(1, 140).optional(),
 }).strict()
@@ -231,7 +258,7 @@ export const FooterProps = z.object({}).strict()
 /** Every section type, its props schema and its variants. Order is the library order. */
 export const SECTION_DEFS = {
   header: { props: HeaderProps, variants: ['bar', 'centered'] },
-  hero: { props: HeroProps, variants: ['split', 'fullbleed', 'minimal'] },
+  hero: { props: HeroProps, variants: ['split', 'fullbleed', 'minimal', 'cinematic'] },
   about: { props: AboutProps, variants: ['left-image', 'right-image', 'text-only'] },
   services: { props: ServicesProps, variants: ['cards', 'list'] },
   menu: { props: MenuProps, variants: ['columns', 'cards'] },

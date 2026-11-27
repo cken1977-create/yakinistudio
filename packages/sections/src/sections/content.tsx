@@ -1,5 +1,5 @@
-import type { SectionOf, SectionType } from '@yakini/site-schema'
-import { DAY_NAMES, DAY_ORDER, DraftHint, Img, Link, RichTextView, Txt, timeRange, type RenderContext } from '../context'
+import { plainText, type SectionOf, type SectionType } from '@yakini/site-schema'
+import { DAY_NAMES, DAY_ORDER, DraftHint, Img, Link, RichTextView, HeadTxt, Txt, timeRange, type RenderContext, showEmpty } from '../context'
 import { Heading } from './heading'
 import { Icon } from './icons'
 
@@ -11,7 +11,65 @@ const wrap = (s: { id: string; type: string; variant: string }, extra = '') => (
   'aria-labelledby': `${s.id}-h`,
 })
 
+/**
+ * Up to two facts for the cinematic hero's floating badges, taken only from the business's own
+ * details (never invented): what it offers (its first services list) and where it is.
+ */
+export function heroFacts(doc: RenderContext['doc']): string[] {
+  const out: string[] = []
+  const services = doc.pages.flatMap((p) => p.sections).find((x) => x.type === 'services' && !x.hidden && x.props.items.length > 0)
+  if (services && services.type === 'services') {
+    const titles = services.props.items.map((i) => i.title.trim()).filter((t) => t && !t.includes('[[')).slice(0, 3)
+    if (titles.length) out.push(titles.join(' · '))
+  }
+  const a = doc.business.address
+  if (a?.city) out.push(a.region ? `${a.city}, ${a.region}` : a.city)
+  return out.slice(0, 2)
+}
+
+/**
+ * Cinematic hero (design v2, plan D1 step 4): a full-bleed photo framed 4:5 on a phone and 16:9 on
+ * a desktop around the photo's focal point, a layered scrim, the display headline with its accent
+ * phrase, a glowing primary and a ghost CTA, and up to two fact badges. With no photo it becomes a
+ * typographic hero: a large ghosted initial and a glow on the surface, never a flat panel.
+ */
+function CinematicHero({ ctx, s, first }: P<'hero'>) {
+  const p = s.props
+  const img = p.image && ctx.image(p.image.assetId) ? p.image : undefined
+  const facts = heroFacts(ctx.doc)
+  const initial = ctx.doc.business.name.trim().charAt(0).toUpperCase()
+  return (
+    <section {...wrap(s, img ? 'has-img' : 'no-img')}>
+      {img ? (
+        <div className="ys-cine-media">
+          <Img ctx={ctx} image={img} className="ys-cine-img" sizes="100vw" priority={first} />
+        </div>
+      ) : <span className="ys-cine-initial" aria-hidden="true">{initial}</span>}
+      <div className="ys-cine-scrim" aria-hidden="true" />
+      <div className="ys-wrap ys-cine-inner">
+        <div className="ys-hero-copy ys-cine-copy">
+          {p.eyebrow ? <p className="ys-eyebrow"><Txt>{p.eyebrow}</Txt></p> : null}
+          <Heading first={first} id={`${s.id}-h`} className="ys-display ys-cine-headline"><HeadTxt>{p.headline}</HeadTxt></Heading>
+          {p.subhead ? <p className="ys-lead"><Txt>{p.subhead}</Txt></p> : null}
+          {p.primaryCta || p.secondaryCta ? (
+            <div className="ys-actions">
+              {p.primaryCta ? <Link ctx={ctx} to={p.primaryCta.target} className="ys-btn ys-btn-primary">{p.primaryCta.label}</Link> : null}
+              {p.secondaryCta ? <Link ctx={ctx} to={p.secondaryCta.target} className="ys-btn ys-btn-ghost">{p.secondaryCta.label}</Link> : null}
+            </div>
+          ) : null}
+        </div>
+        {facts.length ? (
+          <ul className="ys-cine-facts" aria-label="At a glance">
+            {facts.map((f) => <li key={f} className="ys-cine-fact">{f}</li>)}
+          </ul>
+        ) : null}
+      </div>
+    </section>
+  )
+}
+
 export function HeroSection({ ctx, s, first }: P<'hero'>) {
+  if (s.variant === 'cinematic') return <CinematicHero ctx={ctx} s={s} first={first} />
   const p = s.props
   const img = p.image && ctx.image(p.image.assetId) ? p.image : undefined
   const variant = s.variant === 'fullbleed' && !img ? 'minimal' : s.variant
@@ -21,7 +79,7 @@ export function HeroSection({ ctx, s, first }: P<'hero'>) {
       <div className="ys-wrap ys-hero-inner">
         <div className="ys-hero-copy">
           {p.eyebrow ? <p className="ys-eyebrow"><Txt>{p.eyebrow}</Txt></p> : null}
-          <Heading first={first} id={`${s.id}-h`} className="ys-display"><Txt>{p.headline}</Txt></Heading>
+          <Heading first={first} id={`${s.id}-h`} className="ys-display"><HeadTxt>{p.headline}</HeadTxt></Heading>
           {p.subhead ? <p className="ys-lead"><Txt>{p.subhead}</Txt></p> : null}
           {p.primaryCta || p.secondaryCta ? (
             <div className="ys-actions">
@@ -46,7 +104,7 @@ export function AboutSection({ ctx, s, first }: P<'about'>) {
     <section {...wrap(s, img ? 'has-img' : 'no-img')}>
       <div className="ys-wrap ys-about-grid">
         <div className="ys-prose">
-          <Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading>
+          <Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading>
           {s.props.body.length ? <RichTextView ctx={ctx} value={s.props.body} /> : <DraftHint ctx={ctx}>Tell your story here</DraftHint>}
         </div>
         {img ? <div className="ys-about-media"><Img ctx={ctx} image={img} className="ys-cover" sizes="(min-width: 900px) 45vw, 100vw" /></div> : null}
@@ -57,12 +115,12 @@ export function AboutSection({ ctx, s, first }: P<'about'>) {
 
 export function ServicesSection({ ctx, s, first }: P<'services'>) {
   const items = s.props.items
-  if (!items.length && ctx.mode !== 'draft') return null
+  if (!items.length && !showEmpty(ctx)) return null
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap">
         <div className="ys-section-head">
-          <Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading>
+          <Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading>
           {s.props.intro ? <p className="ys-lead"><Txt>{s.props.intro}</Txt></p> : null}
         </div>
         {items.length ? (
@@ -86,13 +144,13 @@ export function ServicesSection({ ctx, s, first }: P<'services'>) {
 const TAG_LABELS = { veg: 'Vegetarian', spicy: 'Spicy', gf: 'Gluten-free' } as const
 
 export function MenuSection({ ctx, s, first }: P<'menu'>) {
-  const cats = s.props.categories.filter((c) => c.items.length > 0 || ctx.mode === 'draft')
-  if (!cats.length && ctx.mode !== 'draft') return null
+  const cats = s.props.categories.filter((c) => c.items.length > 0 || showEmpty(ctx))
+  if (!cats.length && !showEmpty(ctx)) return null
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap">
         <div className="ys-section-head">
-          <Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading>
+          <Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading>
           {s.props.intro ? <p className="ys-lead"><Txt>{s.props.intro}</Txt></p> : null}
         </div>
         {cats.length ? cats.map((cat, ci) => (
@@ -132,13 +190,13 @@ export function MenuSection({ ctx, s, first }: P<'menu'>) {
 
 export function ScheduleSection({ ctx, s, first }: P<'schedule'>) {
   const stops = [...s.props.stops].sort((a, b) => DAY_ORDER.indexOf(a.day) - DAY_ORDER.indexOf(b.day) || a.start.localeCompare(b.start))
-  if (!stops.length && ctx.mode !== 'draft') return null
+  if (!stops.length && !showEmpty(ctx)) return null
   const off = ctx.today && ctx.today.kind === 'off'
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap">
         <div className="ys-section-head">
-          <Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading>
+          <Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading>
           {s.props.intro ? <p className="ys-lead"><Txt>{s.props.intro}</Txt></p> : null}
           {off ? <p className="ys-today-flag" role="status">{ctx.today!.headline}</p> : null}
         </div>
@@ -177,11 +235,11 @@ export function ScheduleSection({ ctx, s, first }: P<'schedule'>) {
 
 export function GallerySection({ ctx, s, first }: P<'gallery'>) {
   const images = s.props.images.filter((im) => ctx.image(im.assetId))
-  if (!images.length && ctx.mode !== 'draft') return null
+  if (!images.length && !showEmpty(ctx)) return null
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap">
-        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Photos</span>}
+        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Photos</span>}
         {images.length ? (
           <ul className="ys-gallery-grid">
             {images.map((im, i) => <li key={i}><Img ctx={ctx} image={im} className={s.variant === 'grid' ? 'ys-cover' : undefined} sizes="(min-width: 900px) 33vw, 50vw" /></li>)}
@@ -194,12 +252,12 @@ export function GallerySection({ ctx, s, first }: P<'gallery'>) {
 
 export function TestimonialsSection({ ctx, s, first }: P<'testimonials'>) {
   const items = s.props.items
-  if (!items.length && ctx.mode !== 'draft') return null
+  if (!items.length && !showEmpty(ctx)) return null
   const shown = s.variant === 'single' ? items.slice(0, 1) : items
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap">
-        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Reviews</span>}
+        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Reviews</span>}
         {shown.length ? (
           <ul className="ys-quotes">
             {shown.map((q, i) => (
@@ -219,11 +277,11 @@ export function TestimonialsSection({ ctx, s, first }: P<'testimonials'>) {
 
 export function FaqSection({ ctx, s, first }: P<'faq'>) {
   const items = s.props.items
-  if (!items.length && ctx.mode !== 'draft') return null
+  if (!items.length && !showEmpty(ctx)) return null
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap ys-narrow">
-        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Questions</span>}
+        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Questions</span>}
         {items.length ? items.map((it, i) => (
           <details key={i} className="ys-faq-item">
             <summary><Txt>{it.q}</Txt></summary>
@@ -241,11 +299,11 @@ function initials(name: string): string {
 
 export function TeamSection({ ctx, s, first }: P<'team'>) {
   const members = s.props.members
-  if (!members.length && ctx.mode !== 'draft') return null
+  if (!members.length && !showEmpty(ctx)) return null
   return (
     <section {...wrap(s)}>
       <div className="ys-wrap">
-        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><Txt>{s.props.heading}</Txt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Team</span>}
+        {s.props.heading ? <div className="ys-section-head"><Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.heading}</HeadTxt></Heading></div> : <span id={`${s.id}-h`} className="ys-sr">Team</span>}
         {members.length ? (
           <ul className="ys-team-grid">
             {members.map((m, i) => (
@@ -270,7 +328,7 @@ export function CtaBandSection({ ctx, s, first }: P<'cta_band'>) {
     <section {...wrap(s)}>
       <div className="ys-wrap ys-cta-inner">
         <div>
-          <Heading first={first} id={`${s.id}-h`}><Txt>{s.props.headline}</Txt></Heading>
+          <Heading first={first} id={`${s.id}-h`}><HeadTxt>{s.props.headline}</HeadTxt></Heading>
           {s.props.body ? <p><Txt>{s.props.body}</Txt></p> : null}
         </div>
         <Link ctx={ctx} to={s.props.cta.target} className={`ys-btn ${s.variant === 'solid' ? 'ys-btn-on-primary' : 'ys-btn-primary'}`}>{s.props.cta.label}</Link>
@@ -287,24 +345,24 @@ export function TodaySection({ ctx, s }: P<'today'>) {
   const t = ctx.today
   if (!t) {
     if (s.props.emptyBehavior === 'hide' || !s.props.emptyText) {
-      if (ctx.mode !== 'draft') return null
-      // In a draft the section stays findable (and clickable in the editor); the live site shows nothing.
+      if (!showEmpty(ctx)) return null
+      // While editing the section stays findable (and clickable in the editor); the live site shows nothing.
       return (
-        <section className={`ys-s ys-today ys-v-${s.variant} is-empty`} id={s.id} aria-label={s.props.heading || 'Today'}>
+        <section className={`ys-s ys-today ys-v-${s.variant} is-empty`} id={s.id} aria-label={plainText(s.props.heading || 'Today')}>
           <div className="ys-wrap"><p className="ys-hint">Your Today update shows here when you post one. Until then this section is hidden on your site.</p></div>
         </section>
       )
     }
     return (
-      <section className={`ys-s ys-today ys-v-${s.variant} is-empty`} id={s.id} aria-label={s.props.heading || 'Today'}>
+      <section className={`ys-s ys-today ys-v-${s.variant} is-empty`} id={s.id} aria-label={plainText(s.props.heading || 'Today')}>
         <div className="ys-wrap"><p className="ys-today-text"><Txt>{s.props.emptyText}</Txt></p></div>
       </section>
     )
   }
   return (
-    <section className={`ys-s ys-today ys-v-${s.variant}`} id={s.id} aria-label={s.props.heading || 'Today'}>
+    <section className={`ys-s ys-today ys-v-${s.variant}`} id={s.id} aria-label={plainText(s.props.heading || 'Today')}>
       <div className="ys-wrap">
-        <p className="ys-today-label">{s.props.heading || 'Today'}</p>
+        <p className="ys-today-label">{plainText(s.props.heading || 'Today')}</p>
         <p className="ys-today-headline">{t.headline}</p>
         {t.lines.map((l, i) => <p key={i} className="ys-today-text">{l}</p>)}
       </div>

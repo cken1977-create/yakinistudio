@@ -1,0 +1,563 @@
+{
+  "kitId": "oilfield",
+  "locale": "en-US",
+  "business": {
+    "name": "Permian Well Services"
+  },
+  "nav": {
+    "items": [
+      {
+        "label": "Home",
+        "pageId": "home"
+      },
+      {
+        "label": "Services",
+        "pageId": "services"
+      },
+      {
+        "label": "Safety",
+        "pageId": "safety"
+      },
+      {
+        "label": "Careers",
+        "pageId": "careers"
+      },
+      {
+        "label": "Contact",
+        "pageId": "contact"
+      }
+    ],
+    "cta": {
+      "label": "Request service",
+      "target": {
+        "kind": "section",
+        "pageId": "contact",
+        "sectionId": "service-form"
+      }
+    }
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "",
+      "title": "Home",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Request service"
+          }
+        },
+        {
+          "id": "hero",
+          "type": "hero",
+          "variant": "fullbleed",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Oilfield services",
+            "headline": "Crews and equipment *for the job at hand.*",
+            "subhead": "Well servicing and roustabout crews across the Permian Basin, around the clock.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000001003",
+              "alt": "A tall drilling rig at a well site in the desert"
+            },
+            "primaryCta": {
+              "label": "Request service",
+              "target": {
+                "kind": "section",
+                "pageId": "contact",
+                "sectionId": "service-form"
+              }
+            },
+            "secondaryCta": {
+              "label": "Our services",
+              "target": {
+                "kind": "page",
+                "pageId": "services"
+              }
+            }
+          }
+        },
+        {
+          "id": "today",
+          "type": "today",
+          "variant": "banner",
+          "hidden": false,
+          "props": {
+            "heading": "Today",
+            "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "services-summary",
+          "type": "services",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "What we do",
+            "items": [
+              {
+                "title": "[[Well servicing]]",
+                "body": "[[The work your crews do and the equipment you run.]]",
+                "icon": "flame"
+              },
+              {
+                "title": "[[Roustabout crews]]",
+                "body": "[[Lease maintenance, construction and repairs.]]",
+                "icon": "users"
+              },
+              {
+                "title": "[[Hauling]]",
+                "body": "[[Water, equipment or pipe, or remove this.]]",
+                "icon": "truck"
+              }
+            ]
+          }
+        },
+        {
+          "id": "why",
+          "type": "about",
+          "variant": "left-image",
+          "hidden": false,
+          "props": {
+            "heading": "Safe, ready and on location",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "[[Write two or three sentences about your crews, your response times and your safety record. Real facts only.]]"
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000001002",
+              "alt": "Two workers in hard hats working on a wellhead"
+            }
+          }
+        },
+        {
+          "id": "service-cta",
+          "type": "cta_band",
+          "variant": "solid",
+          "hidden": false,
+          "props": {
+            "headline": "Need a crew?",
+            "body": "Tell us the location and the job. We’ll call you back.",
+            "cta": {
+              "label": "Request service",
+              "target": {
+                "kind": "section",
+                "pageId": "contact",
+                "sectionId": "service-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "What operators say",
+            "items": []
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "services",
+      "slug": "services",
+      "title": "Services",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Request service"
+          }
+        },
+        {
+          "id": "services",
+          "type": "services",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "Services",
+            "intro": "[[A line on the basins or counties you work and whether you run 24/7.]]",
+            "items": [
+              {
+                "title": "[[Service name]]",
+                "body": "[[What it includes and the equipment you bring.]]",
+                "icon": "flame"
+              },
+              {
+                "title": "[[Service name]]",
+                "body": "[[What it includes and the equipment you bring.]]",
+                "icon": "truck"
+              },
+              {
+                "title": "[[Service name]]",
+                "body": "[[Add another service, or remove this one.]]",
+                "icon": "clock"
+              }
+            ]
+          }
+        },
+        {
+          "id": "gallery",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "In the field",
+            "images": []
+          }
+        },
+        {
+          "id": "services-cta",
+          "type": "cta_band",
+          "variant": "outline",
+          "hidden": false,
+          "props": {
+            "headline": "Have a job coming up?",
+            "cta": {
+              "label": "Request service",
+              "target": {
+                "kind": "section",
+                "pageId": "contact",
+                "sectionId": "service-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "safety",
+      "slug": "safety",
+      "title": "Safety",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Request service"
+          }
+        },
+        {
+          "id": "safety",
+          "type": "about",
+          "variant": "right-image",
+          "hidden": false,
+          "props": {
+            "heading": "Safety comes first",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "[[Describe your safety program: training, meetings, and how you stop work when something isn’t right.]]"
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000001005",
+              "alt": "A worker’s gloved hands turning a valve with a pipe wrench"
+            }
+          }
+        },
+        {
+          "id": "credentials",
+          "type": "services",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "Training and credentials",
+            "intro": "Only list programs and memberships you really hold.",
+            "items": [
+              {
+                "title": "[[Safety training]]",
+                "body": "[[The courses your crews complete.]]",
+                "icon": "star"
+              },
+              {
+                "title": "[[Compliance]]",
+                "body": "[[Registrations or networks you belong to, or remove this.]]",
+                "icon": "heart"
+              }
+            ]
+          }
+        },
+        {
+          "id": "safety-faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Safety questions",
+            "items": [
+              {
+                "q": "Can we see your safety paperwork?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "Yes. Ask us and we’ll send what your company needs."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "careers",
+      "slug": "careers",
+      "title": "Careers",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Request service"
+          }
+        },
+        {
+          "id": "careers-hero",
+          "type": "hero",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Careers",
+            "headline": "Join our crew",
+            "subhead": "[[Say what positions you hire for and what a rotation or schedule looks like.]]",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000001004",
+              "alt": "Service pickups and a tank truck on a dusty lease road"
+            },
+            "primaryCta": {
+              "label": "Apply",
+              "target": {
+                "kind": "section",
+                "pageId": "careers",
+                "sectionId": "apply-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "positions",
+          "type": "services",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "Open positions",
+            "items": [
+              {
+                "title": "[[Position]]",
+                "body": "[[What the job is and what you need to apply.]]",
+                "icon": "users"
+              },
+              {
+                "title": "[[Position]]",
+                "body": "[[What the job is and what you need to apply.]]",
+                "icon": "users"
+              }
+            ]
+          }
+        },
+        {
+          "id": "apply-form",
+          "type": "contact_form",
+          "variant": "simple",
+          "hidden": false,
+          "props": {
+            "heading": "Apply",
+            "intro": "Tell us the job you want and your experience. We’ll call you back.",
+            "formKey": "apply",
+            "fields": [
+              "name",
+              "phone",
+              "email",
+              "service",
+              "message"
+            ],
+            "submitLabel": "Send",
+            "consentText": "By sending this form you agree that Permian Well Services may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "contact",
+      "slug": "contact",
+      "title": "Request service",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Request service"
+          }
+        },
+        {
+          "id": "service-form",
+          "type": "contact_form",
+          "variant": "with-details",
+          "hidden": false,
+          "props": {
+            "heading": "Request service",
+            "intro": "Include the lease or location, the work needed and when.",
+            "formKey": "service-request",
+            "fields": [
+              "name",
+              "phone",
+              "email",
+              "service",
+              "message"
+            ],
+            "submitLabel": "Send request",
+            "consentText": "By sending this form you agree that Permian Well Services may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "story",
+          "type": "about",
+          "variant": "text-only",
+          "hidden": false,
+          "props": {
+            "heading": "About us",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "[[Tell your story: when you started, where you work and who runs the crews.]]"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "team",
+          "type": "team",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "Leadership",
+            "members": []
+          }
+        },
+        {
+          "id": "yard",
+          "type": "hours_location",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "heading": "Yard and office"
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    }
+  ],
+  "footer": {
+    "showHours": true,
+    "showAddress": true,
+    "showSiteByYakini": true
+  },
+  "seo": {
+    "siteTitle": "Permian Well Services",
+    "description": "Permian Well Services: oilfield services. Services, safety, careers and service requests."
+  },
+  "schemaVersion": 2,
+  "brand": {
+    "colors": {
+      "primary": "#1F3A5F",
+      "secondary": "#121A24",
+      "accent": "#E07A1F"
+    },
+    "colorsSource": "kit-default",
+    "fontPair": "modern"
+  },
+  "style": {
+    "preset": "classic",
+    "surface": "light",
+    "fontPair": "modern",
+    "radius": "round",
+    "motion": "off"
+  },
+  "integrations": {
+    "bookingEnabled": false,
+    "formsEnabled": true
+  }
+}

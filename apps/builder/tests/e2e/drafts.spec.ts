@@ -213,7 +213,8 @@ for (const k of KIT_DRAFTS) {
     if (SHOTS) await page.screenshot({ path: `${SHOTS}/kit-${k.industry}-${info.project.name}.png`, fullPage: true })
     for (const [fg, bg] of await site.locator('a.ys-btn-primary, a.ys-btn-on-primary').evaluateAll((as) => as.map((a) => { const cs = getComputedStyle(a); return [cs.color, cs.backgroundColor] }))) expect(fg).not.toBe(bg)
     const hrefs = await site.locator('header a[href^="/d/"]').evaluateAll((as) => [...new Set(as.map((a) => a.getAttribute('href')!.split('#')[0]))])
-    expect(hrefs.length).toBeGreaterThanOrEqual(5)
+    // Pages with nothing filled in yet leave the preview menu (D1 step 5), so a fresh draft links 3 to 5.
+    expect(hrefs.length).toBeGreaterThanOrEqual(3)
     for (const h of hrefs) {
       const r = await page.goto(h)
       expect(r?.status(), h).toBe(200)

@@ -1,0 +1,8 @@
+/* ---------------------------------------------------------------- team */
+.ys-team-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 18px; }
+.ys-person { display: grid; gap: 4px; justify-items: start; }
+.ys-avatar { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; }
+.ys-avatar-initials { display: grid; place-items: center; background: var(--ys-tint-strong); color: var(--ys-primary-text); font-family: var(--ys-font-display); font-weight: var(--ys-display-weight); font-size: 2rem; }
+.ys-person-name { font-weight: 800; }
+.ys-person-bio { color: var(--ys-muted); font-size: 0.9375rem; margin-top: 4px; }
+

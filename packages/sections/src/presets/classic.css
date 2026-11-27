@@ -1,0 +1,7 @@
+/*
+ * Classic preset: the original look, given to every v1 site on read (spec 7.4, plan 6.1).
+ * Classic IS the unscoped base: base.css, sections/*.css and responsive.css together are the original
+ * styles.css byte for byte (checked by styles.test.ts against __snapshots__/styles-v1.css). Presets
+ * not built yet (editorial, poster, craft, clean) fall back to it. Nothing may be added here that
+ * changes how a classic site looks.
+ */

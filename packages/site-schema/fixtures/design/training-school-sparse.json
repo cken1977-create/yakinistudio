@@ -1,0 +1,529 @@
+{
+  "kitId": "training-school",
+  "locale": "en-US",
+  "business": {
+    "name": "Southwest Trade Academy"
+  },
+  "nav": {
+    "items": [
+      {
+        "label": "Home",
+        "pageId": "home"
+      },
+      {
+        "label": "Programs",
+        "pageId": "programs"
+      },
+      {
+        "label": "Schedule",
+        "pageId": "schedule"
+      },
+      {
+        "label": "About",
+        "pageId": "about"
+      },
+      {
+        "label": "Enroll",
+        "pageId": "enroll"
+      }
+    ],
+    "cta": {
+      "label": "Enroll",
+      "target": {
+        "kind": "section",
+        "pageId": "enroll",
+        "sectionId": "enroll-form"
+      }
+    }
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "",
+      "title": "Home",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Enroll"
+          }
+        },
+        {
+          "id": "hero",
+          "type": "hero",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Training",
+            "headline": "Learn the trade. *Start the career.*",
+            "subhead": "Hands-on welding and CDL training that gets you hired.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000801",
+              "alt": "Adult students at desks watching an instructor at the whiteboard"
+            },
+            "primaryCta": {
+              "label": "Enroll",
+              "target": {
+                "kind": "section",
+                "pageId": "enroll",
+                "sectionId": "enroll-form"
+              }
+            },
+            "secondaryCta": {
+              "label": "See programs",
+              "target": {
+                "kind": "page",
+                "pageId": "programs"
+              }
+            }
+          }
+        },
+        {
+          "id": "today",
+          "type": "today",
+          "variant": "banner",
+          "hidden": false,
+          "props": {
+            "heading": "Today",
+            "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "programs-summary",
+          "type": "services",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "Programs",
+            "items": [
+              {
+                "title": "[[Program name]]",
+                "body": "[[What students learn, how long it takes, and the certificate they earn.]]",
+                "icon": "star"
+              },
+              {
+                "title": "[[Program name]]",
+                "body": "[[What students learn, how long it takes, and the certificate they earn.]]",
+                "icon": "calendar"
+              },
+              {
+                "title": "[[Program name]]",
+                "body": "[[Add another program, or remove this one.]]",
+                "icon": "users"
+              }
+            ]
+          }
+        },
+        {
+          "id": "why",
+          "type": "about",
+          "variant": "left-image",
+          "hidden": false,
+          "props": {
+            "heading": "Learn by doing",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "[[Write two or three sentences about your instructors, your hands-on training and how you help students after they finish.]]"
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000802",
+              "alt": "A student welding steel at a shop table while an instructor watches"
+            }
+          }
+        },
+        {
+          "id": "enroll-cta",
+          "type": "cta_band",
+          "variant": "solid",
+          "hidden": false,
+          "props": {
+            "headline": "Ready to start?",
+            "body": "Ask about the next class and how to enroll.",
+            "cta": {
+              "label": "Enroll",
+              "target": {
+                "kind": "section",
+                "pageId": "enroll",
+                "sectionId": "enroll-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
+          }
+        },
+        {
+          "id": "grads",
+          "type": "testimonials",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "What graduates say",
+            "items": []
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "programs",
+      "slug": "programs",
+      "title": "Programs",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Enroll"
+          }
+        },
+        {
+          "id": "programs",
+          "type": "services",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "Programs",
+            "intro": "[[A line on who your programs are for and what students need to start.]]",
+            "items": [
+              {
+                "title": "[[Program name]]",
+                "body": "[[Length, schedule (days or nights), what’s covered, and the certificate or license it prepares for.]]",
+                "icon": "star"
+              },
+              {
+                "title": "[[Program name]]",
+                "body": "[[Length, schedule (days or nights), what’s covered, and the certificate or license it prepares for.]]",
+                "icon": "calendar"
+              }
+            ]
+          }
+        },
+        {
+          "id": "program-faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Program questions",
+            "items": [
+              {
+                "q": "Do I need experience?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "[[Say what students need before they start.]]"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "q": "How do I pay for training?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "[[Explain payment plans or funding you accept. Don’t promise approval.]]"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "programs-cta",
+          "type": "cta_band",
+          "variant": "outline",
+          "hidden": false,
+          "props": {
+            "headline": "Questions about a program?",
+            "body": "We’ll walk you through it.",
+            "cta": {
+              "label": "Enroll",
+              "target": {
+                "kind": "section",
+                "pageId": "enroll",
+                "sectionId": "enroll-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "schedule",
+      "slug": "schedule",
+      "title": "Class schedule",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Enroll"
+          }
+        },
+        {
+          "id": "classes",
+          "type": "schedule",
+          "variant": "week",
+          "hidden": false,
+          "props": {
+            "heading": "Class times",
+            "intro": "[[Add your regular class days and times, and when the next class starts.]]",
+            "stops": []
+          }
+        },
+        {
+          "id": "schedule-cta",
+          "type": "cta_band",
+          "variant": "solid",
+          "hidden": false,
+          "props": {
+            "headline": "Save your seat",
+            "cta": {
+              "label": "Enroll",
+              "target": {
+                "kind": "section",
+                "pageId": "enroll",
+                "sectionId": "enroll-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "about",
+      "slug": "about",
+      "title": "About",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Enroll"
+          }
+        },
+        {
+          "id": "story",
+          "type": "about",
+          "variant": "right-image",
+          "hidden": false,
+          "props": {
+            "heading": "About the school",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "[[Tell your story: when you started, who you train, and any approvals or accreditations you really hold.]]"
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000805",
+              "alt": "Graduates in caps and gowns tossing their caps in the air"
+            }
+          }
+        },
+        {
+          "id": "instructors",
+          "type": "team",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "Instructors",
+            "members": []
+          }
+        },
+        {
+          "id": "gallery",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "Around campus",
+            "images": []
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "enroll",
+      "slug": "enroll",
+      "title": "Enroll",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Enroll"
+          }
+        },
+        {
+          "id": "enroll-hero",
+          "type": "hero",
+          "variant": "minimal",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Enroll",
+            "headline": "Start your training",
+            "subhead": "Tell us which program you want. We’ll reply with next steps and start dates."
+          }
+        },
+        {
+          "id": "enroll-faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Enrolling",
+            "items": [
+              {
+                "q": "What happens after I send this?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "We’ll contact you about the program, start dates and what to bring on day one."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "enroll-form",
+          "type": "contact_form",
+          "variant": "with-details",
+          "hidden": false,
+          "props": {
+            "heading": "Enroll or ask a question",
+            "formKey": "enroll",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "service",
+              "message"
+            ],
+            "submitLabel": "Send",
+            "consentText": "By sending this form you agree that Southwest Trade Academy may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "campus",
+          "type": "hours_location",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "heading": "Campus hours and location"
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    }
+  ],
+  "footer": {
+    "showHours": true,
+    "showAddress": true,
+    "showSiteByYakini": true
+  },
+  "seo": {
+    "siteTitle": "Southwest Trade Academy",
+    "description": "Southwest Trade Academy: hands-on training. Programs, class schedule and how to enroll."
+  },
+  "schemaVersion": 2,
+  "brand": {
+    "colors": {
+      "primary": "#3E5C76",
+      "secondary": "#1D2731",
+      "accent": "#F0A202"
+    },
+    "colorsSource": "kit-default",
+    "fontPair": "modern"
+  },
+  "style": {
+    "preset": "classic",
+    "surface": "light",
+    "fontPair": "modern",
+    "radius": "round",
+    "motion": "off"
+  },
+  "integrations": {
+    "bookingEnabled": false,
+    "formsEnabled": true
+  }
+}

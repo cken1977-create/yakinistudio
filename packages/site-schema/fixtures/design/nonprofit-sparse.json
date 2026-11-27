@@ -1,0 +1,506 @@
+{
+  "kitId": "nonprofit",
+  "locale": "en-US",
+  "business": {
+    "name": "Westside Food Partners"
+  },
+  "nav": {
+    "items": [
+      {
+        "label": "Home",
+        "pageId": "home"
+      },
+      {
+        "label": "Programs",
+        "pageId": "programs"
+      },
+      {
+        "label": "Get involved",
+        "pageId": "involved"
+      },
+      {
+        "label": "About",
+        "pageId": "about"
+      },
+      {
+        "label": "Contact",
+        "pageId": "contact"
+      }
+    ],
+    "cta": {
+      "label": "Get involved",
+      "target": {
+        "kind": "page",
+        "pageId": "involved"
+      }
+    }
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "",
+      "title": "Home",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Get involved"
+          }
+        },
+        {
+          "id": "hero",
+          "type": "hero",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "headline": "Stronger together, *starting here.*",
+            "subhead": "Making sure no family on the west side goes hungry.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000703",
+              "alt": "Volunteers in matching shirts planting a neighborhood garden"
+            },
+            "primaryCta": {
+              "label": "Get involved",
+              "target": {
+                "kind": "page",
+                "pageId": "involved"
+              }
+            },
+            "secondaryCta": {
+              "label": "Our programs",
+              "target": {
+                "kind": "page",
+                "pageId": "programs"
+              }
+            }
+          }
+        },
+        {
+          "id": "today",
+          "type": "today",
+          "variant": "banner",
+          "hidden": false,
+          "props": {
+            "heading": "Today",
+            "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "mission",
+          "type": "about",
+          "variant": "text-only",
+          "hidden": false,
+          "props": {
+            "heading": "Our mission",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "[[Write two or three sentences on who you serve, the need you meet, and the change you’re working toward.]]"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "programs-summary",
+          "type": "services",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "What we do",
+            "items": [
+              {
+                "title": "[[Your main program]]",
+                "body": "[[Who it serves and what it provides.]]",
+                "icon": "heart"
+              },
+              {
+                "title": "[[A second program]]",
+                "body": "[[Who it serves and what it provides.]]",
+                "icon": "users"
+              },
+              {
+                "title": "[[A third program]]",
+                "body": "[[Add another program, or remove this one.]]",
+                "icon": "gift"
+              }
+            ]
+          }
+        },
+        {
+          "id": "involved-cta",
+          "type": "cta_band",
+          "variant": "solid",
+          "hidden": false,
+          "props": {
+            "headline": "Join us",
+            "body": "Volunteer, give or partner with us. Every bit helps.",
+            "cta": {
+              "label": "Get involved",
+              "target": {
+                "kind": "page",
+                "pageId": "involved"
+              }
+            }
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
+          }
+        },
+        {
+          "id": "stories",
+          "type": "testimonials",
+          "variant": "single",
+          "hidden": false,
+          "props": {
+            "heading": "Stories from our community",
+            "items": []
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "programs",
+      "slug": "programs",
+      "title": "Programs",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Get involved"
+          }
+        },
+        {
+          "id": "programs",
+          "type": "services",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "Programs",
+            "intro": "[[A line on who can take part and whether there is any cost.]]",
+            "items": [
+              {
+                "title": "[[Program name]]",
+                "body": "[[What happens, who it’s for, and how to sign up.]]",
+                "icon": "heart"
+              },
+              {
+                "title": "[[Program name]]",
+                "body": "[[What happens, who it’s for, and how to sign up.]]",
+                "icon": "users"
+              }
+            ]
+          }
+        },
+        {
+          "id": "schedule",
+          "type": "schedule",
+          "variant": "list",
+          "hidden": false,
+          "props": {
+            "heading": "When we meet",
+            "intro": "[[Add regular days and times, like a weekly food pantry or meeting.]]",
+            "stops": []
+          }
+        },
+        {
+          "id": "faq",
+          "type": "faq",
+          "variant": "accordion",
+          "hidden": false,
+          "props": {
+            "heading": "Questions",
+            "items": [
+              {
+                "q": "Who can get help?",
+                "a": [
+                  {
+                    "type": "p",
+                    "children": [
+                      {
+                        "text": "[[Explain who is eligible and what to bring, in plain words.]]"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "involved",
+      "slug": "get-involved",
+      "title": "Get involved",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Get involved"
+          }
+        },
+        {
+          "id": "involved-hero",
+          "type": "hero",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Get involved",
+            "headline": "Lend a hand",
+            "subhead": "There’s a place for everyone, whatever time you have.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000701",
+              "alt": "Volunteers packing fresh produce and canned food into boxes"
+            },
+            "primaryCta": {
+              "label": "Volunteer",
+              "target": {
+                "kind": "section",
+                "pageId": "involved",
+                "sectionId": "volunteer-form"
+              }
+            }
+          }
+        },
+        {
+          "id": "ways",
+          "type": "services",
+          "variant": "cards",
+          "hidden": false,
+          "props": {
+            "heading": "Ways to help",
+            "items": [
+              {
+                "title": "Volunteer",
+                "body": "[[Say what volunteers do and how often.]]",
+                "icon": "users"
+              },
+              {
+                "title": "Give",
+                "body": "[[Say how people can give: online, by check or in person.]]",
+                "icon": "heart"
+              },
+              {
+                "title": "Partner with us",
+                "body": "[[Businesses, churches and groups: say how you work together.]]",
+                "icon": "star"
+              }
+            ]
+          }
+        },
+        {
+          "id": "volunteer-form",
+          "type": "contact_form",
+          "variant": "simple",
+          "hidden": false,
+          "props": {
+            "heading": "Sign up to help",
+            "intro": "Tell us how you’d like to help and we’ll be in touch.",
+            "formKey": "volunteer",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "service",
+              "message"
+            ],
+            "submitLabel": "Sign me up",
+            "consentText": "By sending this form you agree that Westside Food Partners may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "about",
+      "slug": "about",
+      "title": "About",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Get involved"
+          }
+        },
+        {
+          "id": "story",
+          "type": "about",
+          "variant": "right-image",
+          "hidden": false,
+          "props": {
+            "heading": "Our story",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "[[Tell how you started, who you serve, and what you’ve done so far. Real numbers only.]]"
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000702",
+              "alt": "Community members sitting in a circle during a group meeting"
+            }
+          }
+        },
+        {
+          "id": "team",
+          "type": "team",
+          "variant": "grid",
+          "hidden": false,
+          "props": {
+            "heading": "Our people",
+            "members": []
+          }
+        },
+        {
+          "id": "gallery",
+          "type": "gallery",
+          "variant": "grid",
+          "hidden": true,
+          "props": {
+            "heading": "In the community",
+            "images": []
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "contact",
+      "slug": "contact",
+      "title": "Contact",
+      "sections": [
+        {
+          "id": "header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": false,
+            "ctaLabel": "Get involved"
+          }
+        },
+        {
+          "id": "contact-form",
+          "type": "contact_form",
+          "variant": "with-details",
+          "hidden": false,
+          "props": {
+            "heading": "Contact us",
+            "formKey": "contact",
+            "fields": [
+              "name",
+              "email",
+              "phone",
+              "message"
+            ],
+            "submitLabel": "Send message",
+            "consentText": "By sending this form you agree that Westside Food Partners may contact you about your request. Your details are never sold."
+          }
+        },
+        {
+          "id": "hours",
+          "type": "hours_location",
+          "variant": "split",
+          "hidden": false,
+          "props": {
+            "heading": "Hours and location"
+          }
+        },
+        {
+          "id": "footer",
+          "type": "footer",
+          "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    }
+  ],
+  "footer": {
+    "showHours": true,
+    "showAddress": true,
+    "showSiteByYakini": true
+  },
+  "seo": {
+    "siteTitle": "Westside Food Partners",
+    "description": "Westside Food Partners: our mission, programs, and how to volunteer or give."
+  },
+  "schemaVersion": 2,
+  "brand": {
+    "colors": {
+      "primary": "#6B2D5C",
+      "secondary": "#21131D",
+      "accent": "#F2B705"
+    },
+    "colorsSource": "kit-default",
+    "fontPair": "friendly"
+  },
+  "style": {
+    "preset": "classic",
+    "surface": "light",
+    "fontPair": "friendly",
+    "radius": "round",
+    "motion": "off"
+  },
+  "integrations": {
+    "bookingEnabled": false,
+    "formsEnabled": true
+  }
+}
