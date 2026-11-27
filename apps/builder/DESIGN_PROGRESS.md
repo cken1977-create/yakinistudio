@@ -276,3 +276,28 @@ on tree-lawn and food-truck, and food-truck accessibility (the schedule contrast
 - The workflow file may need adding by hand if the push token can't write workflow files.
 - The "before" gallery for this branch was captured locally (262 screenshots, design fixtures plus
   v1) and isn't committed; CI makes it again from main.
+
+## Headline font sent with the page (follow-up to PR 140)
+
+Published sites keep `font-display: optional` (nothing ever moves), and each page now also carries
+its own headline typeface inside the HTML, so the brand headline shows even on a slow first visit.
+- What: the pair's display font at the headline weight, cut to the characters the site's text uses,
+  as a `data:` font in a nonce-tagged `<style>` (family 'YS Headline', applied only to headline
+  styles). 6-8 KB per site; Signature 22 KB (with its accent italic). Display-only font files are
+  no longer preloaded. `font-src` allows `data:` (the site's own page only).
+- When it's made: once per published version, at publish (`goLive` → `warmHeadline`), cached in
+  Next's shared data cache under the version id plus a fingerprint of the deployed font files. A page
+  view only reads the cache; a fresh server instance reads it too rather than cutting it again. A
+  version made live another way (a rollback to one published before this change) is made on its first
+  view and cached from then on. Never per page view.
+- Proof: `tests/unit/headline-cache.test.ts` (publish makes it; the first and second views and a
+  fresh instance cut nothing; only new content makes a new one) and
+  `tests/e2e/published-static.spec.ts` (a real published site: first view, repeat view and another
+  page all report a cache hit; test-mode-only `x-headline-font` header).
+- Production stays clean (`tests/unit/site-route-headers.test.ts`): the published-site route run as
+  production (no test mode; and on Vercel even with the test-mode switch set by mistake) sends no
+  `x-headline-font` header, the dev-site harness answers 404, and the font-cut counter stays at 0
+  (it only counts in test mode).
+- Slow 4G first visit, empty cache: the real headline typeface on all 10 kits, every run (body text
+  shows the size-matched fallback until the next page). Lighthouse: CLS 0 on all kits; performance
+  0.95 (restaurant) to 1.00.

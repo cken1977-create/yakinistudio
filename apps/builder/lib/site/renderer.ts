@@ -20,11 +20,14 @@ export type PublishedInput = {
   indexable: boolean
   islands?: SiteIsland[]
   nonce?: string | null
+  headline?: HeadlineFont | null
 }
+export type HeadlineFont = { css: string; bytes: number; displayOnly: string[] }
 type Renderer = {
+  headlineFont: (doc: SiteDoc) => Promise<HeadlineFont | null>
   renderPublished: (i: PublishedInput) => string
   neutralHtml: (title: string, note: string) => string
-  renderFixturePage: (i: { doc: SiteDoc; pageId: string; mode: 'live' | 'draft'; base: string }) => string
+  renderFixturePage: (i: { doc: SiteDoc; pageId: string; mode: 'live' | 'draft'; base: string; headline?: HeadlineFont | null; nonce?: string | null }) => string
 }
 
 let loaded: Renderer | null = null

@@ -8,6 +8,7 @@ import foodTruckEveryV2 from '@yakini/site-schema/fixtures/v2/food-truck-every-s
 import restaurantEveryV2 from '@yakini/site-schema/fixtures/v2/restaurant-every-section.json'
 import { isTestMode } from '@/lib/server/runtime'
 import { siteRenderer } from '@/lib/site/renderer'
+import { headlineFor } from '@/lib/site/headline-cache'
 
 /**
  * Test mode only (BUILDER_TEST_MODE=1, refused on Vercel): the design-quality harness. Renders any
@@ -40,6 +41,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ name
   const page = doc.pages.find((p) => p.slug === (path ?? []).join('/'))
   if (!page) return notFound()
   const mode = new URL(request.url).searchParams.get('mode') === 'draft' ? 'draft' : 'live'
-  const html = siteRenderer().renderFixturePage({ doc, pageId: page.id, mode, base: `/dev-site/${name}` })
-  return new Response(html, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } })
+  const r = siteRenderer()
+  // Fixtures are never published: cached per fixture name, like a published version.
+  const h = mode === 'live' ? await headlineFor({ testMode: true }, { siteId: `fixture-${name}`, versionId: name, doc }) : null
+  const headline = h?.font ?? null
+  const html = r.renderFixturePage({ doc, pageId: page.id, mode, base: `/dev-site/${name}`, headline, nonce: request.headers.get('x-nonce') })
+  return new Response(html, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex', 'x-headline-font': h ? (h.cached ? 'hit' : 'miss') : 'none' } })
 }

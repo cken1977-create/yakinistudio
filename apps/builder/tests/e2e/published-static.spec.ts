@@ -81,3 +81,16 @@ test('forms on a published page still submit with JavaScript off', async ({ page
   expect((await visitor.content()).match(/<script\b[^>]*>/g) ?? []).toEqual(['<script type="application/ld+json">'])
   await ctx.close()
 })
+
+test('the headline font is made at publish: every page view reads it from the cache, none cuts it', async ({ page }) => {
+  test.setTimeout(90_000)
+  const host = await publishedSite(page)
+  // The very first visitor, a repeat visit and another page: all cache hits (x-headline-font is a
+  // test-mode-only header the renderer sets: "hit" = read from the cache, "miss" = made now).
+  for (const path of ['/', '/', '/about']) {
+    const res = (await page.goto(site(host, path)))!
+    expect(res.status(), path).toBe(200)
+    expect(res.headers()['x-headline-font'], path).toBe('hit')
+    expect(await res.text()).toContain("font-family:'YS Headline'")
+  }
+})

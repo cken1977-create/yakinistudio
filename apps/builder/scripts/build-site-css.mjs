@@ -16,7 +16,7 @@
  * Extended) keep their files; browsers fetch those only for pages that use those letters.
  */
 import { createHash } from 'node:crypto'
-import { copyFileSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
+import { copyFileSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -127,5 +127,9 @@ const over = Object.entries(fonts).filter(([, n]) => n > FONT_BUDGET)
 if (over.length) throw new Error(`font budget ${FONT_BUDGET / 1024} KB per site exceeded: ${over.map(([p, n]) => `${p} ${(n / 1024).toFixed(1)} KB`).join(', ')}`)
 
 const v = createHash('sha256').update(css).digest('hex').slice(0, 12)
-writeFileSync(join(OUT, 'manifest.json'), JSON.stringify({ css: `/_site-assets/site.css?v=${v}`, fonts, fontBudget: FONT_BUDGET }) + '\n')
+// Fingerprint of every font file, so cached inline headline fonts are remade when fonts change.
+const fh = createHash('sha256')
+for (const n of readdirSync(FONTS).sort()) fh.update(n).update(readFileSync(join(FONTS, n)))
+const fontsVersion = fh.digest('hex').slice(0, 16)
+writeFileSync(join(OUT, 'manifest.json'), JSON.stringify({ css: `/_site-assets/site.css?v=${v}`, fonts, fontBudget: FONT_BUDGET, fontsVersion }) + '\n')
 console.log(`site.css ${Math.round(css.length / 1024)} KB, version ${v}; fonts per site: ${Object.entries(fonts).map(([p, n]) => `${p} ${(n / 1024).toFixed(1)} KB`).join(', ')}`)

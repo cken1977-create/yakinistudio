@@ -23,7 +23,8 @@ export function buildStudioCsp(nonce: string, opts: StudioCspOptions = {}): stri
     `style-src 'self' 'nonce-${nonce}'`,
     "style-src-attr 'unsafe-inline'",
     "img-src 'self' data: blob:",
-    "font-src 'self'",
+    // data: fonts: a site's headline font sent inside its own page (the studio previews them too).
+    "font-src 'self' data:",
     `connect-src ${connect}`,
     "frame-ancestors 'none'",
     "base-uri 'self'",
@@ -48,7 +49,8 @@ export function buildSiteCsp(nonce: string, opts: { isDev?: boolean } = {}): str
     `style-src 'self' 'nonce-${nonce}'`,
     "style-src-attr 'unsafe-inline'",
     "img-src 'self' data:",
-    "font-src 'self'",
+    // data: fonts: the site's own headline font, cut to its characters, sent inside the page.
+    "font-src 'self' data:",
     "connect-src 'self'",
     "frame-ancestors 'none'",
     "base-uri 'self'",

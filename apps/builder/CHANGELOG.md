@@ -1,5 +1,12 @@
 # Changelog: Yakini Builder
 
+
+## Headline font sent with the page (2026-11-27, branch `feat/inline-headline-font`)
+
+- Each published page carries its own headline typeface (cut to the site's characters, a few KB),
+  so the brand headline shows on a slow first visit with nothing moving. Made once at publish and
+  cached per published version; a page view never cuts fonts.
+
 ## Published sites without framework JavaScript (2026-11-27, branch `perf/static-published-sites`)
 
 - Published client pages are plain HTML from a route handler: a standalone renderer bundle with its
