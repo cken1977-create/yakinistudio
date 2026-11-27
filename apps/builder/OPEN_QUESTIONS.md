@@ -127,3 +127,9 @@ billing starts February 1, 2027 at the normal price. Built on `feat/builder-foun
 | P5-2 | Who manages DNS? | The owner adds records at their own provider; we never change their DNS. | Default |
 | P5-3 | First live test | `test.brsaregistry.com` (CNAME at Namecheap). The `brsaregistry.com` apex stays on its current project. | **Clarence adds the record** |
 | P5-4 | Client-owned hosting ("Move to my accounts") | Phase 5b, next. | Open |
+
+## D2 (premium sections)
+
+1. **Looks beyond Signature.** Section 6 names editorial, poster, craft and clean, and it gives the food truck "poster or craft" and tree-and-lawn "clean". This branch keeps the 2026-11-27 decision: restaurant, food truck and nonprofit start on Signature, and the other kits stay on Classic until D3. Those other looks and their fonts are not in this pull request.
+2. **About chapters and one photo.** The about section stores one photo. Chapters are numbered rows that alternate which side the text sits on, and that one photo sits on the first chapter. A photo on every row would need more than the one photo the owner stored.
+3. **Home "or" slots.** The D2 line says "feature rows or a menu highlight" and "a big quote or stats". The composer places feature rows, then stats, then a big quote. A section with nothing in it is left out, and stats and feature rows start empty, so a visitor only sees the ones the owner filled in.

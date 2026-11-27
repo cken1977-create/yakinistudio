@@ -341,3 +341,7 @@ Each has zod props, a server component, inspector fields and fixture coverage (a
 - Built on a `set_style` edit that the owner's clicks and undo may send, but the AI's chat edits never can. Brand colors and logo are untouched (R6).
 
 **Accessibility:** the filmstrip is a named, focusable region ("<heading>, photo strip") that scrolls with the arrow keys from the first photo to the last and back. Each photo is announced as "Photo n of N" with its alt text (`tests/e2e/filmstrip.spec.ts`, JavaScript on and off). axe: 44 of 44 fixture pages pass.
+
+**Screenshots:** the design gallery takes every fixture page at 390, 1280 and 1440 (D2 asked for 390 and 1440; the core spec asked for 390 and 1280). CI uploads them as the `design-gallery` artifact. Nothing binary is committed.
+
+**Phone photos:** a full-bleed hero was asking the phone for the 960-wide file, because the next smaller copy is 640. Tree-and-lawn and nonprofit then missed the 0.95 speed budget (0.91 and 0.93, layout shift still 0). Each sample photo now also has an 800-wide WebP, which is the size a phone actually needs. After that, three runs: tree-and-lawn 0.95, nonprofit 0.96–0.97. Accessibility 1 and layout shift 0 on both. Fonts stay under 100 KB per site (signature 91.3 KB).

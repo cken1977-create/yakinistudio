@@ -281,7 +281,7 @@ describe('kit sample images ship with the studio', () => {
     expect(unlicensedSamples()).toEqual([])
     for (const kit of Object.values(BUILDER_KITS)) for (const s of kit!.sampleImages) {
       expect(existsSync(join(__dirname, '..', '..', 'public', s.storagePath)), s.storagePath).toBe(true)
-      if (s.webp) for (const f of [s.webp.large, s.webp.small]) {
+      if (s.webp) for (const f of [s.webp.large, s.webp.small, s.webp.phone].filter((f): f is string => Boolean(f))) {
         expect(existsSync(join(__dirname, '..', '..', 'public', 'kit-samples', kit!.id, f)), f).toBe(true)
       }
     }
