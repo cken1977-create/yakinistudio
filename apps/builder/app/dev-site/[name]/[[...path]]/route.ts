@@ -40,6 +40,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ name
   const page = doc.pages.find((p) => p.slug === (path ?? []).join('/'))
   if (!page) return notFound()
   const mode = new URL(request.url).searchParams.get('mode') === 'draft' ? 'draft' : 'live'
-  const html = siteRenderer().renderFixturePage({ doc, pageId: page.id, mode, base: `/dev-site/${name}` })
+  const r = siteRenderer()
+  const headline = mode === 'live' ? await r.headlineFont(doc) : null
+  const html = r.renderFixturePage({ doc, pageId: page.id, mode, base: `/dev-site/${name}`, headline, nonce: request.headers.get('x-nonce') })
   return new Response(html, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } })
 }

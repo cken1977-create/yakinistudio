@@ -29,12 +29,12 @@ export function siteCssHref(): string {
  * are ready before the first paint: no swap, so nothing moves (CLS). Same files the page downloads
  * anyway, within the 100 KB font budget; nothing from another site.
  */
-export function fontPreloads(pair: string): string[] {
-  const keys = (FONT_FILES as Record<string, string[]>)[pair] ?? []
+export function fontPreloads(pair: string, skip: readonly string[] = []): string[] {
+  const keys = ((FONT_FILES as Record<string, string[]>)[pair] ?? []).filter((k) => !skip.includes(k))
   return keys.map((k) => { const [, family, style] = k.match(/^(.+)-(normal|italic)$/)!; return `/_site-assets/fonts/${family}-latin-wght-${style}.woff2` })
 }
 
-type Head = { fonts?: string[]; title: string; description: string | null; canonical: string | null; robots: 'index' | 'noindex'; og?: { url: string; siteName: string; image?: string } }
+type Head = { fonts?: string[]; inlineCss?: string; title: string; description: string | null; canonical: string | null; robots: 'index' | 'noindex'; og?: { url: string; siteName: string; image?: string } }
 
 function Document({ head, children, islands, nonce }: { head: Head; children: ReactNode; islands: SiteIsland[]; nonce: string | null }) {
   for (const f of head.fonts ?? []) preload(f, { as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' })
@@ -60,6 +60,8 @@ function Document({ head, children, islands, nonce }: { head: Head; children: Re
         ) : null}
         <link rel="icon" href="data:," />
         <link rel="stylesheet" href={siteCssHref()} />
+        {/* The site's own headline font, cut to its characters and sent with the page (no swap, ever). */}
+        {head.inlineCss ? <style nonce={nonce ?? undefined} dangerouslySetInnerHTML={{ __html: head.inlineCss }} /> : null}
       </head>
       <body>
         {children}
@@ -75,12 +77,15 @@ const doctype = (body: string) => `<!doctype html>${body}`
 export function publishedPageHtml(o: {
   doc: SiteDoc; page: Page; ctx: RenderContext; canonicalHost: string; indexable: boolean; thanks: boolean
   islands?: SiteIsland[]; nonce?: string | null
+  /** The site's inline headline font (lib/site/headline-font.ts); its display-only files then aren't preloaded. */
+  headline?: { css: string; displayOnly: string[] } | null
 }): string {
   const meta = metaFor(o.doc, o.page)
   const title = o.thanks ? `Thank you · ${o.doc.business.name}` : meta.title
   const url = `https://${o.canonicalHost}${o.page.slug ? `/${o.page.slug}` : ''}`
   const head: Head = {
-    fonts: fontPreloads(o.doc.style.fontPair),
+    fonts: fontPreloads(o.doc.style.fontPair, o.headline?.displayOnly ?? []),
+    inlineCss: o.headline?.css,
     title, description: meta.description, canonical: url,
     robots: o.indexable && !o.thanks && !o.page.seo?.noindex ? 'index' : 'noindex',
     og: { url, siteName: o.doc.business.name, ...(o.doc.seo.ogImageAssetId ? { image: `https://${o.canonicalHost}/assets/${o.doc.seo.ogImageAssetId}` } : {}) },

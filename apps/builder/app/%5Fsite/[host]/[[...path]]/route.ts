@@ -43,11 +43,14 @@ async function render(request: Request, { params }: Ctx): Promise<Response> {
   }
 
   const reportUrl = v.reportLinkHidden ? null : `${studioOrigin()}/report?site=${v.siteId}`
+  // The site's headline font travels with the page; without it the page still reads (fallback font).
+  let headline = null
+  try { headline = await renderer.headlineFont(v.doc) } catch (e) { Sentry.captureException(e, { tags: { area: 'headline-font' } }) }
   const body = renderPublished({
     doc: v.doc, pageId: v.kind === 'page' ? v.page.id : null, thanks: v.kind === 'thanks' ? { formKey: v.formKey } : null,
     siteId: v.siteId, reportUrl, formStamp: freshFormStamp(), canonicalHost: v.canonicalHost, indexable: v.indexable,
     // D7: 3D-plan sites will pass their first-party islands and the request nonce here. None today.
-    islands: [], nonce: request.headers.get('x-nonce'),
+    islands: [], nonce: request.headers.get('x-nonce'), headline,
   })
   return html(body, 200)
 }

@@ -3,6 +3,7 @@ import { neutralHtml, publishedPageHtml, type SiteIsland } from './html'
 import { draftImage } from '@/lib/draft/preview'
 import type { RenderContext } from '@yakini/sections'
 import { liveContext, thanksPage } from './live'
+import { headlineFont, type HeadlineFont } from './headline-font'
 
 /**
  * Entry point of the standalone published-page renderer (scripts/build-site-renderer.mjs bundles
@@ -21,13 +22,17 @@ export type PublishedInput = {
   indexable: boolean
   islands?: SiteIsland[]
   nonce?: string | null
+  /** From headlineFont(doc), awaited by the route first. */
+  headline?: HeadlineFont | null
 }
+
+export { headlineFont }
 
 export function renderPublished(i: PublishedInput): string {
   const page = i.thanks ? thanksPage(i.doc, i.thanks.formKey) : i.doc.pages.find((p) => p.id === i.pageId)
   if (!page) throw new Error('page not found')
   const ctx = liveContext(i.doc, page, { siteId: i.siteId, reportUrl: i.reportUrl, formStamp: i.formStamp, forms: true })
-  return publishedPageHtml({ doc: i.doc, page, ctx, canonicalHost: i.canonicalHost, indexable: i.indexable, thanks: Boolean(i.thanks), islands: i.islands, nonce: i.nonce })
+  return publishedPageHtml({ doc: i.doc, page, ctx, canonicalHost: i.canonicalHost, indexable: i.indexable, thanks: Boolean(i.thanks), islands: i.islands, nonce: i.nonce, headline: i.headline })
 }
 
 export { neutralHtml }
@@ -38,7 +43,7 @@ export { neutralHtml }
  * preview of a draft (same renderer, draft mode).
  */
 const FALLBACK_IMAGE = '7a1e0000-0000-4000-8000-000000000101'
-export function renderFixturePage(i: { doc: SiteDoc; pageId: string; mode: 'live' | 'draft'; base: string }): string {
+export function renderFixturePage(i: { doc: SiteDoc; pageId: string; mode: 'live' | 'draft'; base: string; headline?: HeadlineFont | null; nonce?: string | null }): string {
   const page = i.doc.pages.find((p) => p.id === i.pageId)
   if (!page) throw new Error('page not found')
   const q = i.mode === 'draft' ? '?mode=draft' : ''
@@ -50,5 +55,5 @@ export function renderFixturePage(i: { doc: SiteDoc; pageId: string; mode: 'live
     reportUrl: i.mode === 'live' ? '/report' : null,
     today: null,
   }
-  return publishedPageHtml({ doc: i.doc, page, ctx, canonicalHost: 'localhost', indexable: false, thanks: false })
+  return publishedPageHtml({ doc: i.doc, page, ctx, canonicalHost: 'localhost', indexable: false, thanks: false, headline: i.headline, nonce: i.nonce })
 }

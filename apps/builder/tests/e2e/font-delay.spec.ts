@@ -26,6 +26,15 @@ for (const f of RICH) {
     await page.evaluate(() => document.fonts.ready)
     await page.waitForTimeout(600)
     expect(fonts, 'web fonts requested').toBeGreaterThan(0)
+    // The headline is drawn in the site's own typeface even with the font files late: it travels
+    // inside the page (the inline 'YS Headline' face, loaded, and first in the headline's stack).
+    const headline = await page.evaluate(async () => {
+      const h = document.querySelector('#hero h1') ?? document.querySelector('main h1')!
+      const faces = [...document.fonts].filter((f) => f.family.replace(/"/g, '') === 'YS Headline')
+      await Promise.allSettled(faces.map((f) => f.loaded))
+      return { first: getComputedStyle(h).fontFamily.split(',')[0].replace(/["']/g, '').trim(), loaded: faces.length > 0 && faces.every((f) => f.status === 'loaded') }
+    })
+    expect(headline).toEqual({ first: 'YS Headline', loaded: true })
     const shifts = await page.evaluate(() => (window as unknown as { __shifts: number[] }).__shifts)
     const cls = shifts.reduce((n, v) => n + v, 0)
     expect(cls, `layout shift ${cls.toFixed(4)}`).toBeLessThanOrEqual(0.02)
