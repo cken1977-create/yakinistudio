@@ -389,24 +389,35 @@ is run; Meshy and fal left for D7.
 - Browser: `tests/e2e/imagery.spec.ts`: sparse draft full photo set at 390 and 1440 (loaded, sized,
   alt, AVIF+WebP, placeholder, no empty gallery, phone crop); imported site filter and hero; no
   request to other sites on five rich published pages. Full suite: 194 passed.
-- Lighthouse (phone, throttled, 3 runs, medians):
+- Lighthouse (phone, throttled, 3 runs, medians), after D4-1 (below):
 
 | Kit | LCP | Perf | CLS |
 |---|---|---|---|
-| food-truck | 1.84 s | 1.00 | 0 |
-| landlord | 1.91 s | 1.00 | 0 |
-| oilfield | 1.83 s | 1.00 | 0 |
-| service | 0.93 s | 1.00 | 0 |
-| tree-lawn | 1.90 s | 1.00 | 0 |
-| trucking | 1.82 s | 1.00 | 0 |
-| training-school | 2.06 s | 0.99 | 0 |
-| restaurant | 2.20 s | 0.99 | 0 |
-| nonprofit | 2.21 s | 0.98 | 0 |
-| real-estate | 2.28 s | 0.98 | 0 |
+| food-truck | 1.63 s | 1.00 | 0.001 |
+| landlord | 1.68 s | 1.00 | 0 |
+| oilfield | 1.59 s | 0.99 | 0 |
+| service | 0.92 s | 1.00 | 0 |
+| tree-lawn | 1.98 s | 0.99 | 0 |
+| trucking | 1.60 s | 0.99 | 0.001 |
+| training-school | 1.75 s | 1.00 | 0 |
+| restaurant | 1.92 s | 1.00 | 0 |
+| nonprofit | 1.91 s | 1.00 | 0 |
+| real-estate | 1.90 s | 1.00 | 0 |
 
-Restaurant performance went from 0.93 to 0.99 and its baseline line is gone. LCP under 2.0 s is met
-on six kits. The other four are held by their fonts, not their photos: their phone hero is 15-37 KB,
-and Lighthouse's throttled model counts every font file (high priority) but not lazy photos. An
-experiment without the mono-font preload brought real estate under 2.0 s; restaurant stayed at
-2.2 s (its two display-font files and the inline headline font). Those four have a recorded 2.4 s
-LCP line in `lighthouserc.cjs` until Clarence decides on fonts (OPEN_QUESTIONS D4-1).
+Every kit meets LCP < 2.0 s; no exceptions in `lighthouserc.cjs`. Restaurant performance went from
+0.93 to 1.00. Tightest margin: tree-lawn (1.95-1.99 s locally).
+
+### D4-1 (Clarence 2026-11-28): display font only from the inline headline font
+
+- Published pages carry the display font only as the inline subset ('YS Headline'). The display
+  variable points at it, then the size-matched local fallback, never the web display family, so no
+  separate display font file is downloaded on any kit (checked in the Lighthouse reports).
+- Each inline face covers every weight (one cut at the display weight, no faux bold). Text in the
+  display family at other weights (quotes, initials) now draws at the display weight.
+- The cut always includes printable ASCII and common punctuation, so text the page adds itself
+  has its glyphs. Inline size per site: 12-13 KB (poster, paper, clean), 28-31 KB (signature,
+  craft with italics); was 7-23 KB, while the 20-44 KB display files are no longer fetched.
+- Mono label fonts (JetBrains Mono, IBM Plex Mono) are no longer preloaded. They still load for
+  labels (font-display: optional, so nothing moves; a slow first visit shows the size-matched
+  fallback for labels).
+- Before D4-1, four kits were 2.05-2.28 s, limited by font files.

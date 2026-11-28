@@ -85,7 +85,8 @@ describe('headline font: made at publish, never per page view', () => {
     const { headlineFor } = await cache()
     const site = await publishReady()
     const c0 = await cuts()
-    const changed = { ...site, versionId: '7a1e0000-0000-4000-8000-00000000ffff', doc: { ...site.doc, business: { ...site.doc.business, name: 'Zebra Quartz Joy' } } }
+    // Letters outside the always-included ASCII, so the cut really changes.
+    const changed = { ...site, versionId: '7a1e0000-0000-4000-8000-00000000ffff', doc: { ...site.doc, business: { ...site.doc.business, name: 'Ørsted Œuvre Ñandú' } } }
     const first = await headlineFor({ testMode: true }, changed)
     expect(first.cached).toBe(false)
     expect(await cuts()).toBeGreaterThan(c0)

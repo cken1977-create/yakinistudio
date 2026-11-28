@@ -63,7 +63,9 @@ describe('font preloads (no swap, no layout shift)', () => {
       const head = html.match(/<head>[\s\S]*?<\/head>/)![0]
       const fonts = [...head.matchAll(/<link rel="preload" href="([^"]+)" as="font"[^>]*>/g)].map((m) => m[1])
       expect(fonts, f.name).toEqual(fontPreloads(f.doc.style.fontPair))
-      expect(fonts.length, f.name).toBe((FONT_FILES as Record<string, string[]>)[f.doc.style.fontPair].length)
+      // D4-1: mono label fonts are never preloaded (not needed for the first paint).
+      expect(fonts.length, f.name).toBe((FONT_FILES as Record<string, string[]>)[f.doc.style.fontPair].filter((k) => !k.includes('-mono-')).length)
+      expect(fonts.join(' ')).not.toContain('mono')
       for (const u of fonts) expect(u).toMatch(/^\/_site-assets\/fonts\/[a-z0-9-]+-latin-wght-(normal|italic)\.woff2$/)
       for (const tag of head.match(/<link rel="preload"[^>]*as="font"[^>]*>/g) ?? []) expect(tag).toMatch(/crossorigin=""/)
     }

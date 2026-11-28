@@ -9,7 +9,6 @@
  * keep their own indexing checks (Phase 3/4 tests).
  */
 const KITS = ['food-truck', 'restaurant', 'landlord', 'real-estate', 'tree-lawn', 'nonprofit', 'training-school', 'trucking', 'oilfield', 'service']
-const SLOW_FONTS = ['restaurant', 'nonprofit', 'real-estate', 'training-school']
 const PORT = Number(process.env.LHCI_PORT || 3200)
 // LHCI_ONLY=food-truck,restaurant limits the run to some kits.
 const ONLY = process.env.LHCI_ONLY ? process.env.LHCI_ONLY.split(',') : null
@@ -33,16 +32,9 @@ module.exports = {
       settings: { chromeFlags: '--no-sandbox --headless=new', skipAudits: ['is-crawlable'], ...(process.env.CHROME_PATH ? { chromePath: process.env.CHROME_PATH } : {}) },
     },
     assert: {
-      assertMatrix: [
-        // D4 removed the restaurant performance baseline: every kit now meets every D1 budget, and
-        // six kits paint their largest photo within 2.0 s on the throttled mobile run.
-        { matchingUrlPattern: `^(?!.*/dev-site/(${SLOW_FONTS.join('|')})-rich).*$`, assertions: BUDGETS },
-        // Recorded baseline (D4, waiting on Clarence): these four meet every other budget, but LCP is
-        // 2.05-2.29 s because of their font files (signature/editorial/clean pairs plus the inline
-        // headline font), not their photos (the phone hero is now 15-37 KB). Kept at 2.4 s so CI
-        // catches regressions; removed once the font decision lands.
-        { matchingUrlPattern: `/dev-site/(${SLOW_FONTS.join('|')})-rich`, assertions: { ...BUDGETS, 'largest-contentful-paint': ['error', { maxNumericValue: 2400 }] } },
-      ],
+      // D4 and D4-1: every kit meets every budget, including LCP < 2.0 s on the throttled phone run.
+      // No per-kit exceptions.
+      assertions: BUDGETS,
     },
     upload: { target: 'filesystem', outputDir: process.env.LHCI_OUT || './lhci-report' },
   },

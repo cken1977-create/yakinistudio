@@ -144,12 +144,8 @@ billing starts February 1, 2027 at the normal price. Built on `feat/builder-foun
 
 ## D4 (imagery) open
 
-1. **Fonts and LCP (D4-1).** Six kits paint their largest photo under 2.0 s on Lighthouse's throttled
-   phone run. Restaurant, nonprofit (signature), real estate (editorial) and training school (clean)
-   are at 2.06-2.28 s because of their font files, not photos. Options: stop preloading the small
-   mono label font (brought real estate under 2.0 s in a test), or load the display font only from
-   the inline headline subset. Both change how type first appears, so they wait for your call.
-   Until then those four have a recorded 2.4 s LCP line in `lighthouserc.cjs`.
+1. **Fonts and LCP (D4-1).** Resolved 2026-11-28: display font only from the inline headline
+   subset, mono label fonts not preloaded, LCP < 2.0 s on every kit with no exceptions.
 2. **Switching images on.** Settings (names only): `AI_IMAGE_GENERATION_ENABLED=1`,
    `AI_IMAGE_DAILY_USD_CAP` (dollars; at most `AI_GLOBAL_DAILY_USD_CAP`), and optionally
    `XAI_IMAGE_MODEL` (default `grok-imagine-image-2.0`), `XAI_VISION_MODEL`. Uses `XAI_API_KEY`.

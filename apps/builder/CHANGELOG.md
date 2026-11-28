@@ -14,6 +14,9 @@
 - Images are off until switched on: `AI_IMAGE_GENERATION_ENABLED=1` and `AI_IMAGE_DAILY_USD_CAP`
   (inside `AI_GLOBAL_DAILY_USD_CAP`; text gets the rest). Both caps fail closed.
 - Kit library: made by hand with `scripts/generate-kit-library.ts` (never in CI or on deploy).
+- Faster first paint (D4-1): published pages no longer download a separate display font file; the
+  headline font sent with the page is the only display font. Mono label fonts are not preloaded.
+  Every kit paints its largest element under 2.0 s on a throttled phone.
 - Database (repo only, not applied): `20261128000100_builder_imagery.sql`.
 
 ## Headline font sent with the page (2026-11-27, branch `feat/inline-headline-font`)
