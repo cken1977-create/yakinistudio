@@ -135,7 +135,7 @@ export const nonprofit: KitDefinition = {
   id: 'nonprofit',
   name: 'Nonprofit',
   pageTemplates: PAGES,
-  allowedSections: ['header', 'hero', 'about', 'services', 'schedule', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'catering_request', 'today', 'footer'],
+  allowedSections: ['header', 'hero', 'about', 'services', 'schedule', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'catering_request', 'today', 'footer', 'ticker', 'stats', 'feature_rows'],
   defaultVariants: { header: 'bar', hero: 'split', about: 'right-image', services: 'cards', schedule: 'list', gallery: 'grid', hours_location: 'split', testimonials: 'single', faq: 'accordion', team: 'grid', cta_band: 'solid', contact_form: 'simple', catering_request: 'simple', today: 'banner', footer: 'simple' },
   fontPairs: ['friendly', 'editorial', 'modern'],
   copyTone: 'Hopeful, humble and concrete, like a volunteer coordinator welcoming someone new. Lead with the people served and the work done. Real numbers only, no guilt, no exaggerated claims; respect the dignity of the people you serve.',

@@ -153,7 +153,7 @@ export const realEstate: KitDefinition = {
   id: 'real-estate',
   name: 'Real estate',
   pageTemplates: PAGES,
-  allowedSections: ['header', 'hero', 'about', 'services', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'booking', 'today', 'footer'],
+  allowedSections: ['header', 'hero', 'about', 'services', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'booking', 'today', 'footer', 'ticker', 'stats', 'feature_rows'],
   defaultVariants: { header: 'bar', hero: 'fullbleed', about: 'right-image', services: 'cards', gallery: 'grid', hours_location: 'split', testimonials: 'cards', faq: 'accordion', team: 'grid', cta_band: 'solid', contact_form: 'simple', booking: 'card', today: 'banner', footer: 'simple' },
   fontPairs: ['editorial', 'classic', 'modern'],
   copyTone: 'Warm, knowledgeable and calm, like a trusted local agent. Talk about homes, neighborhoods and the steps of buying or selling. Never promise a sale price, a timeline or returns, and never describe who should live in a neighborhood.',

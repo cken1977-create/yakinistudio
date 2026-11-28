@@ -144,7 +144,7 @@ export const landlord: KitDefinition = {
   id: 'landlord',
   name: 'Landlord',
   pageTemplates: PAGES,
-  allowedSections: ['header', 'hero', 'about', 'services', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'today', 'footer'],
+  allowedSections: ['header', 'hero', 'about', 'services', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'today', 'footer', 'ticker', 'stats', 'feature_rows'],
   defaultVariants: { header: 'bar', hero: 'split', about: 'right-image', services: 'cards', gallery: 'grid', hours_location: 'split', testimonials: 'cards', faq: 'accordion', team: 'grid', cta_band: 'solid', contact_form: 'simple', today: 'banner', footer: 'simple' },
   fontPairs: ['modern', 'classic', 'friendly'],
   copyTone: 'Steady, clear and respectful, like a landlord residents trust. Lead with the homes and how problems get fixed. Plain words about rent, repairs and leases; never promise approval or hide terms.',

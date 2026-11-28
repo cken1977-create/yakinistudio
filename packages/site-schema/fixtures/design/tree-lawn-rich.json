@@ -101,7 +101,7 @@
         {
           "id": "hero",
           "type": "hero",
-          "variant": "fullbleed",
+          "variant": "cinematic",
           "hidden": false,
           "props": {
             "eyebrow": "Tree and lawn care in Lubbock",
@@ -136,6 +136,32 @@
           "props": {
             "heading": "Today",
             "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "ticker",
+          "type": "ticker",
+          "variant": "marquee",
+          "hidden": false,
+          "props": {
+            "label": "What we do",
+            "items": [
+              "Tree trimming and removal",
+              "Lawn care",
+              "Tree trimming",
+              "Tree removal",
+              "Mowing and edging"
+            ]
+          }
+        },
+        {
+          "id": "features",
+          "type": "feature_rows",
+          "variant": "alternating",
+          "hidden": false,
+          "props": {
+            "heading": "What sets us *apart*",
+            "items": []
           }
         },
         {
@@ -188,27 +214,43 @@
           }
         },
         {
-          "id": "estimate-cta",
-          "type": "cta_band",
-          "variant": "solid",
+          "id": "stats",
+          "type": "stats",
+          "variant": "band",
           "hidden": false,
           "props": {
-            "headline": "Get a free estimate",
-            "body": "Tell us about your yard and we’ll come take a look.",
-            "cta": {
-              "label": "Get a free estimate",
-              "target": {
-                "kind": "section",
-                "pageId": "estimate",
-                "sectionId": "estimate-form"
+            "heading": "By the *numbers*",
+            "items": []
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "big-quote",
+          "hidden": false,
+          "props": {
+            "heading": "What neighbors say",
+            "items": [
+              {
+                "quote": "They took down a dead oak next to the house without a scratch.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "Weekly mowing that actually shows up on the same day.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "Fair quote, clean yard, and they hauled everything away.",
+                "name": "Dana L."
               }
-            }
+            ]
           }
         },
         {
           "id": "home-photos",
           "type": "gallery",
-          "variant": "grid",
+          "variant": "mosaic",
           "hidden": false,
           "props": {
             "heading": "A closer look",
@@ -249,33 +291,31 @@
           }
         },
         {
-          "id": "reviews",
-          "type": "testimonials",
-          "variant": "cards",
+          "id": "estimate-cta",
+          "type": "cta_band",
+          "variant": "image",
           "hidden": false,
           "props": {
-            "heading": "What neighbors say",
-            "items": [
-              {
-                "quote": "They took down a dead oak next to the house without a scratch.",
-                "name": "Maria G.",
-                "source": "Google"
-              },
-              {
-                "quote": "Weekly mowing that actually shows up on the same day.",
-                "name": "Sam T."
-              },
-              {
-                "quote": "Fair quote, clean yard, and they hauled everything away.",
-                "name": "Dana L."
+            "headline": "Get a free estimate",
+            "body": "Tell us about your yard and we’ll come take a look.",
+            "cta": {
+              "label": "Get a free estimate",
+              "target": {
+                "kind": "section",
+                "pageId": "estimate",
+                "sectionId": "estimate-form"
               }
-            ]
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000603",
+              "alt": "A bucket truck and wood chipper at a home while a worker feeds branches"
+            }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -368,7 +408,7 @@
         {
           "id": "services-cta",
           "type": "cta_band",
-          "variant": "outline",
+          "variant": "image",
           "hidden": false,
           "props": {
             "headline": "Not sure what you need?",
@@ -380,13 +420,17 @@
                 "pageId": "estimate",
                 "sectionId": "estimate-form"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000602",
+              "alt": "A freshly mowed striped lawn in front of a stone house"
             }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -477,7 +521,7 @@
         {
           "id": "work-cta",
           "type": "cta_band",
-          "variant": "solid",
+          "variant": "image",
           "hidden": false,
           "props": {
             "headline": "Want your yard to look like this?",
@@ -488,13 +532,17 @@
                 "pageId": "estimate",
                 "sectionId": "estimate-form"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000604",
+              "alt": "A landscaper edging the lawn along a stone garden path"
             }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -564,7 +612,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -617,7 +665,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }

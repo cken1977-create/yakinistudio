@@ -39,16 +39,17 @@ export function trimTo(s: string, max: number): string {
 }
 
 /**
- * A photo sample shipped as a JPEG (every browser) plus full-size, 960-wide and 640-wide WebP copies, all in
- * public/kit-samples/<kit>/. Photos are made for Yakini's kits and contain no people's faces,
- * logos or readable text.
+ * A photo sample shipped as a JPEG (every browser) plus full-size, 960-wide, 800-wide and 640-wide
+ * WebP copies, all in public/kit-samples/<kit>/. The 800-wide file is the phone step: a phone
+ * otherwise jumps from 640 to 960 and downloads more than the screen needs. Photos are made for
+ * Yakini's kits and contain no people's faces, logos or readable text.
  */
 export function photoSample(kit: string, key: string, assetId: string, alt: string, sourceNote: string): SampleImage {
   return {
     key, assetId, alt,
     storagePath: `kit-samples/${kit}/${key}.jpg`,
     mime: 'image/jpeg', width: 1280, height: 720,
-    webp: { large: `${key}.webp`, small: `${key}-sm.webp`, smallWidth: 640, medium: `${key}-md.webp`, mediumWidth: 960 },
+    webp: { large: `${key}.webp`, small: `${key}-sm.webp`, smallWidth: 640, phone: `${key}-ph.webp`, phoneWidth: 800, medium: `${key}-md.webp`, mediumWidth: 960 },
     license: { kind: 'yakini-owned', source: `Sample photo made for Yakini Digital's ${kit} kit, Nov 2026 (${sourceNote})`, redistributable: true },
   }
 }

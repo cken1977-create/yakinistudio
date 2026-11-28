@@ -139,7 +139,7 @@ export const treeLawn: KitDefinition = {
   id: 'tree-lawn',
   name: 'Tree and lawn',
   pageTemplates: PAGES,
-  allowedSections: ['header', 'hero', 'about', 'services', 'schedule', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'booking', 'today', 'footer'],
+  allowedSections: ['header', 'hero', 'about', 'services', 'schedule', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'booking', 'today', 'footer', 'ticker', 'stats', 'feature_rows'],
   defaultVariants: { header: 'bar', hero: 'fullbleed', about: 'left-image', services: 'cards', schedule: 'list', gallery: 'grid', hours_location: 'split', testimonials: 'cards', faq: 'accordion', team: 'grid', cta_band: 'solid', contact_form: 'with-details', booking: 'card', today: 'banner', footer: 'simple' },
   fontPairs: ['friendly', 'modern', 'classic'],
   copyTone: 'Down-to-earth and dependable, like a crew lead talking to a homeowner over the fence. Name the actual work: trimming, removal, mowing, cleanup. Short sentences; stress safety, clean-up and a clear price before work starts.',

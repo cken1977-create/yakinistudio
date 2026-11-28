@@ -7,6 +7,7 @@ import {
   TeamSection, TestimonialsSection, TodaySection,
 } from './sections/content'
 import { BookingSection, CateringRequestSection, ContactFormSection } from './sections/forms'
+import { FeatureRowsSection, StatsSection, TickerSection } from './sections/d2'
 import { HoursLocationSection } from './sections/hours'
 import { themeFor } from './theme'
 
@@ -29,6 +30,9 @@ function renderSection(ctx: RenderContext, s: Section, first: boolean): ReactNod
     case 'catering_request': return <CateringRequestSection ctx={ctx} s={s} first={first} />
     case 'today': return <TodaySection ctx={ctx} s={s} first={false} />
     case 'footer': return <FooterSection ctx={ctx} s={s} />
+    case 'ticker': return <TickerSection ctx={ctx} s={s} />
+    case 'stats': return <StatsSection ctx={ctx} s={s} first={first} />
+    case 'feature_rows': return <FeatureRowsSection ctx={ctx} s={s} first={first} />
   }
 }
 
@@ -38,6 +42,8 @@ const NOT_MAIN = new Set(['header', 'footer', 'today'])
  * One page of a client site (spec 7.3). Pure server rendering: every section reads correctly with
  * JavaScript off, and nothing loads from outside the site (no scripts, fonts, iframes or embeds).
  */
+const OWN_BACKDROP = new Set<Section['type']>(['hero', 'ticker', 'cta_band', 'today'])
+
 export function SiteView({ ctx: given }: { ctx: RenderContext }) {
   // A visitor never sees a placeholder: outside the editor the doc is rendered without them (D1 step 5).
   const ctx = given.editing ? given : visitorView(given)
@@ -52,12 +58,22 @@ export function SiteView({ ctx: given }: { ctx: RenderContext }) {
   const body = sections.filter((s) => s.type !== 'header' && s.type !== 'footer')
   // In a draft each section is marked so the editor can select it with a click; live pages carry no ids.
   const mark = (s: Section) => (ctx.mode === 'draft' ? { 'data-ys-section': s.id } : {})
+  // Rhythm rule 3 (design D2): neighbouring sections alternate surface depth on the design-v2
+  // looks, so two text sections that sit together still read as two. Sections with their own
+  // backdrop (hero, ticker, call-to-action bands, today's update) don't take part. Classic keeps
+  // its markup exactly (plan 7.4).
+  const raised = new Set<string>()
+  if (style.preset !== 'classic') {
+    let n = 0
+    for (const s of body) if (!OWN_BACKDROP.has(s.type)) { if (n % 2 === 1) raised.add(s.id); n++ }
+  }
+  const depth = (s: Section) => (raised.has(s.id) ? { 'data-depth': 'raised' } : {})
   return (
     <div className="ys-site" data-preset={style.preset} data-surface={style.surface} data-font={style.fontPair} {...(style.preset === 'classic' ? {} : { 'data-motion': style.motion, 'data-radius': style.radius })} data-kit={ctx.doc.kitId} style={vars as CSSProperties}>
       <a className="ys-skip" href="#ys-main">Skip to content</a>
       {header.map((s) => <div key={s.id} className="ys-slot" {...mark(s)}>{renderSection(ctx, s, false)}</div>)}
       <main id="ys-main" tabIndex={-1}>
-        {body.map((s) => <div key={s.id} className="ys-slot" {...mark(s)}>{renderSection(ctx, s, sections.indexOf(s) === firstMain)}</div>)}
+        {body.map((s) => <div key={s.id} className="ys-slot" {...depth(s)} {...mark(s)}>{renderSection(ctx, s, sections.indexOf(s) === firstMain)}</div>)}
         {/* Draft preview of a page with nothing filled in yet: its title, so the page is never blank. */}
         {ctx.mode === 'draft' && !given.editing && firstMain < 0 ? (
           <section className="ys-s ys-page-title" aria-labelledby="ys-page-title-h"><div className="ys-wrap"><h1 id="ys-page-title-h" className="ys-display">{ctx.page.title}</h1></div></section>

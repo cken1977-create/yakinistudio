@@ -182,6 +182,14 @@ describe('generateContent retry loop', () => {
 
 describe('sanitizeContent (8.8, 14.8)', () => {
   const kit = BUILDER_KITS['food-truck']!
+  it('drops any numbers the writer put in a stats band: only the owner adds stats (D2)', () => {
+    const c = kit.template({ name: 'Mesa Street Tacos' })
+    const stats = c.pages[0].sections.find((s) => s.type === 'stats')!
+    stats.props = { ...(stats.props as object), items: [{ value: '15', label: 'years on the road' }, { value: '10k', label: 'tacos a month' }] } as typeof stats.props
+    const { content, report } = sanitizeContent(c, { kit, businessName: 'Mesa Street Tacos', ownHosts: [], allowedAssetIds: new Set() })
+    expect(content.pages[0].sections.find((s) => s.type === 'stats')!.props).toMatchObject({ items: [] })
+    expect(report.removedStats).toBe(2)
+  })
   it('keeps own-site and social links, replaces others with the home page, drops unknown images, resets forms', () => {
     const c = kit.template({ name: 'Mesa Street Tacos' })
     const hero = c.pages[0].sections[1].props as Record<string, unknown>
@@ -273,7 +281,7 @@ describe('kit sample images ship with the studio', () => {
     expect(unlicensedSamples()).toEqual([])
     for (const kit of Object.values(BUILDER_KITS)) for (const s of kit!.sampleImages) {
       expect(existsSync(join(__dirname, '..', '..', 'public', s.storagePath)), s.storagePath).toBe(true)
-      if (s.webp) for (const f of [s.webp.large, s.webp.small]) {
+      if (s.webp) for (const f of [s.webp.large, s.webp.small, s.webp.phone].filter((f): f is string => Boolean(f))) {
         expect(existsSync(join(__dirname, '..', '..', 'public', 'kit-samples', kit!.id, f)), f).toBe(true)
       }
     }

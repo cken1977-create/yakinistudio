@@ -19,6 +19,7 @@ export const INSPECTORS: Record<SectionType, readonly InspectorField[]> = {
     { path: '/headline', label: 'Headline', kind: 'text' },
     { path: '/subhead', label: 'Subheading', kind: 'textarea' },
     { path: '/image', label: 'Photo', kind: 'image' },
+    { path: '/images', label: 'More photos (collage)', kind: 'list' },
     { path: '/primaryCta', label: 'Main button', kind: 'link' },
     { path: '/secondaryCta', label: 'Second button', kind: 'link' },
   ],
@@ -26,6 +27,7 @@ export const INSPECTORS: Record<SectionType, readonly InspectorField[]> = {
     { path: '/heading', label: 'Heading', kind: 'text' },
     { path: '/body', label: 'Story', kind: 'richtext' },
     { path: '/image', label: 'Photo', kind: 'image' },
+    { path: '/pullQuote', label: 'Line to set large (chapters)', kind: 'textarea' },
   ],
   services: [
     { path: '/heading', label: 'Heading', kind: 'text' },
@@ -91,6 +93,7 @@ export const INSPECTORS: Record<SectionType, readonly InspectorField[]> = {
     { path: '/headline', label: 'Headline', kind: 'text' },
     { path: '/body', label: 'Text', kind: 'textarea' },
     { path: '/cta', label: 'Button', kind: 'link' },
+    { path: '/image', label: 'Background photo (image band)', kind: 'image' },
   ],
   contact_form: [
     { path: '/heading', label: 'Heading', kind: 'text' },
@@ -113,6 +116,25 @@ export const INSPECTORS: Record<SectionType, readonly InspectorField[]> = {
     { path: '/emptyText', label: 'Text when there is no update', kind: 'text' },
   ],
   footer: [],
+  ticker: [
+    { path: '/label', label: 'What the list is (read aloud)', kind: 'text' },
+    { path: '/items', label: 'Short phrases (3 to 8)', kind: 'list' },
+    { path: '/items/*', label: 'Phrase', kind: 'text' },
+  ],
+  stats: [
+    { path: '/heading', label: 'Heading', kind: 'text' },
+    { path: '/items', label: 'Numbers (2 to 4, real ones only)', kind: 'list' },
+    { path: '/items/*/value', label: 'Number', kind: 'text' },
+    { path: '/items/*/label', label: 'What it counts', kind: 'text' },
+  ],
+  feature_rows: [
+    { path: '/heading', label: 'Heading', kind: 'text' },
+    { path: '/items', label: 'Rows (2 to 4)', kind: 'list' },
+    { path: '/items/*/label', label: 'Small label', kind: 'text' },
+    { path: '/items/*/title', label: 'Title', kind: 'text' },
+    { path: '/items/*/body', label: 'Text', kind: 'textarea' },
+    { path: '/items/*/image', label: 'Photo', kind: 'image' },
+  ],
 }
 
 /** May an edit touch this JSON pointer inside a section of this type? (spec 8.7 allow-list) */

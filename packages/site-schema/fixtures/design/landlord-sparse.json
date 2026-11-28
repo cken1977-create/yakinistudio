@@ -54,7 +54,7 @@
         {
           "id": "hero",
           "type": "hero",
-          "variant": "split",
+          "variant": "cinematic",
           "hidden": false,
           "props": {
             "eyebrow": "Rentals",
@@ -89,6 +89,32 @@
           "props": {
             "heading": "Today",
             "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "ticker",
+          "type": "ticker",
+          "variant": "marquee",
+          "hidden": false,
+          "props": {
+            "label": "What we do",
+            "items": [
+              "Fast repairs",
+              "Clear terms",
+              "Repairs",
+              "Paying rent",
+              "Moving out"
+            ]
+          }
+        },
+        {
+          "id": "features",
+          "type": "feature_rows",
+          "variant": "alternating",
+          "hidden": false,
+          "props": {
+            "heading": "What sets us *apart*",
+            "items": []
           }
         },
         {
@@ -137,9 +163,39 @@
           }
         },
         {
+          "id": "stats",
+          "type": "stats",
+          "variant": "band",
+          "hidden": false,
+          "props": {
+            "heading": "By the *numbers*",
+            "items": []
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "big-quote",
+          "hidden": false,
+          "props": {
+            "heading": "What residents say",
+            "items": []
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "mosaic",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
+          }
+        },
+        {
           "id": "rentals-cta",
           "type": "cta_band",
-          "variant": "solid",
+          "variant": "image",
           "hidden": false,
           "props": {
             "headline": "Looking for a place?",
@@ -150,33 +206,17 @@
                 "kind": "page",
                 "pageId": "rentals"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000403",
+              "alt": "A set of house keys handed to a new tenant at the front door"
             }
-          }
-        },
-        {
-          "id": "home-photos",
-          "type": "gallery",
-          "variant": "grid",
-          "hidden": true,
-          "props": {
-            "heading": "A closer look",
-            "images": []
-          }
-        },
-        {
-          "id": "reviews",
-          "type": "testimonials",
-          "variant": "cards",
-          "hidden": false,
-          "props": {
-            "heading": "What residents say",
-            "items": []
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -302,7 +342,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -326,7 +366,7 @@
         {
           "id": "residents-hero",
           "type": "hero",
-          "variant": "minimal",
+          "variant": "split",
           "hidden": false,
           "props": {
             "eyebrow": "For residents",
@@ -339,6 +379,10 @@
                 "pageId": "residents",
                 "sectionId": "maintenance"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000403",
+              "alt": "A set of house keys handed to a new tenant at the front door"
             }
           }
         },
@@ -415,7 +459,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -472,7 +516,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -523,7 +567,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }

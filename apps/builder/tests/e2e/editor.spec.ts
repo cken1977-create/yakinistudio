@@ -260,3 +260,44 @@ test('saving a version and restoring it brings the old page back', async ({ page
   await page.waitForURL(new RegExp(`/sites/${siteId}/edit`))
   await expect(page.locator('[data-ys-section="hero"]')).toContainText('Spring menu is here')
 })
+
+test('"Try the new look": opt-in preview, keep or undo in one click, colors untouched, live site unchanged', async ({ page }) => {
+  const siteId = await seed(page, 'food-truck-every-section') // an older site: classic look
+  const before = await saved(page, siteId) as Doc & { brand: unknown; style: { preset: string } }
+  expect(before.style.preset).toBe('classic')
+  await openEditor(page, `/sites/${siteId}/edit`)
+  // Never switched for anyone: the page is still classic until the owner asks.
+  await expect(page.locator('.ys-site')).toHaveAttribute('data-preset', 'classic')
+  if (isPhone(page)) await page.locator('[data-tour="edit-phone"]').click()
+  const panel = inspector(page)
+  const offer = panel.locator('[data-new-look="offer"]')
+  await expect(offer).toBeVisible()
+  await expect(offer).toContainText('Your colors, logo and words stay exactly as they are')
+
+  // Preview: the page in the middle changes at once, and the draft (not the live site) is saved.
+  let save = nextSave(page)
+  await offer.getByRole('button', { name: 'Preview the new look' }).click()
+  await expect(page.locator('.ys-site')).toHaveAttribute('data-preset', 'signature')
+  await save
+  const trying = await saved(page, siteId) as Doc & { brand: unknown; style: { preset: string } }
+  expect(trying.style.preset).toBe('signature')
+  expect(trying.brand).toEqual(before.brand) // R6
+  expect(trying.pages).toEqual(before.pages)
+  await expect(panel.locator('[data-new-look="trying"]')).toContainText('Your live site doesn’t change until you publish')
+
+  // One-click undo puts the original look back, saved.
+  save = nextSave(page)
+  await panel.getByRole('button', { name: 'Undo', exact: true }).click()
+  await expect(page.locator('.ys-site')).toHaveAttribute('data-preset', 'classic')
+  await save
+  expect(((await saved(page, siteId)) as unknown as { style: unknown }).style).toEqual((before as unknown as { style: unknown }).style)
+
+  // Try again and keep it: it stays after a reload.
+  save = nextSave(page)
+  await panel.locator('[data-new-look="offer"]').getByRole('button', { name: 'Preview the new look' }).click()
+  await save
+  await panel.getByRole('button', { name: 'Keep the new look' }).click()
+  await page.reload()
+  await skipTour(page)
+  await expect(page.locator('.ys-site')).toHaveAttribute('data-preset', 'signature')
+})

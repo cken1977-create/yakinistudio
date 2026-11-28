@@ -1,6 +1,6 @@
 name: design-quality
 # Yakini Builder design quality harness (DESIGN_UPGRADE D1). Never deploys.
-# - design-gallery: every design fixture at 390 and 1440, full page (artifact "design-gallery").
+# - design-gallery: every design fixture at 390, 1280 and 1440, full page (artifact "design-gallery").
 #   On a pull request the screenshots are labelled "after"; on main they are labelled "main" and are
 #   the "before" set for the next pull request.
 # - axe: 0 serious/critical violations on every fixture page (published and draft preview).
@@ -36,7 +36,7 @@ jobs:
       - name: Accessibility (axe) on every design fixture
         working-directory: apps/builder
         run: npx playwright test tests/e2e/design-a11y.spec.ts --trace off
-      - name: Design gallery (390 and 1440, full page)
+      - name: Design gallery (390, 1280 and 1440, full page)
         if: always()
         working-directory: apps/builder
         env:

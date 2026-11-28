@@ -139,39 +139,27 @@
           }
         },
         {
-          "id": "welcome",
-          "type": "about",
-          "variant": "text-only",
+          "id": "ticker",
+          "type": "ticker",
+          "variant": "marquee",
           "hidden": false,
           "props": {
-            "heading": "Welcome",
-            "body": [
-              {
-                "type": "p",
-                "children": [
-                  {
-                    "text": "Write two or three sentences about your food and what it is like to eat here."
-                  }
-                ]
-              }
+            "label": "What we do",
+            "items": [
+              "Private dining",
+              "Group menus",
+              "Catering"
             ]
           }
         },
         {
-          "id": "menu-cta",
-          "type": "cta_band",
-          "variant": "solid",
+          "id": "features",
+          "type": "feature_rows",
+          "variant": "alternating",
           "hidden": false,
           "props": {
-            "headline": "See what’s cooking",
-            "body": "Our full menu, from starters to dessert.",
-            "cta": {
-              "label": "View the menu",
-              "target": {
-                "kind": "page",
-                "pageId": "menu"
-              }
-            }
+            "heading": "What sets us *apart*",
+            "items": []
           }
         },
         {
@@ -184,9 +172,66 @@
           }
         },
         {
+          "id": "welcome",
+          "type": "about",
+          "variant": "left-image",
+          "hidden": false,
+          "props": {
+            "heading": "Welcome",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Write two or three sentences about your food and what it is like to eat here."
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000207",
+              "alt": "Fried chicken, mac and cheese, collard greens and cornbread served family style"
+            }
+          }
+        },
+        {
+          "id": "stats",
+          "type": "stats",
+          "variant": "band",
+          "hidden": false,
+          "props": {
+            "heading": "By the *numbers*",
+            "items": []
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "big-quote",
+          "hidden": false,
+          "props": {
+            "heading": "From our guests",
+            "items": [
+              {
+                "quote": "The green chile stew tastes like my grandmother made it.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "Warm service and the best sopapillas we have had in years.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "We booked the back room for a birthday and they took care of everything.",
+                "name": "Dana L."
+              }
+            ]
+          }
+        },
+        {
           "id": "home-photos",
           "type": "gallery",
-          "variant": "grid",
+          "variant": "mosaic",
           "hidden": false,
           "props": {
             "heading": "A closer look",
@@ -227,33 +272,30 @@
           }
         },
         {
-          "id": "reviews",
-          "type": "testimonials",
-          "variant": "single",
+          "id": "menu-cta",
+          "type": "cta_band",
+          "variant": "image",
           "hidden": false,
           "props": {
-            "heading": "From our guests",
-            "items": [
-              {
-                "quote": "The green chile stew tastes like my grandmother made it.",
-                "name": "Maria G.",
-                "source": "Google"
-              },
-              {
-                "quote": "Warm service and the best sopapillas we have had in years.",
-                "name": "Sam T."
-              },
-              {
-                "quote": "We booked the back room for a birthday and they took care of everything.",
-                "name": "Dana L."
+            "headline": "See what’s cooking",
+            "body": "Our full menu, from starters to dessert.",
+            "cta": {
+              "label": "View the menu",
+              "target": {
+                "kind": "page",
+                "pageId": "menu"
               }
-            ]
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000206",
+              "alt": "A chef finishing a plate of seared fish with fresh herbs"
+            }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -351,7 +393,7 @@
         {
           "id": "events-cta",
           "type": "cta_band",
-          "variant": "outline",
+          "variant": "image",
           "hidden": false,
           "props": {
             "headline": "Planning a celebration?",
@@ -362,13 +404,17 @@
                 "kind": "page",
                 "pageId": "events"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000207",
+              "alt": "Fried chicken, mac and cheese, collard greens and cornbread served family style"
             }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -485,7 +531,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -509,7 +555,7 @@
         {
           "id": "events-hero",
           "type": "hero",
-          "variant": "minimal",
+          "variant": "split",
           "hidden": false,
           "props": {
             "eyebrow": "Private events",
@@ -521,6 +567,10 @@
                 "kind": "form",
                 "formKey": "events"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000206",
+              "alt": "A chef finishing a plate of seared fish with fresh herbs"
             }
           }
         },
@@ -611,7 +661,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -674,7 +724,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }

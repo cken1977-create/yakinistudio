@@ -100,7 +100,7 @@
         {
           "id": "hero",
           "type": "hero",
-          "variant": "split",
+          "variant": "cinematic",
           "hidden": false,
           "props": {
             "eyebrow": "Serving Phoenix",
@@ -137,22 +137,27 @@
           }
         },
         {
-          "id": "mission",
-          "type": "about",
-          "variant": "text-only",
+          "id": "ticker",
+          "type": "ticker",
+          "variant": "marquee",
           "hidden": false,
           "props": {
-            "heading": "Our mission",
-            "body": [
-              {
-                "type": "p",
-                "children": [
-                  {
-                    "text": "Write two or three sentences on who you serve, the need you meet, and the change you’re working toward."
-                  }
-                ]
-              }
+            "label": "What we do",
+            "items": [
+              "Volunteer",
+              "Give",
+              "Partner with us"
             ]
+          }
+        },
+        {
+          "id": "features",
+          "type": "feature_rows",
+          "variant": "alternating",
+          "hidden": false,
+          "props": {
+            "heading": "What sets us *apart*",
+            "items": []
           }
         },
         {
@@ -182,26 +187,66 @@
           }
         },
         {
-          "id": "involved-cta",
-          "type": "cta_band",
-          "variant": "solid",
+          "id": "mission",
+          "type": "about",
+          "variant": "left-image",
           "hidden": false,
           "props": {
-            "headline": "Join us",
-            "body": "Volunteer, give or partner with us. Every bit helps.",
-            "cta": {
-              "label": "Get involved",
-              "target": {
-                "kind": "page",
-                "pageId": "involved"
+            "heading": "Our mission",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Write two or three sentences on who you serve, the need you meet, and the change you’re working toward."
+                  }
+                ]
               }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000301",
+              "alt": "A technician repairing an outdoor air conditioning unit"
             }
+          }
+        },
+        {
+          "id": "stats",
+          "type": "stats",
+          "variant": "band",
+          "hidden": false,
+          "props": {
+            "heading": "By the *numbers*",
+            "items": []
+          }
+        },
+        {
+          "id": "stories",
+          "type": "testimonials",
+          "variant": "big-quote",
+          "hidden": false,
+          "props": {
+            "heading": "Stories from our community",
+            "items": [
+              {
+                "quote": "They helped my family through a hard winter with dignity.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "Volunteering here is the best part of my week.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "Every dollar we gave went straight to families, and they showed us how.",
+                "name": "Dana L."
+              }
+            ]
           }
         },
         {
           "id": "home-photos",
           "type": "gallery",
-          "variant": "grid",
+          "variant": "mosaic",
           "hidden": false,
           "props": {
             "heading": "A closer look",
@@ -242,33 +287,30 @@
           }
         },
         {
-          "id": "stories",
-          "type": "testimonials",
-          "variant": "single",
+          "id": "involved-cta",
+          "type": "cta_band",
+          "variant": "image",
           "hidden": false,
           "props": {
-            "heading": "Stories from our community",
-            "items": [
-              {
-                "quote": "They helped my family through a hard winter with dignity.",
-                "name": "Maria G.",
-                "source": "Google"
-              },
-              {
-                "quote": "Volunteering here is the best part of my week.",
-                "name": "Sam T."
-              },
-              {
-                "quote": "Every dollar we gave went straight to families, and they showed us how.",
-                "name": "Dana L."
+            "headline": "Join us",
+            "body": "Volunteer, give or partner with us. Every bit helps.",
+            "cta": {
+              "label": "Get involved",
+              "target": {
+                "kind": "page",
+                "pageId": "involved"
               }
-            ]
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000702",
+              "alt": "Community members sitting in a circle during a group meeting"
+            }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -376,7 +418,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -469,7 +511,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -586,7 +628,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -637,7 +679,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -665,11 +707,11 @@
     "fontPair": "friendly"
   },
   "style": {
-    "preset": "classic",
-    "surface": "light",
-    "fontPair": "friendly",
+    "preset": "signature",
+    "surface": "dark",
+    "fontPair": "signature",
     "radius": "round",
-    "motion": "off"
+    "motion": "subtle"
   },
   "integrations": {
     "bookingEnabled": false,

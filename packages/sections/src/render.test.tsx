@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { lintCopy } from '@yakini/ai'
-import { loadSiteDoc, type Page, type SiteDoc } from '@yakini/site-schema'
+import { SECTION_TYPES, loadSiteDoc, type Page, type SiteDoc } from '@yakini/site-schema'
 import {
   AA, INSPECTORS, SiteView, contrastRatio, formatPhone, isEditablePath, jsonLdFor, readableInk, themeFor, time12,
   type RenderContext, type RenderMode,
@@ -173,7 +173,7 @@ describe('helpers', () => {
 
 describe('inspectors (spec 7.2, 8.7 allow-list)', () => {
   it('defines editable fields for every section type', () => {
-    expect(Object.keys(INSPECTORS)).toHaveLength(17)
+    expect(Object.keys(INSPECTORS).sort()).toEqual([...SECTION_TYPES].sort())
   })
   it('allows listed paths and paths inside them, nothing else', () => {
     expect(isEditablePath('hero', '/headline')).toBe(true)
@@ -207,5 +207,26 @@ describe('never-empty draft preview (D1 step 5)', () => {
       }
     }
     expect(checked).toBeGreaterThan(0)
+  })
+})
+
+describe('rhythm rule 3: alternating surface depth (D2)', () => {
+  it('raises every other plain section on a design-v2 page, never on classic', async () => {
+    const { designFixtures } = await import('@yakini/kits/design-fixtures')
+    const { loadSiteDoc } = await import('@yakini/site-schema')
+    const { renderToStaticMarkup } = await import('react-dom/server')
+    const { SiteView } = await import('./index')
+    const render = (name: string) => {
+      const doc = loadSiteDoc(structuredClone(designFixtures()[name])).doc
+      const page = doc.pages[0]
+      return renderToStaticMarkup(<SiteView ctx={{ doc, page, mode: 'live', editing: false, hrefForPage: (p) => `/${p.slug}`, image: (id) => ({ src: `/img/${id}`, width: 800, height: 600 }), formAction: (k) => `/f/${k}`, reportUrl: '/report', today: null }} />)
+    }
+    const sig = render('food-truck-rich')
+    expect(sig).toContain('data-preset="signature"')
+    const slots = [...sig.matchAll(/<div class="ys-slot"( data-depth="raised")?><section[^>]*class="ys-s? ?([^"]*)"/g)]
+    expect(slots.some((m) => m[1])).toBe(true)
+    // Two raised sections never sit side by side.
+    for (let i = 1; i < slots.length; i++) expect(Boolean(slots[i][1] && slots[i - 1][1])).toBe(false)
+    expect(render('landlord-rich')).not.toContain('data-depth')
   })
 })

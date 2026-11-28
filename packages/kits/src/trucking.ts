@@ -147,7 +147,7 @@ export const trucking: KitDefinition = {
   id: 'trucking',
   name: 'Trucking',
   pageTemplates: PAGES,
-  allowedSections: ['header', 'hero', 'about', 'services', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'today', 'footer'],
+  allowedSections: ['header', 'hero', 'about', 'services', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'today', 'footer', 'ticker', 'stats', 'feature_rows'],
   defaultVariants: { header: 'bar', hero: 'fullbleed', about: 'left-image', services: 'cards', gallery: 'grid', hours_location: 'split', testimonials: 'cards', faq: 'accordion', team: 'grid', cta_band: 'solid', contact_form: 'with-details', today: 'banner', footer: 'simple' },
   fontPairs: ['modern', 'classic', 'editorial'],
   copyTone: 'Straight-talking and reliable, like a dispatcher who keeps their word. Name the freight, trailers and lanes. Never invent authority numbers, safety ratings, insurance amounts or driver pay.',

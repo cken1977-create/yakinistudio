@@ -55,7 +55,7 @@
         {
           "id": "hero",
           "type": "hero",
-          "variant": "fullbleed",
+          "variant": "cinematic",
           "hidden": false,
           "props": {
             "eyebrow": "Tree and lawn care",
@@ -90,6 +90,32 @@
           "props": {
             "heading": "Today",
             "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "ticker",
+          "type": "ticker",
+          "variant": "marquee",
+          "hidden": false,
+          "props": {
+            "label": "What we do",
+            "items": [
+              "Tree trimming and removal",
+              "Lawn care",
+              "Tree trimming",
+              "Tree removal",
+              "Mowing and edging"
+            ]
+          }
+        },
+        {
+          "id": "features",
+          "type": "feature_rows",
+          "variant": "alternating",
+          "hidden": false,
+          "props": {
+            "heading": "What sets us *apart*",
+            "items": []
           }
         },
         {
@@ -142,9 +168,39 @@
           }
         },
         {
+          "id": "stats",
+          "type": "stats",
+          "variant": "band",
+          "hidden": false,
+          "props": {
+            "heading": "By the *numbers*",
+            "items": []
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "big-quote",
+          "hidden": false,
+          "props": {
+            "heading": "What neighbors say",
+            "items": []
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "mosaic",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
+          }
+        },
+        {
           "id": "estimate-cta",
           "type": "cta_band",
-          "variant": "solid",
+          "variant": "image",
           "hidden": false,
           "props": {
             "headline": "Get a free estimate",
@@ -156,33 +212,17 @@
                 "pageId": "estimate",
                 "sectionId": "estimate-form"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000603",
+              "alt": "A bucket truck and wood chipper at a home while a worker feeds branches"
             }
-          }
-        },
-        {
-          "id": "home-photos",
-          "type": "gallery",
-          "variant": "grid",
-          "hidden": true,
-          "props": {
-            "heading": "A closer look",
-            "images": []
-          }
-        },
-        {
-          "id": "reviews",
-          "type": "testimonials",
-          "variant": "cards",
-          "hidden": false,
-          "props": {
-            "heading": "What neighbors say",
-            "items": []
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -275,7 +315,7 @@
         {
           "id": "services-cta",
           "type": "cta_band",
-          "variant": "outline",
+          "variant": "image",
           "hidden": false,
           "props": {
             "headline": "Not sure what you need?",
@@ -287,13 +327,17 @@
                 "pageId": "estimate",
                 "sectionId": "estimate-form"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000602",
+              "alt": "A freshly mowed striped lawn in front of a stone house"
             }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -371,7 +415,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -424,7 +468,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -477,7 +521,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }

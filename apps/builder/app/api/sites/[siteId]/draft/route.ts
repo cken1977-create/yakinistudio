@@ -48,7 +48,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ si
     if (body.baseRev !== a.rev) return json({ error: CONFLICT_MESSAGE, conflict: true, rev: a.rev, doc }, 409)
 
     const internal = body.source === 'undo' || body.source === 'redo'
-    const applied = applyOps(doc, body.ops, await editContext(rt, a, doc), { internal })
+    const applied = applyOps(doc, body.ops, await editContext(rt, a, doc), { internal, owner: body.source === 'click' })
     if (!applied.ok) return json({ error: applied.error, opIndex: applied.opIndex }, 422)
 
     const saved = await rt.store.saveDraft({ siteId, baseRev: body.baseRev, doc: applied.doc })

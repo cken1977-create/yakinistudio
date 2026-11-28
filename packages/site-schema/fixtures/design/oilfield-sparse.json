@@ -55,7 +55,7 @@
         {
           "id": "hero",
           "type": "hero",
-          "variant": "fullbleed",
+          "variant": "cinematic",
           "hidden": false,
           "props": {
             "eyebrow": "Oilfield services",
@@ -90,6 +90,16 @@
           "props": {
             "heading": "Today",
             "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "features",
+          "type": "feature_rows",
+          "variant": "alternating",
+          "hidden": false,
+          "props": {
+            "heading": "What sets us *apart*",
+            "items": []
           }
         },
         {
@@ -142,9 +152,39 @@
           }
         },
         {
+          "id": "stats",
+          "type": "stats",
+          "variant": "band",
+          "hidden": false,
+          "props": {
+            "heading": "By the *numbers*",
+            "items": []
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "big-quote",
+          "hidden": false,
+          "props": {
+            "heading": "What operators say",
+            "items": []
+          }
+        },
+        {
+          "id": "home-photos",
+          "type": "gallery",
+          "variant": "mosaic",
+          "hidden": true,
+          "props": {
+            "heading": "A closer look",
+            "images": []
+          }
+        },
+        {
           "id": "service-cta",
           "type": "cta_band",
-          "variant": "solid",
+          "variant": "image",
           "hidden": false,
           "props": {
             "headline": "Need a crew?",
@@ -156,33 +196,17 @@
                 "pageId": "contact",
                 "sectionId": "service-form"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000001002",
+              "alt": "Two workers in hard hats working on a wellhead"
             }
-          }
-        },
-        {
-          "id": "home-photos",
-          "type": "gallery",
-          "variant": "grid",
-          "hidden": true,
-          "props": {
-            "heading": "A closer look",
-            "images": []
-          }
-        },
-        {
-          "id": "reviews",
-          "type": "testimonials",
-          "variant": "cards",
-          "hidden": false,
-          "props": {
-            "heading": "What operators say",
-            "items": []
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -243,7 +267,7 @@
         {
           "id": "services-cta",
           "type": "cta_band",
-          "variant": "outline",
+          "variant": "image",
           "hidden": false,
           "props": {
             "headline": "Have a job coming up?",
@@ -254,13 +278,17 @@
                 "pageId": "contact",
                 "sectionId": "service-form"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000001005",
+              "alt": "A worker’s gloved hands turning a valve with a pipe wrench"
             }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -353,7 +381,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -441,7 +469,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -523,7 +551,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }

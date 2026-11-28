@@ -148,7 +148,7 @@ export const service: KitDefinition = {
   id: 'service',
   name: 'Business and services',
   pageTemplates: PAGES,
-  allowedSections: ['header', 'hero', 'about', 'services', 'schedule', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'booking', 'today', 'footer'],
+  allowedSections: ['header', 'hero', 'about', 'services', 'schedule', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'booking', 'today', 'footer', 'ticker', 'stats', 'feature_rows'],
   defaultVariants: {
     header: 'bar', hero: 'split', about: 'right-image', services: 'cards', schedule: 'list', gallery: 'grid',
     hours_location: 'split', testimonials: 'cards', faq: 'accordion', team: 'grid', cta_band: 'solid', contact_form: 'with-details',

@@ -26,7 +26,7 @@ export type SampleImage = {
    * Smaller, faster copies of a photo sample (same folder): a full-size WebP and a 640-wide WebP.
    * storagePath stays the JPEG every browser can show; pages offer the WebP files first.
    */
-  webp?: { large: string; small: string; smallWidth: number; medium?: string; mediumWidth?: number }
+  webp?: { large: string; small: string; smallWidth: number; phone?: string; phoneWidth?: number; medium?: string; mediumWidth?: number }
   /**
    * An earlier sample that is no longer offered or used in new drafts. It stays here so drafts
    * that already show it keep rendering.

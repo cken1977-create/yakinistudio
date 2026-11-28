@@ -101,7 +101,7 @@
         {
           "id": "hero",
           "type": "hero",
-          "variant": "fullbleed",
+          "variant": "cinematic",
           "hidden": false,
           "props": {
             "eyebrow": "Real estate in Albuquerque",
@@ -139,22 +139,32 @@
           }
         },
         {
-          "id": "intro",
-          "type": "about",
-          "variant": "text-only",
+          "id": "ticker",
+          "type": "ticker",
+          "variant": "marquee",
           "hidden": false,
           "props": {
-            "heading": "Your move, handled",
-            "body": [
-              {
-                "type": "p",
-                "children": [
-                  {
-                    "text": "Write two or three sentences about how you work with buyers and sellers and the areas you know best."
-                  }
-                ]
-              }
+            "label": "What we do",
+            "items": [
+              "Buying a home",
+              "Selling a home",
+              "Talk it through",
+              "Get ready to buy",
+              "Tour and offer",
+              "Close",
+              "Price it right",
+              "Get it ready"
             ]
+          }
+        },
+        {
+          "id": "features",
+          "type": "feature_rows",
+          "variant": "alternating",
+          "hidden": false,
+          "props": {
+            "heading": "What sets us *apart*",
+            "items": []
           }
         },
         {
@@ -184,27 +194,66 @@
           }
         },
         {
-          "id": "value-cta",
-          "type": "cta_band",
-          "variant": "solid",
+          "id": "intro",
+          "type": "about",
+          "variant": "left-image",
           "hidden": false,
           "props": {
-            "headline": "Thinking about selling?",
-            "body": "Ask for a free, no-pressure home value review.",
-            "cta": {
-              "label": "What’s my home worth?",
-              "target": {
-                "kind": "section",
-                "pageId": "sell",
-                "sectionId": "home-value"
+            "heading": "Your move, handled",
+            "body": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Write two or three sentences about how you work with buyers and sellers and the areas you know best."
+                  }
+                ]
               }
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000504",
+              "alt": "An aerial view of a leafy suburban neighborhood near a lake"
             }
+          }
+        },
+        {
+          "id": "stats",
+          "type": "stats",
+          "variant": "band",
+          "hidden": false,
+          "props": {
+            "heading": "By the *numbers*",
+            "items": []
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "big-quote",
+          "hidden": false,
+          "props": {
+            "heading": "What clients say",
+            "items": [
+              {
+                "quote": "She sold our house in nine days for more than we asked.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "Patient with first-time buyers and honest about every house.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "Knew every street in the neighborhood and it showed.",
+                "name": "Dana L."
+              }
+            ]
           }
         },
         {
           "id": "home-photos",
           "type": "gallery",
-          "variant": "grid",
+          "variant": "mosaic",
           "hidden": false,
           "props": {
             "heading": "A closer look",
@@ -245,33 +294,31 @@
           }
         },
         {
-          "id": "reviews",
-          "type": "testimonials",
-          "variant": "cards",
+          "id": "value-cta",
+          "type": "cta_band",
+          "variant": "image",
           "hidden": false,
           "props": {
-            "heading": "What clients say",
-            "items": [
-              {
-                "quote": "She sold our house in nine days for more than we asked.",
-                "name": "Maria G.",
-                "source": "Google"
-              },
-              {
-                "quote": "Patient with first-time buyers and honest about every house.",
-                "name": "Sam T."
-              },
-              {
-                "quote": "Knew every street in the neighborhood and it showed.",
-                "name": "Dana L."
+            "headline": "Thinking about selling?",
+            "body": "Ask for a free, no-pressure home value review.",
+            "cta": {
+              "label": "What’s my home worth?",
+              "target": {
+                "kind": "section",
+                "pageId": "sell",
+                "sectionId": "home-value"
               }
-            ]
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000502",
+              "alt": "A bright open living room and kitchen with a lake view"
+            }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -378,7 +425,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -499,7 +546,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -620,7 +667,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -732,7 +779,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }

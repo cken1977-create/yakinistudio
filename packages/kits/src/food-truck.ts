@@ -185,7 +185,7 @@ export const foodTruck: KitDefinition = {
   id: 'food-truck',
   name: 'Food truck',
   pageTemplates: PAGES,
-  allowedSections: ['header', 'hero', 'about', 'services', 'menu', 'schedule', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'booking', 'catering_request', 'today', 'footer'],
+  allowedSections: ['header', 'hero', 'about', 'services', 'menu', 'schedule', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'booking', 'catering_request', 'today', 'footer', 'ticker', 'stats', 'feature_rows'],
   defaultVariants: {
     header: 'bar', hero: 'cinematic', about: 'left-image', services: 'cards', menu: 'cards', schedule: 'week', gallery: 'grid',
     hours_location: 'split', testimonials: 'cards', faq: 'accordion', team: 'grid', cta_band: 'solid', contact_form: 'simple',

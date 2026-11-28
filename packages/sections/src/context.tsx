@@ -188,6 +188,9 @@ export function liveSectionEmpty(doc: SiteDoc, s: Page['sections'][number], hasT
     case 'schedule': return s.props.stops.length === 0
     case 'gallery': return s.props.images.length === 0
     case 'team': return s.props.members.length === 0
+    case 'ticker': return s.props.items.filter((t) => t.trim()).length < 3
+    case 'stats': return s.props.items.length < 2
+    case 'feature_rows': return s.props.items.length === 0
     case 'hours_location': return !((b.hours?.length ?? 0) > 0 || b.address || b.phone || b.serviceArea)
     case 'today': return !hasToday && (s.props.emptyBehavior === 'hide' || !s.props.emptyText)
     default: return false

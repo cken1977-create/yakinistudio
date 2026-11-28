@@ -13,10 +13,11 @@ const fixture = (f: string) => JSON.parse(readFileSync(join(V1, f), 'utf8'))
 const every = (kit: string) => v1ToV2.up(fixture(`${kit}-every-section.json`)) as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
 describe('section library coverage (spec 7.2, 7.4 fixture corpus)', () => {
-  it('has the 17 Phase 1 section types', () => {
+  it('has the 17 Phase 1 section types plus the 3 from D2', () => {
     expect(SECTION_TYPES).toEqual([
       'header', 'hero', 'about', 'services', 'menu', 'schedule', 'gallery', 'hours_location', 'testimonials',
       'faq', 'team', 'cta_band', 'contact_form', 'booking', 'catering_request', 'today', 'footer',
+      'ticker', 'stats', 'feature_rows',
     ])
   })
   it.each(['food-truck', 'restaurant'])('the %s fixtures (v1 + v2) cover every section type and variant', (kit) => {
@@ -43,6 +44,7 @@ describe('per-section props schemas', () => {
       hours_location: { heading: 'Hours' }, testimonials: { items: [] }, faq: { items: [] }, team: { members: [] },
       cta_band: { headline: 'Go', cta: { label: 'Menu', target: { kind: 'page', pageId: 'menu' } } },
       contact_form: { heading: 'Write', formKey: 'contact', fields: ['name', 'email'], submitLabel: 'Send', consentText: 'OK' },
+      ticker: { items: ['Tacos', 'Catering', 'Weddings'] }, stats: { items: [] }, feature_rows: { items: [] },
       booking: { heading: 'Book', mode: 'request' }, catering_request: { heading: 'Cater', formKey: 'cater', fields: ['name', 'phone'], submitLabel: 'Send', consentText: 'OK' },
       today: { emptyBehavior: 'hide' }, footer: {},
     }

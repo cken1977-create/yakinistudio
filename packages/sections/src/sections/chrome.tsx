@@ -61,7 +61,10 @@ export function FooterSection({ ctx, s }: { ctx: RenderContext; s: SectionOf<'fo
   const hours = doc.footer.showHours ? b.hours ?? [] : []
   const year = new Date().getFullYear()
   return (
-    <footer className="ys-footer" id={s.id}>
+    <footer className={s.variant === 'statement' ? 'ys-footer ys-v-statement' : 'ys-footer'} id={s.id}>
+      {/* Statement (D2): the business name as a giant wordmark across the full width. The name is
+          also in the footer text below, so the wordmark is decorative for screen readers. */}
+      {s.variant === 'statement' ? <p className="ys-footer-wordmark" aria-hidden="true">{b.name}</p> : null}
       <div className="ys-wrap ys-footer-grid">
         <div>
           <p className="ys-footer-name">{b.name}</p>

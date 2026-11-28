@@ -101,7 +101,7 @@
         {
           "id": "hero",
           "type": "hero",
-          "variant": "fullbleed",
+          "variant": "cinematic",
           "hidden": false,
           "props": {
             "eyebrow": "Trucking in Amarillo",
@@ -136,6 +136,30 @@
           "props": {
             "heading": "Today",
             "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "ticker",
+          "type": "ticker",
+          "variant": "marquee",
+          "hidden": false,
+          "props": {
+            "label": "What we do",
+            "items": [
+              "Home time",
+              "Equipment",
+              "Support"
+            ]
+          }
+        },
+        {
+          "id": "features",
+          "type": "feature_rows",
+          "variant": "alternating",
+          "hidden": false,
+          "props": {
+            "heading": "What sets us *apart*",
+            "items": []
           }
         },
         {
@@ -188,27 +212,43 @@
           }
         },
         {
-          "id": "quote-cta",
-          "type": "cta_band",
-          "variant": "solid",
+          "id": "stats",
+          "type": "stats",
+          "variant": "band",
           "hidden": false,
           "props": {
-            "headline": "Have a load to move?",
-            "body": "Send the pickup, delivery and dates. We’ll get back to you with a quote.",
-            "cta": {
-              "label": "Get a quote",
-              "target": {
-                "kind": "section",
-                "pageId": "quote",
-                "sectionId": "quote-form"
+            "heading": "By the *numbers*",
+            "items": []
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "big-quote",
+          "hidden": false,
+          "props": {
+            "heading": "What shippers say",
+            "items": [
+              {
+                "quote": "Loads show up when they say, and dispatch answers at 2 a.m.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "Best carrier we have used for oversize flatbed.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "Clear rates and no surprises on the invoice.",
+                "name": "Dana L."
               }
-            }
+            ]
           }
         },
         {
           "id": "home-photos",
           "type": "gallery",
-          "variant": "grid",
+          "variant": "mosaic",
           "hidden": false,
           "props": {
             "heading": "A closer look",
@@ -249,33 +289,31 @@
           }
         },
         {
-          "id": "reviews",
-          "type": "testimonials",
-          "variant": "cards",
+          "id": "quote-cta",
+          "type": "cta_band",
+          "variant": "image",
           "hidden": false,
           "props": {
-            "heading": "What shippers say",
-            "items": [
-              {
-                "quote": "Loads show up when they say, and dispatch answers at 2 a.m.",
-                "name": "Maria G.",
-                "source": "Google"
-              },
-              {
-                "quote": "Best carrier we have used for oversize flatbed.",
-                "name": "Sam T."
-              },
-              {
-                "quote": "Clear rates and no surprises on the invoice.",
-                "name": "Dana L."
+            "headline": "Have a load to move?",
+            "body": "Send the pickup, delivery and dates. We’ll get back to you with a quote.",
+            "cta": {
+              "label": "Get a quote",
+              "target": {
+                "kind": "section",
+                "pageId": "quote",
+                "sectionId": "quote-form"
               }
-            ]
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000905",
+              "alt": "A driver checking trailer tires with a flashlight at dawn"
+            }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -406,7 +444,7 @@
         {
           "id": "services-cta",
           "type": "cta_band",
-          "variant": "outline",
+          "variant": "image",
           "hidden": false,
           "props": {
             "headline": "Let’s move it",
@@ -417,13 +455,17 @@
                 "pageId": "quote",
                 "sectionId": "quote-form"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000902",
+              "alt": "A row of semi trucks parked at a terminal at dusk"
             }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -539,7 +581,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -613,7 +655,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -666,7 +708,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }

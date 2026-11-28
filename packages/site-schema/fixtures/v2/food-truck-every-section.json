@@ -87,6 +87,10 @@
       {
         "label": "More",
         "pageId": "more"
+      },
+      {
+        "label": "Showcase",
+        "pageId": "showcase"
       }
     ],
     "cta": {
@@ -867,6 +871,352 @@
           "id": "footer",
           "type": "footer",
           "variant": "simple",
+          "hidden": false,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "showcase",
+      "slug": "showcase",
+      "title": "Showcase",
+      "sections": [
+        {
+          "id": "sc-header",
+          "type": "header",
+          "variant": "bar",
+          "hidden": false,
+          "props": {
+            "showPhone": true,
+            "ctaLabel": "Order now"
+          }
+        },
+        {
+          "id": "sc-hero-ed",
+          "type": "hero",
+          "variant": "editorial-split",
+          "hidden": false,
+          "props": {
+            "eyebrow": "Since 2019",
+            "headline": "Cooked to order, *every single day.*",
+            "subhead": "Fresh tortillas and slow-cooked meats.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000101",
+              "alt": "Our truck at Civic Plaza"
+            },
+            "primaryCta": {
+              "label": "See the menu",
+              "target": {
+                "kind": "page",
+                "pageId": "menu"
+              }
+            }
+          }
+        },
+        {
+          "id": "sc-ticker",
+          "type": "ticker",
+          "variant": "marquee",
+          "hidden": false,
+          "props": {
+            "label": "What we do",
+            "items": [
+              "Street tacos",
+              "Catering",
+              "Weddings",
+              "Office lunches",
+              "Late nights"
+            ]
+          }
+        },
+        {
+          "id": "sc-hero-col",
+          "type": "hero",
+          "variant": "collage",
+          "hidden": false,
+          "props": {
+            "headline": "A truck *full of color.*",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000103",
+              "alt": "Lights over a backyard party"
+            },
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000102",
+                "alt": "Three carne asada tacos"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000101",
+                "alt": "Our truck at Civic Plaza"
+              }
+            ]
+          }
+        },
+        {
+          "id": "sc-features",
+          "type": "feature_rows",
+          "variant": "alternating",
+          "hidden": false,
+          "props": {
+            "heading": "How we *cook*",
+            "items": [
+              {
+                "label": "Step one",
+                "title": "Fresh every morning",
+                "body": "We press tortillas and make salsas before every service.",
+                "image": {
+                  "assetId": "7a1e0000-0000-4000-8000-000000000101",
+                  "alt": "Our truck at Civic Plaza"
+                }
+              },
+              {
+                "label": "Step two",
+                "title": "Slow and low",
+                "body": "Meats cook for hours so they are tender and full of flavor.",
+                "image": {
+                  "assetId": "7a1e0000-0000-4000-8000-000000000103",
+                  "alt": "Lights over a backyard party"
+                }
+              },
+              {
+                "title": "Hot off the griddle",
+                "body": "Every order is cooked when you ask for it."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sc-stats",
+          "type": "stats",
+          "variant": "band",
+          "hidden": false,
+          "props": {
+            "heading": "By the numbers",
+            "items": [
+              {
+                "value": "7",
+                "label": "years on Central Ave"
+              },
+              {
+                "value": "300+",
+                "label": "events catered"
+              },
+              {
+                "value": "12",
+                "label": "salsas"
+              }
+            ]
+          }
+        },
+        {
+          "id": "sc-about",
+          "type": "about",
+          "variant": "chapters",
+          "hidden": false,
+          "props": {
+            "heading": "Our *story*",
+            "pullQuote": "We cook the food we grew up on.",
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000102",
+              "alt": "Three carne asada tacos"
+            },
+            "body": [
+              {
+                "type": "h3",
+                "children": [
+                  {
+                    "text": "How it started"
+                  }
+                ]
+              },
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Rosa started the truck with her grandmother\u2019s recipes."
+                  }
+                ]
+              },
+              {
+                "type": "h3",
+                "children": [
+                  {
+                    "text": "Where we are now"
+                  }
+                ]
+              },
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Two trucks, one kitchen, the same recipes."
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "sc-menu",
+          "type": "menu",
+          "variant": "editorial",
+          "hidden": false,
+          "props": {
+            "heading": "Menu",
+            "intro": "Made fresh to order.",
+            "categories": [
+              {
+                "name": "Tacos",
+                "items": [
+                  {
+                    "name": "Carne asada",
+                    "description": "Grilled steak, onion, cilantro, lime.",
+                    "price": "$4",
+                    "tags": [
+                      "gf"
+                    ],
+                    "image": {
+                      "assetId": "7a1e0000-0000-4000-8000-000000000102",
+                      "alt": "Three carne asada tacos"
+                    }
+                  },
+                  {
+                    "name": "Calabacitas",
+                    "description": "Squash, corn and green chile.",
+                    "price": "$3.50",
+                    "tags": [
+                      "veg",
+                      "spicy"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Drinks",
+                "items": [
+                  {
+                    "name": "Horchata"
+                  },
+                  {
+                    "name": "Agua fresca",
+                    "price": "$3"
+                  }
+                ]
+              }
+            ],
+            "note": "Prices can change."
+          }
+        },
+        {
+          "id": "sc-mosaic",
+          "type": "gallery",
+          "variant": "mosaic",
+          "hidden": false,
+          "props": {
+            "heading": "From the *truck*",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000101",
+                "alt": "Our truck at Civic Plaza"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000103",
+                "alt": "Lights over a backyard party"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000102",
+                "alt": "Three carne asada tacos"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000101",
+                "alt": "Our truck at Civic Plaza"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000101",
+                "alt": "Our truck at Civic Plaza"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000101",
+                "alt": "Our truck at Civic Plaza"
+              }
+            ]
+          }
+        },
+        {
+          "id": "sc-film",
+          "type": "gallery",
+          "variant": "filmstrip",
+          "hidden": false,
+          "props": {
+            "heading": "Behind the window",
+            "images": [
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000101",
+                "alt": "Our truck at Civic Plaza"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000103",
+                "alt": "Lights over a backyard party"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000102",
+                "alt": "Three carne asada tacos"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000101",
+                "alt": "Our truck at Civic Plaza"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000101",
+                "alt": "Our truck at Civic Plaza"
+              },
+              {
+                "assetId": "7a1e0000-0000-4000-8000-000000000101",
+                "alt": "Our truck at Civic Plaza"
+              }
+            ]
+          }
+        },
+        {
+          "id": "sc-quote",
+          "type": "testimonials",
+          "variant": "big-quote",
+          "hidden": false,
+          "props": {
+            "items": [
+              {
+                "quote": "The best tacos in Albuquerque, full stop.",
+                "name": "Maria G.",
+                "source": "Google"
+              }
+            ]
+          }
+        },
+        {
+          "id": "sc-cta-img",
+          "type": "cta_band",
+          "variant": "image",
+          "hidden": false,
+          "props": {
+            "headline": "Feeding a crowd? *We bring the truck.*",
+            "body": "Parties, offices and weddings.",
+            "cta": {
+              "label": "Plan an event",
+              "target": {
+                "kind": "page",
+                "pageId": "menu"
+              }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000101",
+              "alt": "Our truck at Civic Plaza"
+            }
+          }
+        },
+        {
+          "id": "sc-footer",
+          "type": "footer",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }

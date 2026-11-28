@@ -101,7 +101,7 @@
         {
           "id": "hero",
           "type": "hero",
-          "variant": "fullbleed",
+          "variant": "cinematic",
           "hidden": false,
           "props": {
             "eyebrow": "Oilfield services in Midland",
@@ -136,6 +136,34 @@
           "props": {
             "heading": "Today",
             "emptyBehavior": "hide"
+          }
+        },
+        {
+          "id": "ticker",
+          "type": "ticker",
+          "variant": "marquee",
+          "hidden": false,
+          "props": {
+            "label": "What we do",
+            "items": [
+              "Well servicing",
+              "Roustabout crews",
+              "Hauling",
+              "Service name",
+              "Safety training",
+              "Compliance",
+              "Position"
+            ]
+          }
+        },
+        {
+          "id": "features",
+          "type": "feature_rows",
+          "variant": "alternating",
+          "hidden": false,
+          "props": {
+            "heading": "What sets us *apart*",
+            "items": []
           }
         },
         {
@@ -188,27 +216,43 @@
           }
         },
         {
-          "id": "service-cta",
-          "type": "cta_band",
-          "variant": "solid",
+          "id": "stats",
+          "type": "stats",
+          "variant": "band",
           "hidden": false,
           "props": {
-            "headline": "Need a crew?",
-            "body": "Tell us the location and the job. We’ll call you back.",
-            "cta": {
-              "label": "Request service",
-              "target": {
-                "kind": "section",
-                "pageId": "contact",
-                "sectionId": "service-form"
+            "heading": "By the *numbers*",
+            "items": []
+          }
+        },
+        {
+          "id": "reviews",
+          "type": "testimonials",
+          "variant": "big-quote",
+          "hidden": false,
+          "props": {
+            "heading": "What operators say",
+            "items": [
+              {
+                "quote": "Crew on location within two hours of the call.",
+                "name": "Maria G.",
+                "source": "Google"
+              },
+              {
+                "quote": "Clean safety record and they leave the pad cleaner than they found it.",
+                "name": "Sam T."
+              },
+              {
+                "quote": "Reliable rigs and operators who know what they are doing.",
+                "name": "Dana L."
               }
-            }
+            ]
           }
         },
         {
           "id": "home-photos",
           "type": "gallery",
-          "variant": "grid",
+          "variant": "mosaic",
           "hidden": false,
           "props": {
             "heading": "A closer look",
@@ -249,33 +293,31 @@
           }
         },
         {
-          "id": "reviews",
-          "type": "testimonials",
-          "variant": "cards",
+          "id": "service-cta",
+          "type": "cta_band",
+          "variant": "image",
           "hidden": false,
           "props": {
-            "heading": "What operators say",
-            "items": [
-              {
-                "quote": "Crew on location within two hours of the call.",
-                "name": "Maria G.",
-                "source": "Google"
-              },
-              {
-                "quote": "Clean safety record and they leave the pad cleaner than they found it.",
-                "name": "Sam T."
-              },
-              {
-                "quote": "Reliable rigs and operators who know what they are doing.",
-                "name": "Dana L."
+            "headline": "Need a crew?",
+            "body": "Tell us the location and the job. We’ll call you back.",
+            "cta": {
+              "label": "Request service",
+              "target": {
+                "kind": "section",
+                "pageId": "contact",
+                "sectionId": "service-form"
               }
-            ]
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000001002",
+              "alt": "Two workers in hard hats working on a wellhead"
+            }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -369,7 +411,7 @@
         {
           "id": "services-cta",
           "type": "cta_band",
-          "variant": "outline",
+          "variant": "image",
           "hidden": false,
           "props": {
             "headline": "Have a job coming up?",
@@ -380,13 +422,17 @@
                 "pageId": "contact",
                 "sectionId": "service-form"
               }
+            },
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000001005",
+              "alt": "A worker’s gloved hands turning a valve with a pipe wrench"
             }
           }
         },
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -479,7 +525,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -567,7 +613,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }
@@ -611,7 +657,7 @@
         {
           "id": "story",
           "type": "about",
-          "variant": "text-only",
+          "variant": "left-image",
           "hidden": false,
           "props": {
             "heading": "About us",
@@ -624,7 +670,11 @@
                   }
                 ]
               }
-            ]
+            ],
+            "image": {
+              "assetId": "7a1e0000-0000-4000-8000-000000000301",
+              "alt": "A technician repairing an outdoor air conditioning unit"
+            }
           }
         },
         {
@@ -666,7 +716,7 @@
         {
           "id": "footer",
           "type": "footer",
-          "variant": "simple",
+          "variant": "statement",
           "hidden": false,
           "props": {}
         }

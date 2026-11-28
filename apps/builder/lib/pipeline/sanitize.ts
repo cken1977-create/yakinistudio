@@ -8,7 +8,8 @@ import { isAllowedOutboundUrl, type SiteDocContent } from '@yakini/site-schema'
  * - kit, locale and business name (from our trusted form/brand reader),
  * - links to other websites (only the business's own site, social pages and maps survive),
  * - images (only assets we stored for this draft, or the kit's own samples),
- * - form fields, form keys and consent text (always the kit template's).
+ * - form fields, form keys and consent text (always the kit template's),
+ * - numbers in a stats band (design D2: only the owner adds those; the writer may not invent them).
  */
 export type SanitizeContext = {
   kit: KitDefinition
@@ -38,7 +39,7 @@ function isUrlLink(v: Json): v is { kind: 'url'; url: string } {
   return !!v && typeof v === 'object' && (v as { kind?: unknown }).kind === 'url' && typeof (v as { url?: unknown }).url === 'string'
 }
 
-export type SanitizeReport = { removedLinks: number; removedImages: number; resetForms: number }
+export type SanitizeReport = { removedLinks: number; removedImages: number; resetForms: number; removedStats?: number }
 
 export function sanitizeContent(content: SiteDocContent, c: SanitizeContext): { content: SiteDocContent; report: SanitizeReport } {
   const report: SanitizeReport = { removedLinks: 0, removedImages: 0, resetForms: 0 }
@@ -82,6 +83,13 @@ export function sanitizeContent(content: SiteDocContent, c: SanitizeContext): { 
     if (!t) continue
     if (JSON.stringify(t.fields) !== JSON.stringify(s.props.fields) || t.consentText !== s.props.consentText) report.resetForms++
     s.props = { ...s.props, fields: [...t.fields] as typeof s.props.fields, consentText: t.consentText }
+  }
+
+  // Stats are facts ("12 years", "400 trees"): never from the writer, only the owner (D2).
+  for (const p of out.pages) for (const s of p.sections) {
+    if (s.type !== 'stats' || !s.props.items.length) continue
+    report.removedStats = (report.removedStats ?? 0) + s.props.items.length
+    s.props = { ...s.props, items: [] }
   }
 
   out.kitId = c.kit.id

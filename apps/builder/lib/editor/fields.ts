@@ -32,7 +32,12 @@ function build(type: SectionType, prefix: string): FieldNode[] {
   return out
 }
 function node(type: SectionType, f: InspectorField, rel: string): FieldNode {
-  return { rel, label: f.label, kind: f.kind, options: f.options, pattern: f.path, children: f.kind === 'list' ? build(type, `${f.path}/*`) : [] }
+  if (f.kind !== 'list') return { rel, label: f.label, kind: f.kind, options: f.options, pattern: f.path, children: [] }
+  // A list of plain values (the ticker's phrases) lists the item itself as `<list>/*`: one child
+  // with an empty relative path, so each row edits the value directly.
+  const self = INSPECTORS[type].find((x) => x.path === `${f.path}/*`)
+  const children = self ? [{ rel: '', label: self.label, kind: self.kind, options: self.options, pattern: self.path, children: [] }] : build(type, `${f.path}/*`)
+  return { rel, label: f.label, kind: f.kind, options: f.options, pattern: f.path, children }
 }
 
 const layouts = new Map<SectionType, FieldNode[]>()
@@ -173,11 +178,15 @@ export const SECTION_LABELS: Record<SectionType, string> = {
   header: 'Header', hero: 'Big welcome', about: 'About', services: 'Services', menu: 'Menu', schedule: 'Where we’ll be',
   gallery: 'Photo gallery', hours_location: 'Hours and location', testimonials: 'Reviews', faq: 'Questions', team: 'Team',
   cta_band: 'Call to action', contact_form: 'Contact form', booking: 'Booking', catering_request: 'Catering request', today: 'Today', footer: 'Footer',
+  ticker: 'Moving strip', stats: 'Numbers', feature_rows: 'Feature rows',
 }
 
 export const VARIANT_LABELS: Record<string, string> = {
   bar: 'Bar', centered: 'Centered', split: 'Side by side', fullbleed: 'Full photo', minimal: 'Simple', 'left-image': 'Photo on the left',
   'right-image': 'Photo on the right', 'text-only': 'Text only', cards: 'Cards', list: 'List', columns: 'Columns', week: 'Week', grid: 'Grid',
-  masonry: 'Mosaic', card: 'Card', single: 'One at a time', accordion: 'Fold-out', solid: 'Solid', outline: 'Outline', simple: 'Simple',
+  masonry: 'Staggered', card: 'Card', single: 'One at a time', accordion: 'Fold-out', solid: 'Solid', outline: 'Outline', simple: 'Simple',
   'with-details': 'With your details', banner: 'Banner',
+  cinematic: 'Big photo, big words', 'editorial-split': 'Magazine', collage: 'Collage', chapters: 'Chapters', editorial: 'Magazine list',
+  mosaic: 'Photo mosaic', filmstrip: 'Filmstrip', 'big-quote': 'One big quote', image: 'Photo band', statement: 'Statement',
+  marquee: 'Moving', band: 'Band', alternating: 'Alternating',
 }

@@ -147,7 +147,7 @@ export const oilfield: KitDefinition = {
   id: 'oilfield',
   name: 'Oilfield',
   pageTemplates: PAGES,
-  allowedSections: ['header', 'hero', 'about', 'services', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'today', 'footer'],
+  allowedSections: ['header', 'hero', 'about', 'services', 'gallery', 'hours_location', 'testimonials', 'faq', 'team', 'cta_band', 'contact_form', 'today', 'footer', 'ticker', 'stats', 'feature_rows'],
   defaultVariants: { header: 'bar', hero: 'fullbleed', about: 'left-image', services: 'cards', gallery: 'grid', hours_location: 'split', testimonials: 'cards', faq: 'accordion', team: 'grid', cta_band: 'solid', contact_form: 'with-details', today: 'banner', footer: 'simple' },
   fontPairs: ['modern', 'classic'],
   copyTone: 'Direct, capable and safety-minded, like a field supervisor briefing an operator. Name the real services, equipment and areas worked. Never invent safety statistics, certifications, memberships or response times.',
