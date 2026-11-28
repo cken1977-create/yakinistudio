@@ -28,7 +28,8 @@ function num(v: string | undefined): number | undefined {
 export function spendConfigFromEnv(env: Record<string, string | undefined>): SpendConfig {
   return {
     dailyTokenCap: num(env.AI_DAILY_TOKEN_CAP) ?? DEFAULT_DAILY_TOKEN_CAP,
-    dailyUsdCap: num(env.AI_GLOBAL_DAILY_USD_CAP) ?? DEFAULT_DAILY_USD_CAP,
+    // Text gets the overall cap minus what is set aside for images, so images never eat the text budget.
+    dailyUsdCap: textUsdCap(env),
     inputPerMUsd: num(env.AI_PRICE_INPUT_PER_M_USD),
     outputPerMUsd: num(env.AI_PRICE_OUTPUT_PER_M_USD),
   }
@@ -50,5 +51,39 @@ export function checkSpend(today: Usage, next: Usage, c: SpendConfig): SpendDeci
   if (total.inputTokens + total.outputTokens > c.dailyTokenCap) return { allowed: false, reason: 'token_cap' }
   const usd = estimateUsd(total, c)
   if (c.dailyUsdCap !== undefined && usd !== undefined && usd > c.dailyUsdCap) return { allowed: false, reason: 'usd_cap' }
+  return { allowed: true }
+}
+
+/**
+ * Image spend (design D4, decided 2026-11-28): images have their own dollar cap inside the overall
+ * AI cap (AI_GLOBAL_DAILY_USD_CAP). That amount is set aside for images, so images can never use up
+ * the text budget and text can never use up the images'. Both fail closed. Images are off unless
+ * AI_IMAGE_GENERATION_ENABLED=1 and AI_IMAGE_DAILY_USD_CAP is set above 0.
+ */
+export type ImageSpendConfig = { enabled: boolean; imageDailyUsdCap: number; overallDailyUsdCap: number }
+export type ImageSpendDecision = { allowed: true } | { allowed: false; reason: 'off' | 'no_cap' | 'image_cap' | 'bad_usage' }
+
+export function imageSpendConfigFromEnv(env: Record<string, string | undefined>): ImageSpendConfig {
+  const overall = num(env.AI_GLOBAL_DAILY_USD_CAP) ?? DEFAULT_DAILY_USD_CAP
+  return {
+    enabled: env.AI_IMAGE_GENERATION_ENABLED === '1',
+    // Never more than the overall cap.
+    imageDailyUsdCap: Math.min(num(env.AI_IMAGE_DAILY_USD_CAP) ?? 0, overall),
+    overallDailyUsdCap: overall,
+  }
+}
+
+/** The text side's dollar cap: the overall cap minus the images' share when images are on. */
+export function textUsdCap(env: Record<string, string | undefined>): number {
+  const img = imageSpendConfigFromEnv(env)
+  return img.enabled ? Math.max(0, img.overallDailyUsdCap - img.imageDailyUsdCap) : img.overallDailyUsdCap
+}
+
+/** `todayUsd` is what images have cost so far today; `nextUsd` the worst case of the call about to run. */
+export function checkImageSpend(todayUsd: number, nextUsd: number, c: ImageSpendConfig): ImageSpendDecision {
+  if (!c.enabled) return { allowed: false, reason: 'off' }
+  if (!(c.imageDailyUsdCap > 0)) return { allowed: false, reason: 'no_cap' }
+  if (![todayUsd, nextUsd].every((v) => Number.isFinite(v) && v >= 0)) return { allowed: false, reason: 'bad_usage' }
+  if (todayUsd + nextUsd > c.imageDailyUsdCap) return { allowed: false, reason: 'image_cap' }
   return { allowed: true }
 }

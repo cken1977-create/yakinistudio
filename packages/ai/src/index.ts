@@ -1,6 +1,7 @@
 export * from './client'
 export * from './copy-lint'
 export * from './spend'
+export * from './images'
 export * from './prompts/generate'
 export * from './prompts/edit'
 export * from './prompts/helper'
