@@ -1,0 +1,30 @@
+/*
+ * Clean (design D3): Inter Tight and Inter, 12px corners, soft layered shadows.
+ * Cool light surface. Brand colors stay as stored.
+ */
+.ys-site[data-preset='clean'] {
+  --ys-font-label: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ys-radius: 12px;
+  --ys-radius-sm: 8px;
+  --ys-shadow-1: 0 1px 2px color-mix(in srgb, var(--ys-ink) 6%, transparent);
+  --ys-shadow-2: 0 1px 2px color-mix(in srgb, var(--ys-ink) 5%, transparent), 0 12px 28px -16px color-mix(in srgb, var(--ys-ink) 18%, transparent);
+  --ys-shadow-3: 0 1px 2px color-mix(in srgb, var(--ys-ink) 6%, transparent), 0 24px 48px -24px color-mix(in srgb, var(--ys-ink) 22%, transparent);
+  --ys-line: color-mix(in srgb, var(--ys-ink) 10%, transparent);
+  background: var(--ys-surface-0);
+  color: var(--ys-on-surface);
+}
+.ys-site[data-preset='clean'] .ys-s { padding-block: var(--ys-section-pad); }
+.ys-site[data-preset='clean'] .ys-display { font-weight: 650; letter-spacing: -0.03em; line-height: 0.98; }
+.ys-site[data-preset='clean'] .ys-h2 { letter-spacing: -0.025em; }
+.ys-site[data-preset='clean'] .ys-accent { color: var(--ys-accent-display); }
+.ys-site[data-preset='clean'] :is(.ys-eyebrow, .ys-label, .ys-footer-head) { font-family: var(--ys-font-label); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ys-muted); }
+.ys-site[data-preset='clean'] :is(.ys-service, .ys-quote, .ys-menu-item, .ys-form-body, .ys-booking-card, .ys-hours-grid) {
+  background: var(--ys-surface-1);
+  border: 1px solid var(--ys-line);
+  box-shadow: var(--ys-shadow-2);
+  border-radius: var(--ys-radius);
+}
+.ys-site[data-preset='clean'] .ys-btn { border-radius: 12px; box-shadow: var(--ys-shadow-1); }
+.ys-site[data-preset='clean'] .ys-btn-primary { box-shadow: var(--ys-shadow-2); }
+.ys-site[data-preset='clean'] .ys-header { background: color-mix(in srgb, var(--ys-surface-0) 86%, transparent); border-bottom: 1px solid var(--ys-line); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.ys-site[data-preset='clean'] :is(img, .ys-cover) { border-radius: var(--ys-radius); }

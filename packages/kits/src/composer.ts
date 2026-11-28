@@ -114,6 +114,27 @@ export function arrangeRhythm(sections: Sec[], tailFrom: (s: Sec) => boolean = (
   return [...head, ...best.flatMap((g) => g.items), ...pending, ...tail]
 }
 
+/**
+ * Stats and a big quote both show only when the owner filled them, and they never sit next to
+ * each other (Clarence, 2026-11-27). When they would, another visible section moves between them.
+ */
+export function separateStatsAndQuote(sections: Sec[]): Sec[] {
+  const visible = rhythmSections(sections)
+  for (let i = 1; i < visible.length; i++) {
+    const a = visible[i - 1]
+    const b = visible[i]
+    const touching = (a.type === 'stats' && b.type === 'testimonials') || (a.type === 'testimonials' && b.type === 'stats')
+    if (!touching) continue
+    const quote = a.type === 'testimonials' ? a : b
+    const filler = visible.find((s) => s !== a && s !== b && s.type !== 'hero')
+    if (!filler) return sections
+    const next = sections.filter((s) => s.id !== filler.id)
+    next.splice(next.findIndex((s) => s.id === quote.id), 0, filler)
+    return separateStatsAndQuote(next)
+  }
+  return sections
+}
+
 /** Keep at most one full-bleed moment besides the hero: extra image bands go solid, extra filmstrips become a grid. */
 export function limitFullBleed(sections: Sec[]): Sec[] {
   let seen = false
@@ -229,7 +250,7 @@ export function composeHome(kit: KitDefinition, content: SiteDocContent, ctx: Pi
     rest.splice(q < 0 ? rest.length : q, 0, ...st)
     return rest
   }
-  const arrange = (secs: Sec[]) => slot(limitFullBleed(arrangeRhythm(secs, (s) => closing.has(s.id))))
+  const arrange = (secs: Sec[]) => separateStatsAndQuote(slot(limitFullBleed(arrangeRhythm(secs, (s) => closing.has(s.id)))))
   home.sections = photoWhereNeeded(arrange([
     ...header, ...hero, ...today, ...ticker, ...features, ...highlights, ...extraCtas, ...stats, ...quotes, ...gallery, ...cta, ...footer,
   ]), pool, 1, arrange)

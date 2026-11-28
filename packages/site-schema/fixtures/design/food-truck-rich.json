@@ -770,10 +770,10 @@
     "fontPair": "friendly"
   },
   "style": {
-    "preset": "signature",
-    "surface": "dark",
-    "fontPair": "signature",
-    "radius": "round",
+    "preset": "poster",
+    "surface": "light",
+    "fontPair": "poster",
+    "radius": "none",
     "motion": "subtle"
   },
   "integrations": {

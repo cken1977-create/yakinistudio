@@ -807,11 +807,11 @@
     "fontPair": "editorial"
   },
   "style": {
-    "preset": "classic",
+    "preset": "editorial",
     "surface": "light",
-    "fontPair": "editorial",
-    "radius": "round",
-    "motion": "off"
+    "fontPair": "paper",
+    "radius": "none",
+    "motion": "subtle"
   },
   "integrations": {
     "bookingEnabled": false,

@@ -578,11 +578,11 @@
     "fontPair": "modern"
   },
   "style": {
-    "preset": "classic",
+    "preset": "poster",
     "surface": "light",
-    "fontPair": "modern",
-    "radius": "round",
-    "motion": "off"
+    "fontPair": "poster",
+    "radius": "none",
+    "motion": "subtle"
   },
   "integrations": {
     "bookingEnabled": false,

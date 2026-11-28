@@ -99,7 +99,10 @@ export function ChaptersAbout({ ctx, s, first }: P<'about'>) {
             {chapters.map((c, i) => (
               <li key={i} className={`ys-chapter${i % 2 ? ' is-flip' : ''}`}>
                 <div className="ys-prose">
-                  <p className="ys-label ys-chapter-label">{two(i)}{c.title ? <> · <Txt>{c.title}</Txt></> : null}</p>
+                  <p className="ys-chapter-label">
+                    <span className="ys-chapter-num">{two(i)}</span>
+                    {c.title ? <span className="ys-chapter-name"> · <Txt>{c.title}</Txt></span> : null}
+                  </p>
                   <RichTextView ctx={ctx} value={c.blocks} />
                 </div>
                 {i === 0 && img ? <div className="ys-chapter-media"><Img ctx={ctx} image={img} className="ys-cover" sizes="(min-width: 900px) 45vw, 100vw" /></div> : null}

@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { join } from 'node:path'
 import { FONT_STACKS } from '@yakini/sections'
@@ -26,6 +26,7 @@ const CLASSIC_HEADLINES = ['.ys-h3', '.ys-prose h3']
 /** Files a pair uses only for display text; when the headline ships with the page they aren't preloaded. */
 const DISPLAY_ONLY: Record<string, string[]> = {
   editorial: ['fraunces-normal'], classic: ['playfair-display-normal'], signature: ['cormorant-garamond-normal', 'cormorant-garamond-italic'],
+  paper: ['fraunces-normal'], poster: ['anton-normal'], craft: ['instrument-serif-normal', 'instrument-serif-italic'], clean: ['inter-tight-normal'],
 }
 const SKIP_KEYS = new Set(['assetId', 'url', 'href', 'formKey', 'id', 'pageId', 'sectionId', 'slug', 'kitId', 'type', 'variant', 'icon', 'kind', 'fields', 'focal', 'locale'])
 const MAX_CHARS = 400
@@ -44,7 +45,15 @@ export function siteCharacters(doc: SiteDoc): string {
 }
 
 const range = (text: string) => [...text].map((c) => `U+${c.codePointAt(0)!.toString(16).toUpperCase()}`).join(',')
-const fileOf = (key: string) => { const [, family, style] = key.match(/^(.+)-(normal|italic)$/)!; return `${family}-latin-wght-${style}.woff2` }
+const fileOf = (key: string) => {
+  const [, family, style] = key.match(/^(.+)-(normal|italic)$/)!
+  const dir = join(process.env.SITE_ASSETS_DIR ?? join(process.cwd(), 'public', '_site-assets'), 'fonts')
+  const exact = `${family}-latin-wght-${style}.woff2`
+  if (existsSync(join(dir, exact))) return exact
+  const hit = readdirSync(dir).find((n) => n.startsWith(`${family}-latin-`) && n.endsWith(`-${style}.woff2`) && !n.includes('-ext-'))
+  if (!hit) throw new Error(`no font file for ${key}`)
+  return hit
+}
 
 type Subset = (font: Buffer, text: string, opts: { targetFormat: 'woff2'; variationAxes?: Record<string, number> }) => Promise<Buffer>
 let subsetFont: Subset | null = null
@@ -90,13 +99,13 @@ export async function headlineFont(doc: SiteDoc): Promise<HeadlineFont | null> {
     faces.push(`@font-face{font-family:'YS Headline';font-style:${style};font-weight:${w};font-display:block;src:url(data:font/woff2;base64,${b64}) format('woff2');unicode-range:${range(text)}}`)
   }
   await face(files[0], 'normal', weight)
-  // Signature's accent phrase is Cormorant italic at 400.
-  if (pair === 'signature' && files.includes('cormorant-garamond-italic')) await face('cormorant-garamond-italic', 'italic', 400)
+  const italic = files.find((f) => f.endsWith('-italic'))
+  if (italic) await face(italic, 'italic', 400)
   const family = `font-family:'YS Headline',${stack.display}!important`
   const rules = [
     `.ys-site :is(${HEADLINES.join(',')}){${family}}`,
-    `.ys-site:not([data-preset='signature']) :is(${CLASSIC_HEADLINES.join(',')}){${family}}`,
-    pair === 'signature' ? `.ys-site[data-preset='signature'] .ys-accent{${family}}` : '',
+    `.ys-site[data-preset='classic'] :is(${CLASSIC_HEADLINES.join(',')}){${family}}`,
+    files.some((f) => f.endsWith('-italic')) ? `.ys-site[data-font='${pair}'] .ys-accent{${family}}` : '',
   ].filter(Boolean)
   return { css: faces.join('') + rules.join(''), bytes, displayOnly: DISPLAY_ONLY[pair] ?? [] }
 }

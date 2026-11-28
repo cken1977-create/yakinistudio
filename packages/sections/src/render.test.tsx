@@ -222,11 +222,14 @@ describe('rhythm rule 3: alternating surface depth (D2)', () => {
       return renderToStaticMarkup(<SiteView ctx={{ doc, page, mode: 'live', editing: false, hrefForPage: (p) => `/${p.slug}`, image: (id) => ({ src: `/img/${id}`, width: 800, height: 600 }), formAction: (k) => `/f/${k}`, reportUrl: '/report', today: null }} />)
     }
     const sig = render('food-truck-rich')
-    expect(sig).toContain('data-preset="signature"')
+    expect(sig).toContain('data-preset="poster"')
     const slots = [...sig.matchAll(/<div class="ys-slot"( data-depth="raised")?><section[^>]*class="ys-s? ?([^"]*)"/g)]
     expect(slots.some((m) => m[1])).toBe(true)
     // Two raised sections never sit side by side.
     for (let i = 1; i < slots.length; i++) expect(Boolean(slots[i][1] && slots[i - 1][1])).toBe(false)
-    expect(render('landlord-rich')).not.toContain('data-depth')
+    const classic = loadSiteDoc(structuredClone(designFixtures()['landlord-rich'])).doc
+    classic.style = { preset: 'classic', surface: 'light', fontPair: 'modern', radius: 'round', motion: 'off' }
+    const classicHtml = renderToStaticMarkup(<SiteView ctx={{ doc: classic, page: classic.pages[0], mode: 'live', editing: false, hrefForPage: (p) => `/${p.slug}`, image: (id) => ({ src: `/img/${id}`, width: 800, height: 600 }), formAction: (k) => `/f/${k}`, reportUrl: '/report', today: null }} />)
+    expect(classicHtml).not.toContain('data-depth')
   })
 })

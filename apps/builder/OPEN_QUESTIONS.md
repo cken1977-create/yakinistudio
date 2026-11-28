@@ -128,8 +128,16 @@ billing starts February 1, 2027 at the normal price. Built on `feat/builder-foun
 | P5-3 | First live test | `test.brsaregistry.com` (CNAME at Namecheap). The `brsaregistry.com` apex stays on its current project. | **Clarence adds the record** |
 | P5-4 | Client-owned hosting ("Move to my accounts") | Phase 5b, next. | Open |
 
-## D2 (premium sections)
+## D2 (premium sections) — resolved 2026-11-27
 
-1. **Looks beyond Signature.** Section 6 names editorial, poster, craft and clean, and it gives the food truck "poster or craft" and tree-and-lawn "clean". This branch keeps the 2026-11-27 decision: restaurant, food truck and nonprofit start on Signature, and the other kits stay on Classic until D3. Those other looks and their fonts are not in this pull request.
-2. **About chapters and one photo.** The about section stores one photo. Chapters are numbered rows that alternate which side the text sits on, and that one photo sits on the first chapter. A photo on every row would need more than the one photo the owner stored.
-3. **Home "or" slots.** The D2 line says "feature rows or a menu highlight" and "a big quote or stats". The composer places feature rows, then stats, then a big quote. A section with nothing in it is left out, and stats and feature rows start empty, so a visitor only sees the ones the owner filled in.
+1. **Looks beyond Signature.** Resolved. D3 builds editorial, poster, craft and clean. New sites: food truck is poster, tree-and-lawn is clean, and the other kits follow section 6 (restaurant and nonprofit stay on Signature; trucking and oilfield are poster; landlord is craft; training school and the general service kit are clean). Existing sites never switch on their own. They preview a look from "Try the new look", and undo puts the old look back.
+2. **About chapters and one photo.** Resolved. One photo, on chapter 1. Chapters with no photo are styled as type rows (a large number and room to read). Per-chapter photos are backlog, not part of D3.
+3. **Home "or" slots.** Resolved. When the owner has filled both stats and a big quote, both show, and the composer keeps at least one other section between them. Empty sections stay hidden.
+
+### Backlog
+
+- Optional photo on each about chapter (the about section stores one photo today).
+
+## D3 open
+
+1. **Real estate's look.** Section 6 does not name real estate. New real-estate sites start on editorial (light paper). Say if that should be Signature or craft instead.

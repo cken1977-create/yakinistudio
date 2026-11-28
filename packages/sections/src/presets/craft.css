@@ -1,0 +1,28 @@
+/*
+ * Craft (design D3): Instrument Serif and DM Sans on warm paper. Soft corners,
+ * a torn-paper edge and a stamp accent. The paper tint is mixed beside the stored colors.
+ */
+.ys-site[data-preset='craft'] {
+  --ys-font-label: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ys-radius: 18px;
+  --ys-radius-sm: 10px;
+  --ys-line: color-mix(in srgb, var(--ys-ink) 14%, transparent);
+  background-color: var(--ys-surface-0);
+  background-image: radial-gradient(circle at 20% 10%, color-mix(in srgb, var(--ys-accent) 8%, transparent), transparent 42%);
+  color: var(--ys-on-surface);
+}
+.ys-site[data-preset='craft'] .ys-s { padding-block: var(--ys-section-pad); }
+.ys-site[data-preset='craft'] .ys-display { font-weight: 400; letter-spacing: -0.02em; line-height: 0.98; }
+.ys-site[data-preset='craft'] .ys-accent { font-style: italic; color: var(--ys-accent-display); }
+.ys-site[data-preset='craft'] :is(.ys-eyebrow, .ys-label) { font-family: var(--ys-font-label); font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; }
+.ys-site[data-preset='craft'] .ys-s { box-shadow: inset 0 14px 0 color-mix(in srgb, var(--ys-ink) 5%, transparent); }
+.ys-site[data-preset='craft'] :is(img, .ys-cover) { border-radius: var(--ys-radius); }
+.ys-site[data-preset='craft'] :is(.ys-service, .ys-quote, .ys-menu-item, .ys-form-body) {
+  background: color-mix(in srgb, var(--ys-surface-1) 80%, var(--ys-bg));
+  border: 1px dashed color-mix(in srgb, var(--ys-ink) 28%, transparent);
+  box-shadow: none;
+}
+.ys-site[data-preset='craft'] .ys-btn { border-radius: 999px; }
+.ys-site[data-preset='craft'] .ys-btn-primary { box-shadow: 0 0 0 6px color-mix(in srgb, var(--ys-accent) 25%, transparent); }
+.ys-site[data-preset='craft'] .ys-header { background: color-mix(in srgb, var(--ys-surface-0) 92%, var(--ys-bg)); border-bottom: 1px dashed var(--ys-line-strong); }
+.ys-site[data-preset='craft'] .ys-footer-wordmark { letter-spacing: -0.03em; }

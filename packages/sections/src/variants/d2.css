@@ -36,6 +36,14 @@
 .ys-chapters { display: grid; gap: clamp(40px, 7cqi, 96px); counter-reset: none; }
 .ys-chapter { display: grid; gap: 28px; align-items: center; }
 .ys-chapter-label { margin-bottom: 8px; }
+/* A chapter with no photo is a type row on purpose: a large number and room to read. */
+.ys-chapter:not(:has(.ys-chapter-media)) { align-content: start; padding-block: clamp(12px, 2cqi, 28px); }
+.ys-chapter:not(:has(.ys-chapter-media)) .ys-chapter-num {
+  display: block; font-family: var(--ys-font-display); font-weight: var(--ys-display-weight);
+  font-size: clamp(3.4rem, 12cqi, 7.5rem); line-height: 0.82; letter-spacing: -0.04em;
+  color: color-mix(in srgb, var(--ys-ink) 16%, transparent);
+}
+.ys-chapter:not(:has(.ys-chapter-media)) .ys-chapter-name { display: block; margin-top: 8px; }
 .ys-chapter-media img { width: 100%; aspect-ratio: 4 / 3; border-radius: var(--ys-radius); }
 .ys-pullquote { margin: clamp(48px, 8cqi, 112px) auto 0; max-width: 22ch; text-align: center; }
 .ys-pullquote p {
