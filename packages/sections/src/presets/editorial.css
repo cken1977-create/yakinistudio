@@ -26,3 +26,4 @@
 .ys-site[data-preset='editorial'] .ys-btn-primary { background: var(--ys-ink); color: var(--ys-bg); }
 .ys-site[data-preset='editorial'] .ys-header { border-bottom: 1px solid var(--ys-line); background: var(--ys-surface-0); }
 .ys-site[data-preset='editorial'] .ys-footer { border-top: 1px solid var(--ys-ink); }
+.ys-site[data-preset='editorial'] .ys-week > li.is-off { opacity: 1; }

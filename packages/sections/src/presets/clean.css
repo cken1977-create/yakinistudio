@@ -17,7 +17,11 @@
 .ys-site[data-preset='clean'] .ys-display { font-weight: 650; letter-spacing: -0.03em; line-height: 0.98; }
 .ys-site[data-preset='clean'] .ys-h2 { letter-spacing: -0.025em; }
 .ys-site[data-preset='clean'] .ys-accent { color: var(--ys-accent-display); }
-.ys-site[data-preset='clean'] :is(.ys-eyebrow, .ys-label, .ys-footer-head) { font-family: var(--ys-font-label); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ys-muted); }
+.ys-site[data-preset='clean'] :is(.ys-eyebrow, .ys-label) { font-family: var(--ys-font-label); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ys-muted); }
+/* Footer sits on the stored secondary, so its labels use on-secondary at full opacity.
+   Page-muted ink would fail on that ground, and the shared 0.75 dim drops AA. */
+.ys-site[data-preset='clean'] .ys-footer-head { font-family: var(--ys-font-label); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; opacity: 1; color: var(--ys-on-secondary); }
+.ys-site[data-preset='clean'] .ys-week > li.is-off { opacity: 1; }
 .ys-site[data-preset='clean'] :is(.ys-service, .ys-quote, .ys-menu-item, .ys-form-body, .ys-booking-card, .ys-hours-grid) {
   background: var(--ys-surface-1);
   border: 1px solid var(--ys-line);

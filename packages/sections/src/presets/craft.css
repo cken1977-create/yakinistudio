@@ -26,3 +26,4 @@
 .ys-site[data-preset='craft'] .ys-btn-primary { box-shadow: 0 0 0 6px color-mix(in srgb, var(--ys-accent) 25%, transparent); }
 .ys-site[data-preset='craft'] .ys-header { background: color-mix(in srgb, var(--ys-surface-0) 92%, var(--ys-bg)); border-bottom: 1px dashed var(--ys-line-strong); }
 .ys-site[data-preset='craft'] .ys-footer-wordmark { letter-spacing: -0.03em; }
+.ys-site[data-preset='craft'] .ys-week > li.is-off { opacity: 1; }
