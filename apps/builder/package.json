@@ -33,7 +33,7 @@
     "@yakini/sections": "*",
     "@yakini/site-schema": "*",
     "@yakini/visits": "*",
-    "next": "16.4.6",
+    "next": "^16.4.6",
     "posthog-js": "^1.454.0",
     "qrcode": "^1.5.4",
     "react": "19.2.4",
