@@ -13,8 +13,11 @@ import FONT_FILES from './font-files.json'
  * text uses (a few KB), as a `data:` font. It is there before the first paint, every time, with no
  * swap. Body text keeps the shared, cached font files.
  *
- * It is a separate family ('YS Headline') applied only to the headline styles, which all draw at
- * the display weight; other text in the display family (quotes, initials) keeps the shared file.
+ * It is a separate family ('YS Headline'). D4-1 (Clarence 2026-11-28): it is the ONLY source of the
+ * display font on a published page. The display variable points at it, with the size-matched local
+ * fallback behind it (never the web display family), so the separate display font file is never
+ * downloaded. Each face covers every weight (one cut, no faux bold), and the cut always includes
+ * printable ASCII and common punctuation, so text the page adds itself still has its glyphs.
  * First-party only: the bytes come from the site's own subset font files (R2).
  */
 export type HeadlineFont = { css: string; bytes: number; displayOnly: string[] }
@@ -32,6 +35,9 @@ const SKIP_KEYS = new Set(['assetId', 'url', 'href', 'formKey', 'id', 'pageId', 
 const MAX_CHARS = 400
 
 /** Every character a visitor can see in the site's text (a superset of its headlines, cache-friendly). */
+/** Always in the cut: printable ASCII and common typographic punctuation. */
+const BASE_CHARS = [...Array.from({ length: 95 }, (_, i) => String.fromCharCode(32 + i)), '\u00a0', '…', '’', '‘', '“', '”', '–', '—', '•', '·', '✦', '×', '©', '®', '°']
+
 export function siteCharacters(doc: SiteDoc): string {
   const chars = new Set<string>([' ', ' ', '…'])
   const walk = (v: unknown, key?: string) => {
@@ -41,7 +47,8 @@ export function siteCharacters(doc: SiteDoc): string {
     if (v && typeof v === 'object') for (const [k, x] of Object.entries(v)) walk(x, k)
   }
   walk(doc.business); walk(doc.nav); walk(doc.pages); walk(doc.footer)
-  return [...chars].sort().slice(0, MAX_CHARS).join('')
+  for (const c of BASE_CHARS) chars.delete(c)
+  return [...BASE_CHARS, ...[...chars].sort().slice(0, MAX_CHARS - BASE_CHARS.length)].join('')
 }
 
 const range = (text: string) => [...text].map((c) => `U+${c.codePointAt(0)!.toString(16).toUpperCase()}`).join(',')
@@ -96,13 +103,16 @@ export async function headlineFont(doc: SiteDoc): Promise<HeadlineFont | null> {
   const face = async (key: string, style: 'normal' | 'italic', w: number) => {
     const b64 = await cut(fileOf(key), text, w)
     bytes += Math.ceil((b64.length * 3) / 4)
-    faces.push(`@font-face{font-family:'YS Headline';font-style:${style};font-weight:${w};font-display:block;src:url(data:font/woff2;base64,${b64}) format('woff2');unicode-range:${range(text)}}`)
+    faces.push(`@font-face{font-family:'YS Headline';font-style:${style};font-weight:1 1000;font-display:block;src:url(data:font/woff2;base64,${b64}) format('woff2');unicode-range:${range(text)}}`)
   }
   await face(files[0], 'normal', weight)
   const italic = files.find((f) => f.endsWith('-italic'))
   if (italic) await face(italic, 'italic', 400)
-  const family = `font-family:'YS Headline',${stack.display}!important`
+  // Behind the inline face: the size-matched local fallback, never the web display family.
+  const fallback = stack.display.split(',').slice(1).join(',').trim()
+  const family = `font-family:'YS Headline',${fallback}!important`
   const rules = [
+    `.ys-site{--ys-font-display:'YS Headline',${fallback}!important}`,
     `.ys-site :is(${HEADLINES.join(',')}){${family}}`,
     `.ys-site[data-preset='classic'] :is(${CLASSIC_HEADLINES.join(',')}){${family}}`,
     files.some((f) => f.endsWith('-italic')) ? `.ys-site[data-font='${pair}'] .ys-accent{${family}}` : '',

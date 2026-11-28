@@ -8,4 +8,5 @@ design-gallery/
 lhci-report/
 .lighthouseci/
 public/_site-assets/
+public/_kit-samples/
 .site-renderer/

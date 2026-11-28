@@ -345,3 +345,79 @@ Each has zod props, a server component, inspector fields and fixture coverage (a
 **Screenshots:** the design gallery takes every fixture page at 390, 1280 and 1440 (D2 asked for 390 and 1440; the core spec asked for 390 and 1280). CI uploads them as the `design-gallery` artifact. Nothing binary is committed.
 
 **Phone photos:** a full-bleed hero was asking the phone for the 960-wide file, because the next smaller copy is 640. Tree-and-lawn and nonprofit then missed the 0.95 speed budget (0.91 and 0.93, layout shift still 0). Each sample photo now also has an 800-wide WebP, which is the size a phone actually needs. After that, three runs: tree-and-lawn 0.95, nonprofit 0.96–0.97. Accessibility 1 and layout shift 0 on both. Fonts stay under 100 KB per site (signature 91.3 KB).
+
+## D4: imagery engine (branch `feat/design-d4-imagery`, 2026-11-28)
+
+Plan approved by Clarence 2026-11-28: no identifiable faces (hands, people from behind or far away
+are fine); images get their own dollar cap inside the overall AI cap, both fail closed, built
+switched off; kit library in Supabase storage, kit samples stay the library until the batch script
+is run; Meshy and fal left for D7.
+
+**What a new draft gets**
+- Imported sites: every photo is checked by pixel analysis (too small, flat graphic, screenshot,
+  text-heavy, blurry, blown highlights) and near-duplicates are dropped. The best wide photo
+  (1200 px or more, landscape) becomes the Home hero. Kept photos get AVIF and WebP copies, a
+  placeholder, a focus point, and the 4:5 phone crop for the hero.
+- Library first: the draft opens with library photos at once (kit samples today; the kit library
+  once it is made). Nothing waits.
+- After the draft is saved, images are made for the business (11-shot list per kit and look, no
+  faces, no text, no logos) and each passes the automatic check (pixel check, duplicate check, vision
+  check score of at least 0.6, no text, face, logo, warped or off-brief flags) before it replaces a
+  library photo. The owner's own photos and anything the owner changed are never replaced.
+- Spend: every image and check is priced and logged (`ai_runs.usd`). Images stop, and the library
+  stays, when the image cap is reached or spend can't be read.
+
+**How photos render (v2 looks)**
+- `<picture>` with AVIF first, then WebP, at several widths; exact width and height; alt text; an
+  inline blurred placeholder under the photo; `object-position` from the focus point; the 4:5 crop
+  for full-width heroes on phones (kit samples included). Classic keeps its pre-D4 markup byte for byte.
+- Grade: one color treatment per look as a CSS filter on photos made for the site and library
+  photos (classic has none). The owner's own photos only when they turn on "Photo color" in the
+  editor. Brand colors are untouched.
+- Asset routes serve copies by name only (`?img=full-640.avif`, strict pattern). Published pages
+  read photo details once per published version (cached).
+
+**Kit library**
+- `scripts/generate-kit-library.ts`, by hand only. Refuses in CI or Vercel builds, with images off,
+  with no image budget, or without `--yes`. A new draft copies the library photos it uses into its
+  own tenant (server-side copies).
+
+**Evidence**
+- Unit: builder 260 (image quality fixtures: text, low-res, duplicate, screenshot, blurry, blown;
+  vision flags incl. face; spend cap stop and fallback; library; rendering; serving), sections 173,
+  kits 245, edits 35, ai 31. Database: D4 checks in `phase-d4-tests.sql`, all pass on local Postgres.
+- Browser: `tests/e2e/imagery.spec.ts`: sparse draft full photo set at 390 and 1440 (loaded, sized,
+  alt, AVIF+WebP, placeholder, no empty gallery, phone crop); imported site filter and hero; no
+  request to other sites on five rich published pages. Full suite: 194 passed.
+- Lighthouse (phone, throttled, 3 runs, medians), after D4-1 (below):
+
+| Kit | LCP | Perf | CLS |
+|---|---|---|---|
+| food-truck | 1.63 s | 1.00 | 0.001 |
+| landlord | 1.68 s | 1.00 | 0 |
+| oilfield | 1.59 s | 0.99 | 0 |
+| service | 0.92 s | 1.00 | 0 |
+| tree-lawn | 1.98 s | 0.99 | 0 |
+| trucking | 1.60 s | 0.99 | 0.001 |
+| training-school | 1.75 s | 1.00 | 0 |
+| restaurant | 1.92 s | 1.00 | 0 |
+| nonprofit | 1.91 s | 1.00 | 0 |
+| real-estate | 1.90 s | 1.00 | 0 |
+
+Every kit meets LCP < 2.0 s; no exceptions in `lighthouserc.cjs`. Restaurant performance went from
+0.93 to 1.00. Tightest margin: tree-lawn (1.95-1.99 s locally).
+
+### D4-1 (Clarence 2026-11-28): display font only from the inline headline font
+
+- Published pages carry the display font only as the inline subset ('YS Headline'). The display
+  variable points at it, then the size-matched local fallback, never the web display family, so no
+  separate display font file is downloaded on any kit (checked in the Lighthouse reports).
+- Each inline face covers every weight (one cut at the display weight, no faux bold). Text in the
+  display family at other weights (quotes, initials) now draws at the display weight.
+- The cut always includes printable ASCII and common punctuation, so text the page adds itself
+  has its glyphs. Inline size per site: 12-13 KB (poster, paper, clean), 28-31 KB (signature,
+  craft with italics); was 7-23 KB, while the 20-44 KB display files are no longer fetched.
+- Mono label fonts (JetBrains Mono, IBM Plex Mono) are no longer preloaded. They still load for
+  labels (font-display: optional, so nothing moves; a slow first visit shows the size-matched
+  fallback for labels).
+- Before D4-1, four kits were 2.05-2.28 s, limited by font files.

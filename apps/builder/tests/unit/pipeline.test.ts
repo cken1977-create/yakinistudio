@@ -13,6 +13,7 @@ import { generateContent, type GenerateChat } from '@/lib/pipeline/generate'
 import { encodeLogo, encodePhoto, sniffImage } from '@/lib/pipeline/images'
 import { sanitizeContent } from '@/lib/pipeline/sanitize'
 import { mockFetchDeps, mockGenerateChat } from '@/lib/pipeline/test-mode'
+import { drawPhoto } from '@/lib/pipeline/test-images'
 import { draftTokenMatches, hashDraftToken } from '@/lib/server/draft-token'
 import type { Runtime } from '@/lib/server/runtime'
 import { createMemoryStore } from '@/lib/server/store'
@@ -214,7 +215,8 @@ describe('sanitizeContent (8.8, 14.8)', () => {
 
 describe('images (spec 8.3, 14.5)', () => {
   let png: Buffer
-  beforeAll(async () => { png = await sharp({ create: { width: 900, height: 600, channels: 3, background: '#9A3412' } }).png().toBuffer() })
+  // Photo-like, so it passes the D4 quality filter (a flat colour block is rightly left out).
+  beforeAll(async () => { png = await sharp(await drawPhoto('photo-grill', 900, 600)).png().toBuffer() })
   it('sniffs by magic bytes, not by what the server claims', () => {
     expect(sniffImage(png)).toBe('png')
     expect(sniffImage(Buffer.from('<html><body>not an image</body></html>'))).toBeNull()

@@ -244,3 +244,7 @@
   .ys-site[data-preset='signature'] .ys-hero.ys-v-split .ys-hero-inner { grid-template-columns: 1.1fr 0.9fr; gap: 72px; }
   .ys-site[data-preset='signature'] .ys-quotes { gap: 20px; }
 }
+
+/* D4 photo grade: one consistent treatment for photos made for the site and library photos (and the
+   owner's own photos when they turn it on). A filter on the photo only; brand colours are untouched. */
+.ys-site[data-preset='signature'] img.ys-graded { filter: brightness(0.95) contrast(1.1) saturate(0.92) sepia(0.08); }

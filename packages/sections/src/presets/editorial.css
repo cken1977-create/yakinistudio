@@ -27,3 +27,7 @@
 .ys-site[data-preset='editorial'] .ys-header { border-bottom: 1px solid var(--ys-line); background: var(--ys-surface-0); }
 .ys-site[data-preset='editorial'] .ys-footer { border-top: 1px solid var(--ys-ink); }
 .ys-site[data-preset='editorial'] .ys-week > li.is-off { opacity: 1; }
+
+/* D4 photo grade: one consistent treatment for photos made for the site and library photos (and the
+   owner's own photos when they turn it on). A filter on the photo only; brand colours are untouched. */
+.ys-site[data-preset='editorial'] img.ys-graded { filter: brightness(1.02) contrast(0.97) saturate(0.82); }

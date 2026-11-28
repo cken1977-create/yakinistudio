@@ -29,8 +29,11 @@ export function siteCssHref(): string {
  * are ready before the first paint: no swap, so nothing moves (CLS). Same files the page downloads
  * anyway, within the 100 KB font budget; nothing from another site.
  */
+/** Small label (mono) fonts are never preloaded (D4-1): they are not needed for the first paint. */
+const NOT_PRELOADED = /-mono-/
+
 export function fontPreloads(pair: string, skip: readonly string[] = []): string[] {
-  const keys = ((FONT_FILES as Record<string, string[]>)[pair] ?? []).filter((k) => !skip.includes(k))
+  const keys = ((FONT_FILES as Record<string, string[]>)[pair] ?? []).filter((k) => !skip.includes(k) && !NOT_PRELOADED.test(k))
   return keys.map((k) => { const [, family, style] = k.match(/^(.+)-(normal|italic)$/)!; return `/_site-assets/fonts/${family}-latin-wght-${style}.woff2` })
 }
 

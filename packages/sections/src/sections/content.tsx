@@ -43,7 +43,7 @@ function CinematicHero({ ctx, s, first }: P<'hero'>) {
     <section {...wrap(s, img ? 'has-img' : 'no-img')}>
       {img ? (
         <div className="ys-cine-media">
-          <Img ctx={ctx} image={img} className="ys-cine-img" sizes="100vw" priority={first} />
+          <Img ctx={ctx} image={img} className="ys-cine-img" sizes="100vw" priority={first} art />
         </div>
       ) : <span className="ys-cine-initial" aria-hidden="true">{initial}</span>}
       <div className="ys-cine-scrim" aria-hidden="true" />
@@ -78,7 +78,7 @@ export function HeroSection({ ctx, s, first }: P<'hero'>) {
   const variant = s.variant === 'fullbleed' && !img ? 'minimal' : s.variant
   return (
     <section {...wrap({ ...s, variant }, img ? 'has-img' : 'no-img')}>
-      {variant === 'fullbleed' && img ? <Img ctx={ctx} image={img} className="ys-hero-bg" sizes="100vw" priority={first} /> : null}
+      {variant === 'fullbleed' && img ? <Img ctx={ctx} image={img} className="ys-hero-bg" sizes="100vw" priority={first} art /> : null}
       <div className="ys-wrap ys-hero-inner">
         <div className="ys-hero-copy">
           {p.eyebrow ? <p className="ys-eyebrow"><Txt>{p.eyebrow}</Txt></p> : null}

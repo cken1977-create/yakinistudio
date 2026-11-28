@@ -18,6 +18,14 @@ export type ResolvedImage = {
   height: number
   /** Better formats offered first (e.g. WebP); `src` stays the file every browser can show. */
   sources?: readonly { type: 'image/webp' | 'image/avif'; srcSet: string }[]
+  /** Design D4: a tiny blurred copy shown under the photo while it loads (an inline data URI). */
+  lqip?: string
+  /** Where the interesting part of the photo is (0..1 each way); used when the doc sets no focal point. */
+  focus?: { x: number; y: number }
+  /** 4:5 crops around the focus point, for full-width heroes on phones (art direction). */
+  tallSources?: readonly { type: 'image/webp' | 'image/avif'; srcSet: string }[]
+  /** A generated or library photo: takes the look's colour grade (a CSS filter; brand colours untouched). */
+  graded?: boolean
 }
 
 /** The active Today update (spec 11.5). Phase 1 never has one; Phase 6 fills it in. */
@@ -260,27 +268,39 @@ export function RichTextView({ ctx, value }: { ctx: RenderContext; value: RichTe
   )
 }
 
-export function Img({ ctx, image, className, sizes, priority }: {
+export function Img({ ctx, image, className, sizes, priority, art }: {
   ctx: RenderContext
   image: { assetId: string; alt: string; focal?: { x: number; y: number } }
   className?: string
   sizes?: string
   priority?: boolean
+  /** Full-width heroes: phones get the 4:5 crop when the photo has one (D4). */
+  art?: boolean
 }) {
   const r = ctx.image(image.assetId)
   if (!r) return null
+  const tall = art && r.tallSources?.length ? r.tallSources : null
+  const PHONE = '(max-width: 699px)'
   // The first image on a page is usually the largest thing on screen: start it with the HTML
   // (a <link rel="preload"> in the head) instead of after the CSS. Not in exports (no head there).
   if (priority && ctx.mode !== 'export') {
     const best = r.sources?.[0]
-    if (best) preload(r.src, { as: 'image', imageSrcSet: best.srcSet, imageSizes: sizes ?? '100vw', type: best.type, fetchPriority: 'high' })
-    else preload(r.src, { as: 'image', ...(r.srcSet ? { imageSrcSet: r.srcSet, imageSizes: sizes ?? '100vw' } : {}), fetchPriority: 'high' })
+    if (tall) preload(r.src, { as: 'image', imageSrcSet: tall[0].srcSet, imageSizes: '100vw', type: tall[0].type, fetchPriority: 'high', media: PHONE })
+    const media = tall ? '(min-width: 700px)' : undefined
+    if (best) preload(r.src, { as: 'image', imageSrcSet: best.srcSet, imageSizes: sizes ?? '100vw', type: best.type, fetchPriority: 'high', ...(media ? { media } : {}) })
+    else preload(r.src, { as: 'image', ...(r.srcSet ? { imageSrcSet: r.srcSet, imageSizes: sizes ?? '100vw' } : {}), fetchPriority: 'high', ...(media ? { media } : {}) })
   }
-  const style = image.focal ? { objectPosition: `${Math.round(image.focal.x * 100)}% ${Math.round(image.focal.y * 100)}%` } : undefined
+  const focus = image.focal ?? r.focus
+  const position = focus ? `${Math.round(focus.x * 100)}% ${Math.round(focus.y * 100)}%` : undefined
+  // The placeholder sits under the photo (same crop and position), so nothing pops in (CLS stays 0).
+  const style = position || r.lqip
+    ? { ...(position ? { objectPosition: position } : {}), ...(r.lqip ? { backgroundImage: `url("${r.lqip}")`, backgroundSize: 'cover', backgroundPosition: position ?? '50% 50%' } : {}) }
+    : undefined
+  const cls = r.graded ? [className, 'ys-graded'].filter(Boolean).join(' ') : className
   const img = (
     // eslint-disable-next-line @next/next/no-img-element -- the same markup must work in exports and client runtimes
     <img
-      className={className}
+      className={cls}
       src={r.src}
       srcSet={r.srcSet}
       sizes={r.srcSet ? sizes : undefined}
@@ -293,11 +313,12 @@ export function Img({ ctx, image, className, sizes, priority }: {
       style={style}
     />
   )
-  if (!r.sources?.length) return img
+  if (!r.sources?.length && !tall) return img
   // <picture> is laid out as if absent (display: contents), so every img style and selector still applies.
   return (
     <picture className="ys-pic">
-      {r.sources.map((s) => <source key={s.type} type={s.type} srcSet={s.srcSet} sizes={sizes ?? '100vw'} />)}
+      {tall?.map((s) => <source key={`tall-${s.type}`} media={PHONE} type={s.type} srcSet={s.srcSet} sizes="100vw" />)}
+      {(r.sources ?? []).map((s) => <source key={s.type} type={s.type} srcSet={s.srcSet} sizes={sizes ?? '100vw'} />)}
       {img}
     </picture>
   )

@@ -39,6 +39,12 @@ export const Style = z.object({
   fontPair: z.enum(FONT_PAIRS),
   radius: z.enum(['none', 'soft', 'round']),
   motion: z.enum(['full', 'subtle', 'off']),
+  /**
+   * Design D4: which photos take the look's colour grade. Photos made for the site and library photos
+   * always do; the owner's own photos only when this is 'all' (the owner turns it on). Optional, so
+   * every stored doc stays valid; no grade on the classic look.
+   */
+  photoGrade: z.enum(['made', 'all']).optional(),
 }).strict()
 export type Style = z.infer<typeof Style>
 

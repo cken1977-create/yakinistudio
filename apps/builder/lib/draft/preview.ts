@@ -1,6 +1,7 @@
 import { kitDefinition, sampleImageById } from '@yakini/kits'
 import type { RenderContext, ResolvedImage } from '@yakini/sections'
 import type { Page, SiteDoc } from '@yakini/site-schema'
+import { assetResolved, imageOptions, sampleResolved, type AssetMetaMap, type ImageOptions } from '@/lib/images/resolve'
 
 /**
  * How a draft preview resolves its pages and images (spec 5.2 step 5). Kit samples come from the
@@ -19,25 +20,13 @@ export function draftHref(siteId: string, page: Page, view: PreviewView): string
   return view === 'phone' ? `${base}?view=phone` : base
 }
 
-export function draftImage(siteId: string, assetId: string, known: ReadonlySet<string>): ResolvedImage | null {
+export function draftImage(siteId: string, assetId: string, known: ReadonlySet<string>, meta?: AssetMetaMap, o: ImageOptions = { gradeOwn: false, legacy: false }): ResolvedImage | null {
   const sample = sampleImageById(assetId)
-  if (sample) {
-    if (!sample.webp) return { src: `/${sample.storagePath}`, width: sample.width, height: sample.height }
-    const dir = `/${sample.storagePath.slice(0, sample.storagePath.lastIndexOf('/') + 1)}`
-    return {
-      src: `/${sample.storagePath}`, width: sample.width, height: sample.height,
-      sources: [{ type: 'image/webp', srcSet: [
-        `${dir}${sample.webp.small} ${sample.webp.smallWidth}w`,
-        sample.webp.phone && sample.webp.phoneWidth ? `${dir}${sample.webp.phone} ${sample.webp.phoneWidth}w` : null,
-        sample.webp.medium && sample.webp.mediumWidth ? `${dir}${sample.webp.medium} ${sample.webp.mediumWidth}w` : null,
-        `${dir}${sample.webp.large} ${sample.width}w`,
-      ].filter(Boolean).join(', ') }],
-    }
-  }
+  if (sample) return sampleResolved(sample, o.legacy)
   // Only ids the stored draft itself references are linked (a doc cannot point at another tenant's file;
   // the asset route also checks the tenant).
   if (!known.has(assetId)) return null
-  return { src: `/api/drafts/${siteId}/assets/${assetId}`, width: 1600, height: 1000 }
+  return assetResolved(`/api/drafts/${siteId}/assets/${assetId}`, meta?.[assetId], o)
 }
 
 /** Every asset id the doc refers to (logo, section images, social preview image). */
@@ -55,12 +44,13 @@ export function assetIdsIn(doc: SiteDoc): Set<string> {
   return ids
 }
 
-export function previewContext(doc: SiteDoc, page: Page, siteId: string, view: PreviewView): RenderContext {
+export function previewContext(doc: SiteDoc, page: Page, siteId: string, view: PreviewView, meta?: AssetMetaMap): RenderContext {
   const known = assetIdsIn(doc)
+  const opts = imageOptions(doc)
   return {
     doc, page, mode: 'draft',
     hrefForPage: (p) => draftHref(siteId, p, view),
-    image: (id) => draftImage(siteId, id, known),
+    image: (id) => draftImage(siteId, id, known, meta, opts),
     formAction: () => null, // forms start working once the site is published (Phase 3)
     reportUrl: `/report?site=${siteId}`, // spec 7.3: every preview carries the Report link
     today: null,

@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { Readable } from 'node:stream'
 import sharp from 'sharp'
+import { drawPhoto } from './test-images'
 import type { ChatResult } from '@yakini/ai'
 import type { SafeFetchDeps } from '@yakini/brand/safe-fetch'
 import type { GenerateChat } from './generate'
@@ -35,14 +36,21 @@ export function mockFetchDeps(dir = SITES_DIR): SafeFetchDeps {
   }
 }
 
-/** A plain, deterministic stand-in photo (a soft two-color gradient) for test-mode sites. */
+/**
+ * Deterministic stand-in photos for test-mode sites (photo-like, so they pass the D4 quality filter).
+ * Names pick a kind for the imported-photo tests: wide-* (1600 px, hero material), small-* (too
+ * narrow for a hero), blurry-*, screenshot-*; anything else is a 1200x800 photo.
+ */
 async function testPhoto(key: string): Promise<Buffer> {
-  let h = 0
-  for (const c of key) h = (h * 31 + c.charCodeAt(0)) >>> 0
-  const a = `hsl(${h % 360} 45% 42%)`
-  const b = `hsl(${(h >> 9) % 360} 50% 68%)`
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="1200" height="800" fill="url(#g)"/><circle cx="840" cy="300" r="180" fill="#fff" fill-opacity=".18"/></svg>`
-  return sharp(Buffer.from(svg)).png().toBuffer()
+  const name = key.slice(key.indexOf('/') + 1)
+  if (name.startsWith('screenshot-')) {
+    const lines = Array.from({ length: 30 }, (_, i) => `<rect x="60" y="${120 + i * 22}" width="${300 + ((i * 137) % 800)}" height="9" fill="#222"/>`).join('')
+    return sharp(Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900"><rect width="100%" height="100%" fill="#fff"/><rect width="100%" height="64" fill="#1d4ed8"/>${lines}</svg>`)).png().toBuffer()
+  }
+  if (name.startsWith('blurry-')) return sharp(await drawPhoto(key, 1600, 1000)).blur(18).png().toBuffer()
+  if (name.startsWith('small-')) return sharp(await drawPhoto(key, 700, 460)).png().toBuffer()
+  if (name.startsWith('wide-')) return sharp(await drawPhoto(key, 1600, 1000)).png().toBuffer()
+  return sharp(await drawPhoto(key, 1200, 800)).png().toBuffer()
 }
 
 function between(text: string, start: string, end: string): string {

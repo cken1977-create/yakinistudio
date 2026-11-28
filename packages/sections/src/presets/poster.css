@@ -36,3 +36,7 @@
 .ys-site[data-preset='poster'] .ys-week > li.is-off { opacity: 1; }
 .ys-site[data-preset='poster'] .ys-footer { background: var(--ys-ink); color: var(--ys-bg); }
 .ys-site[data-preset='poster'] .ys-footer-head { opacity: 1; color: var(--ys-bg); }
+
+/* D4 photo grade: one consistent treatment for photos made for the site and library photos (and the
+   owner's own photos when they turn it on). A filter on the photo only; brand colours are untouched. */
+.ys-site[data-preset='poster'] img.ys-graded { filter: contrast(1.15) saturate(1.2); }

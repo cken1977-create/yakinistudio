@@ -245,3 +245,18 @@ describe('kit details', () => {
     expect(oh.fields.safeParse({ place: '12 Elm St', start: '15:00', end: '13:00' }).success).toBe(false)
   })
 })
+
+describe('sample imagery (design D4)', () => {
+  it('every photo sample has a placeholder and focus point (run scripts/kit-sample-imagery.ts after adding one)', async () => {
+    const { BUILDER_KITS, sampleImagery } = await import('./index')
+    for (const k of Object.values(BUILDER_KITS)) for (const s of k!.sampleImages) {
+      if (!s.webp) continue
+      const m = sampleImagery(s.assetId)
+      expect(m, s.assetId).toBeTruthy()
+      expect(m!.lqip).toMatch(/^data:image\/webp;base64,[A-Za-z0-9+/=]+$/)
+      expect(m!.lqip.length).toBeLessThan(2048)
+      expect(m!.focus.x).toBeGreaterThanOrEqual(0); expect(m!.focus.x).toBeLessThanOrEqual(1)
+      expect(m!.focus.y).toBeGreaterThanOrEqual(0); expect(m!.focus.y).toBeLessThanOrEqual(1)
+    }
+  })
+})

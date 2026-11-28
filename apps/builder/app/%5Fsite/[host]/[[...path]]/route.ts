@@ -5,6 +5,7 @@ import { freshFormStamp } from '@/lib/server/form-stamp'
 import { studioOrigin } from '@/lib/server/settings'
 import { getRuntime, isTestMode } from '@/lib/server/runtime'
 import { headlineFor } from '@/lib/site/headline-cache'
+import { assetMetaFor } from '@/lib/site/asset-meta-cache'
 
 /**
  * Multi-tenant renderer (spec 13.5). The proxy rewrites every client host to /_site/<host>/<path>.
@@ -53,11 +54,14 @@ async function render(request: Request, { params }: Ctx): Promise<Response> {
     const h = await headlineFor(getRuntime(), { siteId: v.siteId, versionId: v.versionId, doc: v.doc })
     headline = h.font; headlineCache = h.cached ? 'hit' : 'miss'
   } catch (e) { Sentry.captureException(e, { tags: { area: 'headline-font' } }) }
+  // Photo details for AVIF/WebP copies and placeholders (cached per version). Without them photos still show.
+  let assets = {}
+  try { assets = await assetMetaFor(getRuntime(), { siteId: v.siteId, versionId: v.versionId, doc: v.doc }) } catch (e) { Sentry.captureException(e, { tags: { area: 'asset-meta' } }) }
   const body = renderPublished({
     doc: v.doc, pageId: v.kind === 'page' ? v.page.id : null, thanks: v.kind === 'thanks' ? { formKey: v.formKey } : null,
     siteId: v.siteId, reportUrl, formStamp: freshFormStamp(), canonicalHost: v.canonicalHost, indexable: v.indexable,
     // D7: 3D-plan sites will pass their first-party islands and the request nonce here. None today.
-    islands: [], nonce: request.headers.get('x-nonce'), headline,
+    islands: [], nonce: request.headers.get('x-nonce'), headline, assets,
   })
   // Test mode only: say whether the headline font came from the cache (browser tests check it).
   return html(body, 200, isTestMode() ? { 'x-headline-font': headlineCache } : {})

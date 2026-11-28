@@ -4,7 +4,7 @@
  * Run: npm run lhci -w apps/builder  (needs `next build` with BUILDER_TEST_MODE=1 first).
  *
  * Budgets (DESIGN_UPGRADE_PLAN D1): performance >= 0.95, accessibility = 1, best-practices >= 0.95,
- * SEO = 1, CLS < 0.02. One SEO audit is skipped (so it does not count toward the score): `is-crawlable`,
+ * SEO = 1, CLS < 0.02, LCP < 2.0 s (D4). One SEO audit is skipped (so it does not count toward the score): `is-crawlable`,
  * because this harness route is noindex on purpose (a test page on localhost). Published client sites
  * keep their own indexing checks (Phase 3/4 tests).
  */
@@ -19,6 +19,7 @@ const BUDGETS = {
   'categories:best-practices': ['error', { minScore: 0.95 }],
   'categories:seo': ['error', { minScore: 1 }],
   'cumulative-layout-shift': ['error', { maxNumericValue: 0.02 }],
+  'largest-contentful-paint': ['error', { maxNumericValue: 2000 }],
 }
 
 module.exports = {
@@ -31,13 +32,9 @@ module.exports = {
       settings: { chromeFlags: '--no-sandbox --headless=new', skipAudits: ['is-crawlable'], ...(process.env.CHROME_PATH ? { chromePath: process.env.CHROME_PATH } : {}) },
     },
     assert: {
-      assertMatrix: [
-        { matchingUrlPattern: '^(?!.*/dev-site/restaurant-rich).*$', assertions: BUDGETS },
-        // Recorded baseline (decision 2026-11-27): restaurant-rich scores 0.92-0.93 on performance
-        // because its large hero photo is the slowest LCP of the kits. D4 (images) fixes it and
-        // removes this line; every other budget, CLS included, still applies to it.
-        { matchingUrlPattern: '/dev-site/restaurant-rich', assertions: { ...BUDGETS, 'categories:performance': ['error', { minScore: 0.9 }] } },
-      ],
+      // D4 and D4-1: every kit meets every budget, including LCP < 2.0 s on the throttled phone run.
+      // No per-kit exceptions.
+      assertions: BUDGETS,
     },
     upload: { target: 'filesystem', outputDir: process.env.LHCI_OUT || './lhci-report' },
   },

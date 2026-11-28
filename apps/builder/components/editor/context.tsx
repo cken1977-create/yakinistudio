@@ -5,7 +5,7 @@ import type { SiteDoc } from '@yakini/site-schema'
 import type { EditSession } from '@/lib/editor/session'
 
 /** What every editor panel needs: the working copy and a way to change it. */
-export type Photo = { id: string; width: number; height: number; alt: string }
+export type Photo = { id: string; width: number; height: number; alt: string; generated?: boolean }
 export type EditorApi = {
   siteId: string
   doc: SiteDoc

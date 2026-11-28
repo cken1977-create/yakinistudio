@@ -9,7 +9,8 @@ import { checkFormTime, originAllowed, readCappedForm, requestOrigin } from '@/l
  * starting at step 4e. Studio origin only.
  */
 export const dynamic = 'force-dynamic'
-export const maxDuration = 60
+// The draft takes up to a minute; then its own photos are made after the response (D4, `after`).
+export const maxDuration = 300
 
 const LOGO_MAX = 2 * 1024 * 1024
 const LOGO_TYPES = new Set(['image/png', 'image/jpeg', 'image/svg+xml'])

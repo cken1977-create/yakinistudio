@@ -18,7 +18,7 @@
     "design:gallery": "DESIGN_GALLERY=1 playwright test tests/e2e/design-gallery.spec.ts --trace off",
     "prebuild": "npm run build:site",
     "predev": "npm run build:site",
-    "build:site": "node scripts/build-site-css.mjs && node scripts/build-site-renderer.mjs"
+    "build:site": "node scripts/build-site-css.mjs && node scripts/build-kit-samples.mjs && node scripts/build-site-renderer.mjs"
   },
   "dependencies": {
     "@sentry/nextjs": "^11.11.0",

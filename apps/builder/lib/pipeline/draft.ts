@@ -14,6 +14,9 @@ import { DRAFT_TTL_SECONDS, hashDraftToken, newDraftToken } from '@/lib/server/d
 import type { Runtime } from '@/lib/server/runtime'
 import { generateContent, type GenerateChat, type GenerateResult } from './generate'
 import { importLogo, importPhotos, logoFromUpload, type StoredImage } from './images'
+import { rankImportedPhotos } from './image-check'
+import { makeVariants } from '@/lib/images/variants'
+import type { AssetImagery } from '@/lib/server/store'
 
 /**
  * The draft pipeline (spec 5.2 step 4, 5.3, 8.3-8.5). From a /demo hand-off or the /new form to a
@@ -114,8 +117,19 @@ export async function createDraft(
       req.logoUpload ? logoFromUpload(req.logoUpload, name)
         : site?.brand.logoUrl ? importLogo(site.brand.logoUrl, name, rt.fetchDeps, started + 20_000) : Promise.resolve(null),
     ])
+    // D4 quality filter: small, blurry, flat, screenshot-like and near-duplicate photos are left out;
+    // the rest are ranked and the best one wide enough becomes the hero.
+    const ranked = await rankImportedPhotos(photos).catch(() => ({ kept: photos.map((item) => ({ item, heroOk: false })), hero: null }))
+    const keptPhotos = ranked.kept.map((r) => r.item)
+    const imagery = new Map<string, AssetImagery>()
+    for (const r of ranked.kept) {
+      try {
+        const v = await makeVariants(r.item.bytes, { tall: r.heroOk })
+        imagery.set(r.item.id, { variants: v.variants, lqip: v.lqip, focus: v.focus, ...('stats' in r ? { dhash: r.stats.dhash, quality: { score: r.score, reasons: [] } } : {}) })
+      } catch { /* served as the single stored file */ }
+    }
     const stored: StoredImage[] = []
-    for (const img of [...(logo ? [logo] : []), ...photos]) {
+    for (const img of [...(logo ? [logo] : []), ...keptPhotos]) {
       try {
         await rt.store.saveAsset({
           id: img.id, tenantId, kind: img.kind, bytes: img.bytes, mime: img.mime, width: img.width, height: img.height, alt: img.alt,
@@ -124,11 +138,13 @@ export async function createDraft(
           licenseNote: req.logoUpload && img.kind === 'logo' ? 'Uploaded by the owner' : 'From the business’s own public website',
           // Owner uploads may ship in exports; photos read from a site wait for the owner to confirm them (spec 11.7).
           redistributable: Boolean(req.logoUpload && img.kind === 'logo'),
+          ...(imagery.has(img.id) ? { imagery: imagery.get(img.id) } : {}),
         })
         stored.push(img)
       } catch { /* an image that cannot be stored is simply left out */ }
     }
-    return stored
+    const hero = ranked.hero && stored.some((x) => x.id === ranked.hero!.item.id) ? ranked.hero.item : null
+    return { stored, hero }
   })()
 
   // 4. Brand: colors exactly as read (R6), the owner's own colors, or the kit default, labelled.
@@ -165,7 +181,7 @@ export async function createDraft(
   }
 
   progress('finishing')
-  const stored = await imagesDone
+  const { stored, hero: bestPhoto } = await imagesDone
   const logo = stored.find((i) => i.kind === 'logo')
   const brand = brandFor(kit, { colors: palette, ...(logo ? { logo: { assetId: logo.id, alt: logo.alt } } : {}) }, ownerColors ? 'owner' : 'extracted')
   const storedIds = new Set([...stored.map((i) => i.id), ...offeredSamples(kit).map((s) => s.assetId)])
@@ -181,6 +197,11 @@ export async function createDraft(
     const fb = validateNewDoc(buildKitDraft(kit, fallbackCtx, brand))
     if (!fb.ok) throw new Error('Kit template failed validation') // a bug, caught by tests
     doc = fb.doc
+  }
+  // The best of the business's own photos is the Home hero (D4): real photos of the real place win.
+  if (bestPhoto) {
+    const withHero = validateNewDoc(heroWith(doc, { assetId: bestPhoto.id, alt: bestPhoto.alt }))
+    if (withHero.ok) doc = withHero.doc
   }
 
   // 6. Store the anonymous draft. Only a hash of the access token is kept.
@@ -199,6 +220,17 @@ export async function createDraft(
     }).catch(() => {})
   }
   return { kind: 'created', siteId, token, kitId: kit.id, outcome, siteRead: Boolean(site) }
+}
+
+/** The doc with this photo as its Home hero image (a text-only Home hero becomes cinematic). */
+function heroWith(doc: SiteDoc, ref: { assetId: string; alt: string }): SiteDoc {
+  const out = structuredClone(doc)
+  const home = out.pages.find((p) => p.slug === '') ?? out.pages[0]
+  const hero = home.sections.find((s) => s.type === 'hero')
+  if (!hero) return out
+  ;(hero.props as { image?: unknown }).image = ref
+  if (hero.variant === 'minimal') hero.variant = 'cinematic'
+  return out
 }
 
 /** Remove image references to photos that failed to download or store. */

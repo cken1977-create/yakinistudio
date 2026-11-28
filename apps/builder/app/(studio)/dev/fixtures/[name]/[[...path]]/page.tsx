@@ -9,6 +9,7 @@ import foodTruckMinimal from '@yakini/site-schema/fixtures/v1/food-truck-minimal
 import restaurantEvery from '@yakini/site-schema/fixtures/v1/restaurant-every-section.json'
 import restaurantMinimal from '@yakini/site-schema/fixtures/v1/restaurant-minimal.json'
 import { draftImage } from '@/lib/draft/preview'
+import { imageOptions } from '@/lib/images/resolve'
 import { isTestMode } from '@/lib/server/runtime'
 
 /**
@@ -39,7 +40,7 @@ export default async function FixturePreview({ params, searchParams }: Props) {
     doc, page, mode: renderMode,
     hrefForPage: (p) => `/dev/fixtures/${name}${p.slug ? `/${p.slug}` : ''}`,
     // Fixture photos are stand-ins: anything that is not a kit sample shows the first kit sample.
-    image: (id) => draftImage('fixture', id, new Set()) ?? draftImage('fixture', '7a1e0000-0000-4000-8000-000000000101', new Set()),
+    image: (id) => draftImage('fixture', id, new Set(), undefined, imageOptions(doc)) ?? draftImage('fixture', '7a1e0000-0000-4000-8000-000000000101', new Set(), undefined, imageOptions(doc)),
     formAction: (key) => (renderMode === 'live' ? `/api/forms/${key}` : null),
     reportUrl: renderMode === 'live' ? '/report' : null,
     today: null,

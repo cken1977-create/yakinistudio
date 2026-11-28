@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { designFixtures } from '@yakini/kits/design-fixtures'
+import { FONT_STACKS } from '@yakini/sections'
 import { loadSiteDoc } from '@yakini/site-schema'
 import { headlineFont, siteCharacters } from '@/lib/site/headline-font'
 import { renderPublished } from '@/lib/site/render-entry'
@@ -37,21 +38,28 @@ describe('inline headline font', () => {
     }
   })
 
-  it('is small, a data: font of the display face at the headline weight, used only by headline styles', async () => {
+  it('is small, a data: font of the display face at the headline weight, and is the only display font (D4-1)', async () => {
     for (const f of fixtures) {
       const h = (await headlineFont(f.doc))!
       expect(h, f.name).not.toBeNull()
-      // A few KB per face: far under the 100 KB budget even with Signature's italic.
-      expect(h.bytes, f.name).toBeLessThan(f.doc.style.fontPair === 'signature' ? 40_000 : 25_000)
-      expect(h.css).toMatch(/@font-face\{font-family:'YS Headline';font-style:normal;font-weight:\d+;font-display:block;src:url\(data:font\/woff2;base64,[A-Za-z0-9+/=]+\) format\('woff2'\);unicode-range:U\+/)
+      // A few KB per face (ASCII always included): far under the 100 KB budget even with an italic face.
+      const italic = (FONT_FILES as Record<string, string[]>)[f.doc.style.fontPair].some((k) => k.endsWith('-italic'))
+      expect(h.bytes, f.name).toBeLessThan(italic ? 40_000 : 25_000)
+      expect(h.css).toMatch(/@font-face\{font-family:'YS Headline';font-style:normal;font-weight:1 1000;font-display:block;src:url\(data:font\/woff2;base64,[A-Za-z0-9+/=]+\) format\('woff2'\);unicode-range:U\+/)
       expect(h.css).toContain(".ys-site :is(.ys-display,.ys-h2,")
+      // D4-1: every display-font use points at the inline face, then the local fallback, never the web family.
+      const web = FONT_STACKS[f.doc.style.fontPair].display.split(',')[0].trim()
+      expect(h.css).toContain(".ys-site{--ys-font-display:'YS Headline',")
+      expect(h.css, f.name).not.toContain(web)
+      // Printable ASCII is always there, so text the page adds itself never pulls in the display file.
+      for (const c of 'AZaz09?!&') expect(siteCharacters(f.doc)).toContain(c)
       expect(h.css).not.toMatch(/https?:/) // first-party bytes only (R2)
       expect(h.css).not.toMatch(/<\/style/i)
-      if (f.doc.style.fontPair === 'signature') expect(h.css).toContain("font-style:italic;font-weight:400")
+      if (f.doc.style.fontPair === 'signature') expect(h.css).toContain("font-style:italic;font-weight:1 1000")
     }
   })
 
-  it('goes into the page head with the nonce, and display-only files stop being preloaded', async () => {
+  it('goes into the page head with the nonce; display-only and mono label files are not preloaded', async () => {
     for (const f of fixtures) {
       const headline = await headlineFont(f.doc)
       const html = renderPublished({ ...base, doc: f.doc, pageId: f.doc.pages[0].id, thanks: null, headline, nonce: 'abc123' })
@@ -60,7 +68,8 @@ describe('inline headline font', () => {
       const preloads = [...head.matchAll(/<link rel="preload" href="\/_site-assets\/fonts\/([^"]+)" as="font"/g)].map((m) => m[1])
       for (const key of headline!.displayOnly) expect(preloads.join(' '), f.name).not.toContain(key.replace(/-(normal|italic)$/, ''))
       const all = (FONT_FILES as Record<string, string[]>)[f.doc.style.fontPair]
-      expect(preloads.length).toBe(all.length - headline!.displayOnly.length)
+      expect(preloads.length).toBe(all.filter((k) => !headline!.displayOnly.includes(k) && !k.includes('-mono-')).length)
+      expect(preloads.join(' ')).not.toContain('mono')
     }
   })
 

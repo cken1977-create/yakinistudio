@@ -177,6 +177,16 @@ describe('set_style: "Try the new look" (design D2)', () => {
     expect(describeOp(doc, r.applied[0])).toBe('Switched to the new look')
     expect(describeOp(r.doc, r.inverse[0])).toBe('Went back to your original look')
   })
+  it('the photo grade toggle (design D4) changes only that, says so, and undoes', () => {
+    const r = applyOps(base(), [{ op: 'set_style', style: look }], ctx, { owner: true })
+    if (!r.ok) throw new Error(r.error)
+    const on = applyOps(r.doc, [{ op: 'set_style', style: { ...look, photoGrade: 'all' } }], ctx, { owner: true })
+    if (!on.ok) throw new Error(on.error)
+    expect(on.doc.style).toEqual({ ...look, photoGrade: 'all' })
+    expect(describeOp(r.doc, on.applied[0])).toBe('Gave your own photos the look’s color treatment')
+    expect(describeOp(on.doc, on.inverse[0])).toBe('Showed your own photos as they are')
+    expect(applyOps(r.doc, [{ op: 'set_style', style: { ...look, photoGrade: 'sepia' } }] as never, ctx, { owner: true }).ok).toBe(false)
+  })
   it('is never accepted from the AI (chat edits use the public ops only)', () => {
     const r = applyOps(base(), [{ op: 'set_style', style: look }], ctx)
     expect(r.ok).toBe(false)

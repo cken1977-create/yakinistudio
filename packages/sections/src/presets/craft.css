@@ -27,3 +27,7 @@
 .ys-site[data-preset='craft'] .ys-header { background: color-mix(in srgb, var(--ys-surface-0) 92%, var(--ys-bg)); border-bottom: 1px dashed var(--ys-line-strong); }
 .ys-site[data-preset='craft'] .ys-footer-wordmark { letter-spacing: -0.03em; }
 .ys-site[data-preset='craft'] .ys-week > li.is-off { opacity: 1; }
+
+/* D4 photo grade: one consistent treatment for photos made for the site and library photos (and the
+   owner's own photos when they turn it on). A filter on the photo only; brand colours are untouched. */
+.ys-site[data-preset='craft'] img.ys-graded { filter: sepia(0.14) saturate(0.95) contrast(1.04); }
