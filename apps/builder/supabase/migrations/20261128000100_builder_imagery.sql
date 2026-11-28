@@ -6,8 +6,10 @@
 --    record provider, model, prompt and date.
 -- 2. ai_runs: image and image-check runs with their dollar cost, and ai_image_usd_today() for the
 --    images' own daily cap (inside the overall AI cap).
--- 3. kit_library_images: the AI-made kit library (made by hand with scripts/generate-kit-library.ts,
---    files in the site-assets bucket under kit-library/). Server-only; no client can read or write it.
+-- 3. kit_library_images: the kit library (made by hand with scripts/generate-kit-library.ts, files in
+--    the site-assets bucket under kit-library/). Server-only; no client can read or write it. A new
+--    draft copies the photos it uses into its own tenant (source 'kit-sample', licence 'kit_licensed'),
+--    so a tenant's photos always live under its own folder.
 
 -- ---------------------------------------------------------------- 1. assets
 alter table builder.assets drop constraint if exists assets_source_check;
@@ -61,6 +63,8 @@ create table if not exists builder.kit_library_images (
   width int not null check (width between 1 and 8000),
   height int not null check (height between 1 and 8000),
   alt text not null check (char_length(alt) between 1 and 160),
+  bytes int not null check (bytes between 1 and 26214400),
+  sha256 text not null check (sha256 ~ '^[0-9a-f]{64}$'),
   lqip text check (lqip is null or (char_length(lqip) <= 2048 and lqip like 'data:image/webp;base64,%')),
   focus_x real check (focus_x is null or (focus_x >= 0 and focus_x <= 1)),
   focus_y real check (focus_y is null or (focus_y >= 0 and focus_y <= 1)),

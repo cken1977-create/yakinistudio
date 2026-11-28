@@ -78,6 +78,6 @@ export function assetResolved(url: string, meta: AssetMeta | undefined, o: Image
     ...(tall.length ? { tallSources: tall } : {}),
     ...(meta.lqip ? { lqip: meta.lqip } : {}),
     ...(meta.focus ? { focus: meta.focus } : {}),
-    graded: meta.generated || o.gradeOwn,
+    graded: meta.generated || Boolean(meta.library) || o.gradeOwn,
   }
 }

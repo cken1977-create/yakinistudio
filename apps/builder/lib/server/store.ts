@@ -18,10 +18,10 @@ export type AssetInput = {
   width: number
   height: number
   alt: string
-  source: 'upload' | 'scraped' | 'generated'
+  source: 'upload' | 'scraped' | 'generated' | 'kit-sample'
   sourceUrl: string | null
   sha256: string
-  licenseKind: 'owner_upload' | 'owner_site' | 'generated'
+  licenseKind: 'owner_upload' | 'owner_site' | 'generated' | 'kit_licensed'
   licenseNote: string
   redistributable: boolean
   /** Design D4: the served copies, placeholder, focus point, check result and licence of a photo. */
@@ -46,7 +46,18 @@ export type AssetMeta = {
   focus?: { x: number; y: number }
   variants: { format: 'avif' | 'webp'; width: number; height: number; crop: 'full' | 'tall' }[]
   generated: boolean
+  /** A kit library photo copied into this tenant: replaceable by images made for the site, like kit samples. */
+  library?: boolean
 }
+/** Design D4: a kit library photo (made by hand with scripts/generate-kit-library.ts). */
+export type KitLibraryImage = {
+  id: string; kitId: string; slot: string; width: number; height: number; alt: string; bytes: number; sha256: string
+  lqip: string | null; focus: { x: number; y: number } | null; dhash: string | null; qualityScore: number
+  variants: { format: 'avif' | 'webp'; width: number; height: number; crop: 'full' | 'tall' }[]
+  license: { provider: string; model: string; prompt: string; createdAt: string }
+}
+export type NewKitLibraryImage = Omit<KitLibraryImage, 'id' | 'bytes' | 'variants'> & { id: string; master: Buffer; variants: (KitLibraryImage['variants'][number] & { bytes: Buffer })[] }
+
 export const variantKey = (v: { crop: string; width: number; format: string }) => `${v.crop}-${v.width}.${v.format}`
 
 export type NewDraft = {
@@ -147,6 +158,12 @@ export interface DraftStore {
   getAssetVariant(tenantId: string, assetId: string, key: string): Promise<{ bytes: Buffer; mime: string } | null>
   /** Size, placeholder, focus and served copies of the tenant's photos with these ids (D4). */
   assetMeta(tenantId: string, ids: readonly string[]): Promise<Record<string, AssetMeta>>
+  /** D4: the kit library photos in use (not retired). Empty until the library is made. */
+  kitLibrary(kitId: string): Promise<KitLibraryImage[]>
+  /** D4: copy a library photo (file and copies) into a tenant's own photos; returns the new asset id. */
+  copyLibraryImage(tenantId: string, image: KitLibraryImage): Promise<string>
+  /** D4, batch script only: store a new library photo. */
+  saveKitLibraryImage(image: NewKitLibraryImage): Promise<void>
   /** Dollars spent on images and image checks today, across all tenants (the images' own cap). */
   imageUsdToday(): Promise<number>
   /** True when the call is allowed (Postgres-backed limiter, spec 14.4). */
@@ -257,7 +274,7 @@ export function createSupabaseStore(db: SupabaseClient<any, any, any>): DraftSto
         width: (r.width as number) ?? 1600, height: (r.height as number) ?? 1000, lqip: (r.lqip as string) ?? undefined,
         focus: r.focus_x === null || r.focus_x === undefined ? undefined : { x: r.focus_x as number, y: r.focus_y as number },
         variants: ((r.variants ?? []) as AssetMeta['variants']).map((v) => ({ format: v.format, width: v.width, height: v.height, crop: v.crop })),
-        generated: r.source === 'generated',
+        generated: r.source === 'generated', library: r.source === 'kit-sample',
       } satisfies AssetMeta]))
     },
     async imageUsdToday() {
@@ -266,6 +283,64 @@ export function createSupabaseStore(db: SupabaseClient<any, any, any>): DraftSto
       const n = Number(data)
       if (!Number.isFinite(n)) throw new Error('image spend unreadable') // fails closed
       return n
+    },
+    async kitLibrary(kitId) {
+      const { data, error } = await db.from('kit_library_images')
+        .select('id, kit_id, slot, width, height, alt, bytes, sha256, lqip, focus_x, focus_y, dhash, quality_score, variants, license_provider, license_model, license_prompt, license_created_at')
+        .eq('kit_id', kitId).is('retired_at', null).order('created_at', { ascending: false }).limit(60)
+      if (error) fail('kit library read', error)
+      return (data ?? []).map((r) => ({
+        id: r.id as string, kitId: r.kit_id as string, slot: r.slot as string, width: r.width as number, height: r.height as number,
+        alt: r.alt as string, bytes: r.bytes as number, sha256: r.sha256 as string, lqip: (r.lqip as string | null) ?? null,
+        focus: r.focus_x === null ? null : { x: r.focus_x as number, y: r.focus_y as number }, dhash: (r.dhash as string | null) ?? null,
+        qualityScore: Number(r.quality_score),
+        variants: ((r.variants ?? []) as KitLibraryImage['variants']).map((v) => ({ format: v.format, width: v.width, height: v.height, crop: v.crop })),
+        license: { provider: r.license_provider as string, model: r.license_model as string, prompt: r.license_prompt as string, createdAt: new Date(r.license_created_at as string).toISOString() },
+      }))
+    },
+    async copyLibraryImage(tenantId, img) {
+      // Server-side copies inside the bucket: no bytes pass through here. The tenant owns its copy
+      // (soft-deleted like any photo); the library's own files stay as they are.
+      const id = crypto.randomUUID()
+      const from = `kit-library/${img.kitId}/${img.id}`
+      const path = `${tenantId}/${id}.webp`
+      const c = await db.storage.from(BUCKET).copy(`${from}.webp`, path)
+      if (c.error) fail('library copy', c.error)
+      const variants: { format: string; width: number; height: number; crop: string; path: string }[] = []
+      for (const v of img.variants) {
+        const vp = `${tenantId}/${id}/${variantKey(v)}`
+        const cv = await db.storage.from(BUCKET).copy(`${from}/${variantKey(v)}`, vp)
+        if (cv.error) fail('library variant copy', cv.error)
+        variants.push({ ...v, path: vp })
+      }
+      const { error } = await db.from('assets').insert({
+        id, tenant_id: tenantId, kind: 'image', storage_path: path, mime: 'image/webp', width: img.width, height: img.height,
+        bytes: img.bytes, alt: img.alt.slice(0, 160), source: 'kit-sample', source_url: null, sha256: img.sha256,
+        license_kind: 'kit_licensed', license_note: 'Yakini kit library photo', redistributable: false,
+        variants, lqip: img.lqip, focus_x: img.focus?.x ?? null, focus_y: img.focus?.y ?? null, dhash: img.dhash, quality_score: img.qualityScore,
+        license_provider: img.license.provider, license_model: img.license.model, license_prompt: img.license.prompt.slice(0, 2000), license_created_at: img.license.createdAt,
+      })
+      if (error) fail('library asset insert', error)
+      return id
+    },
+    async saveKitLibraryImage(img) {
+      const base = `kit-library/${img.kitId}/${img.id}`
+      const up = await db.storage.from(BUCKET).upload(`${base}.webp`, img.master, { contentType: 'image/webp', upsert: false, cacheControl: '31536000' })
+      if (up.error) fail('library upload', up.error)
+      const variants: { format: string; width: number; height: number; crop: string; path: string }[] = []
+      for (const v of img.variants) {
+        const vp = `${base}/${variantKey(v)}`
+        const vu = await db.storage.from(BUCKET).upload(vp, v.bytes, { contentType: `image/${v.format}`, upsert: false, cacheControl: '31536000' })
+        if (vu.error) fail('library variant upload', vu.error)
+        variants.push({ format: v.format, width: v.width, height: v.height, crop: v.crop, path: vp })
+      }
+      const { error } = await db.from('kit_library_images').insert({
+        id: img.id, kit_id: img.kitId, slot: img.slot, storage_path: `${base}.webp`, width: img.width, height: img.height, alt: img.alt.slice(0, 160),
+        bytes: img.master.length, sha256: img.sha256, lqip: img.lqip, focus_x: img.focus?.x ?? null, focus_y: img.focus?.y ?? null,
+        variants, dhash: img.dhash, quality_score: img.qualityScore,
+        license_provider: img.license.provider, license_model: img.license.model, license_prompt: img.license.prompt.slice(0, 2000), license_created_at: img.license.createdAt,
+      })
+      if (error) fail('library insert', error)
     },
     async hitRateLimit(key, max, windowSeconds) {
       const { data, error } = await db.rpc('hit_rate_limit', { p_key: key, p_max: max, p_window_seconds: windowSeconds })
@@ -423,6 +498,7 @@ type MemState = {
   sites: Map<string, MemSite>
   assets: Map<string, AssetInput>
   runs: (AiRunRow & { at: number })[]
+  kitLibrary: NewKitLibraryImage[]
   limits: Map<string, number>
   members: { tenantId: string; userId: string; role: 'owner' | 'editor' }[]
   operators: Set<string>
@@ -436,7 +512,7 @@ type MemState = {
 /** In-memory store for unit tests and the CI end-to-end run. Never used on Vercel. */
 export function createMemoryStore(): DraftStore & EditorStore & PublishStore & BillingStore & DomainStore & { _state: MemState; _p3: MemPublishState; _p4: MemBillingState } {
   const state: MemState = {
-    tenants: new Map(), sites: new Map(), assets: new Map(), runs: [], limits: new Map(), members: [], operators: new Set(),
+    tenants: new Map(), sites: new Map(), assets: new Map(), runs: [], kitLibrary: [], limits: new Map(), members: [], operators: new Set(),
     versions: [], edits: [], audit: [], chat: [], tutorial: new Set(),
   }
   const clone = <T>(v: T): T => structuredClone(v)
@@ -475,7 +551,7 @@ export function createMemoryStore(): DraftStore & EditorStore & PublishStore & B
         out[id] = {
           width: a.width, height: a.height, lqip: a.imagery?.lqip, focus: a.imagery?.focus,
           variants: (a.imagery?.variants ?? []).map((v) => ({ format: v.format, width: v.width, height: v.height, crop: v.crop })),
-          generated: a.source === 'generated',
+          generated: a.source === 'generated', library: a.source === 'kit-sample',
         }
       }
       return out
@@ -484,6 +560,21 @@ export function createMemoryStore(): DraftStore & EditorStore & PublishStore & B
       const day = new Date(); day.setUTCHours(0, 0, 0, 0)
       return state.runs.filter((r) => (r.kind === 'image' || r.kind === 'image_check') && r.at >= day.getTime()).reduce((n, r) => n + (r.usd ?? 0), 0)
     },
+    async kitLibrary(kitId) {
+      return state.kitLibrary.filter((x) => x.kitId === kitId).map(({ master, variants, ...rest }) => ({ ...rest, bytes: master.length, variants: variants.map(({ format, width, height, crop }) => ({ format, width, height, crop })) }))
+    },
+    async copyLibraryImage(tenantId, img) {
+      const src = state.kitLibrary.find((x) => x.id === img.id)
+      if (!src) throw new Error('library image missing')
+      const id = crypto.randomUUID()
+      state.assets.set(id, {
+        id, tenantId, kind: 'image', bytes: src.master, mime: 'image/webp', width: src.width, height: src.height, alt: src.alt,
+        source: 'kit-sample', sourceUrl: null, sha256: src.sha256, licenseKind: 'kit_licensed', licenseNote: 'Yakini kit library photo', redistributable: false,
+        imagery: { variants: src.variants, lqip: src.lqip ?? '', focus: src.focus ?? { x: 0.5, y: 0.5 }, ...(src.dhash ? { dhash: src.dhash } : {}), license: src.license },
+      })
+      return id
+    },
+    async saveKitLibraryImage(img) { state.kitLibrary.push(clone(img)) },
     async hitRateLimit(key, max, windowSeconds) {
       const k = `${key}|${Math.floor(Date.now() / 1000 / windowSeconds)}`
       const n = (state.limits.get(k) ?? 0) + 1

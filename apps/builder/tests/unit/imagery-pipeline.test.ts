@@ -113,6 +113,51 @@ describe('sparse draft: library first, then generated (test mode)', () => {
   }, 240_000)
 })
 
+describe('kit library (made by hand, then used first)', () => {
+  async function seedLibrary(store: ReturnType<typeof createMemoryStore>, kitId: string, slots: string[]) {
+    const { makeVariants } = await import('@/lib/images/variants')
+    const { drawPhoto } = await import('@/lib/pipeline/test-images')
+    const { createHash } = await import('node:crypto')
+    for (const [i, slot] of slots.entries()) {
+      const master = await drawPhoto(`library-${slot}`, 1600, slot === 'hero-tall' ? 2000 : 1000)
+      const v = await makeVariants(master, { widths: [640, 1024], tall: slot === 'hero-wide' })
+      await store.saveKitLibraryImage({
+        id: `aaaaaaaa-0000-4000-8000-00000000000${i}`, kitId, slot, width: v.width, height: v.height, alt: `Library ${slot}`, sha256: createHash('sha256').update(master).digest('hex'),
+        lqip: v.lqip, focus: v.focus, dhash: null, qualityScore: 0.8, master, variants: v.variants,
+        license: { provider: 'test', model: 'test-image', prompt: 'p', createdAt: new Date().toISOString() },
+      })
+    }
+  }
+  it('with generation off, a new draft swaps kit samples for library copies owned by the tenant', async () => {
+    const { rt, store } = runtime()
+    await seedLibrary(store, 'restaurant', ['hero-wide', 'feature-1', 'gallery-1', 'gallery-2', 'gallery-3'])
+    const siteId = await draft(rt, { source: 'prompt', businessName: 'Library Lane', kitId: 'restaurant' })
+    const r = await runImagery({ ...rt, testMode: false }, siteId)
+    expect(r.status).toBe('off')
+    expect(r.placed).toBeGreaterThanOrEqual(2)
+    const doc = await docOf(store, siteId)
+    const hero = homeHero(doc)!
+    expect(hero.alt).toBe('Library hero-wide')
+    const copy = store._state.assets.get(hero.assetId)!
+    expect(copy.tenantId).toBe((await store.getDraft(siteId))!.tenantId)
+    expect(copy.source).toBe('kit-sample')
+    expect(copy.licenseKind).toBe('kit_licensed')
+    const meta = await store.assetMeta(copy.tenantId, [hero.assetId])
+    expect(meta[hero.assetId]).toMatchObject({ library: true, generated: false })
+  }, 120_000)
+  it('images made for the site then replace library copies, never the owner\'s photos', async () => {
+    const { rt, store } = runtime()
+    await seedLibrary(store, 'restaurant', ['hero-wide'])
+    const siteId = await draft(rt, { source: 'prompt', businessName: 'Library Lane Two', kitId: 'restaurant' })
+    await runImagery({ ...rt, testMode: false }, siteId)
+    expect(homeHero(await docOf(store, siteId))!.alt).toBe('Library hero-wide')
+    const r = await runImagery(rt, siteId)
+    expect(r.status).toBe('done')
+    const hero = homeHero(await docOf(store, siteId))!
+    expect(store._state.assets.get(hero.assetId)!.source).toBe('generated')
+  }, 240_000)
+})
+
 describe('switched off in production', () => {
   it('does nothing without the flag, a cap and the key', async () => {
     expect(providersFor({ testMode: false })).toBeNull()

@@ -7,7 +7,7 @@ SET ROLE authenticated;
 SELECT bt.login('a0000000-0000-0000-0000-0000000000a1');
 DO $$ BEGIN
   PERFORM bt.ok(bt.raises($q$SELECT count(*) FROM builder.kit_library_images$q$), 'signed-in users cannot read the kit library');
-  PERFORM bt.ok(bt.raises($q$INSERT INTO builder.kit_library_images (kit_id, slot, storage_path, width, height, alt, quality_score, license_provider, license_model, license_prompt, license_created_at) VALUES ('food-truck','scene-1','kit-library/food-truck/00000000-0000-0000-0000-000000000001.webp',10,10,'x',0.9,'x','x','x',now())$q$), 'signed-in users cannot add to the kit library');
+  PERFORM bt.ok(bt.raises($q$INSERT INTO builder.kit_library_images (kit_id, slot, storage_path, width, height, alt, bytes, sha256, quality_score, license_provider, license_model, license_prompt, license_created_at) VALUES ('food-truck','scene-1','kit-library/food-truck/00000000-0000-0000-0000-000000000001.webp',10,10,'x',100,repeat('a',64),0.9,'x','x','x',now())$q$), 'signed-in users cannot add to the kit library');
   PERFORM bt.ok(bt.raises($q$SELECT builder.ai_image_usd_today()$q$), 'signed-in users cannot read image spend');
 END $$;
 RESET ROLE;
@@ -33,9 +33,10 @@ BEGIN
   PERFORM bt.ok(bt.raises($q$INSERT INTO builder.ai_runs (kind, model, prompt_version, outcome, usd) VALUES ('image', 'x', 'd4', 'ok', -1)$q$), 'spend can never be negative');
 
   -- The library keeps its own licence fields and lives under kit-library/.
-  INSERT INTO builder.kit_library_images (kit_id, slot, storage_path, width, height, alt, quality_score, license_provider, license_model, license_prompt, license_created_at)
-  VALUES ('food-truck', 'scene-1', 'kit-library/food-truck/00000000-0000-0000-0000-000000000001.webp', 2400, 1350, 'A truck window', 0.9, 'xai', 'grok-imagine-image-2.0', 'prompt', now());
-  PERFORM bt.ok(bt.raises($q$INSERT INTO builder.kit_library_images (kit_id, slot, storage_path, width, height, alt, quality_score, license_provider, license_model, license_prompt, license_created_at) VALUES ('food-truck', 'scene-2', 'tenant/../x.webp', 1, 1, 'x', 0.9, 'x', 'x', 'x', now())$q$), 'library files only live under kit-library/<kit>/');
+  INSERT INTO builder.kit_library_images (kit_id, slot, storage_path, width, height, alt, bytes, sha256, quality_score, license_provider, license_model, license_prompt, license_created_at)
+  VALUES ('food-truck', 'scene-1', 'kit-library/food-truck/00000000-0000-0000-0000-000000000001.webp', 2400, 1350, 'A truck window', 120000, repeat('a', 64), 0.9, 'xai', 'grok-imagine-image-2.0', 'prompt', now());
+  PERFORM bt.ok(bt.raises($q$INSERT INTO builder.kit_library_images (kit_id, slot, storage_path, width, height, alt, bytes, sha256, quality_score, license_provider, license_model, license_prompt, license_created_at) VALUES ('food-truck', 'scene-2', 'tenant/../x.webp', 1, 1, 'x', 100, repeat('a', 64), 0.9, 'x', 'x', 'x', now())$q$), 'library files only live under kit-library/<kit>/');
+  PERFORM bt.ok(bt.raises($q$INSERT INTO builder.kit_library_images (kit_id, slot, storage_path, width, height, alt, bytes, sha256, quality_score, license_provider, license_model, license_prompt, license_created_at) VALUES ('food-truck', 'scene-3', 'kit-library/food-truck/00000000-0000-0000-0000-000000000003.webp', 1, 1, 'x', 100, 'not-a-hash', 0.9, 'x', 'x', 'x', now())$q$), 'library rows carry a real file hash');
   RAISE NOTICE 'ALL D4 TESTS PASSED';
 END $$;
 RESET ROLE;
