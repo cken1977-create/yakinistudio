@@ -87,6 +87,8 @@ export function sampleImagery(assetId: string): { lqip: string; focus: { x: numb
 
 /** Widths of the AVIF copies build:site makes of every sample photo (public/_kit-samples/<kit>/<key>-<w>.avif). */
 export const SAMPLE_AVIF_WIDTHS = [640, 800, 960, 1280] as const
+/** The 4:5 phone crop build:site makes of every sample photo (public/_kit-samples/<kit>/<key>-tall-576.{avif,webp}). */
+export const SAMPLE_TALL = { width: 576, height: 720 } as const
 
 export function sampleImageSrc(sample: SampleImage, size: 'full' | 'small' = 'full'): string {
   const dir = sample.storagePath.slice(0, sample.storagePath.lastIndexOf('/') + 1)

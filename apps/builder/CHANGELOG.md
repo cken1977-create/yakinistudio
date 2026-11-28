@@ -1,6 +1,21 @@
 # Changelog: Yakini Builder
 
 
+## D4: imagery engine (2026-11-28, branch `feat/design-d4-imagery`)
+
+- New drafts never show empty photo places: library photos first, then photos made for the business
+  replace them once each passes the automatic check. Owner photos and owner edits are never replaced.
+- Imported sites: screenshots, blurry, tiny and text-heavy photos are left out; the best wide photo
+  becomes the hero.
+- Photos load faster and never shift the page: AVIF then WebP at several widths, exact size, blurred
+  placeholder, focus point, 4:5 phone crop for heroes. Classic sites render exactly as before.
+- Each look has a photo color treatment; owners can apply it to their own photos ("Photo color").
+- The photo picker marks photos made for the site: "Made for your site, swap in your own anytime".
+- Images are off until switched on: `AI_IMAGE_GENERATION_ENABLED=1` and `AI_IMAGE_DAILY_USD_CAP`
+  (inside `AI_GLOBAL_DAILY_USD_CAP`; text gets the rest). Both caps fail closed.
+- Kit library: made by hand with `scripts/generate-kit-library.ts` (never in CI or on deploy).
+- Database (repo only, not applied): `20261128000100_builder_imagery.sql`.
+
 ## Headline font sent with the page (2026-11-27, branch `feat/inline-headline-font`)
 
 - Each published page carries its own headline typeface (cut to the site's characters, a few KB),

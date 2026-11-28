@@ -1,4 +1,4 @@
-import { SAMPLE_AVIF_WIDTHS, sampleImagery, type SampleImage } from '@yakini/kits'
+import { SAMPLE_AVIF_WIDTHS, SAMPLE_TALL, sampleImagery, type SampleImage } from '@yakini/kits'
 import type { ResolvedImage } from '@yakini/sections'
 import type { SiteDoc } from '@yakini/site-schema'
 import type { AssetMeta } from '@/lib/server/store'
@@ -43,9 +43,11 @@ export function sampleResolved(sample: SampleImage, legacy = false): ResolvedIma
   ].filter(Boolean).join(', ')
   if (legacy) return { src, width: sample.width, height: sample.height, sources: [{ type: 'image/webp', srcSet: webp }] }
   const avif = SAMPLE_AVIF_WIDTHS.filter((w) => w <= sample.width).map((w) => `${avifDir}${stem}-${w}.avif ${w}w`).join(', ')
+  const tall = `${avifDir}${stem}-tall-${SAMPLE_TALL.width}`
   return {
     src, width: sample.width, height: sample.height,
     sources: [{ type: 'image/avif', srcSet: avif }, { type: 'image/webp', srcSet: webp }],
+    tallSources: [{ type: 'image/avif', srcSet: `${tall}.avif ${SAMPLE_TALL.width}w` }, { type: 'image/webp', srcSet: `${tall}.webp ${SAMPLE_TALL.width}w` }],
     ...(meta ? { lqip: meta.lqip, focus: meta.focus } : {}),
     graded: true,
   }
