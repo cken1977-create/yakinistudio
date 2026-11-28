@@ -10,7 +10,8 @@ import { originAllowed, readCappedForm, requestOrigin, withWww } from '@/lib/ser
  * GET /start shows the same form as /new.
  */
 export const dynamic = 'force-dynamic'
-export const maxDuration = 60
+// The draft takes up to a minute; then its own photos are made after the response (D4, `after`).
+export const maxDuration = 300
 
 export function GET(request: Request): Response {
   return Response.redirect(new URL('/new', request.url), 303)

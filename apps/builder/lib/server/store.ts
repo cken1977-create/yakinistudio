@@ -18,13 +18,36 @@ export type AssetInput = {
   width: number
   height: number
   alt: string
-  source: 'upload' | 'scraped'
+  source: 'upload' | 'scraped' | 'generated'
   sourceUrl: string | null
   sha256: string
-  licenseKind: 'owner_upload' | 'owner_site'
+  licenseKind: 'owner_upload' | 'owner_site' | 'generated'
   licenseNote: string
   redistributable: boolean
+  /** Design D4: the served copies, placeholder, focus point, check result and licence of a photo. */
+  imagery?: AssetImagery
 }
+
+export type AssetVariantFile = { format: 'avif' | 'webp'; width: number; height: number; crop: 'full' | 'tall'; bytes: Buffer }
+export type AssetImagery = {
+  variants: AssetVariantFile[]
+  lqip: string
+  focus: { x: number; y: number }
+  dhash?: string
+  quality?: { score: number; reasons: string[] }
+  license?: { provider: string; model: string; prompt: string; createdAt: string }
+}
+
+/** What a renderer needs to draw a photo well (D4): exact size, placeholder, focus, served copies. */
+export type AssetMeta = {
+  width: number
+  height: number
+  lqip?: string
+  focus?: { x: number; y: number }
+  variants: { format: 'avif' | 'webp'; width: number; height: number; crop: 'full' | 'tall' }[]
+  generated: boolean
+}
+export const variantKey = (v: { crop: string; width: number; format: string }) => `${v.crop}-${v.width}.${v.format}`
 
 export type NewDraft = {
   tenantId: string
@@ -54,7 +77,7 @@ export type StoredDraft = {
 export type AiRunRow = {
   tenantId: string | null
   siteId: string | null
-  kind: 'generate' | 'edit' | 'helper'
+  kind: 'generate' | 'edit' | 'helper' | 'image' | 'image_check'
   model: string
   promptVersion: string
   inputTokens: number
@@ -62,6 +85,8 @@ export type AiRunRow = {
   latencyMs: number
   outcome: 'ok' | 'invalid' | 'fallback' | 'timeout' | 'error' | 'blocked'
   toolCalls: number
+  /** Dollar cost (image runs; text runs are priced from tokens). */
+  usd?: number
 }
 
 export type Role = 'owner' | 'editor' | 'operator'
@@ -118,6 +143,12 @@ export interface DraftStore {
   createDraft(d: NewDraft): Promise<void>
   getDraft(siteId: string): Promise<StoredDraft | null>
   getAsset(tenantId: string, assetId: string): Promise<{ bytes: Buffer; mime: string } | null>
+  /** One served copy of a photo (D4), e.g. key 'full-1024.avif'; only keys the asset lists. */
+  getAssetVariant(tenantId: string, assetId: string, key: string): Promise<{ bytes: Buffer; mime: string } | null>
+  /** Size, placeholder, focus and served copies of the tenant's photos with these ids (D4). */
+  assetMeta(tenantId: string, ids: readonly string[]): Promise<Record<string, AssetMeta>>
+  /** Dollars spent on images and image checks today, across all tenants (the images' own cap). */
+  imageUsdToday(): Promise<number>
   /** True when the call is allowed (Postgres-backed limiter, spec 14.4). */
   hitRateLimit(key: string, max: number, windowSeconds: number): Promise<boolean>
   aiUsageToday(): Promise<{ inputTokens: number; outputTokens: number }>
@@ -149,10 +180,24 @@ export function createSupabaseStore(db: SupabaseClient<any, any, any>): DraftSto
       const path = `${a.tenantId}/${a.id}.${extFor(a.mime)}`
       const up = await db.storage.from(BUCKET).upload(path, a.bytes, { contentType: a.mime, upsert: false, cacheControl: '31536000' })
       if (up.error) fail('asset upload', up.error)
+      const variants: { format: string; width: number; height: number; crop: string; path: string }[] = []
+      for (const v of a.imagery?.variants ?? []) {
+        const vp = `${a.tenantId}/${a.id}/${variantKey(v)}`
+        const vu = await db.storage.from(BUCKET).upload(vp, v.bytes, { contentType: `image/${v.format}`, upsert: false, cacheControl: '31536000' })
+        if (vu.error) fail('asset variant upload', vu.error)
+        variants.push({ format: v.format, width: v.width, height: v.height, crop: v.crop, path: vp })
+      }
+      const im = a.imagery
       const { error } = await db.from('assets').insert({
         id: a.id, tenant_id: a.tenantId, kind: a.kind, storage_path: path, mime: a.mime, width: a.width, height: a.height,
         bytes: a.bytes.length, alt: a.alt.slice(0, 160), source: a.source, source_url: a.sourceUrl, sha256: a.sha256,
         license_kind: a.licenseKind, license_note: a.licenseNote.slice(0, 300), redistributable: a.redistributable,
+        ...(im ? {
+          variants, lqip: im.lqip, focus_x: im.focus.x, focus_y: im.focus.y, dhash: im.dhash ?? null,
+          quality_score: im.quality?.score ?? null, quality_reasons: im.quality?.reasons ?? [],
+          license_provider: im.license?.provider ?? null, license_model: im.license?.model ?? null,
+          license_prompt: im.license?.prompt.slice(0, 2000) ?? null, license_created_at: im.license?.createdAt ?? null,
+        } : {}),
       })
       if (error) fail('asset insert', error)
     },
@@ -194,6 +239,34 @@ export function createSupabaseStore(db: SupabaseClient<any, any, any>): DraftSto
       if (file.error || !file.data) return null
       return { bytes: Buffer.from(await file.data.arrayBuffer()), mime: data.mime }
     },
+    async getAssetVariant(tenantId, assetId, key) {
+      const { data, error } = await db.from('assets').select('variants').eq('id', assetId).eq('tenant_id', tenantId).is('deleted_at', null).maybeSingle()
+      if (error) fail('asset read', error)
+      const v = ((data?.variants ?? []) as { format: 'avif' | 'webp'; width: number; crop: string; path: string }[]).find((x) => variantKey(x) === key)
+      if (!v || !v.path.startsWith(`${tenantId}/${assetId}/`)) return null
+      const file = await db.storage.from(BUCKET).download(v.path)
+      if (file.error || !file.data) return null
+      return { bytes: Buffer.from(await file.data.arrayBuffer()), mime: `image/${v.format}` }
+    },
+    async assetMeta(tenantId, ids) {
+      if (!ids.length) return {}
+      const { data, error } = await db.from('assets').select('id, width, height, lqip, focus_x, focus_y, variants, source')
+        .eq('tenant_id', tenantId).in('id', ids.slice(0, 200)).is('deleted_at', null)
+      if (error) fail('asset meta read', error)
+      return Object.fromEntries((data ?? []).map((r) => [r.id as string, {
+        width: (r.width as number) ?? 1600, height: (r.height as number) ?? 1000, lqip: (r.lqip as string) ?? undefined,
+        focus: r.focus_x === null || r.focus_x === undefined ? undefined : { x: r.focus_x as number, y: r.focus_y as number },
+        variants: ((r.variants ?? []) as AssetMeta['variants']).map((v) => ({ format: v.format, width: v.width, height: v.height, crop: v.crop })),
+        generated: r.source === 'generated',
+      } satisfies AssetMeta]))
+    },
+    async imageUsdToday() {
+      const { data, error } = await db.rpc('ai_image_usd_today')
+      if (error) fail('image spend', error)
+      const n = Number(data)
+      if (!Number.isFinite(n)) throw new Error('image spend unreadable') // fails closed
+      return n
+    },
     async hitRateLimit(key, max, windowSeconds) {
       const { data, error } = await db.rpc('hit_rate_limit', { p_key: key, p_max: max, p_window_seconds: windowSeconds })
       if (error) fail('rate limit', error)
@@ -209,6 +282,7 @@ export function createSupabaseStore(db: SupabaseClient<any, any, any>): DraftSto
       const { error } = await db.from('ai_runs').insert({
         tenant_id: r.tenantId, site_id: r.siteId, kind: r.kind, model: r.model, prompt_version: r.promptVersion,
         input_tokens: r.inputTokens, output_tokens: r.outputTokens, latency_ms: r.latencyMs, outcome: r.outcome, tool_calls: r.toolCalls,
+        ...(r.usd ? { usd: r.usd } : {}),
       })
       if (error) fail('ai run insert', error)
     },
@@ -387,6 +461,28 @@ export function createMemoryStore(): DraftStore & EditorStore & PublishStore & B
     async getAsset(tenantId, assetId) {
       const a = state.assets.get(assetId)
       return a && a.tenantId === tenantId ? { bytes: a.bytes, mime: a.mime } : null
+    },
+    async getAssetVariant(tenantId, assetId, key) {
+      const a = state.assets.get(assetId)
+      const v = a && a.tenantId === tenantId ? a.imagery?.variants.find((x) => variantKey(x) === key) : undefined
+      return v ? { bytes: v.bytes, mime: `image/${v.format}` } : null
+    },
+    async assetMeta(tenantId, ids) {
+      const out: Record<string, AssetMeta> = {}
+      for (const id of ids) {
+        const a = state.assets.get(id)
+        if (!a || a.tenantId !== tenantId) continue
+        out[id] = {
+          width: a.width, height: a.height, lqip: a.imagery?.lqip, focus: a.imagery?.focus,
+          variants: (a.imagery?.variants ?? []).map((v) => ({ format: v.format, width: v.width, height: v.height, crop: v.crop })),
+          generated: a.source === 'generated',
+        }
+      }
+      return out
+    },
+    async imageUsdToday() {
+      const day = new Date(); day.setUTCHours(0, 0, 0, 0)
+      return state.runs.filter((r) => (r.kind === 'image' || r.kind === 'image_check') && r.at >= day.getTime()).reduce((n, r) => n + (r.usd ?? 0), 0)
     },
     async hitRateLimit(key, max, windowSeconds) {
       const k = `${key}|${Math.floor(Date.now() / 1000 / windowSeconds)}`

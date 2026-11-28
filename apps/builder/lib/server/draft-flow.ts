@@ -1,10 +1,12 @@
 import 'server-only'
 import { randomUUID } from 'node:crypto'
 import * as Sentry from '@sentry/nextjs'
+import { after } from 'next/server'
 import { z } from 'zod'
 import { isBuilderKit, kitDefinition } from '@yakini/kits'
 import { KITS, type SiteKitId as KitId } from '@yakini/pricing'
-import { createDraft, type DraftRequest, type ProgressStep } from '@/lib/pipeline/draft'
+import { createDraft, type DraftRequest, type DraftResult, type ProgressStep } from '@/lib/pipeline/draft'
+import { runImagery } from '@/lib/pipeline/imagery-run'
 import { draftCookieHeader, newDraftToken } from './draft-token'
 import { clientIp, hashIp } from './request'
 import { ConfigError, getRuntime, type Runtime } from './runtime'
@@ -109,6 +111,19 @@ export function streamDraft(req: DraftRequest, rt: Runtime): Response {
   const token = newDraftToken()
   const kitName = req.kitId && isBuilderKit(req.kitId) ? kitDefinition(req.kitId)!.name.toLowerCase() : null
   const enc = new TextEncoder()
+  // D4: once the draft is saved and the owner is looking at it, make its own photos (when images are on).
+  let finished: (r: DraftResult | null) => void = () => {}
+  const result = new Promise<DraftResult | null>((resolve) => { finished = resolve })
+  try {
+    after(async () => {
+      const r = await result
+      if (r?.kind !== 'created') return
+      try { await runImagery(rt, r.siteId) } catch (e) { Sentry.captureException(e, { tags: { area: 'imagery' } }) }
+    })
+  } catch {
+    // Outside a request (unit tests call the route directly) there is no "after": the draft is
+    // unchanged and keeps its library photos.
+  }
   const body = new ReadableStream<Uint8Array>({
     async start(controller) {
       const send = (s: string) => controller.enqueue(enc.encode(s))
@@ -120,6 +135,7 @@ export function streamDraft(req: DraftRequest, rt: Runtime): Response {
       }
       try {
         const r = await createDraft(req, rt, progress, { siteId, token })
+        finished(r)
         if (r.kind === 'blocked') {
           send(`</ol><p>${esc(r.message)}</p><p><a class="btn" href="https://yakini.digital">Back to Yakini</a></p></main></body></html>`)
         } else {
@@ -128,6 +144,7 @@ export function streamDraft(req: DraftRequest, rt: Runtime): Response {
           send(`</ol><meta http-equiv="refresh" content="0;url=${esc(href)}"><p>Your draft is ready.</p><p><a class="btn" href="${esc(href)}">Open your draft</a></p></main></body></html>`)
         }
       } catch (e) {
+        finished(null)
         const ref = Sentry.captureException(e, { tags: { area: 'draft-pipeline' } }) || randomUUID().slice(0, 8)
         send(`</ol><h1>Something went wrong on our side.</h1><p>Please try again in a minute${kitName ? `, or start from our ${esc(kitName)} design on the demo` : ''}.</p><p class="small">Reference: ${esc(String(ref))}</p><p><a class="btn" href="https://yakini.digital/demo">Back to the demo</a></p></main></body></html>`)
       } finally {
