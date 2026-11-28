@@ -8,6 +8,8 @@ import { panel, useEditor } from './context'
  * description is required, because people using screen readers hear it instead of seeing the photo.
  */
 type Pick = { assetId: string; alt: string }
+/** Design D4: photos made for this site say so, and that the owner's own can replace them. */
+export const MADE_LABEL = 'Made for your site, swap in your own anytime'
 
 export function PhotoPicker({ title, onPick, onClose }: { title: string; onPick: (p: Pick) => string | null; onClose: () => void }) {
   const { doc, photos, refreshPhotos, imageUrl, siteId } = useEditor()
@@ -51,7 +53,7 @@ export function PhotoPicker({ title, onPick, onClose }: { title: string; onPick:
     } finally { setBusy(false) }
   }
 
-  const tile = (id: string, suggested: string, thumb?: string) => {
+  const tile = (id: string, suggested: string, thumb?: string, made = false) => {
     const src = thumb ?? imageUrl(id)
     return (
       <li key={id}>
@@ -60,6 +62,7 @@ export function PhotoPicker({ title, onPick, onClose }: { title: string; onPick:
           {/* eslint-disable-next-line @next/next/no-img-element -- private, access-checked images */}
           {src ? <img src={src} alt={suggested} className="aspect-[4/3] w-full object-cover" /> : <span className="block aspect-[4/3] w-full bg-paper/10" />}
         </button>
+        {made && <p className="mt-1 text-xs leading-snug text-paper/80" data-made-for-site>{MADE_LABEL}</p>}
       </li>
     )
   }
@@ -79,7 +82,7 @@ export function PhotoPicker({ title, onPick, onClose }: { title: string; onPick:
           ))}
         </div>
         {tab === 'mine' && (photos.length
-          ? <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">{photos.map((p) => tile(p.id, p.alt))}</ul>
+          ? <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">{photos.map((p) => tile(p.id, p.alt, undefined, p.generated))}</ul>
           : <p className="text-paper/80">No photos yet. Upload one, or use a kit photo for now.</p>)}
         {tab === 'kit' && <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">{kitPhotos.map((p) => tile(p.assetId, p.alt, sampleImageSrc(p, 'small')))}</ul>}
         {tab === 'upload' && (

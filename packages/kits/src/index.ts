@@ -5,6 +5,7 @@
  * templates, allowed sections, default variants, font pairs, copy tone, licensed sample images,
  * default palette and Today kinds. Later kits are one PR each (Phase 8).
  */
+import SAMPLE_IMAGERY from './sample-imagery.json'
 import type { SiteKitId as KitId } from '@yakini/pricing'
 import { CURRENT_SCHEMA_VERSION, type Brand, type FontPair, type SiteDocContent, type SiteDocInput, type Style } from '@yakini/site-schema'
 import { foodTruck } from './food-truck'
@@ -79,6 +80,14 @@ export function offeredSamples(kit: KitDefinition | undefined): SampleImage[] {
 }
 
 /** URL of a sample file the studio serves from public/ (`small` for thumbnails). */
+/** Design D4: a sample photo's tiny blurred placeholder and focus point (packages/kits/src/sample-imagery.json). */
+export function sampleImagery(assetId: string): { lqip: string; focus: { x: number; y: number } } | undefined {
+  return (SAMPLE_IMAGERY as Record<string, { lqip: string; focus: { x: number; y: number } }>)[assetId]
+}
+
+/** Widths of the AVIF copies build:site makes of every sample photo (public/_kit-samples/<kit>/<key>-<w>.avif). */
+export const SAMPLE_AVIF_WIDTHS = [640, 800, 960, 1280] as const
+
 export function sampleImageSrc(sample: SampleImage, size: 'full' | 'small' = 'full'): string {
   const dir = sample.storagePath.slice(0, sample.storagePath.lastIndexOf('/') + 1)
   if (sample.webp) return `/${dir}${size === 'small' ? sample.webp.small : sample.webp.large}`

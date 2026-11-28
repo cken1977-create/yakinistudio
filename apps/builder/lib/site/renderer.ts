@@ -2,6 +2,7 @@ import 'server-only'
 import { createRequire } from 'node:module'
 import { join } from 'node:path'
 import type { SiteDoc } from '@yakini/site-schema'
+import type { AssetMetaMap } from '@/lib/images/resolve'
 
 /**
  * Loads the standalone published-page renderer (.site-renderer/render.cjs, built by
@@ -21,6 +22,7 @@ export type PublishedInput = {
   islands?: SiteIsland[]
   nonce?: string | null
   headline?: HeadlineFont | null
+  assets?: AssetMetaMap
 }
 export type HeadlineFont = { css: string; bytes: number; displayOnly: string[] }
 type Renderer = {

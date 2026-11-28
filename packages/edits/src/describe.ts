@@ -53,7 +53,12 @@ export function describeOp(doc: SiteDoc, op: EditOp): string {
     case 'rename_page': return `Renamed ${page?.title ?? 'a page'} to “${op.title}”`
     case 'rename_page_raw': return `Renamed ${page?.title ?? 'a page'} to “${op.title}”`
     case 'move_page': return `Moved the ${page?.title ?? ''} page in the menu`.replace('  ', ' ')
-    case 'set_style': return op.style.preset === 'classic' ? 'Went back to your original look' : 'Switched to the new look'
+    case 'set_style':
+      // Only the photo grade changed (design D4): say that, not "new look".
+      if (op.style.preset === doc.style.preset && (op.style.photoGrade ?? 'made') !== (doc.style.photoGrade ?? 'made')) {
+        return op.style.photoGrade === 'all' ? 'Gave your own photos the look’s color treatment' : 'Showed your own photos as they are'
+      }
+      return op.style.preset === 'classic' ? 'Went back to your original look' : 'Switched to the new look'
     case 'set_seo': case 'set_seo_raw': return op.pageId === null ? 'Updated how your site shows in search results' : `Updated how ${page?.title ?? 'a page'} shows in search results`
   }
 }

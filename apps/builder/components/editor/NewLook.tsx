@@ -36,10 +36,37 @@ export function NewLook() {
       <p className="mt-1 text-sm text-paper/85">The new look for your kind of business, with its own type. Your colors, logo and words stay exactly as they are, and you can undo it in one click.</p>
       <button type="button" className={`${panel.btn} mt-3`} onClick={() => {
         const was = doc.style
-        const err = change([{ op: 'set_style', style: offered }], 'Switched to the new look')
+        // The owner's photo-grade choice travels with them to the new look.
+        const err = change([{ op: 'set_style', style: doc.style.photoGrade ? { ...offered, photoGrade: doc.style.photoGrade } : offered }], 'Switched to the new look')
         setError(err)
         if (!err) setBefore(was)
       }}>Preview the new look</button>
+      {error && <p role="alert" className={panel.error}>{error}</p>}
+    </section>
+  )
+}
+
+/**
+ * Design D4: photos made for the site and library photos take the look's color treatment so they sit
+ * together. The owner's own photos keep their colors unless the owner turns this on. Not offered on
+ * the classic look (it has no treatment).
+ */
+export function PhotoGrade() {
+  const { doc, change } = useEditor()
+  const [error, setError] = useState<string | null>(null)
+  if (doc.style.preset === 'classic') return null
+  const on = doc.style.photoGrade === 'all'
+  const toggle = () => {
+    const style: Style = { ...doc.style, photoGrade: on ? 'made' : 'all' }
+    setError(change([{ op: 'set_style', style }], on ? 'Showed your own photos as they are' : 'Gave your own photos the look’s color treatment'))
+  }
+  return (
+    <section aria-labelledby="photo-grade-h" className="rounded-2xl border border-paper/15 p-4" data-photo-grade={on ? 'all' : 'made'}>
+      <h3 id="photo-grade-h" className="font-semibold text-paper">Photo color</h3>
+      <label className="mt-2 flex min-h-11 cursor-pointer items-start gap-3 text-sm text-paper/85">
+        <input type="checkbox" className="mt-1 size-5 accent-[#C9A14A]" checked={on} onChange={toggle} />
+        <span>Give my own photos the same color treatment as the rest of the site. Your photos are never changed; you can turn this off anytime.</span>
+      </label>
       {error && <p role="alert" className={panel.error}>{error}</p>}
     </section>
   )

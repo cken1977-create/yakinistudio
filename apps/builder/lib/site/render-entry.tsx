@@ -2,6 +2,7 @@ import type { SiteDoc } from '@yakini/site-schema'
 import { neutralHtml, publishedPageHtml, type SiteIsland } from './html'
 import { draftImage } from '@/lib/draft/preview'
 import type { RenderContext } from '@yakini/sections'
+import { imageOptions, type AssetMetaMap } from '@/lib/images/resolve'
 import { liveContext, thanksPage } from './live'
 import { headlineFont, type HeadlineFont } from './headline-font'
 
@@ -24,6 +25,8 @@ export type PublishedInput = {
   nonce?: string | null
   /** From headlineFont(doc), awaited by the route first. */
   headline?: HeadlineFont | null
+  /** Design D4: stored photos' sizes, copies, placeholders and focus points (cached per version by the route). */
+  assets?: AssetMetaMap
 }
 
 export { headlineFont }
@@ -31,7 +34,7 @@ export { headlineFont }
 export function renderPublished(i: PublishedInput): string {
   const page = i.thanks ? thanksPage(i.doc, i.thanks.formKey) : i.doc.pages.find((p) => p.id === i.pageId)
   if (!page) throw new Error('page not found')
-  const ctx = liveContext(i.doc, page, { siteId: i.siteId, reportUrl: i.reportUrl, formStamp: i.formStamp, forms: true })
+  const ctx = liveContext(i.doc, page, { siteId: i.siteId, reportUrl: i.reportUrl, formStamp: i.formStamp, forms: true, assets: i.assets })
   return publishedPageHtml({ doc: i.doc, page, ctx, canonicalHost: i.canonicalHost, indexable: i.indexable, thanks: Boolean(i.thanks), islands: i.islands, nonce: i.nonce, headline: i.headline })
 }
 
@@ -50,7 +53,7 @@ export function renderFixturePage(i: { doc: SiteDoc; pageId: string; mode: 'live
   const ctx: RenderContext = {
     doc: i.doc, page, mode: i.mode,
     hrefForPage: (p) => `${i.base}${p.slug ? `/${p.slug}` : ''}${q}`,
-    image: (id) => draftImage('fixture', id, new Set()) ?? draftImage('fixture', FALLBACK_IMAGE, new Set()),
+    image: (id) => draftImage('fixture', id, new Set(), undefined, imageOptions(i.doc)) ?? draftImage('fixture', FALLBACK_IMAGE, new Set(), undefined, imageOptions(i.doc)),
     formAction: (key) => (i.mode === 'live' ? `/api/forms/${key}` : null),
     reportUrl: i.mode === 'live' ? '/report' : null,
     today: null,

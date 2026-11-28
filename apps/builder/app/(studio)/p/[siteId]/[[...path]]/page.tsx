@@ -4,7 +4,10 @@ import { SiteView, type RenderContext } from '@yakini/sections'
 import '@yakini/sections/fonts.css'
 import '@yakini/sections/styles.css'
 import { loadSiteDoc, type Page } from '@yakini/site-schema'
-import { assetIdsIn, draftImage, pageForPath } from '@/lib/draft/preview'
+import { sampleImageById } from '@yakini/kits'
+import { assetIdsIn, pageForPath } from '@/lib/draft/preview'
+import { assetResolved, imageOptions, sampleResolved, type AssetMetaMap } from '@/lib/images/resolve'
+import { storedAssetIds } from '@/lib/site/asset-meta-cache'
 import { getRuntime } from '@/lib/server/runtime'
 import { previewAccess } from '@/lib/server/share'
 
@@ -39,10 +42,17 @@ export default async function Preview({ params, searchParams }: Props) {
   if (a.via === 'member' && a.versionId) keep.set('v', a.versionId)
   const qs = keep.toString() ? `?${keep}` : ''
   const known = assetIdsIn(doc)
+  const ids = storedAssetIds(doc)
+  const meta = ids.length ? await rt.store.assetMeta(a.tenantId, ids).catch(() => ({})) : {}
+  const opts = imageOptions(doc)
   const ctx: RenderContext = {
     doc, page, mode: 'live',
     hrefForPage: (p: Page) => `/p/${siteId}${p.slug ? `/${p.slug}` : ''}${qs}`,
-    image: (id) => draftImage('', id, new Set()) ?? (known.has(id) ? { src: `/api/previews/${siteId}/assets/${id}${qs}`, width: 1600, height: 1000 } : null),
+    image: (id) => {
+      const sample = sampleImageById(id)
+      if (sample) return sampleResolved(sample, opts.legacy)
+      return known.has(id) ? assetResolved(`/api/previews/${siteId}/assets/${id}${qs}`, (meta as AssetMetaMap)[id], opts) : null
+    },
     formAction: () => null,
     reportUrl: `/report?site=${siteId}`,
     today: null,

@@ -128,7 +128,7 @@ export interface EditorStore {
   audit(a: { tenantId: string; userId: string | null; actorKind: 'owner' | 'editor' | 'operator'; action: AuditAction; targetId: string; details: Record<string, unknown> }): Promise<void>
   tenantAssetIds(tenantId: string): Promise<string[]>
   /** The tenant's own photos (not the logo) for the photo picker, newest first. */
-  tenantPhotos(tenantId: string): Promise<{ id: string; width: number; height: number; alt: string }[]>
+  tenantPhotos(tenantId: string): Promise<{ id: string; width: number; height: number; alt: string; generated: boolean }[]>
   /** Chat edits in the last hour and AI tokens today for one tenant (per-tenant limits, 8.7). */
   tenantAiUsage(tenantId: string): Promise<{ editsLastHour: number; tokensToday: number }>
   saveChat(m: { tenantId: string; siteId: string; role: 'user' | 'assistant'; content: string; proposal: unknown | null }): Promise<string>
@@ -379,9 +379,9 @@ export function createSupabaseStore(db: SupabaseClient<any, any, any>): DraftSto
       return (data ?? []).map((r) => r.id as string)
     },
     async tenantPhotos(tenantId) {
-      const { data, error } = await db.from('assets').select('id, width, height, alt').eq('tenant_id', tenantId).eq('kind', 'image').is('deleted_at', null).order('created_at', { ascending: false }).limit(200)
+      const { data, error } = await db.from('assets').select('id, width, height, alt, source').eq('tenant_id', tenantId).eq('kind', 'image').is('deleted_at', null).order('created_at', { ascending: false }).limit(200)
       if (error) fail('photos read', error)
-      return (data ?? []).map((r) => ({ id: r.id as string, width: r.width as number, height: r.height as number, alt: (r.alt as string) ?? '' }))
+      return (data ?? []).map((r) => ({ id: r.id as string, width: r.width as number, height: r.height as number, alt: (r.alt as string) ?? '', generated: r.source === 'generated' }))
     },
     async tenantAiUsage(tenantId) {
       const hourAgo = new Date(Date.now() - 3600_000).toISOString()
@@ -561,7 +561,7 @@ export function createMemoryStore(): DraftStore & EditorStore & PublishStore & B
     async audit(a) { state.audit.push({ tenantId: a.tenantId, action: a.action, targetId: a.targetId, details: clone(a.details) }) },
     async tenantAssetIds(tenantId) { return [...state.assets.values()].filter((a) => a.tenantId === tenantId).map((a) => a.id) },
     async tenantPhotos(tenantId) {
-      return [...state.assets.values()].filter((a) => a.tenantId === tenantId && a.kind === 'image').reverse().map((a) => ({ id: a.id, width: a.width, height: a.height, alt: a.alt }))
+      return [...state.assets.values()].filter((a) => a.tenantId === tenantId && a.kind === 'image').reverse().map((a) => ({ id: a.id, width: a.width, height: a.height, alt: a.alt, generated: a.source === 'generated' }))
     },
     async tenantAiUsage(tenantId) {
       const runs = state.runs.filter((r) => r.tenantId === tenantId)

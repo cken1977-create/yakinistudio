@@ -5,7 +5,7 @@ import { SECTION_DEFS, type Section } from '@yakini/site-schema'
 import { addableSections, inspectorLayout, SECTION_LABELS, starterProps, VARIANT_LABELS } from '@/lib/editor/fields'
 import { panel, useEditor } from './context'
 import { Fields } from './FieldEditors'
-import { NewLook } from './NewLook'
+import { NewLook, PhotoGrade } from './NewLook'
 
 /**
  * The Edit tab (spec 10.3): the selected section's toolbar (move, hide, duplicate, change style,
@@ -24,6 +24,7 @@ export function Inspector() {
         <h2 className={panel.h2}>Edit</h2>
         <p className="text-paper/85">Tap any part of the page to change it. Your changes save on their own.</p>
         <NewLook />
+        <PhotoGrade />
         <AddSection after={page.sections[page.sections.length - 2]?.id ?? null} />
       </div>
     )

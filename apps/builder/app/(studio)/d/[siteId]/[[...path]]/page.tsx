@@ -8,6 +8,7 @@ import { loadSiteDoc, SiteDocError } from '@yakini/site-schema'
 import { kitName, pageForPath, previewContext, type PreviewView } from '@/lib/draft/preview'
 import { viewableDraft } from '@/lib/server/site-access'
 import { getRuntime } from '@/lib/server/runtime'
+import { storedAssetIds } from '@/lib/site/asset-meta-cache'
 
 /**
  * Draft preview (spec 5.2 step 5): the whole site as it will look, with a phone/desktop switch.
@@ -49,6 +50,9 @@ export default async function DraftPreview({ params, searchParams }: Props) {
   const unread = one(query.note) === 'unread'
   const kit = kitName(doc)
   const finish = finishItems(doc)
+  // Photo details (sizes, AVIF/WebP copies, placeholders); without them photos still show.
+  const ids = storedAssetIds(doc)
+  const meta = ids.length ? await rt.store.assetMeta(draft.tenantId, ids).catch(() => ({})) : {}
 
   return (
     <div className="min-h-screen bg-[#1a1714]">
@@ -94,7 +98,7 @@ export default async function DraftPreview({ params, searchParams }: Props) {
           className={view === 'phone' ? 'w-full max-w-[390px] overflow-hidden rounded-[28px] border-8 border-black shadow-2xl' : ''}
           data-preview={view}
         >
-          <SiteView ctx={previewContext(doc, page, siteId, view)} />
+          <SiteView ctx={previewContext(doc, page, siteId, view, meta)} />
         </div>
       </div>
     </div>

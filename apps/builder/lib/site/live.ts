@@ -1,6 +1,8 @@
 import type { RenderContext } from '@yakini/sections'
 import type { Page, SiteDoc } from '@yakini/site-schema'
-import { assetIdsIn, draftImage } from '@/lib/draft/preview'
+import { sampleImageById } from '@yakini/kits'
+import { assetIdsIn } from '@/lib/draft/preview'
+import { assetResolved, imageOptions, sampleResolved, type AssetMetaMap, type ImageOptions } from '@/lib/images/resolve'
 
 /**
  * How a published site resolves its pages, photos, forms and Report link (spec 7.3, 11.3, 13.5).
@@ -9,19 +11,20 @@ import { assetIdsIn, draftImage } from '@/lib/draft/preview'
  */
 export const hrefForSlug = (slug: string) => (slug ? `/${slug}` : '/')
 
-export function liveImage(assetId: string, known: ReadonlySet<string>) {
+export function liveImage(assetId: string, known: ReadonlySet<string>, meta?: AssetMetaMap, o: ImageOptions = { gradeOwn: false, legacy: false }) {
   // Kit samples resolve to the shared /kit-samples files; the site's own photos to /assets/<id>.
-  const sample = draftImage('', assetId, new Set())
-  if (sample) return sample
-  return known.has(assetId) ? { src: `/assets/${assetId}`, width: 1600, height: 1000 } : null
+  const sample = sampleImageById(assetId)
+  if (sample) return sampleResolved(sample, o.legacy)
+  return known.has(assetId) ? assetResolved(`/assets/${assetId}`, meta?.[assetId], o) : null
 }
 
-export function liveContext(doc: SiteDoc, page: Page, o: { siteId: string; reportUrl: string | null; formStamp: string | null; forms: boolean }): RenderContext {
+export function liveContext(doc: SiteDoc, page: Page, o: { siteId: string; reportUrl: string | null; formStamp: string | null; forms: boolean; assets?: AssetMetaMap }): RenderContext {
   const known = assetIdsIn(doc)
+  const opts = imageOptions(doc)
   return {
     doc, page, mode: 'live',
     hrefForPage: (p) => hrefForSlug(p.slug),
-    image: (id) => liveImage(id, known),
+    image: (id) => liveImage(id, known, o.assets, opts),
     formAction: (formKey) => (o.forms ? `/api/f/${o.siteId}/${encodeURIComponent(formKey)}` : null),
     formStamp: o.formStamp,
     reportUrl: o.reportUrl,
