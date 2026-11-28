@@ -18,8 +18,11 @@ export const CURRENT_SCHEMA_VERSION = 2 as const
 const kitIds = [...KITS.map((k) => k.id), ...SITE_ONLY_KIT_IDS] as unknown as [SiteKitId, ...SiteKitId[]]
 export const KitIdSchema = z.enum(kitIds)
 
-/** `signature`: Cormorant Garamond display, Inter body, JetBrains Mono labels (design v2). */
-export const FONT_PAIRS = ['editorial', 'modern', 'friendly', 'classic', 'signature'] as const
+/**
+ * Font pairs. The first five are the original ones (classic sites keep them).
+ * D3 adds `paper` (editorial), `poster`, `craft` and `clean`.
+ */
+export const FONT_PAIRS = ['editorial', 'modern', 'friendly', 'classic', 'signature', 'paper', 'poster', 'craft', 'clean'] as const
 export type FontPair = (typeof FONT_PAIRS)[number]
 
 /**

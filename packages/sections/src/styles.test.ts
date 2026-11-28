@@ -22,12 +22,14 @@ describe('stylesheet parts', () => {
     const body = read('tokens.css').replace(/\/\*[\s\S]*?\*\//g, '')
     for (const decl of body.replace(/^\s*\.ys-site\s*\{|\}\s*$/g, '').split(';').map((d) => d.trim()).filter(Boolean)) expect(decl, decl).toMatch(/^--ys-[a-z0-9-]+\s*:/)
   })
-  it('presets: classic adds no rules; every Signature selector is scoped to its data-preset', () => {
+  it('presets: classic adds no rules; every other preset is scoped to its own data-preset', () => {
     expect(read('presets/classic.css').replace(/\/\*[\s\S]*?\*\//g, '').trim()).toBe('')
-    const css = read('presets/signature.css').replace(/\/\*[\s\S]*?\*\//g, '')
-    const selectors = [...css.matchAll(/(^|[}\n])\s*([^@{}\s][^{}]*?)\s*\{/g)].map((m) => m[2].trim()).filter((s) => !/^(from|to|\d+%)$/.test(s))
-    expect(selectors.length).toBeGreaterThan(40)
-    for (const sel of selectors) for (const part of sel.split(/,(?![^(]*\))/)) expect(part.trim(), sel).toMatch(/^\.ys-site\[data-preset='signature'\]/)
+    for (const name of ['signature', 'editorial', 'poster', 'craft', 'clean']) {
+      const css = read(`presets/${name}.css`).replace(/\/\*[\s\S]*?\*\//g, '')
+      const selectors = [...css.matchAll(/(^|[}\n])\s*([^@{}\s][^{}]*?)\s*\{/g)].map((m) => m[2].trim()).filter((s) => !/^(from|to|\d+%)$/.test(s))
+      expect(selectors.length, name).toBeGreaterThan(8)
+      for (const sel of selectors) for (const part of sel.split(/,(?![^(]*\))/)) expect(part.trim(), `${name}: ${sel}`).toMatch(new RegExp(`^\\.ys-site\\[data-preset='${name}'\\]`))
+    }
   })
   it('variant files only style variants and types that did not exist in v1', () => {
     const NEW = {

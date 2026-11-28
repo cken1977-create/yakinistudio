@@ -594,11 +594,11 @@
     "fontPair": "modern"
   },
   "style": {
-    "preset": "classic",
+    "preset": "craft",
     "surface": "light",
-    "fontPair": "modern",
-    "radius": "round",
-    "motion": "off"
+    "fontPair": "craft",
+    "radius": "soft",
+    "motion": "subtle"
   },
   "integrations": {
     "bookingEnabled": false,

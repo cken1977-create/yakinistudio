@@ -40,6 +40,12 @@ const WEIGHTS = {
   'cormorant-garamond-normal': 500,
   'cormorant-garamond-italic': 400,
   'jetbrains-mono-normal': 500,
+  'inter-tight-normal': { min: 400, max: 700 },
+  'dm-sans-normal': { min: 400, max: 700 },
+  'anton-normal': 400,
+  'instrument-serif-normal': 400,
+  'instrument-serif-italic': 400,
+  'ibm-plex-mono-normal': 500,
 }
 /** The Latin files each font pair's site downloads (shared with the page head, which preloads them). */
 const PAIRS = JSON.parse(readFileSync(join(app, 'lib', 'site', 'font-files.json'), 'utf8'))
@@ -70,12 +76,17 @@ function inline(file) {
   css = css.replace(/@font-face\s*{[^}]*}/g, (block) => block.replace(/url\((['"]?)(\.\/files\/[^'")]+)\1\)/g, (_m, _q, rel) => {
     const src = resolve(dirname(file), rel)
     const name = basename(src)
-    const latin = name.match(/^(.+)-latin-wght-(normal|italic)\.woff2$/)
+    if (name.endsWith('.woff')) return '/*woff*/'
+    const variable = name.match(/^(.+)-latin-wght-(normal|italic)\.woff2$/)
+    const fixed = name.match(/^(.+)-latin-\d+-(normal|italic)\.woff2$/)
+    const latin = variable || fixed
     const key = latin && `${latin[1]}-${latin[2]}`
     if (key && WEIGHTS[key] !== undefined) {
       const range = block.match(/unicode-range:\s*([^;]+);/)
-      if (!range) throw new Error(`no unicode-range for ${name}`)
-      subsetJobs.push({ src, name, key, text: String.fromCodePoint(...codePoints(range[1])) })
+      // A Latin-only file (Anton, Instrument Serif) has no unicode-range. It is already the
+      // file an English page downloads, so it is copied as-is and still counts toward the budget.
+      if (range) subsetJobs.push({ src, name, key, text: String.fromCodePoint(...codePoints(range[1])), variable: Boolean(variable) })
+      else copyFileSync(src, join(FONTS, name))
       latinFiles[key] = name
     } else copyFileSync(src, join(FONTS, name))
     return `url(/_site-assets/fonts/${name})`
@@ -107,6 +118,7 @@ mkdirSync(FONTS, { recursive: true })
 const sections = dirname(require.resolve('@yakini/sections/styles.css'))
 let css = noSwap(inline(join(sections, 'fonts.css'))) + '\n' + inline(join(sections, 'styles.css'))
 // Smaller download: drop comments and blank lines (rules are untouched).
+css = css.replace(/,\s*\/\*woff\*\/\s*format\('woff'\)/g, '')
 css = css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\n\s*\n+/g, '\n').trim() + '\n'
 if (/url\(\s*['"]?https?:/i.test(css)) throw new Error('site.css must not load anything from another site (R2)')
 writeFileSync(join(OUT, 'site.css'), css)
@@ -114,7 +126,7 @@ writeFileSync(join(OUT, 'site.css'), css)
 const subsetFont = require('subset-font')
 for (const job of subsetJobs) {
   const w = WEIGHTS[job.key]
-  const out = await subsetFont(readFileSync(job.src), job.text, { targetFormat: 'woff2', variationAxes: { wght: w } })
+  const out = await subsetFont(readFileSync(job.src), job.text, job.variable ? { targetFormat: 'woff2', variationAxes: { wght: w } } : { targetFormat: 'woff2' })
   writeFileSync(join(FONTS, job.name), out)
 }
 const fonts = {}

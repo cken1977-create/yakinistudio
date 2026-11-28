@@ -3,5 +3,9 @@
   "modern": ["inter-normal"],
   "friendly": ["nunito-normal"],
   "classic": ["playfair-display-normal", "lora-normal"],
-  "signature": ["cormorant-garamond-normal", "cormorant-garamond-italic", "inter-normal", "jetbrains-mono-normal"]
+  "signature": ["cormorant-garamond-normal", "cormorant-garamond-italic", "inter-normal", "jetbrains-mono-normal"],
+  "paper": ["fraunces-normal", "inter-tight-normal", "ibm-plex-mono-normal"],
+  "poster": ["anton-normal", "dm-sans-normal"],
+  "craft": ["instrument-serif-normal", "instrument-serif-italic", "dm-sans-normal"],
+  "clean": ["inter-tight-normal", "inter-normal"]
 }

@@ -1,0 +1,29 @@
+/*
+ * Editorial (design D3): light paper, Fraunces and Inter Tight, IBM Plex Mono labels.
+ * Square pictures, thin rules, no shadows. Brand colors stay as stored.
+ */
+.ys-site[data-preset='editorial'] {
+  --ys-font-label: 'IBM Plex Mono', 'IBM Plex Mono Fallback', 'IBM Plex Mono Fallback DV', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ys-radius: 0px;
+  --ys-radius-sm: 0px;
+  --ys-shadow-1: none;
+  --ys-shadow-2: none;
+  --ys-shadow-3: none;
+  --ys-line: color-mix(in srgb, var(--ys-ink) 18%, transparent);
+  --ys-line-strong: color-mix(in srgb, var(--ys-ink) 42%, transparent);
+  background: var(--ys-surface-0);
+  color: var(--ys-on-surface);
+}
+.ys-site[data-preset='editorial'] .ys-s { padding-block: var(--ys-section-pad); }
+.ys-site[data-preset='editorial'] .ys-display { font-size: var(--ys-step-6); font-weight: 560; line-height: 0.96; letter-spacing: -0.03em; }
+.ys-site[data-preset='editorial'] .ys-h2 { font-weight: 560; letter-spacing: -0.02em; }
+.ys-site[data-preset='editorial'] .ys-accent { font-style: italic; font-weight: 450; color: var(--ys-accent-display); }
+.ys-site[data-preset='editorial'] :is(.ys-eyebrow, .ys-label, .ys-footer-head) { font-family: var(--ys-font-label); font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; }
+.ys-site[data-preset='editorial'] .ys-eyebrow::before { content: ''; display: inline-block; width: 24px; height: 1px; margin-right: 12px; background: currentColor; vertical-align: middle; }
+.ys-site[data-preset='editorial'] :is(img, .ys-cover) { border-radius: 0; }
+.ys-site[data-preset='editorial'] :is(.ys-service, .ys-quote, .ys-menu-item, .ys-form-body, .ys-booking-card) { border: 0; border-top: 1px solid var(--ys-line); box-shadow: none; background: transparent; }
+.ys-site[data-preset='editorial'] .ys-btn { border-radius: 0; box-shadow: none; min-height: 48px; }
+.ys-site[data-preset='editorial'] .ys-btn-primary { background: var(--ys-ink); color: var(--ys-bg); }
+.ys-site[data-preset='editorial'] .ys-header { border-bottom: 1px solid var(--ys-line); background: var(--ys-surface-0); }
+.ys-site[data-preset='editorial'] .ys-footer { border-top: 1px solid var(--ys-ink); }
+.ys-site[data-preset='editorial'] .ys-week > li.is-off { opacity: 1; }

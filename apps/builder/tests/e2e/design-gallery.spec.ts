@@ -32,7 +32,23 @@ for (const f of set) {
         const res = await page.goto(fixtureUrl(f.name, s.slug, s.mode))
         expect(res?.status(), `${f.name}/${s.slug} ${s.mode}`).toBe(200)
         await page.evaluate(() => document.fonts.ready)
-        await page.screenshot({ path: join(OUT, f.name, `${s.slug || 'home'}-${s.mode}-${w}.png`), fullPage: true, animations: 'disabled' })
+        const shot = join(OUT, f.name, `${s.slug || 'home'}-${s.mode}-${w}.png`)
+        // Full-page capture sometimes fails in CI with "Unable to capture screenshot" even though the
+        // page loaded. Retry the same shot before failing the gallery.
+        let captured = false
+        let last: unknown
+        for (let attempt = 0; attempt < 3 && !captured; attempt++) {
+          try {
+            // CSS pixels, so the file is 390, 1280, or 1440 wide. The phone project is a 3x device,
+            // and a full-page shot at that scale is taller than Chrome can capture.
+            await page.screenshot({ path: shot, fullPage: true, animations: 'disabled', scale: 'css' })
+            captured = true
+          } catch (e) {
+            last = e
+            await page.waitForTimeout(400)
+          }
+        }
+        if (!captured) throw last
       }
     }
   })

@@ -277,10 +277,10 @@ test('"Try the new look": opt-in preview, keep or undo in one click, colors unto
   // Preview: the page in the middle changes at once, and the draft (not the live site) is saved.
   let save = nextSave(page)
   await offer.getByRole('button', { name: 'Preview the new look' }).click()
-  await expect(page.locator('.ys-site')).toHaveAttribute('data-preset', 'signature')
+  await expect(page.locator('.ys-site')).toHaveAttribute('data-preset', 'poster')
   await save
   const trying = await saved(page, siteId) as Doc & { brand: unknown; style: { preset: string } }
-  expect(trying.style.preset).toBe('signature')
+  expect(trying.style.preset).toBe('poster')
   expect(trying.brand).toEqual(before.brand) // R6
   expect(trying.pages).toEqual(before.pages)
   await expect(panel.locator('[data-new-look="trying"]')).toContainText('Your live site doesn’t change until you publish')
@@ -299,5 +299,5 @@ test('"Try the new look": opt-in preview, keep or undo in one click, colors unto
   await panel.getByRole('button', { name: 'Keep the new look' }).click()
   await page.reload()
   await skipTour(page)
-  await expect(page.locator('.ys-site')).toHaveAttribute('data-preset', 'signature')
+  await expect(page.locator('.ys-site')).toHaveAttribute('data-preset', 'poster')
 })

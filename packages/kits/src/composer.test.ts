@@ -87,6 +87,22 @@ describe('composer', () => {
     for (const k of kits) for (const t of ['ticker', 'stats', 'feature_rows']) expect(k.allowedSections, k.id).toContain(t)
   })
 
+  it('a filled stats band and a big quote never sit next to each other', () => {
+    for (const kit of kits) {
+      const doc = structuredClone(designFixtures()[`${kit.id}-rich`]) as Doc
+      const home = doc.pages.find((p) => p.slug === '')!
+      const stats = home.sections.find((s) => s.type === 'stats')
+      const quote = home.sections.find((s) => s.type === 'testimonials')
+      if (!stats || !quote || quote.props.items.length === 0) continue
+      stats.props.items = [{ value: '12', label: 'years on this street' }, { value: '40', label: 'seats inside' }]
+      const seen = rhythmSections(composeHome(kit, doc).pages.find((p) => p.slug === '')!.sections)
+      for (let i = 1; i < seen.length; i++) {
+        const pair = [seen[i - 1].type, seen[i].type].sort().join('+')
+        expect(pair, kit.id).not.toBe('stats+testimonials')
+      }
+    }
+  })
+
   it('a stats band only shows with two or more of the owner\'s numbers, so an empty one is never seen', () => {
     const s = { id: 's', type: 'stats', variant: 'band', hidden: false, props: { items: [{ value: '12', label: 'years' }] } } as Section
     expect(showsContent(s)).toBe(false)

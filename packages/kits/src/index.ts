@@ -109,16 +109,32 @@ export function brandFor(kit: KitDefinition, b: DraftBrand, source: 'extracted' 
 }
 
 /**
- * Kits whose new drafts get the Signature look (decision 2026-11-27: restaurant, food truck and
- * nonprofit). Every other kit keeps the classic look with its own font pair until the D3 presets.
+ * The look a new draft of each kit starts on (design D3, plan section 6, Clarence 2026-11-27).
+ * Food truck is poster. Tree and lawn is clean. The rest follow section 6. Real estate is not
+ * named there; it starts on editorial (see OPEN_QUESTIONS.md). Existing sites are not rewritten
+ * to this: they stay as stored and can preview it from "Try the new look".
  */
-export const SIGNATURE_KITS: ReadonlySet<string> = new Set(['food-truck', 'restaurant', 'nonprofit'])
+export const KIT_LOOKS: Record<string, Style> = {
+  'food-truck': { preset: 'poster', surface: 'light', fontPair: 'poster', radius: 'none', motion: 'subtle' },
+  trucking: { preset: 'poster', surface: 'light', fontPair: 'poster', radius: 'none', motion: 'subtle' },
+  oilfield: { preset: 'poster', surface: 'light', fontPair: 'poster', radius: 'none', motion: 'subtle' },
+  restaurant: { preset: 'signature', surface: 'dark', fontPair: 'signature', radius: 'round', motion: 'subtle' },
+  nonprofit: { preset: 'signature', surface: 'dark', fontPair: 'signature', radius: 'round', motion: 'subtle' },
+  landlord: { preset: 'craft', surface: 'light', fontPair: 'craft', radius: 'soft', motion: 'subtle' },
+  'real-estate': { preset: 'editorial', surface: 'light', fontPair: 'paper', radius: 'none', motion: 'subtle' },
+  'tree-lawn': { preset: 'clean', surface: 'light', fontPair: 'clean', radius: 'soft', motion: 'subtle' },
+  'training-school': { preset: 'clean', surface: 'light', fontPair: 'clean', radius: 'soft', motion: 'subtle' },
+  service: { preset: 'clean', surface: 'light', fontPair: 'clean', radius: 'soft', motion: 'subtle' },
+}
 
-/** The look a new draft starts with (design v2). Never touches brand colors (R6). */
-export function defaultStyle(kit: KitDefinition, brand: Brand): Style {
-  return SIGNATURE_KITS.has(kit.id)
-    ? { preset: 'signature', surface: 'dark', fontPair: 'signature', radius: 'round', motion: 'subtle' }
-    : { preset: 'classic', surface: 'light', fontPair: brand.fontPair, radius: 'round', motion: 'off' }
+/** The look offered to a new draft, and to an existing site that asks to try the new look. */
+export function lookFor(kitId: string): Style {
+  return KIT_LOOKS[kitId] ?? { preset: 'classic', surface: 'light', fontPair: 'modern', radius: 'round', motion: 'off' }
+}
+
+/** The look a new draft starts with. Never touches brand colors (R6). */
+export function defaultStyle(kit: KitDefinition, _brand: Brand): Style {
+  return lookFor(kit.id)
 }
 
 /**

@@ -27,4 +27,8 @@
 @import './variants/d2.css';
 @import './presets/classic.css';
 @import './presets/signature.css';
+@import './presets/editorial.css';
+@import './presets/poster.css';
+@import './presets/craft.css';
+@import './presets/clean.css';
 @import './editor.css';

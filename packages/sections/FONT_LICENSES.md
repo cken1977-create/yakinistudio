@@ -14,6 +14,11 @@ The full licence text ships in each package's `LICENSE` file.
 | Lora | @fontsource-variable/lora | classic body | OFL-1.1 |
 | Cormorant Garamond (roman + italic) | @fontsource-variable/cormorant-garamond | Signature display and accent phrase | OFL-1.1, © 2015 The Cormorant Project Authors |
 | JetBrains Mono | @fontsource-variable/jetbrains-mono | Signature labels | OFL-1.1, © 2020 The JetBrains Mono Project Authors |
+| Inter Tight | @fontsource-variable/inter-tight | paper body; clean display | OFL-1.1 |
+| DM Sans | @fontsource-variable/dm-sans | poster and craft body | OFL-1.1 |
+| Anton | @fontsource/anton | poster display | OFL-1.1 |
+| Instrument Serif | @fontsource/instrument-serif | craft display | OFL-1.1 |
+| IBM Plex Mono | @fontsource/ibm-plex-mono | editorial (paper) labels | OFL-1.1 |
 
 Checked 2026-11-27 against each package's `license` field and LICENSE file.
 

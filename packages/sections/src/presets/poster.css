@@ -1,0 +1,38 @@
+/*
+ * Poster (design D3): Anton and DM Sans. Hard edges, oversized type, sticker labels.
+ * Blocks use the stored primary; the hex is not changed.
+ */
+.ys-site[data-preset='poster'] {
+  --ys-font-label: ui-monospace, 'DM Sans Variable', SFMono-Regular, Menlo, Consolas, monospace;
+  --ys-radius: 0px;
+  --ys-radius-sm: 0px;
+  --ys-shadow-1: none;
+  --ys-shadow-2: 6px 6px 0 var(--ys-ink);
+  --ys-shadow-3: 8px 8px 0 var(--ys-ink);
+  background: var(--ys-surface-0);
+  color: var(--ys-on-surface);
+}
+.ys-site[data-preset='poster'] .ys-s { padding-block: clamp(64px, 8cqi, 140px); }
+.ys-site[data-preset='poster'] .ys-display { font-size: var(--ys-step-7); font-weight: 400; line-height: 0.86; letter-spacing: -0.03em; text-transform: uppercase; }
+.ys-site[data-preset='poster'] .ys-h2 { font-family: var(--ys-font-display); text-transform: uppercase; letter-spacing: -0.03em; line-height: 0.9; }
+.ys-site[data-preset='poster'] .ys-accent { font-style: normal; color: var(--ys-primary); }
+.ys-site[data-preset='poster'] :is(.ys-eyebrow, .ys-label) {
+  display: inline-block; font-family: var(--ys-font-label); font-size: 0.72rem; letter-spacing: 0.14em;
+  text-transform: uppercase; background: var(--ys-primary); color: var(--ys-on-primary);
+  padding: 4px 8px; transform: rotate(-2deg);
+}
+.ys-site[data-preset='poster'] .ys-hero.ys-v-cinematic { background: var(--ys-primary); color: var(--ys-on-primary); }
+.ys-site[data-preset='poster'] .ys-btn { border-radius: 0; box-shadow: 4px 4px 0 var(--ys-ink); min-height: 52px; text-transform: uppercase; letter-spacing: 0.04em; }
+.ys-site[data-preset='poster'] .ys-btn-primary { background: var(--ys-primary); color: var(--ys-on-primary); }
+.ys-site[data-preset='poster'] :is(.ys-service, .ys-quote, .ys-menu-item) { border: 2px solid var(--ys-ink); box-shadow: var(--ys-shadow-2); border-radius: 0; }
+.ys-site[data-preset='poster'] .ys-header { background: var(--ys-primary); color: var(--ys-on-primary); border-bottom: 3px solid var(--ys-ink); }
+.ys-site[data-preset='poster'] .ys-header :is(a, .ys-brand-name) { color: inherit; }
+/* The shared current-page tint is a light wash. On a primary header that wash sits under on-primary text and fails AA. */
+.ys-site[data-preset='poster'] .ys-nav-list a:hover { background: color-mix(in srgb, var(--ys-on-primary) 18%, transparent); color: var(--ys-on-primary); }
+.ys-site[data-preset='poster'] .ys-nav-list a[aria-current='page'] { background: var(--ys-ink); color: var(--ys-bg); }
+.ys-site[data-preset='poster'] .ys-nav-narrow[open] > nav { background: var(--ys-surface-0); color: var(--ys-on-surface); }
+.ys-site[data-preset='poster'] .ys-nav-narrow[open] .ys-nav-list a[aria-current='page'] { background: var(--ys-ink); color: var(--ys-bg); }
+/* Closed days stay fully opaque so "No stop" keeps the muted color's AA contrast. */
+.ys-site[data-preset='poster'] .ys-week > li.is-off { opacity: 1; }
+.ys-site[data-preset='poster'] .ys-footer { background: var(--ys-ink); color: var(--ys-bg); }
+.ys-site[data-preset='poster'] .ys-footer-head { opacity: 1; color: var(--ys-bg); }

@@ -44,6 +44,10 @@ export const FONT_STACKS: Record<FontPair, FontStack> = {
   friendly: { display: "'Nunito Variable', 'Nunito Fallback', 'Nunito Fallback DV', ui-rounded, ui-sans-serif, system-ui, sans-serif", body: "'Nunito Variable', 'Nunito Fallback', 'Nunito Fallback DV', ui-rounded, ui-sans-serif, system-ui, sans-serif", displayWeight: 850, displayTracking: '-0.01em' },
   classic: { display: "'Playfair Display Variable', 'Playfair Display Fallback', 'Playfair Display Fallback DV', Georgia, 'Times New Roman', serif", body: "'Lora Variable', 'Lora Fallback', 'Lora Fallback DV', Georgia, 'Times New Roman', serif", displayWeight: 650, displayTracking: '0' },
   signature: { display: "'Cormorant Garamond Variable', 'Cormorant Fallback', 'Cormorant Fallback DV', Georgia, 'Times New Roman', serif", body: "'Inter Variable', 'Inter Fallback', 'Inter Fallback DV', ui-sans-serif, system-ui, sans-serif", displayWeight: 500, displayTracking: '-0.02em' },
+  paper: { display: "'Fraunces Variable', 'Fraunces Fallback', 'Fraunces Fallback DV', Georgia, 'Times New Roman', serif", body: "'Inter Tight Variable', 'Inter Tight Fallback', 'Inter Tight Fallback DV', ui-sans-serif, system-ui, sans-serif", displayWeight: 560, displayTracking: '-0.02em' },
+  poster: { display: "'Anton', 'Anton Fallback', 'Anton Fallback DV', Impact, sans-serif", body: "'DM Sans Variable', 'DM Sans Fallback', 'DM Sans Fallback DV', ui-sans-serif, system-ui, sans-serif", displayWeight: 400, displayTracking: '-0.03em' },
+  craft: { display: "'Instrument Serif', 'Instrument Serif Fallback', 'Instrument Serif Fallback DV', Georgia, 'Times New Roman', serif", body: "'DM Sans Variable', 'DM Sans Fallback', 'DM Sans Fallback DV', ui-sans-serif, system-ui, sans-serif", displayWeight: 400, displayTracking: '-0.02em' },
+  clean: { display: "'Inter Tight Variable', 'Inter Tight Fallback', 'Inter Tight Fallback DV', ui-sans-serif, system-ui, sans-serif", body: "'Inter Variable', 'Inter Fallback', 'Inter Fallback DV', ui-sans-serif, system-ui, sans-serif", displayWeight: 650, displayTracking: '-0.03em' },
 }
 
 export type ThemeReport = {

@@ -609,11 +609,11 @@
     "fontPair": "modern"
   },
   "style": {
-    "preset": "classic",
+    "preset": "clean",
     "surface": "light",
-    "fontPair": "modern",
-    "radius": "round",
-    "motion": "off"
+    "fontPair": "clean",
+    "radius": "soft",
+    "motion": "subtle"
   },
   "integrations": {
     "bookingEnabled": false,
