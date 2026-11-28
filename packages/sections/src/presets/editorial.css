@@ -3,7 +3,7 @@
  * Square pictures, thin rules, no shadows. Brand colors stay as stored.
  */
 .ys-site[data-preset='editorial'] {
-  --ys-font-label: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ys-font-label: 'IBM Plex Mono', 'IBM Plex Mono Fallback', 'IBM Plex Mono Fallback DV', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --ys-radius: 0px;
   --ys-radius-sm: 0px;
   --ys-shadow-1: none;
